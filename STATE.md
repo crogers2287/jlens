@@ -145,3 +145,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 23 (2026-07-08 10:39 EDT) — step 5 COMPLETE (router-only mode)
 - capture_router_logits.py: --router-only/--no-hidden-states + --overwrite + resume-skip (_valid_capture). tests → 4 pass. hidden_states=None tolerated downstream.
 - Next step 6: weighted drift features (schema/v3_decode.json, top-k-prob-weighted signatures) — the make-or-break test for whether drift contributes any signal.
+
+## M2 DecodeGuard — Iteration 24 (2026-07-08 10:44 EDT) — step 6 COMPLETE (weighted drift / schema v3)
+- schema/v3_decode.json (v2 superset) + exporter --weighted; r4 weighted export 512 recs valid vs v3. Weighted drift STILL ~0 (×entropy -0.062, ×sel_prob +0.030) → drift dead both ways. BUT topk_mass×entropy +0.165, ×sel_prob -0.157 → first routing→confidence link. Risk head: drop drift, keep topk_mass + entropy/sel_prob.
+- Next step 7: decode domain-shift probe (reuse r3 sidecar head on decode-step signatures).

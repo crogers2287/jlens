@@ -1,0 +1,935 @@
+{
+ "n_records": 512,
+ "n_prompts": 16,
+ "n_domains": 8,
+ "distributions": {
+  "drift_from_prefill_signature": {
+   "n": 512,
+   "mean": 0.7229,
+   "sd": 0.104,
+   "min": 0.4583,
+   "max": 0.939
+  },
+  "drift_from_previous_token": {
+   "n": 496,
+   "mean": 0.6288,
+   "sd": 0.1491,
+   "min": 0.3563,
+   "max": 0.9563
+  },
+  "entropy_final_logits": {
+   "n": 512,
+   "mean": 0.2098,
+   "sd": 0.4269,
+   "min": 0.0,
+   "max": 2.8526
+  },
+  "selected_token_prob": {
+   "n": 512,
+   "mean": 0.9293,
+   "sd": 0.1475,
+   "min": 0.2812,
+   "max": 1.0
+  },
+  "drift_from_prefill_weighted": {
+   "n": 512,
+   "mean": 0.7464,
+   "sd": 0.1082,
+   "min": 0.4471,
+   "max": 0.954
+  },
+  "drift_from_previous_token_weighted": {
+   "n": 496,
+   "mean": 0.5859,
+   "sd": 0.1725,
+   "min": 0.2488,
+   "max": 0.9587
+  }
+ },
+ "correlations": {
+  "drift_prefill_x_entropy": -0.0781,
+  "drift_prefill_x_sel_prob": 0.0557,
+  "drift_prev_x_entropy": -0.1076,
+  "drift_prev_x_sel_prob": 0.1175,
+  "drift_prefill_weighted_x_entropy": -0.0617,
+  "drift_prefill_weighted_x_sel_prob": 0.0301
+ },
+ "by_domain": {
+  "code_py": {
+   "drift_from_prefill_signature": {
+    "n": 128,
+    "mean": 0.7109,
+    "sd": 0.1116,
+    "min": 0.4583,
+    "max": 0.934
+   },
+   "drift_from_previous_token": {
+    "n": 124,
+    "mean": 0.626,
+    "sd": 0.1468,
+    "min": 0.3656,
+    "max": 0.9531
+   },
+   "entropy_final_logits": {
+    "n": 128,
+    "mean": 0.2676,
+    "sd": 0.5689,
+    "min": 0.0,
+    "max": 2.8526
+   },
+   "selected_token_prob": {
+    "n": 128,
+    "mean": 0.9226,
+    "sd": 0.1564,
+    "min": 0.3929,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 128,
+    "mean": 0.7272,
+    "sd": 0.1177,
+    "min": 0.4471,
+    "max": 0.9238
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 124,
+    "mean": 0.5827,
+    "sd": 0.1632,
+    "min": 0.2717,
+    "max": 0.9565
+   }
+  },
+  "code_rust": {
+   "drift_from_prefill_signature": {
+    "n": 64,
+    "mean": 0.7358,
+    "sd": 0.0746,
+    "min": 0.5648,
+    "max": 0.8691
+   },
+   "drift_from_previous_token": {
+    "n": 62,
+    "mean": 0.5932,
+    "sd": 0.1501,
+    "min": 0.3563,
+    "max": 0.9563
+   },
+   "entropy_final_logits": {
+    "n": 64,
+    "mean": 0.1515,
+    "sd": 0.3083,
+    "min": 0.0,
+    "max": 1.7124
+   },
+   "selected_token_prob": {
+    "n": 64,
+    "mean": 0.9479,
+    "sd": 0.1172,
+    "min": 0.5062,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 64,
+    "mean": 0.7472,
+    "sd": 0.0908,
+    "min": 0.5442,
+    "max": 0.9057
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 62,
+    "mean": 0.531,
+    "sd": 0.1806,
+    "min": 0.2488,
+    "max": 0.9507
+   }
+  },
+  "creative": {
+   "drift_from_prefill_signature": {
+    "n": 32,
+    "mean": 0.7295,
+    "sd": 0.1215,
+    "min": 0.5644,
+    "max": 0.9113
+   },
+   "drift_from_previous_token": {
+    "n": 31,
+    "mean": 0.6789,
+    "sd": 0.1696,
+    "min": 0.3937,
+    "max": 0.9469
+   },
+   "entropy_final_logits": {
+    "n": 32,
+    "mean": 0.0866,
+    "sd": 0.2007,
+    "min": 0.0,
+    "max": 0.7427
+   },
+   "selected_token_prob": {
+    "n": 32,
+    "mean": 0.9592,
+    "sd": 0.1149,
+    "min": 0.5,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 32,
+    "mean": 0.7734,
+    "sd": 0.0979,
+    "min": 0.6196,
+    "max": 0.9363
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 31,
+    "mean": 0.6748,
+    "sd": 0.1788,
+    "min": 0.387,
+    "max": 0.9576
+   }
+  },
+  "fact": {
+   "drift_from_prefill_signature": {
+    "n": 64,
+    "mean": 0.6862,
+    "sd": 0.0984,
+    "min": 0.5088,
+    "max": 0.9181
+   },
+   "drift_from_previous_token": {
+    "n": 62,
+    "mean": 0.6135,
+    "sd": 0.1329,
+    "min": 0.3812,
+    "max": 0.9
+   },
+   "entropy_final_logits": {
+    "n": 64,
+    "mean": 0.3875,
+    "sd": 0.4998,
+    "min": 0.0,
+    "max": 1.8173
+   },
+   "selected_token_prob": {
+    "n": 64,
+    "mean": 0.8687,
+    "sd": 0.1975,
+    "min": 0.2812,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 64,
+    "mean": 0.7215,
+    "sd": 0.1118,
+    "min": 0.4824,
+    "max": 0.9355
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 62,
+    "mean": 0.5665,
+    "sd": 0.1622,
+    "min": 0.2941,
+    "max": 0.9202
+   }
+  },
+  "json_tool": {
+   "drift_from_prefill_signature": {
+    "n": 32,
+    "mean": 0.7532,
+    "sd": 0.0953,
+    "min": 0.5186,
+    "max": 0.8808
+   },
+   "drift_from_previous_token": {
+    "n": 31,
+    "mean": 0.6446,
+    "sd": 0.1635,
+    "min": 0.4062,
+    "max": 0.95
+   },
+   "entropy_final_logits": {
+    "n": 32,
+    "mean": 0.1012,
+    "sd": 0.2309,
+    "min": 0.0,
+    "max": 0.894
+   },
+   "selected_token_prob": {
+    "n": 32,
+    "mean": 0.9558,
+    "sd": 0.1094,
+    "min": 0.6168,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 32,
+    "mean": 0.7895,
+    "sd": 0.0943,
+    "min": 0.5502,
+    "max": 0.9058
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 31,
+    "mean": 0.631,
+    "sd": 0.1751,
+    "min": 0.327,
+    "max": 0.9426
+   }
+  },
+  "lang": {
+   "drift_from_prefill_signature": {
+    "n": 64,
+    "mean": 0.7012,
+    "sd": 0.0895,
+    "min": 0.5221,
+    "max": 0.8848
+   },
+   "drift_from_previous_token": {
+    "n": 62,
+    "mean": 0.6128,
+    "sd": 0.1482,
+    "min": 0.3969,
+    "max": 0.9437
+   },
+   "entropy_final_logits": {
+    "n": 64,
+    "mean": 0.2052,
+    "sd": 0.4122,
+    "min": 0.0,
+    "max": 2.2689
+   },
+   "selected_token_prob": {
+    "n": 64,
+    "mean": 0.9216,
+    "sd": 0.1598,
+    "min": 0.3127,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 64,
+    "mean": 0.7278,
+    "sd": 0.0995,
+    "min": 0.5278,
+    "max": 0.89
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 62,
+    "mean": 0.5678,
+    "sd": 0.1678,
+    "min": 0.3345,
+    "max": 0.9256
+   }
+  },
+  "math": {
+   "drift_from_prefill_signature": {
+    "n": 64,
+    "mean": 0.7226,
+    "sd": 0.0732,
+    "min": 0.5714,
+    "max": 0.8721
+   },
+   "drift_from_previous_token": {
+    "n": 62,
+    "mean": 0.6392,
+    "sd": 0.1107,
+    "min": 0.4031,
+    "max": 0.875
+   },
+   "entropy_final_logits": {
+    "n": 64,
+    "mean": 0.1975,
+    "sd": 0.345,
+    "min": 0.0001,
+    "max": 1.5431
+   },
+   "selected_token_prob": {
+    "n": 64,
+    "mean": 0.9371,
+    "sd": 0.12,
+    "min": 0.4837,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 64,
+    "mean": 0.7419,
+    "sd": 0.0741,
+    "min": 0.5924,
+    "max": 0.8647
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 62,
+    "mean": 0.5703,
+    "sd": 0.1322,
+    "min": 0.3052,
+    "max": 0.8599
+   }
+  },
+  "reason": {
+   "drift_from_prefill_signature": {
+    "n": 64,
+    "mean": 0.774,
+    "sd": 0.1252,
+    "min": 0.5028,
+    "max": 0.939
+   },
+   "drift_from_previous_token": {
+    "n": 62,
+    "mean": 0.6578,
+    "sd": 0.1687,
+    "min": 0.3656,
+    "max": 0.9563
+   },
+   "entropy_final_logits": {
+    "n": 64,
+    "mean": 0.1074,
+    "sd": 0.2535,
+    "min": 0.0,
+    "max": 1.3447
+   },
+   "selected_token_prob": {
+    "n": 64,
+    "mean": 0.9565,
+    "sd": 0.1191,
+    "min": 0.4662,
+    "max": 1.0
+   },
+   "drift_from_prefill_weighted": {
+    "n": 64,
+    "mean": 0.797,
+    "sd": 0.1226,
+    "min": 0.5193,
+    "max": 0.954
+   },
+   "drift_from_previous_token_weighted": {
+    "n": 62,
+    "mean": 0.6329,
+    "sd": 0.1942,
+    "min": 0.2811,
+    "max": 0.9587
+   }
+  }
+ },
+ "by_token_index": {
+  "0": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6531,
+   "entropy_final_mean": 0.7514,
+   "sel_prob_mean": 0.8496
+  },
+  "1": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7988,
+   "entropy_final_mean": 1.0497,
+   "sel_prob_mean": 0.7269
+  },
+  "2": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7464,
+   "entropy_final_mean": 0.571,
+   "sel_prob_mean": 0.6399
+  },
+  "3": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7662,
+   "entropy_final_mean": 0.1212,
+   "sel_prob_mean": 0.9515
+  },
+  "4": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7796,
+   "entropy_final_mean": 0.0746,
+   "sel_prob_mean": 0.9866
+  },
+  "5": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6328,
+   "entropy_final_mean": 0.2272,
+   "sel_prob_mean": 0.9425
+  },
+  "6": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7355,
+   "entropy_final_mean": 0.2247,
+   "sel_prob_mean": 0.9274
+  },
+  "7": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7397,
+   "entropy_final_mean": 0.1445,
+   "sel_prob_mean": 0.964
+  },
+  "8": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6774,
+   "entropy_final_mean": 0.3449,
+   "sel_prob_mean": 0.8838
+  },
+  "9": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7632,
+   "entropy_final_mean": 0.0762,
+   "sel_prob_mean": 0.9817
+  },
+  "10": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7706,
+   "entropy_final_mean": 0.0346,
+   "sel_prob_mean": 0.9926
+  },
+  "11": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6436,
+   "entropy_final_mean": 0.0686,
+   "sel_prob_mean": 0.9801
+  },
+  "12": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7027,
+   "entropy_final_mean": 0.0327,
+   "sel_prob_mean": 0.9943
+  },
+  "13": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7002,
+   "entropy_final_mean": 0.0961,
+   "sel_prob_mean": 0.9641
+  },
+  "14": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7652,
+   "entropy_final_mean": 0.1144,
+   "sel_prob_mean": 0.9611
+  },
+  "15": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7347,
+   "entropy_final_mean": 0.0859,
+   "sel_prob_mean": 0.9645
+  },
+  "16": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7449,
+   "entropy_final_mean": 0.286,
+   "sel_prob_mean": 0.8911
+  },
+  "17": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7588,
+   "entropy_final_mean": 0.2289,
+   "sel_prob_mean": 0.9145
+  },
+  "18": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7844,
+   "entropy_final_mean": 0.1189,
+   "sel_prob_mean": 0.9643
+  },
+  "19": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7749,
+   "entropy_final_mean": 0.1917,
+   "sel_prob_mean": 0.9141
+  },
+  "20": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.774,
+   "entropy_final_mean": 0.1267,
+   "sel_prob_mean": 0.9598
+  },
+  "21": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7618,
+   "entropy_final_mean": 0.2232,
+   "sel_prob_mean": 0.9325
+  },
+  "22": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7206,
+   "entropy_final_mean": 0.2348,
+   "sel_prob_mean": 0.9066
+  },
+  "23": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7101,
+   "entropy_final_mean": 0.1602,
+   "sel_prob_mean": 0.9334
+  },
+  "24": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7137,
+   "entropy_final_mean": 0.2461,
+   "sel_prob_mean": 0.9141
+  },
+  "25": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.7216,
+   "entropy_final_mean": 0.1117,
+   "sel_prob_mean": 0.9736
+  },
+  "26": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.679,
+   "entropy_final_mean": 0.3518,
+   "sel_prob_mean": 0.8541
+  },
+  "27": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6837,
+   "entropy_final_mean": 0.0716,
+   "sel_prob_mean": 0.9833
+  },
+  "28": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6686,
+   "entropy_final_mean": 0.0641,
+   "sel_prob_mean": 0.9757
+  },
+  "29": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6706,
+   "entropy_final_mean": 0.0915,
+   "sel_prob_mean": 0.9745
+  },
+  "30": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6909,
+   "entropy_final_mean": 0.0965,
+   "sel_prob_mean": 0.9742
+  },
+  "31": {
+   "n": 16,
+   "drift_from_prefill_mean": 0.6644,
+   "entropy_final_mean": 0.0919,
+   "sel_prob_mean": 0.9615
+  }
+ },
+ "top_spikes": {
+  "drift_from_prefill": [
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 14,
+    "generated_token_text": "An",
+    "drift_from_prefill_signature": 0.938996,
+    "drift_from_previous_token": 0.634375,
+    "entropy_final_logits": 0.000781,
+    "selected_token_prob": 0.999933
+   },
+   {
+    "prompt_id": "code_py_01",
+    "domain": "code_py",
+    "generated_token_index": 28,
+    "generated_token_text": ",",
+    "drift_from_prefill_signature": 0.934034,
+    "drift_from_previous_token": 0.6625,
+    "entropy_final_logits": 0.005097,
+    "selected_token_prob": 0.999526
+   },
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 19,
+    "generated_token_text": "\n",
+    "drift_from_prefill_signature": 0.924814,
+    "drift_from_previous_token": 0.440625,
+    "entropy_final_logits": 0.00012,
+    "selected_token_prob": 0.999992
+   },
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 10,
+    "generated_token_text": "1",
+    "drift_from_prefill_signature": 0.923914,
+    "drift_from_previous_token": 0.434375,
+    "entropy_final_logits": 0.001814,
+    "selected_token_prob": 0.99983
+   },
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 6,
+    "generated_token_text": " thinking",
+    "drift_from_prefill_signature": 0.920988,
+    "drift_from_previous_token": 0.95625,
+    "entropy_final_logits": 6.3e-05,
+    "selected_token_prob": 0.999996
+   },
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 17,
+    "generated_token_text": " Input",
+    "drift_from_prefill_signature": 0.918511,
+    "drift_from_previous_token": 0.453125,
+    "entropy_final_logits": 0.000157,
+    "selected_token_prob": 0.999988
+   },
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 27,
+    "generated_token_text": "2",
+    "drift_from_prefill_signature": 0.918132,
+    "drift_from_previous_token": 0.60625,
+    "entropy_final_logits": 7.6e-05,
+    "selected_token_prob": 0.999995
+   },
+   {
+    "prompt_id": "creative_01",
+    "domain": "creative",
+    "generated_token_index": 16,
+    "generated_token_text": "\n",
+    "drift_from_prefill_signature": 0.911349,
+    "drift_from_previous_token": 0.5625,
+    "entropy_final_logits": 3.5e-05,
+    "selected_token_prob": 0.999998
+   }
+  ],
+  "drift_from_previous": [
+   {
+    "prompt_id": "code_rust_01",
+    "domain": "code_rust",
+    "generated_token_index": 6,
+    "generated_token_text": " thinking",
+    "drift_from_prefill_signature": 0.841194,
+    "drift_from_previous_token": 0.95625,
+    "entropy_final_logits": 4.6e-05,
+    "selected_token_prob": 0.999997
+   },
+   {
+    "prompt_id": "reason_01",
+    "domain": "reason",
+    "generated_token_index": 6,
+    "generated_token_text": " thinking",
+    "drift_from_prefill_signature": 0.881256,
+    "drift_from_previous_token": 0.95625,
+    "entropy_final_logits": 6.3e-05,
+    "selected_token_prob": 0.999996
+   },
+   {
+    "prompt_id": "reason_02",
+    "domain": "reason",
+    "generated_token_index": 6,
+    "generated_token_text": " thinking",
+    "drift_from_prefill_signature": 0.920988,
+    "drift_from_previous_token": 0.95625,
+    "entropy_final_logits": 6.3e-05,
+    "selected_token_prob": 0.999996
+   },
+   {
+    "prompt_id": "code_py_01",
+    "domain": "code_py",
+    "generated_token_index": 29,
+    "generated_token_text": " ",
+    "drift_from_prefill_signature": 0.822083,
+    "drift_from_previous_token": 0.953125,
+    "entropy_final_logits": 0.012721,
+    "selected_token_prob": 0.998464
+   },
+   {
+    "prompt_id": "json_tool_01",
+    "domain": "json_tool",
+    "generated_token_index": 15,
+    "generated_token_text": "alyze",
+    "drift_from_prefill_signature": 0.694254,
+    "drift_from_previous_token": 0.95,
+    "entropy_final_logits": 1.7e-05,
+    "selected_token_prob": 0.999999
+   },
+   {
+    "prompt_id": "creative_01",
+    "domain": "creative",
+    "generated_token_index": 20,
+    "generated_token_text": " Topic",
+    "drift_from_prefill_signature": 0.817897,
+    "drift_from_previous_token": 0.946875,
+    "entropy_final_logits": 0.003054,
+    "selected_token_prob": 0.999703
+   },
+   {
+    "prompt_id": "creative_01",
+    "domain": "creative",
+    "generated_token_index": 17,
+    "generated_token_text": "   ",
+    "drift_from_prefill_signature": 0.642836,
+    "drift_from_previous_token": 0.94375,
+    "entropy_final_logits": 4.3e-05,
+    "selected_token_prob": 0.999997
+   },
+   {
+    "prompt_id": "lang_es_01",
+    "domain": "lang",
+    "generated_token_index": 6,
+    "generated_token_text": " thinking",
+    "drift_from_prefill_signature": 0.884777,
+    "drift_from_previous_token": 0.94375,
+    "entropy_final_logits": 0.000284,
+    "selected_token_prob": 0.99998
+   }
+  ],
+  "entropy_final_logits": [
+   {
+    "prompt_id": "code_py_01",
+    "domain": "code_py",
+    "generated_token_index": 1,
+    "generated_token_text": "```",
+    "drift_from_prefill_signature": 0.723769,
+    "drift_from_previous_token": 0.4875,
+    "entropy_final_logits": 2.85259,
+    "selected_token_prob": 0.392892
+   },
+   {
+    "prompt_id": "code_py_03",
+    "domain": "code_py",
+    "generated_token_index": 1,
+    "generated_token_text": "<think>",
+    "drift_from_prefill_signature": 0.794457,
+    "drift_from_previous_token": 0.609375,
+    "entropy_final_logits": 2.508161,
+    "selected_token_prob": 0.411499
+   },
+   {
+    "prompt_id": "code_py_02",
+    "domain": "code_py",
+    "generated_token_index": 1,
+    "generated_token_text": "<think>",
+    "drift_from_prefill_signature": 0.804781,
+    "drift_from_previous_token": 0.584375,
+    "entropy_final_logits": 2.373709,
+    "selected_token_prob": 0.54808
+   },
+   {
+    "prompt_id": "code_py_01",
+    "domain": "code_py",
+    "generated_token_index": 0,
+    "generated_token_text": "\n\n",
+    "drift_from_prefill_signature": 0.634335,
+    "drift_from_previous_token": null,
+    "entropy_final_logits": 2.340022,
+    "selected_token_prob": 0.471086
+   },
+   {
+    "prompt_id": "lang_zh_01",
+    "domain": "lang",
+    "generated_token_index": 21,
+    "generated_token_text": "\u5148\u8fdb\u7684",
+    "drift_from_prefill_signature": 0.662183,
+    "drift_from_previous_token": 0.425,
+    "entropy_final_logits": 2.268883,
+    "selected_token_prob": 0.3127
+   },
+   {
+    "prompt_id": "code_py_03",
+    "domain": "code_py",
+    "generated_token_index": 0,
+    "generated_token_text": "\n\n",
+    "drift_from_prefill_signature": 0.639487,
+    "drift_from_previous_token": null,
+    "entropy_final_logits": 2.16085,
+    "selected_token_prob": 0.562505
+   },
+   {
+    "prompt_id": "code_py_02",
+    "domain": "code_py",
+    "generated_token_index": 0,
+    "generated_token_text": "\n\n",
+    "drift_from_prefill_signature": 0.663978,
+    "drift_from_previous_token": null,
+    "entropy_final_logits": 1.941612,
+    "selected_token_prob": 0.566952
+   },
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 8,
+    "generated_token_text": "**",
+    "drift_from_prefill_signature": 0.766848,
+    "drift_from_previous_token": 0.778125,
+    "entropy_final_logits": 1.817254,
+    "selected_token_prob": 0.281224
+   }
+  ],
+  "lowest_selected_token_prob": [
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 8,
+    "generated_token_text": "**",
+    "drift_from_prefill_signature": 0.766848,
+    "drift_from_previous_token": 0.778125,
+    "entropy_final_logits": 1.817254,
+    "selected_token_prob": 0.281224
+   },
+   {
+    "prompt_id": "lang_zh_01",
+    "domain": "lang",
+    "generated_token_index": 21,
+    "generated_token_text": "\u5148\u8fdb\u7684",
+    "drift_from_prefill_signature": 0.662183,
+    "drift_from_previous_token": 0.425,
+    "entropy_final_logits": 2.268883,
+    "selected_token_prob": 0.3127
+   },
+   {
+    "prompt_id": "fact_02",
+    "domain": "fact",
+    "generated_token_index": 19,
+    "generated_token_text": " in",
+    "drift_from_prefill_signature": 0.674213,
+    "drift_from_previous_token": 0.634375,
+    "entropy_final_logits": 1.385986,
+    "selected_token_prob": 0.3343
+   },
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 17,
+    "generated_token_text": " NASA",
+    "drift_from_prefill_signature": 0.578471,
+    "drift_from_previous_token": 0.55,
+    "entropy_final_logits": 1.709504,
+    "selected_token_prob": 0.347349
+   },
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 19,
+    "generated_token_text": " to",
+    "drift_from_prefill_signature": 0.612649,
+    "drift_from_previous_token": 0.50625,
+    "entropy_final_logits": 1.246379,
+    "selected_token_prob": 0.37202
+   },
+   {
+    "prompt_id": "code_py_01",
+    "domain": "code_py",
+    "generated_token_index": 1,
+    "generated_token_text": "```",
+    "drift_from_prefill_signature": 0.723769,
+    "drift_from_previous_token": 0.4875,
+    "entropy_final_logits": 2.85259,
+    "selected_token_prob": 0.392892
+   },
+   {
+    "prompt_id": "code_py_03",
+    "domain": "code_py",
+    "generated_token_index": 1,
+    "generated_token_text": "<think>",
+    "drift_from_prefill_signature": 0.794457,
+    "drift_from_previous_token": 0.609375,
+    "entropy_final_logits": 2.508161,
+    "selected_token_prob": 0.411499
+   },
+   {
+    "prompt_id": "fact_01",
+    "domain": "fact",
+    "generated_token_index": 1,
+    "generated_token_text": "1",
+    "drift_from_prefill_signature": 0.791488,
+    "drift_from_previous_token": 0.525,
+    "entropy_final_logits": 1.314766,
+    "selected_token_prob": 0.422046
+   }
+  ]
+ }
+}

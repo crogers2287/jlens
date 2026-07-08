@@ -53,6 +53,32 @@ def _usage_vector(per_layer_logits, top_k: int, num_experts: int) -> np.ndarray:
     return np.concatenate(vecs)
 
 
+def _weighted_usage_vector(per_layer_logits, top_k: int, num_experts: int):
+    """Per-layer 256-dim vector using top-k softmax PROBABILITIES (not 1/k
+    counts), concatenated across layers. Also returns mean top-k softmax mass
+    (routing concentration) across layers."""
+    import torch
+
+    vecs, masses = [], []
+    for logits in per_layer_logits:
+        lg = logits.float()
+        if lg.dim() == 1:
+            lg = lg.unsqueeze(0)
+        probs = torch.softmax(lg, dim=-1)              # full 256-way softmax
+        tk = torch.topk(probs, k=min(top_k, lg.shape[-1]), dim=-1)
+        vec = np.zeros(num_experts, dtype=np.float32)
+        for idx_row, p_row in zip(tk.indices.tolist(), tk.values.tolist()):
+            for e, p in zip(idx_row, p_row):
+                vec[e] += p
+        s = vec.sum()
+        masses.append(float(tk.values.sum(dim=-1).mean()))  # top-k mass this layer
+        if s:
+            vec /= s
+        vecs.append(vec)
+    mean_mass = float(np.mean(masses)) if masses else 0.0
+    return np.concatenate(vecs), mean_mass
+
+
 def _cosine_dist(a: np.ndarray, b: np.ndarray) -> float:
     na, nb = np.linalg.norm(a), np.linalg.norm(b)
     if na == 0 or nb == 0:
@@ -78,14 +104,18 @@ def _layer_record(logits, top_k: int, num_experts: int) -> dict:
     }
 
 
-def export_capture(cap: dict, prompt_id: str, run_id: str, top_k: int):
+def export_capture(cap: dict, prompt_id: str, run_id: str, top_k: int,
+                   weighted: bool = False):
     steps = cap.get("decode_steps")
     if not steps:
         return []
     num_experts = cap["router_logits"][0].shape[-1]
     prefill_sig = _usage_vector(cap["router_logits"], top_k, num_experts)
+    if weighted:
+        prefill_wsig, _ = _weighted_usage_vector(
+            cap["router_logits"], top_k, num_experts)
 
-    out, prev_sig = [], None
+    out, prev_sig, prev_wsig = [], None, None
     for s in steps:
         rl = s["router_logits"]
         tok_sig = _usage_vector(rl, top_k, num_experts)
@@ -94,8 +124,8 @@ def export_capture(cap: dict, prompt_id: str, run_id: str, top_k: int):
             rec = _layer_record(logits, top_k, num_experts)
             rec["layer"] = li
             layers.append(rec)
-        out.append({
-            "schema_version": SCHEMA_VERSION,
+        record = {
+            "schema_version": 3 if weighted else SCHEMA_VERSION,
             "model": cap.get("model_path", "?"),
             "model_type": cap.get("model_type", "?"),
             "run_id": run_id,
@@ -113,7 +143,17 @@ def export_capture(cap: dict, prompt_id: str, run_id: str, top_k: int):
                 _cosine_dist(tok_sig, prefill_sig), 6),
             "drift_from_previous_token": (None if prev_sig is None else
                 round(_cosine_dist(tok_sig, prev_sig), 6)),
-        })
+        }
+        if weighted:
+            tok_wsig, mass = _weighted_usage_vector(rl, top_k, num_experts)
+            record["drift_from_prefill_weighted"] = round(
+                _cosine_dist(tok_wsig, prefill_wsig), 6)
+            record["drift_from_previous_token_weighted"] = (
+                None if prev_wsig is None else
+                round(_cosine_dist(tok_wsig, prev_wsig), 6))
+            record["topk_mass_or_margin"] = round(mass, 6)
+            prev_wsig = tok_wsig
+        out.append(record)
         prev_sig = tok_sig
     return out
 
@@ -124,6 +164,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--top-k", type=int, default=8)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--weighted", action="store_true",
+                    help="also emit prob-weighted drift fields (schema v3)")
     args = ap.parse_args(argv)
 
     out = Path(args.out)
@@ -131,13 +173,15 @@ def main(argv: list[str] | None = None) -> int:
     n_prompts = n_tokens = 0
     with out.open("w", encoding="utf-8") as fh:
         for name, cap in iter_captures(args.captures_dir):
-            recs = export_capture(cap, Path(name).stem, args.run_id, args.top_k)
+            recs = export_capture(cap, Path(name).stem, args.run_id, args.top_k,
+                                  weighted=args.weighted)
             for r in recs:
                 fh.write(json.dumps(r) + "\n")
             n_prompts += 1
             n_tokens += len(recs)
+    ver = 3 if args.weighted else SCHEMA_VERSION
     print(f"[jlens] exported {n_tokens} decode tokens from {n_prompts} prompts "
-          f"-> {out} (schema v{SCHEMA_VERSION})")
+          f"-> {out} (schema v{ver})")
     return 0 if n_tokens else 1
 
 

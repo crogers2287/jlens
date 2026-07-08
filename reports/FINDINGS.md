@@ -233,3 +233,23 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
 - tests/test_decode_capture.py extended to 4 tests, all PASS: prefill-only intact,
   decode intact, router-only omits hidden states (decode still works), resume-skip
   valid/missing/corrupt detection. Loaders/exporters tolerate hidden_states=None.
+
+## 18. Weighted drift features + schema v3 (M2 step 6) — drift dead, but topk_mass lives
+- `schema/v3_decode.json` = v2 superset (v2 frozen) + drift_from_prefill_weighted,
+  drift_from_previous_token_weighted, topk_mass_or_margin. Exporter gains
+  `--weighted`; r4 weighted export = 512 records, all valid against v3.
+- **Make-or-break test — weighted drift does NOT recover signal**: prob-weighted
+  drift_prefill × entropy = −0.062, × sel_prob = +0.030 (even weaker than the
+  unweighted −0.078/+0.056). Weighting the 256-dim routing vector by top-k
+  softmax mass instead of 1/k counts changes nothing. **Routing drift (either
+  form) is confirmed dead as a confidence/risk feature.**
+- **NEW positive — topk_mass_or_margin is the first routing feature that tracks
+  confidence**: routing-concentration (mean summed top-k softmax mass, mean 0.231)
+  × entropy = **+0.165**, × sel_prob = **−0.157**. Consistent sign both ways:
+  when the router puts MORE mass on its chosen experts, the model is LESS
+  confident in the emitted token. Modest but the strongest router→uncertainty
+  link found so far.
+- Consequence for the risk head: DROP drift; KEEP topk_mass as a candidate
+  routing feature alongside the (stronger) entropy_final_logits + sel_prob.
+  Caveat: 512 tokens / 16 prompts — ±0.16 is suggestive, needs the M3 labeled set
+  to confirm.

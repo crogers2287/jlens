@@ -1043,3 +1043,19 @@ sm_regex_01 to task_category "json" + json_check + json_required ["result"] (dro
 the full-anchor pattern). Verified: a JSON task runs json_object_check and NOT regex
 (verdict pass on valid JSON+trailing text); a real regex task still runs
 regex_or_schema_check; full suite stays green.
+
+## 78. Objective review of the 7 escalated live records (M12 step 3)
+Reviewed all 7 M11 escalated rows against PUBLIC benchmark ground truth (operator
+review, review_source="operator_review", confidence 1.0) into a gitignored private
+queue (agents_a1_reviewed_live.jsonl, all auto_outcome_v1-valid, never staged).
+Every output was objectively correct: sm_regex_01 returned valid JSON with the
+required `result` key (was_wrong=False — the model was right, confirming #75); the
+6 explain tasks (prime number, photosynthesis, water cycle, primary colors,
+gravity, water boils at 100°C at sea level) were all factually correct
+(was_wrong=False). Agreement-relevant rows are only those where BOTH auto and human
+was_wrong are set: sm_regex_01 alone (auto=wrong, human=right) → a single
+disagreement, the pre-fix verifier false-positive quantified. The 6 explain rows
+had auto_was_wrong=None (escalated on low confidence, no applicable verifier) so
+they populate human_reviewed_count but not agreement. Honest: only objectively
+determinable ground truth set; null left where undeterminable; auto_outcome stays
+a candidate.

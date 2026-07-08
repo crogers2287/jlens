@@ -382,3 +382,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M12 Verifier calibration — Iteration M12.2 (2026-07-08 19:50 EDT) — step 2 COMPLETE (JSON routing)
 - _run_verifiers routes json_check/json_required tasks → json_object_check; regex guarded to skip json tasks (regex for regex only); escalation/confidence math untouched. Smoke fixture sm_regex_01 → json_check+json_required. Routing verified; full suite green.
 - Next step 3: review the 7 escalated live records (objective/ground-truth) → gitignored reviewed queue.
+
+## M12 Verifier calibration — Iteration M12.3 (2026-07-08 19:52 EDT) — step 3 COMPLETE (objective review)
+- Reviewed all 7 escalated live rows vs public benchmark ground truth (operator_review) → gitignored agents_a1_reviewed_live.jsonl (valid, unstaged). All objectively correct (was_wrong=False). sm_regex_01 = the one agreement-comparable row (auto=wrong, human=right → the false-positive). 6 explain rows auto=None (low-conf escalation).
+- Next step 4: run agents_a1_run_report over reviewed queue → public reviewed aggregate + first auto_vs_human_agreement.

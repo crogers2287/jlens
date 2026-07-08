@@ -915,3 +915,18 @@ demonstrating the real workload batch format: 5 math (known_answer+expression),
 5 exact_answer (known_answer), 4 format/regex (pattern), 4 current_info, 7 plain
 explain. Verified: valid JSONL, every row has prompt_id+prompt, unique ids,
 within the batch cap (100). No private text — safe to commit as run input.
+
+## 69. Bounded resume-safe batch runner (M11 step 3)
+`src/run_agents_a1_shadow_batch.py` — thin wrapper over
+autonomous_shadow_supervisor.run_task: bounds the batch to config batch.size
+(≤cap), is RESUME-safe (reads existing run-log prompt_ids, runs only missing
+tasks, APPENDS — never rewrites completed rows), records run metadata
+(run_id=config sha256, model, endpoint_alias, n_tasks/n_completed/n_failed/
+n_telemetry_missing/escalation counts, placeholder timestamps in deterministic
+mode), and on a per-task endpoint failure increments n_failed and CONTINUES.
+Raw records + run-meta sidecar go to the gitignored private dir; auto_outcome is
+a candidate; human fields never written. Verified on the public smoke batch:
+run 1 completed=25 escalated=13 telemetry_missing=25 (honest GGUF), all records
+auto_outcome_v1-valid; run 2 skipped=25 completed=0 (resume adds zero, log stays
+25 lines); run_id stable (cd08d63a145be1d2); injected failing endpoint → n_failed=25
+n_completed=0, run continued without crashing; private artifacts unstaged/gitignored.

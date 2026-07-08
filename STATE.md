@@ -349,3 +349,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M11 Agents-A1 workload — Iteration M11.2 (2026-07-08 18:15 EDT) — step 2 COMPLETE (public smoke batch)
 - data/prompts/agents_a1_smoke_batch.jsonl: 25 public tasks (math5/exact5/regex4/current_info4/explain7), unique ids, within cap. Public input, tracked.
 - Next step 3: src/run_agents_a1_shadow_batch.py (bounded + resume-safe wrapper + run metadata + failure counting).
+
+## M11 Agents-A1 workload — Iteration M11.3 (2026-07-08 18:19 EDT) — step 3 COMPLETE (batch runner)
+- src/run_agents_a1_shadow_batch.py: bounded + resume-safe + run metadata + failure-count/continue. Smoke: run1 25 completed (13 escalated, telemetry_missing 25), run2 resume adds 0; failure injection → 25 failed continue; records valid; run_id stable. Private outputs gitignored.
+- Next step 4: src/make_escalation_review_queue.py (only-escalated local queue, human fields null).

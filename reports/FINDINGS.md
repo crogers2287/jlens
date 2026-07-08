@@ -1006,3 +1006,16 @@ reports/outcomes/agents_a1_run_summary_live.json (check_commit_safe clean, no
 text). Raw run/review/meta logs stayed in the gitignored private dir. Human
 outcome fields untouched (auto never writes them); production thresholds still
 gated. NEXT: human-review the 7 escalated rows → first auto-vs-human agreement.
+
+## 75. Live-run insight: regex verifier full-anchor is too strict (M11 follow-up)
+The one live auto_was_wrong=True row (sm_regex_01) is a VERIFIER false-positive,
+not a model error: Agents-A1 returned a valid JSON object, but
+regex_or_schema_check uses `^\{.*\}$` (full-string anchors, no DOTALL), so any
+trailing text/newline after the JSON fails the match. This is exactly what the
+escalation loop is for — it surfaced an uncertain auto-verdict for human review,
+and review shows the auto-verdict was wrong (the model was right). Candidate
+improvement for a future milestone (NOT applied here — verifier change is a
+deliberate decision): use re.search without ^…$ anchors (+re.DOTALL) or a real
+json.loads-based schema check for the JSON case. This is the auto-vs-human loop
+working as designed: auto_outcome is a candidate, humans correct it, and the
+corrections are the calibration signal.

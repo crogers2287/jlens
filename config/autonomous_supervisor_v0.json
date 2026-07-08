@@ -1,0 +1,59 @@
+{
+  "_doc": "EXAMPLE config for the M10 autonomous shadow supervisor (src/autonomous_shadow_supervisor.py). PLACEHOLDER, not a secret and not a real internal host. Copy to a local (gitignored) config and edit for your own endpoint. The default dry-run / fake-endpoint path needs none of the live fields.",
+
+  "endpoint": {
+    "_doc": "Local OpenAI-compatible endpoint. Targets Agents-A1 GGUF-style serving (llama.cpp / llama-swap / vLLM / Ollama-OpenAI shim). The supervisor POSTs {base_url}/chat/completions.",
+    "base_url": "http://localhost:9069/v1",
+    "model": "InternScience/Agents-A1-Q8_0-GGUF",
+    "_model_doc": "A GGUF chat endpoint returns OUTPUT TEXT ONLY — no router logits. So live tasks have NO telemetry feature row: the supervisor sets telemetry_missing=true and policy=null. It NEVER fabricates features.",
+    "api_key": "not-needed",
+    "_api_key_doc": "Most local endpoints ignore this. Do NOT put a real secret here; use an env var in your own local config if your endpoint needs auth.",
+    "timeout_s": 60
+  },
+
+  "task_sources": [
+    {
+      "_doc": "PUBLIC fixture task queue — safe to use for committed samples and tests.",
+      "path": "reports/shadow/realuse_sample.jsonl",
+      "kind": "public_fixture"
+    },
+    {
+      "_doc": "OPTIONAL local private queue — gitignored, real prompts, NEVER committed. Absent by default.",
+      "path": "reports/shadow/private/task_queue_local.jsonl",
+      "kind": "private_local",
+      "optional": true
+    }
+  ],
+
+  "features": {
+    "_doc": "Optional telemetry feature rows keyed by prompt_id. When a row is missing for a task, telemetry_missing=true and policy=null.",
+    "path": "reports/features/benchmark_m5_features.jsonl"
+  },
+
+  "verifiers": {
+    "_doc": "Toggle cheap verifier adapters (src/verifiers.py). Each produces an auto_outcome signal only; none is gold.",
+    "exact_answer_match": true,
+    "regex_or_schema_check": true,
+    "math_checker": true,
+    "code_test_stub": true,
+    "retrieval_required_heuristic": true,
+    "self_consistency": true,
+    "self_consistency_samples": 3
+  },
+
+  "escalation": {
+    "_doc": "When to flag a task for later HUMAN review. Escalation is advisory; it never sets a human outcome.",
+    "low_confidence_below": 0.55,
+    "self_consistency_min_agreement": 0.67,
+    "high_impact_levels": ["high", "critical"],
+    "escalate_on_verifier_contradiction": true
+  },
+
+  "run": {
+    "_doc": "Runtime defaults. dry-run uses the deterministic fake output (no network); live calls the endpoint above.",
+    "mode": "dry-run",
+    "log": "reports/shadow/private/autonomous_local.jsonl",
+    "_log_doc": "Default log path is under the gitignored private dir — raw prompt/output text stays local. Commit only aggregate-only or redacted artifacts.",
+    "limit": 0
+  }
+}

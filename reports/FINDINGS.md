@@ -778,3 +778,16 @@ text committed, production/final thresholds still gold/audit gated. This is the
 mechanism by which reviewed real-use records accumulate to eventually calibrate
 and unlock production thresholds. HAND OFF TO HUMAN: run real prompts locally →
 review → aggregate/redact → commit-safe share.
+
+## 60. Autonomous supervisor config (M10 step 1)
+`config/autonomous_supervisor_v0.json` — placeholder config for the M10 autonomous
+shadow supervisor. Explicitly targets `InternScience/Agents-A1-Q8_0-GGUF` via a
+local OpenAI-compatible endpoint, and documents (via `_doc` keys, mirroring
+config/local_endpoint_example.json) that a GGUF chat endpoint returns output text
+ONLY — no router logits — so live tasks get telemetry_missing=true + policy=null,
+never fabricated features. Includes task_sources (public fixture + optional
+gitignored private queue), verifier toggles (6 adapters + self_consistency_samples),
+and escalation thresholds (low_confidence_below 0.55, self_consistency_min_agreement
+0.67, high_impact_levels [high,critical], escalate_on_verifier_contradiction). Default
+run.log points at the gitignored private dir so raw text stays local. Verified: loads
+as JSON; run.log path is git-ignored. No secrets.

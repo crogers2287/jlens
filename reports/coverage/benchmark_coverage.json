@@ -1,0 +1,249 @@
+{
+ "n_records": 23172,
+ "n_sources": 3,
+ "min_per_label": 10,
+ "gate": {
+  "answerable_from_memory": {
+   "pass": true,
+   "reason": "ok",
+   "n_true": 2600,
+   "n_false": 1319,
+   "n_null": 19253
+  },
+  "needs_current_info": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  },
+  "needs_exact_citation": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 9525,
+   "n_false": 0,
+   "n_null": 13647
+  },
+  "needs_math_verification": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 1319,
+   "n_false": 0,
+   "n_null": 21853
+  },
+  "needs_code_execution": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  },
+  "needs_user_file_context": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  },
+  "high_stakes_or_sensitive": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  },
+  "context_attack_present": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  },
+  "unsupported_or_hallucinated": {
+   "pass": true,
+   "reason": "ok",
+   "n_true": 8205,
+   "n_false": 7238,
+   "n_null": 7729
+  },
+  "format_or_tool_mode_shift": {
+   "pass": false,
+   "reason": "only one class",
+   "n_true": 0,
+   "n_false": 0,
+   "n_null": 23172
+  }
+ },
+ "by_source": {
+  "FEVER[benchmark_gold]": {
+   "answerable_from_memory": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "needs_current_info": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "needs_exact_citation": {
+    "n_true": 9525,
+    "n_false": 0,
+    "n_null": 6410
+   },
+   "needs_math_verification": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "needs_code_execution": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "needs_user_file_context": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "high_stakes_or_sensitive": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "context_attack_present": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   },
+   "unsupported_or_hallucinated": {
+    "n_true": 4887,
+    "n_false": 4638,
+    "n_null": 6410
+   },
+   "format_or_tool_mode_shift": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 15935
+   }
+  },
+  "GSM8K[benchmark_gold]": {
+   "answerable_from_memory": {
+    "n_true": 0,
+    "n_false": 1319,
+    "n_null": 0
+   },
+   "needs_current_info": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "needs_exact_citation": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "needs_math_verification": {
+    "n_true": 1319,
+    "n_false": 0,
+    "n_null": 0
+   },
+   "needs_code_execution": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "needs_user_file_context": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "high_stakes_or_sensitive": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "context_attack_present": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "unsupported_or_hallucinated": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   },
+   "format_or_tool_mode_shift": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 1319
+   }
+  },
+  "TruthfulQA[benchmark_gold]": {
+   "answerable_from_memory": {
+    "n_true": 2600,
+    "n_false": 0,
+    "n_null": 3318
+   },
+   "needs_current_info": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "needs_exact_citation": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "needs_math_verification": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "needs_code_execution": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "needs_user_file_context": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "high_stakes_or_sensitive": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "context_attack_present": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   },
+   "unsupported_or_hallucinated": {
+    "n_true": 3318,
+    "n_false": 2600,
+    "n_null": 0
+   },
+   "format_or_tool_mode_shift": {
+    "n_true": 0,
+    "n_false": 0,
+    "n_null": 5918
+   }
+  }
+ },
+ "labels_passing": [
+  "answerable_from_memory",
+  "unsupported_or_hallucinated"
+ ],
+ "labels_failing": [
+  "needs_current_info",
+  "needs_exact_citation",
+  "needs_math_verification",
+  "needs_code_execution",
+  "needs_user_file_context",
+  "high_stakes_or_sensitive",
+  "context_attack_present",
+  "format_or_tool_mode_shift"
+ ]
+}

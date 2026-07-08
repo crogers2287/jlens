@@ -198,3 +198,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 36 (2026-07-08 11:53 EDT) — step 5 COMPLETE (GSM8K, ≥3 converters)
 - src/convert_gsm8k.py → data/labels/benchmark/gsm8k.jsonl: 1319 records (MIT). needs_math_verification 1319T; answerable_from_memory 1319F. 3 converters total = 23172 records. answerable_from_memory + unsupported_or_hallucinated now both-class across sources.
 - Next step 6: src/coverage_report.py → reports/coverage/benchmark_coverage.json + coverage GATE.
+
+## M4 Benchmark-Gold — Iteration 37 (2026-07-08 11:57 EDT) — step 6 COMPLETE (coverage + gate)
+- src/coverage_report.py → reports/coverage/benchmark_coverage.json. 2 labels PASS (answerable_from_memory, unsupported_or_hallucinated); 8 fail (2 single-class needing negatives, 6 no-data needing second-wave sources). Gate = both-class + minority≥10.
+- Next step 7: src/audit_sample.py → data/labels/audit_queue.jsonl (benchmark_gold→project-gold spot-check).

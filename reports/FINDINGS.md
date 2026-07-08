@@ -424,3 +424,21 @@ calibrate the heads.
   (TruthfulQA 2600 true + GSM8K 1319 false); unsupported_or_hallucinated strongly
   covered (TruthfulQA + FEVER). Single-source labels (needs_math_verification,
   needs_exact_citation) still lack negatives — the coverage report will quantify.
+
+## 31. Coverage report + gate (M4 step 6)
+- `src/coverage_report.py` → `reports/coverage/benchmark_coverage.json`:
+  per-label true/false/null aggregated over 23,172 records × 3 sources, with a
+  per-label COVERAGE GATE (pass iff both classes present AND minority ≥ 10).
+- **2 labels PASS (training-ready)**: answerable_from_memory (2600T/1319F),
+  unsupported_or_hallucinated (8205T/7238F) — both strong both-class from
+  complementary sources (TruthfulQA+GSM8K, TruthfulQA+FEVER).
+- **8 labels FAIL** — the gate pinpoints the data gaps:
+  - single-class (need NEGATIVES): needs_exact_citation (9525T/0F),
+    needs_math_verification (1319T/0F)
+  - no data yet (need second-wave sources): needs_current_info,
+    needs_code_execution, needs_user_file_context, high_stakes_or_sensitive,
+    context_attack_present, format_or_tool_mode_shift
+- Next-source shopping list (from GOLD plan): BeaverTails/PKU-SafeRLHF→high_stakes;
+  BFCL→format_or_tool_mode_shift; prompt-injection benchmark→context_attack;
+  SWE-bench→needs_user_file_context; GAIA/BrowseComp→needs_current_info;
+  HumanEval/MBPP→needs_code_execution; stable closed-book QA→citation/math negatives.

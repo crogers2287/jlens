@@ -307,3 +307,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M9 Private workflow — Iteration M9.5 (2026-07-08 16:22 EDT) — step 6 COMPLETE (workflow doc) [folds step 2]
 - docs/PRIVATE_SHADOW_WORKFLOW.md: local-only end-to-end (generate→review→aggregate/redact→guard→commit), public-fixture examples, commands verified vs real flags, gating note. Scoped check_commit_safe private-path content check to JSON records only (prose passes) — re-verified 5 cases.
 - Next step 7 (FINAL): tests/test_private_workflow.py, then M9 DONE.
+
+## M9 Private workflow — Iteration M9.6 (2026-07-08 16:23 EDT) — step 7 COMPLETE → M9 DONE
+- tests/test_private_workflow.py 5/5 pass; full suite green (22 tests). All M9 artifacts present: private dir gitignored + README; workflow doc (public-fixture); redact tool; aggregate summary; commit-safe guard; tests. No private text committed; production thresholds gated. M9 STOP CONDITION MET.
+- HAND OFF TO HUMAN: run real prompts locally → review outcomes → aggregate/redact → commit-safe share; accumulated reviewed records eventually calibrate + unlock production thresholds via gold audit.

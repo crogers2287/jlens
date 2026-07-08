@@ -753,3 +753,28 @@ documentation is not a leak. File-path check + JSON text-field check + JSON
 private-path-reference check still FAIL on real leaks. Re-verified all 5 cases.
 Gating restated: production/final thresholds stay gold/audit gated until enough
 reviewed real-use records exist; scores stay PROTOTYPE tiny-n M5 numbers.
+
+## 59. Private-workflow tests (M9 step 7) — MILESTONE COMPLETE
+`tests/test_private_workflow.py` (5 tests, CPU-only, no network) locks the four
+privacy invariants: (a) reports/shadow/private/*.jsonl is gitignored and the
+README is not (asserted against .gitignore + `git check-ignore`); (b) redaction
+scrubs prompt_preview/output_preview/outcome.notes to `[redacted]` while keeping
+prompt_id/policy/mode/booleans/review_meta, doesn't mutate the source, and
+`--hash` gives a stable non-reversible tag with no original text; (c) the
+aggregate summary carries NO prompt/output text and every `notes` key is an
+integer count, with correct level/action distributions and reviewed-only
+FLR=0.5 / FHR=0.0 from a SYNTHETIC reviewed fixture (unreviewed rows excluded;
+calibration null when 0 reviewed — never fabricated); (d) check_commit_safe
+PASSES aggregate/all-null-text/redacted files and FAILS real prompt text +
+unredacted notes. Full suite green: 22 tests (decode-stub 4, shadow-wrapper 4,
+outcome-review 5, policy-engine 4, private-workflow 5).
+
+### M9 summary — Private real-use logging + review workflow
+jlens can now be pointed at a REAL local workload safely: private logs stay in a
+gitignored dir, humans review outcomes locally, and only aggregate-only summaries
+or explicitly-redacted logs leave the machine — with `check_commit_safe.py` as a
+mandatory pre-commit gate. Nothing fabricated (null = unreviewed), no private
+text committed, production/final thresholds still gold/audit gated. This is the
+mechanism by which reviewed real-use records accumulate to eventually calibrate
+and unlock production thresholds. HAND OFF TO HUMAN: run real prompts locally →
+review → aggregate/redact → commit-safe share.

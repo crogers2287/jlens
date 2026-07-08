@@ -667,3 +667,10 @@ production thresholds stay gold-gated.
 - Calibration math verified on SYNTHETIC in-memory fixtures (never committed):
   1 wrong@critical + 1 wrong@low + 1 fine@low → FLR=0.5, FHR=0.0, confusion
   tp1/fn1/fp0/tn1. Computes from reviewed rows only.
+
+## 52. Human-review guide (M8 step 6)
+- `docs/SHADOW_OUTCOME_REVIEW.md`: the reviewer flow (build queue → review CLI →
+  coverage/calibration), each outcome/review field's meaning, the "leave null if
+  unsure — never guess" rule, what false-low-risk / false-high-risk measure, and
+  the honesty + gating rules (never fabricate; production stays gold-gated;
+  public prompts only).

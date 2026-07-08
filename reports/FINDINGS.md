@@ -655,3 +655,15 @@ production thresholds stay gold-gated.
   without writing; a write sets was_wrong + reviewer and re-validates; bad type +
   unknown id both refused. Committed review_queue_sample.jsonl remains all-null —
   no fabricated outcomes committed.
+
+## 51. Outcome coverage + calibration (M8 steps 4–5)
+- `src/outcome_report.py` → `reports/outcomes/outcome_coverage.json` (reviewed vs
+  unreviewed, per-field non-null counts, per-reviewer counts) +
+  `reports/outcomes/calibration_notes.md` (policy level vs reviewed was_wrong;
+  false-low-risk / false-high-risk from REVIEWED rows only).
+- On the current all-null queue: coverage honestly reports **reviewed=0/9**;
+  calibration notes say exactly "calibration pending — no reviewed outcomes yet"
+  and keep production gated. No outcome is inferred to fill a gap.
+- Calibration math verified on SYNTHETIC in-memory fixtures (never committed):
+  1 wrong@critical + 1 wrong@low + 1 fine@low → FLR=0.5, FHR=0.0, confusion
+  tp1/fn1/fp0/tn1. Computes from reviewed rows only.

@@ -1,0 +1,16 @@
+{
+ "coverage": {
+  "n_total": 9,
+  "n_reviewed": 0,
+  "n_unreviewed": 9,
+  "outcome_field_nonnull_counts": {
+   "user_agreed": 0,
+   "was_wrong": 0,
+   "needed_retrieval": 0,
+   "needed_checker": 0,
+   "notes": 0
+  },
+  "reviewers": {}
+ },
+ "calibration": null
+}

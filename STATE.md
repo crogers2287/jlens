@@ -277,3 +277,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M8 Outcome review — Iteration M8.3 (2026-07-08 14:47 EDT) — step 3 COMPLETE (review CLI)
 - src/review_shadow_log.py: explicit-flag review, validates, --dry-run, refuses bad bool/range/unknown-id, never guesses. Exercised on throwaway copy; committed queue stays all-null.
 - Next step 4: src/outcome_report.py → reports/outcomes/outcome_coverage.json (honest 0-reviewed).
+
+## M8 Outcome review — Iteration M8.4 (2026-07-08 14:51 EDT) — steps 4–5 COMPLETE (coverage + calibration)
+- src/outcome_report.py → outcome_coverage.json (reviewed=0/9) + calibration_notes.md ("pending" honest). FLR/FHR from reviewed-only; verified on synthetic fixtures (FLR 0.5/FHR 0.0). Production stays gated.
+- Next step 6: docs/SHADOW_OUTCOME_REVIEW.md. Then step 7 tests.

@@ -259,3 +259,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M7 Local shadow wrapper — Iteration M7.3 (2026-07-08 14:22 EDT) — step 3 COMPLETE (runtime doc)
 - docs/M7_SHADOW_RUNTIME.md matches the emitted record; run instructions + posture + privacy rule. Next step 4: fixture tests (stubbed live). Then step 5 sample log.
+
+## M7 Local shadow wrapper — Iteration M7.4 (2026-07-08 14:26 EDT) — step 4 COMPLETE (tests)
+- tests/test_local_shadow_wrapper.py 4/4 pass (dry-run/scored/null/stubbed-live). No real network. Other suites pass. Next step 5 (FINAL): reports/shadow/realuse_sample.jsonl (public prompts).

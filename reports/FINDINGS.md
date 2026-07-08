@@ -603,3 +603,10 @@ CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gat
   and live run commands, the advisory/shadow posture, that require_confirmation
   never executes, final thresholds gold-gated, and the privacy rule (public
   prompts only in committed logs).
+
+## 46. M7 wrapper fixture tests (M7 step 4)
+- `tests/test_local_shadow_wrapper.py` (4 tests, all PASS): dry-run record shape +
+  all 5 outcome fields null; policy scored when a feature row exists (valid v0
+  action); policy=null + no-telemetry note when no feature row; live mode goes
+  through a STUBBED requests.post (asserts exactly one call, no real network).
+  PolicyEngine + decode-capture suites still pass (no regression).

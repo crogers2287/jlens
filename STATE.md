@@ -118,3 +118,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 18 (2026-07-08 08:54 EDT) — item 4 IN FLIGHT (r4 decode capture)
 - llama-swap unloaded (:9069/unload, both 3090s free 50/18 MiB). Launched r4 decode capture PID 2184628: --max-new-tokens 32, bf16, --max-gpu-mem-gib 20, expandable_segments, 32 prompts → data/captures/qwen3_6_35b_a3b_r4_decode/. Log: logs/capture_r4_decode.log. Monitor b63tp5qsj armed on PID.
 - On exit: export → reports/schema/r4_decode.jsonl (validate against schema/v2_decode.json), then item 5 drift analysis.
+
+## M2 item 4 — progress note (2026-07-08 09:21 EDT, heartbeat)
+- r4 decode capture steady ~5.3 min/prompt (CPU-offload PCIe-bound, GPU util ~25%); full 32 prompts ≈ 2.8h. 4/32 done (code_py_01, code_rust_01, math_01, math_02).
+- Worker PID 2184631 (30GB RSS); wrapper 2184628. Monitor b63tp5qsj has 1h timeout < job runtime → switching to heartbeat polling as the real wake signal. Capture pre-authorized; letting it run rather than waste the 4 done + reload.

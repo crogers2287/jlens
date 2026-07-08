@@ -208,3 +208,16 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
   the decode-time uncertainty features; unweighted routing drift is not
   predictive. Whether WEIGHTED drift (step 6) recovers signal is the open
   question.
+
+## 16. Drift interpretation notes (M2 step 4) — verdict: drift WEAK, entropy is the signal
+- `reports/qwen3_6_35b_a3b_r4_decode_drift_notes.md`. Grounded in actual spike tokens.
+- Top-entropy = mode-boundary opens (` ``` ` code fence, `<think>`, `\n\n`) at
+  t0–t1; top-drift = maximally-confident template tokens (`An`, `,`, ` thinking`,
+  H≈0/p=1.0). **0/8 overlap** between the two spike sets.
+- Uncertainty concentrates in first 1–2 generated tokens (mode selection):
+  H(t0..1)=0.75→1.05 then collapses to ~0.1; drift is flat throughout.
+- Low-confidence tokens include factual-content tokens (` NASA` p=0.35 in fact_01)
+  — the interesting risk locus — and drift there is below average.
+- Verdict: unweighted drift NOT usable as a risk feature; lead the risk head with
+  entropy_final_logits + selected_token_prob. Step 6 (weighted drift) is the
+  make-or-break test for whether drift contributes anything.

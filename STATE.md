@@ -137,3 +137,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 21 (2026-07-08 10:31 EDT) — step 3 COMPLETE (decode_drift.py)
 - src/decode_drift.py → reports/qwen3_6_35b_a3b_r4_decode_drift.json (512 tok, full steer metric set + spikes). drift flat & uncorrelated with confidence; entropy spikes = format/mode-shift tokens (``` code fence #1). Risk head should use entropy/sel_prob, not unweighted drift.
 - Next step 4: drift interpretation notes (.md).
+
+## M2 DecodeGuard — Iteration 22 (2026-07-08 10:35 EDT) — step 4 COMPLETE (drift interpretation)
+- reports/qwen3_6_35b_a3b_r4_decode_drift_notes.md: verdict unweighted-drift WEAK, entropy/sel_prob is the decode signal (mode-boundary tokens ```/<think>/\n\n spike entropy at t0-1; top-drift tokens are confident templates; 0/8 spike overlap).
+- Next step 5: router-only decode mode (--router-only/--no-hidden-states/--overwrite) + resume-skip + tests.

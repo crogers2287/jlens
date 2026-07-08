@@ -238,3 +238,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M6 PolicyEngine v0 — Iteration M6.2 (2026-07-08 13:52 EDT) — step 2 COMPLETE (scorer)
 - src/policy_engine.py: fits M5 heads, score()→{level,scores,risk,recommended_action,explanation}, advisory-only. 16/16 M5 rows scored; FEVER→critical/require_confirmation, spread 6crit/4med/6low.
 - Next step 3: src/risk_runtime.py CLI + shadow log (reports/shadow/shadow_log.jsonl).
+
+## M6 PolicyEngine v0 — Iteration M6.3 (2026-07-08 13:56 EDT) — step 3 COMPLETE (shadow runtime)
+- src/risk_runtime.py + reports/shadow/shadow_log.jsonl. Advisory-only, records never acts. Verified 3 entries parse w/ required keys.
+- Next step 4: tests/test_policy_engine.py (config/score/mapping/log). Then step 5 docs.

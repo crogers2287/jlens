@@ -548,3 +548,12 @@ end; scaling data is the next lever.
   6 critical→require_confirmation, 4 medium→verify, 6 low→answer_locally. FEVER
   claim-verification prompts (highest telemetry uncertainty) correctly land
   critical. Prototype thresholds only; no production claim.
+
+## 40. Shadow-logging runtime CLI (M6 step 3)
+- `src/risk_runtime.py`: wraps PolicyEngine, scores a feature JSONL row/file,
+  prints the advisory, and APPENDS one entry per row to
+  `reports/shadow/shadow_log.jsonl` {ts_placeholder, prompt_id, feature_source,
+  scores, level, recommended_action, mode:"shadow", outcome_note:null}. No
+  wall-clock (env-safe --ts placeholder). Records only — never blocks/executes.
+- Verified: 3 advisories logged, every line parses with all required keys,
+  mode=shadow, outcome_note=null. Shadow log is tracked (small/shareable).

@@ -82,3 +82,10 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   - code_py<->code_rust are mutual NNs (cos 0.591) — code forms a cluster even across languages
 - Conclusion: routing signature alone separates domains at coarse grain; sidecar domain-detection head is feasible.
 - Next: expand data/prompts.jsonl to >=4 prompts/domain (~32 total), re-capture, then re-run probe validly.
+
+## Iteration 12 (2026-07-08 08:20 EDT) — Roadmap item 1 COMPLETE (r3 token probe + per-layer sweep)
+- Loop restarted via /prompt-master → /jlens-loop (new routerguard loop prompt installed at ~/.claude/commands/jlens-loop.md).
+- r3 all-layer token acc 0.816 vs 0.175 chance (708 tokens, GroupKFold-4 by prompt) — up from r2 0.578.
+- Per-layer sweep: mid-third strongest (L13-26 mean 0.613), best L20=0.712, weak at L0 (0.233) and late motor zone (L33 0.369). All-layer > best single layer → multi-layer tap required.
+- r3 overlap stability check committed (findings #8). Reports: r3_token_probe.json, r3_layer_sweep.json, r3_overlap.json.
+- Tasks #17/#18 satisfied. Next roadmap item: 2. Freeze capture schema v1 (CPU-only, no gate).

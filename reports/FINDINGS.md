@@ -58,3 +58,29 @@ Tool: `src/routing_probe.py` → `reports/qwen3_6_35b_a3b_probe.json`.
 - Re-run overlap on r3 to check stability of Jaccard estimates.
 - Token-level (not prompt-level) probe with prompt-held-out splits.
 - Exclusive-expert ablation experiment on lang/math.
+
+## 7. r3 token-level probe + per-layer depth sweep (roadmap item 1)
+Tools: `src/token_probe.py` → `reports/qwen3_6_35b_a3b_r3_token_probe.json`,
+`reports/qwen3_6_35b_a3b_r3_layer_sweep.json`. 32 prompts (4/domain × 8),
+708 tokens, top-8 multi-hot, GroupKFold(4) by prompt.
+
+- **All-layer token accuracy 0.816 vs 0.175 chance (~4.7×)** — up sharply from
+  r2's 0.578 (12 prompts). 4× more data → much cleaner domain separability.
+- Per-layer depth profile (single-layer probes):
+  - early (L0–12) mean 0.472; **mid (L13–26) mean 0.613**; late (L27–39) 0.535
+  - best single layer **L20 = 0.712**; weakest L0 = 0.233 (raw token layer),
+    late decline (L33 = 0.369, L39 = 0.442 — motor/output zone)
+- **All-layer (0.816) beats the best single layer (0.712)** → multi-layer
+  tapping is necessary, not optional. Confirms the ROADMAP #3 decision to tap a
+  spread of layers rather than only late-stack.
+- Depth story here is cleaner than the near-flat expert-set Jaccard terciles:
+  the token-level probe resolves a mid-stack peak (L7–L20) that set-overlap
+  washed out. For sidecar heads, prioritize the mid-third; keep a few
+  early+late taps for coverage.
+
+## 8. r3 cross-domain overlap (stability check vs r2)
+Tool: `src/expert_overlap.py` → `reports/qwen3_6_35b_a3b_r3_overlap.json`.
+- Overlap estimates rose with more tokens/domain (more experts touched):
+  math|reason still tightest (J=0.507), depth terciles 0.48/0.41/0.47.
+- Exclusive-expert ranking stable: lang (442) and math (342) still carve the
+  most private capacity; code_py/creative least. Directionally matches r2.

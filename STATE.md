@@ -316,3 +316,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M10 loop prompt installed (autonomous supervisor, privacy+autonomy invariants, CPU-only) via /prompt-master. steer.md synced to post-M9 (461c2ad).
 - config/autonomous_supervisor_v0.json: Agents-A1 GGUF endpoint (placeholder), task_sources (public fixture + optional private), verifier toggles, escalation thresholds, private-dir default log. Loads OK; log path gitignored; no secrets.
 - Next step 2: schema/auto_outcome_v1.json (NEW draft-07, separate from frozen shadow_outcome_v1; auto_outcome candidate fields + human fields stay null).
+
+## M10 Autonomous supervisor — Iteration M10.2 (2026-07-08 17:49 EDT) — step 2 COMPLETE (auto_outcome schema)
+- schema/auto_outcome_v1.json: NEW draft-07, separate from frozen shadow_outcome_v1 (confirmed). auto_outcome candidate fields + telemetry_missing bool; human outcome/review_meta present but supervisor never writes them. 6 validation behaviors verified (good validates; bad bool/unknown-field/conf>1 rejected; undecided all-null valid).
+- Next step 3: src/verifiers.py (6 cheap verifier adapters, evidence hashed, self-consistency disagreement=escalation).

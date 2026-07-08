@@ -791,3 +791,18 @@ and escalation thresholds (low_confidence_below 0.55, self_consistency_min_agree
 0.67, high_impact_levels [high,critical], escalate_on_verifier_contradiction). Default
 run.log points at the gitignored private dir so raw text stays local. Verified: loads
 as JSON; run.log path is git-ignored. No secrets.
+
+## 61. auto_outcome_v1 schema (M10 step 2)
+`schema/auto_outcome_v1.json` — NEW draft-07 schema for autonomous supervisor
+records; the frozen `shadow_outcome_v1.json` is untouched (verified: it has no
+auto_outcome). Carries shadow fields (prompt_id, policy nullable, mode,
+local-only prompt/output previews) + `telemetry_missing` (bool; true ⇒ policy
+null, no fabricated features) + HUMAN `outcome`/`review_meta` (present but the
+supervisor NEVER sets them — stay null) + an `auto_outcome` CANDIDATE object
+{auto_judged, auto_was_wrong, auto_needed_retrieval, auto_needed_checker,
+verifier_names[], verifier_confidence 0..1, verifier_evidence_hash (hash, never
+raw text), escalate_for_review, auto_notes_redacted}. additionalProperties:false
+everywhere; null = undecided/unknown. Verified: schema self-checks; a good
+record validates; non-bool telemetry_missing, unknown top-level field, unknown
+auto_outcome field, and confidence>1 all rejected; an all-null (undecided) auto
+record is valid. auto_outcome is a candidate, never gold.

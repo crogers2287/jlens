@@ -291,3 +291,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M9 Private workflow — Iteration M9.1 (2026-07-08 15:59 EDT) — step 1 COMPLETE (private dir gitignored)
 - New M9 loop prompt (privacy-as-invariant, CPU-only). .gitignore blocks reports/shadow/private/*.jsonl; README stub committed. Verified check-ignore.
 - Next step 2: document local private-log generation (public-fixture example only) — folded into step 6 doc.
+
+## M9 Private workflow — Iteration M9.2 (2026-07-08 16:05 EDT) — step 3 COMPLETE (redaction) [step 2 doc folds into step 6]
+- src/redact_shadow_log.py: scrubs prompt/output/notes, keeps structure/bools; verified on public fixture, no text leak.
+- Next step 4: src/private_outcome_summary.py → reports/outcomes/private_summary_sample.json (aggregate-only, no text).

@@ -700,3 +700,12 @@ human judgment begins.
   explaining the local-only rule + the redact/aggregate/check-commit-safe path.
 - Verified: git check-ignore blocks reports/shadow/private/realuse_local.jsonl;
   the README is NOT ignored.
+
+## 55. Redaction tool (M9 step 3)
+- `src/redact_shadow_log.py`: scrubs the three free-text fields (prompt_preview,
+  output_preview, outcome.notes) to '[redacted]' (or --hash: a stable
+  non-reversible tag), KEEPS prompt_id / policy(level/action/scores/explanation) /
+  policy_note / mode / outcome booleans / review_meta.
+- Verified on the PUBLIC fixture: 6 records redacted — text fields gone, all
+  structural fields + booleans preserved, and NO original prompt text leaks
+  anywhere in the output. Enables safe sharing of a private log.

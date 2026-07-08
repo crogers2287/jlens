@@ -1,8 +1,8 @@
-# steer.md — post-M3 steering
+# steer.md — post-M3 silver-label steering
 
 Read this first before continuing `jlens`.
 
-M2 DecodeGuard is complete. M3 scaffolding is also complete. Do not continue from M2 or from M3 step 5.
+M2 DecodeGuard is complete. M3 scaffolding is complete. The next phase should not assume every label must be created manually from scratch.
 
 ## Current state
 
@@ -25,11 +25,31 @@ reports/features/r4_risk_features.jsonl
 src/train_risk_heads.py
 src/eval_risk_heads.py
 LABELING_HANDOFF.md
+SILVER_LABEL_SOURCE_PLAN.md
 ```
 
-The current label file is intentionally all-null. Training correctly refuses to run until reviewed labels exist.
+The current seed label file is intentionally all-null. Training correctly refuses all-null labels.
 
-## Working findings
+## Labeling policy
+
+Use three tiers:
+
+```text
+bronze = deterministic labels from dataset metadata or rules
+silver = public benchmark labels or frontier-model judge labels
+gold = human-reviewed labels
+```
+
+Policy:
+
+```text
+prototype training may use bronze + silver
+final calibration and production thresholds require gold or gold-audited labels
+null is unknown, never false
+label_source and confidence should be recorded on generated labels
+```
+
+## Working features
 
 Keep these feature groups for future heads:
 
@@ -42,7 +62,7 @@ windowed decode-domain shift
 low-confidence and high-entropy counts
 ```
 
-Do not use these as model features:
+Exclude these from model features:
 
 ```text
 drift_from_prefill_signature
@@ -53,69 +73,76 @@ drift_from_previous_token_weighted
 
 Reason: M2 showed drift does not track confidence. Keep drift only for provenance/debugging.
 
-## What happens next
+## Next milestone: M4 silver-label ingestion
 
-The project is now operator-gated.
+M4 should build label sources and converters, not final production policy.
 
-Next useful work is not more modeling. It is labeling and dataset expansion.
-
-Human/operator action:
+Read:
 
 ```text
-1. Review LABELING_HANDOFF.md.
-2. Fill labels in data/labels/risk_labels_seed.jsonl, or approve a larger labeling file.
-3. Add enough examples to reach useful coverage across label families.
-4. Keep train/test prompt templates separate.
+SILVER_LABEL_SOURCE_PLAN.md
+LABELING_HANDOFF.md
+M3_RISK_LABELING.md
+schema/risk_labels_v1.json
+reports/features/r4_risk_features.jsonl
+reports/FINDINGS.md
 ```
-
-After reviewed labels exist, a future loop can train and calibrate the risk heads.
-
-## If starting another agent loop
-
-Use `/prompt-master` first and create/update a loop prompt that starts from post-M3 state.
 
 Suggested command:
 
 ```text
-/jlens-labeling-ops-loop
+/jlens-silver-label-loop
 ```
 
 The loop should:
 
 ```text
 1. Read steer.md first.
-2. Read LABELING_HANDOFF.md, M3_RISK_LABELING.md, STATE.md, reports/FINDINGS.md, schema/risk_labels_v1.json, and reports/features/r4_risk_features.jsonl.
-3. Confirm M3 scaffolding is complete.
-4. Do not fabricate labels.
-5. Do not treat null as false.
-6. Do not train final heads on all-null or undercovered labels.
-7. Help build/validate labeling batches and operator workflow.
-8. Commit only documentation, schemas, validation helpers, or approved labeled files.
-9. Stop when it reaches a human decision point.
+2. Read SILVER_LABEL_SOURCE_PLAN.md.
+3. Build a source registry for public datasets and frontier-judge labelers.
+4. Add converters from source datasets into risk_labels_v1 format.
+5. Add frontier-judge silver-label pipeline with strict JSON output.
+6. Add agreement checks: bronze vs silver vs gold.
+7. Add coverage reports by label, class balance, and source.
+8. Allow prototype training on bronze+silver labels only when coverage is adequate.
+9. Keep final threshold calibration gated on gold or gold-audited labels.
+10. Do not treat null as false.
+11. Do not use drift as a model feature.
 ```
 
-## Suggested next milestone: M4 labeling operations
-
-M4 should be about making the labeling process easy and reliable, not training yet.
-
-Potential M4 tasks:
+Potential source families:
 
 ```text
-create a label-review dashboard or simple HTML table
-create scripts to validate completed label files
-create scripts to summarize label coverage by family
-create scripts to sample more prompts for weak label families
-create prompt packs for current-info, citation, math-check, code-check, user-file-context, high-stakes, context-attack, unsupported-output, and format-shift cases
-create capture commands using router-only decode mode for new prompt packs
-create a merge script for multiple human label files
+hallucination / unsupported claims: HaluEval, HaluEval-Wild, TruthfulQA
+fact verification / citation: FEVER, SciFact, SciFact-Open
+current-info / web-needed: BrowseComp, GAIA-style tasks, custom current prompt packs
+math verification: GSM8K, MATH, MathQA, AQuA
+code execution: HumanEval, MBPP, BigCodeBench, SWE-bench style tasks, DS-1000
+high-stakes or sensitive: BeaverTails, PKU-SafeRLHF, domain-specific custom prompts
+context attack detection: public prompt/context-injection datasets, custom benign/adversarial context packs
+format or tool mode: BFCL, JSON/tool-use tasks, custom format-control prompts
+user file context: GitHub issue tasks, repo/file/screenshot reference prompts
+```
+
+M4 deliverables:
+
+```text
+label source registry
+public-source converters
+frontier silver-label judge prompt/spec
+silver-label JSONL output
+coverage report
+prototype-training command that refuses weak coverage
+updated FINDINGS and STATE
 ```
 
 M4 stop condition:
 
 ```text
-operator can label examples without touching raw JSON by hand
-coverage report shows which labels still need examples
-no final risk heads trained unless label coverage meets the gate
+public/silver sources can populate a training set
+coverage report shows class balance by label and source
+prototype training is allowed only when coverage gate passes
+final calibration remains gated on gold/gold-audited labels
 ```
 
 ## Final architecture

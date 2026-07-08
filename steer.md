@@ -1,8 +1,8 @@
-# steer.md — post-M7 calibration steering
+# steer.md — post-M8 real-use calibration steering
 
 Read this first before continuing `jlens`.
 
-M1 through M7 are complete. Do not redo benchmark ingestion, the M5 smoke test, PolicyEngine v0, or the local shadow wrapper.
+M1 through M8 are complete. Do not redo benchmark ingestion, the M5 smoke test, PolicyEngine v0, the local shadow wrapper, or the outcome-review tooling.
 
 ## Completed milestones
 
@@ -14,44 +14,45 @@ M4: benchmark-gold ingestion foundation
 M5: end-to-end benchmark telemetry smoke prototype
 M6: PolicyEngine v0 advisory/shadow runtime
 M7: local shadow wrapper + real-use log schema
+M8: outcome review + calibration loop
 ```
 
 ## Current capability
 
-`jlens` now has a local shadow runtime:
+`jlens` now has the full shadow feedback loop:
 
 ```text
-config/policy_engine_v0.json
-src/policy_engine.py
-src/risk_runtime.py
-src/local_shadow_wrapper.py
-docs/POLICY_ENGINE_V0.md
-docs/M7_SHADOW_RUNTIME.md
-tests/test_policy_engine.py
-tests/test_local_shadow_wrapper.py
-reports/shadow/shadow_log.jsonl
-reports/shadow/realuse_sample.jsonl
+local shadow wrapper
+PolicyEngine v0 advisory scorer
+shadow logs
+review queue builder
+safe outcome review CLI
+outcome schema
+outcome coverage report
+calibration notes from reviewed-only data
+human reviewer guide
+tests for policy/runtime/review tooling
 ```
 
 Current behavior:
 
 ```text
 - scores telemetry feature rows when available
-- can run dry-run or optional live endpoint wrapper
-- logs prompt/output previews, policy recommendation, and outcome fields
-- keeps outcome fields null until reviewed
-- advisory/shadow only
-- no production safety claims
+- logs advisory recommendations
+- queues shadow records for review
+- lets a reviewer mark outcome fields explicitly
+- computes calibration only from reviewed records
+- stays advisory/shadow only
 - final thresholds remain gold/audit gated
 ```
 
 Current interpretation:
 
 ```text
-Telemetry has real ranking signal.
-PolicyEngine v0 can produce advisory recommendations.
-The local wrapper can produce real-use shadow records.
-The next useful work is annotation + calibration, not another wrapper.
+The technical loop is now complete.
+The next bottleneck is real reviewed data.
+Do not fabricate outcomes.
+Do not tune thresholds from unreviewed logs.
 ```
 
 ## Feature decision
@@ -78,14 +79,14 @@ drift_from_previous_token_weighted
 
 Drift remains provenance/debug only.
 
-## Next milestone: M8 outcome annotation + calibration loop
+## Next milestone: M9 private real-use logging + review workflow
 
-M8 should turn shadow logs into reviewed calibration data.
+M9 should move from public samples and fixtures into a local-only real-use workflow. The goal is to collect private shadow logs locally, review them, and produce calibration summaries without committing sensitive content.
 
 Suggested command:
 
 ```text
-/jlens-m8-outcome-calibration-loop
+/jlens-m9-private-shadow-review-loop
 ```
 
 Read first:
@@ -95,27 +96,28 @@ steer.md
 reports/FINDINGS.md
 docs/POLICY_ENGINE_V0.md
 docs/M7_SHADOW_RUNTIME.md
+docs/SHADOW_OUTCOME_REVIEW.md
+schema/shadow_outcome_v1.json
+src/local_shadow_wrapper.py
+src/build_review_queue.py
+src/review_shadow_log.py
+src/outcome_report.py
 reports/shadow/realuse_sample.jsonl
-reports/shadow/shadow_log.jsonl
-reports/risk_heads_prototype.json
-reports/benchmark_m5_join.json
-reports/features/benchmark_m5_features.jsonl
-schema/risk_labels_v2.json
+reports/outcomes/calibration_notes.md
 ```
 
-M8 objectives:
+M9 objectives:
 
 ```text
-1. Define an outcome annotation schema for shadow logs.
-2. Add a tool that copies shadow records into a review queue.
-3. Add a safe CLI/editor flow for marking outcome fields.
-4. Validate reviewed logs: null is allowed, but invalid types or missing required fields fail.
-5. Add a coverage report for reviewed outcomes.
-6. Add calibration analysis that compares policy recommendation to reviewed outcome fields.
-7. Report false-low-risk and false-high-risk using reviewed outcomes where possible.
-8. Keep production thresholds gated until enough reviewed outcomes exist.
-9. Add docs for how a human reviews shadow records.
-10. Update STATE.md and reports/FINDINGS.md.
+1. Add a local-only private log directory convention that is gitignored.
+2. Add scripts or docs for running real prompts through the wrapper into local private logs.
+3. Add a redaction/export tool that can produce scrubbed review samples if explicitly requested.
+4. Add a local review workflow for marking outcomes on private logs.
+5. Add aggregate-only reports that can be safely committed: counts, rates, calibration summaries, no prompt text.
+6. Add checks that refuse to commit private logs or unredacted prompt/output text.
+7. Add examples using public fixture logs only.
+8. Keep production thresholds gated until enough reviewed real-use records exist.
+9. Update STATE.md and reports/FINDINGS.md.
 ```
 
 Outcome fields to preserve:
@@ -128,7 +130,7 @@ needed_checker
 notes
 ```
 
-Recommended additional review metadata:
+Review metadata:
 
 ```text
 reviewer
@@ -137,37 +139,34 @@ review_source
 review_confidence
 ```
 
-M8 deliverables:
+M9 deliverables:
 
 ```text
-schema/shadow_outcome_v1.json
-src/build_review_queue.py
-src/review_shadow_log.py or equivalent
-src/outcome_report.py
-reports/shadow/review_queue_sample.jsonl
-reports/outcomes/outcome_coverage.json
-reports/outcomes/calibration_notes.md
-docs/SHADOW_OUTCOME_REVIEW.md
-tests for schema validation and report generation
+local/private-log path documented and gitignored
+src/redact_shadow_log.py or equivalent
+src/private_outcome_summary.py or equivalent
+docs/PRIVATE_SHADOW_WORKFLOW.md
+reports/outcomes/private_summary_sample.json
+fixture tests for redaction and aggregate reports
 updated STATE.md and reports/FINDINGS.md
 ```
 
-M8 stop condition:
+M9 stop condition:
 
 ```text
-shadow records can be queued for review
-reviewed records validate against schema
-coverage report summarizes reviewed outcomes
-calibration notes compare recommendations to outcomes
+private real-use logs can be generated locally
+review queue can be built locally
+reviewed outcomes can be summarized without committing private text
+redaction/export path exists for safe sharing
+aggregate-only reports are commit-safe
 production thresholds remain gated
-no private prompts or sensitive logs are committed
 ```
 
-## Parallel track after M8
+## Parallel track after M9
 
-Continue collecting real-use shadow logs locally. Keep private logs out of git unless explicitly scrubbed and approved.
+Continue benchmark scaling only after the private real-use workflow exists.
 
-For benchmark scaling:
+Benchmark scale targets:
 
 ```text
 64-128 prompts for quick calibration check
@@ -188,7 +187,7 @@ threshold behavior
 
 ## Later data expansion for remaining labels
 
-After the review/calibration loop exists, add second-wave converters to cover the remaining labels:
+After the private review workflow exists, add second-wave converters to cover the remaining labels:
 
 ```text
 HumanEval or MBPP -> needs_code_execution
@@ -208,6 +207,7 @@ RouterGuard: prefill routing signatures and domain priors
 DecodeGuard: entropy, selected-token confidence, router concentration, windowed mode shift
 PolicyEngine: advisory/shadow v0 now, calibrated route decisions later
 ReviewLoop: human/audit outcome labels from shadow logs
+PrivateOps: local-only private logs + safe aggregate reporting
 HiddenLens: future phase only after the risk governor baseline is validated
 ```
 

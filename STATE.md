@@ -226,3 +226,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M5 — Iteration 43 (2026-07-08 13:22 EDT) — steps 4–5 COMPLETE (features + join)
 - benchmark_m5_features.jsonl (16 rows, drift excluded). join → 16/16 matched; both covered labels both-class (ansmem 4/4, unsup 4T/8F). Next step 6: REAL prototype train/eval (LOO, tiny-n honest metrics).
+
+## M5 — Iteration 44 (2026-07-08 13:23 EDT) — step 6 COMPLETE → M5 DONE
+- Real LOO prototype heads trained: answerable_from_memory AUROC 0.875, unsupported_or_hallucinated AUROC 0.844 (ranking real vs chance); BUT tiny-n → bad calibration + false-low-risk at 0.5 threshold. final mode still refuses. reports/risk_heads_prototype.json.
+- ALL M5 stop-condition artifacts present. M5 STOP CONDITION MET. Hand off: scale sample (more prompts/class), add second-wave sources for 8 uncovered labels, human-audit benchmark_gold→gold for final calibration.

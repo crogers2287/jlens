@@ -194,16 +194,104 @@ def main(argv=None) -> int:
 
     # ---- Reached only when the coverage gate passes for >=1 label ----
     print(f"[jlens] mode={args.mode}: coverage gate PASSES for {passing}. "
-          f"{len(X)} feature prompts, {len(feat_names)} features. "
-          "Prototype-training calibrated heads for the passing labels...")
+          f"{len(X)} feature prompts, {len(feat_names)} features.")
     if args.mode == "final":
         print("[jlens] NOTE: final-threshold calibration on gold-tier labels.")
+
+    # join features to labels by prompt_id
+    lab_by_id = {r["prompt_id"]: r["labels"] for r in records}
+    results = {}
+    for L in passing:
+        ids = [pid for pid in X if lab_by_id.get(pid, {}).get(L) is not None]
+        import numpy as np
+        Xy = np.stack([X[pid] for pid in ids])
+        y = np.array([1 if lab_by_id[pid][L] else 0 for pid in ids])
+        results[L] = _loo_prototype(Xy, y, len(ids))
+        m = results[L]
+        print(f"  {L}: n={m['n']} ({m['n_pos']}+/{m['n_neg']}-)  "
+              f"best={m['best_model']} AUROC={m['best_auroc']}  "
+              f"(chance {m['pos_rate']})")
+
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(args.out).write_text(json.dumps(
-        {"status": "coverage_gate_passed_training_not_implemented_in_scaffold",
-         "mode": args.mode, "trainable_labels": passing,
-         "features": feat_names, "models": list(build_models())}, indent=1))
+    Path(args.out).write_text(json.dumps({
+        "mode": args.mode, "trainable_labels": passing,
+        "min_per_label": args.min_per_label,
+        "features": feat_names,
+        "cv": "leave-one-out (tiny-n smoke prototype)",
+        "caveats": [
+            "Tiny n (see per-label n): metrics are INDICATIVE, not conclusive.",
+            "answerable_from_memory is confounded with domain (TruthfulQA trivia "
+            "vs GSM8K math) — a head may learn topic, not the risk concept.",
+            "Labels are prompt-level PROXIES from benchmark reference answers; "
+            "telemetry is on the prompt, not a graded model output.",
+            "Calibration (ECE) is unreliable at this n; final thresholds stay "
+            "gold-gated.",
+        ],
+        "results": results,
+    }, indent=1))
+    print(f"[jlens] prototype metrics written: {args.out}")
     return 0
+
+
+def _loo_prototype(X, y, n):
+    """Leave-one-out out-of-fold probabilities per model; honest tiny-n metrics."""
+    import numpy as np
+    from sklearn.base import clone
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import average_precision_score, roc_auc_score
+    from sklearn.svm import SVC
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from eval_risk_heads import ece, false_high_risk_rate, false_low_risk_rate
+
+    models = {
+        "logreg": LogisticRegression(max_iter=3000),
+        "linsvm": SVC(kernel="linear", probability=True),
+        "hand_score": None,  # mean of standardized entropy/low-confidence proxies
+    }
+    out = {"n": n, "n_pos": int(y.sum()), "n_neg": int((1 - y).sum()),
+           "pos_rate": round(float(y.mean()), 3), "models": {}}
+    # standardize once for the hand-score baseline
+    mu, sd = X.mean(0), X.std(0) + 1e-9
+    for name, proto in models.items():
+        proba = np.zeros(n)
+        import time
+        t0 = time.perf_counter()
+        for i in range(n):
+            tr = np.arange(n) != i
+            if name == "hand_score":
+                # unsupervised proxy: higher standardized feature energy -> higher risk
+                proba[i] = float(((X[i] - mu) / sd).mean())
+            else:
+                if len(set(y[tr])) < 2:
+                    proba[i] = y[tr].mean()
+                    continue
+                clf = clone(proto).fit(X[tr], y[tr])
+                proba[i] = clf.predict_proba(X[i:i + 1])[0, 1]
+        lat_ms = (time.perf_counter() - t0) / n * 1e3
+        # rank-normalize hand_score to [0,1] for metric comparability
+        if name == "hand_score":
+            r = proba.argsort().argsort()
+            proba = r / max(len(r) - 1, 1)
+        pred = (proba >= 0.5).astype(int)
+        try:
+            auroc = round(float(roc_auc_score(y, proba)), 3)
+            auprc = round(float(average_precision_score(y, proba)), 3)
+        except ValueError:
+            auroc = auprc = None
+        out["models"][name] = {
+            "auroc": auroc, "auprc": auprc,
+            "ece": round(ece(y, proba), 3),
+            "false_low_risk_rate": round(false_low_risk_rate(y, pred), 3),
+            "false_high_risk_rate": round(false_high_risk_rate(y, pred), 3),
+            "predict_latency_ms": round(lat_ms, 3),
+        }
+    ranked = [(m["auroc"] if m["auroc"] is not None else -1, k)
+              for k, m in out["models"].items()]
+    best = max(ranked)[1]
+    out["best_model"] = best
+    out["best_auroc"] = out["models"][best]["auroc"]
+    return out
 
 
 if __name__ == "__main__":

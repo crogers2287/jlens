@@ -498,3 +498,31 @@ gold-gated; audit queue promotes benchmark_gold→gold via human review only.
   excluded/asserted). src/join_labels_features.py → reports/benchmark_m5_join.json:
   16/16 matched. Joined-set class balance: answerable_from_memory 4T/4F (trainable),
   unsupported_or_hallucinated 4T/8F (trainable). This is the prototype training table.
+
+## 37. M5 real prototype heads (M5 step 6) — MILESTONE COMPLETE
+- train_risk_heads.py stub REPLACED with real leave-one-out prototype training
+  (logreg / linear SVM / hand-score baseline) on the joined 16-prompt table.
+  --min-per-label lowered to 3 for the smoke run (stated). --mode final STILL
+  refuses (gold-gated) — verified. Report: reports/risk_heads_prototype.json.
+- REAL metrics (LOO, tiny-n):
+  - answerable_from_memory (n=8, 4+/4-): best AUROC 0.875 (logreg & hand_score);
+    hand_score FLR=0.25/FHR=0.25 is the best operating point.
+  - unsupported_or_hallucinated (n=12, 4+/8-): linsvm AUROC 0.844 BUT
+    false-low-risk-rate=1.0 at the 0.5 threshold (ranks well, catches zero
+    positives operationally — classic good-AUROC/bad-threshold trap). logreg
+    AUROC 0.688 with FLR=0.25.
+- HONEST TAKEAWAY: the telemetry carries real RANKING signal (AUROC 0.84–0.88 vs
+  chance) — the core bet holds — but at n=8–12 the CALIBRATION (ECE 0.15–0.42)
+  and thresholds are unusable, and false-low-risk (the error we care about most)
+  is bad at the default operating point. Exactly why final thresholds stay
+  gold-gated and need far more data.
+- CAVEATS (in the report): tiny n; answerable_from_memory confounded with domain
+  (trivia vs math); prompt-level PROXY labels (not graded model outputs); ECE
+  unreliable at this n. No inflated numbers.
+
+### M5 summary
+First END-TO-END trained jlens risk heads: 16-prompt benchmark sample → GPU
+router-only decode telemetry → v3 export → drift-excluded features → label join →
+real LOO prototype training. Ranking signal is real (AUROC ~0.84–0.88); operating
+points are not (tiny-n, uncalibrated). Pipeline is now complete and honest end to
+end; scaling data is the next lever.

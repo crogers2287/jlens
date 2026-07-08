@@ -894,3 +894,17 @@ gated by check_commit_safe. Production/final thresholds remain gold/audit gated.
 HAND OFF TO HUMAN: run a local workload → auto_outcome candidates + escalations
 accumulate → review the escalated subset → calibration eventually unlocks
 production thresholds via a gold audit.
+
+## 67. Agents-A1 shadow-run config + private-dir ignore hardening (M11 step 1)
+`config/agents_a1_shadow_run.json` — placeholder run config for a bounded
+Agents-A1 GGUF workload: endpoint (alias/base_url/model=InternScience/Agents-A1-Q8_0-GGUF/
+api_key placeholder/timeout, documented no-router-logits ⇒ telemetry_missing+policy=null),
+task_sources (public smoke batch + optional gitignored private queue), batch
+{size 25, cap 100}, verifier toggles + escalation thresholds (reuse M10 shape),
+resume {enabled}, deterministic run defaults with all outputs (run_log,
+review_queue, run_meta) under the gitignored private dir. Verified: loads;
+sha256-over-config run_id stable (cd08d63a145be1d2). Hardened .gitignore:
+reports/shadow/private/* (all file types, was *.jsonl only) with
+!reports/shadow/private/README.md — closes a gap where a run-meta .json would not
+have been ignored. Verified: run_meta.json / run/review .jsonl all ignored, README
+still tracked + committed.

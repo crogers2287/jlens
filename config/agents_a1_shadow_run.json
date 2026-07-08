@@ -1,0 +1,67 @@
+{
+  "_doc": "EXAMPLE run config for a bounded Agents-A1 shadow workload (M11, src/run_agents_a1_shadow_batch.py). PLACEHOLDER, not a secret and not a real internal host. Copy to a local (gitignored) config and edit for your own endpoint. The default deterministic smoke path needs none of the live fields. A genuinely LIVE run against Agents-A1 is HUMAN-GATED: the operator serves the GGUF endpoint first — the agent never serves models.",
+
+  "endpoint": {
+    "alias": "agents-a1-local",
+    "base_url": "http://localhost:9069/v1",
+    "model": "InternScience/Agents-A1-Q8_0-GGUF",
+    "_model_doc": "A GGUF chat endpoint returns OUTPUT TEXT ONLY — no router logits. So each record sets telemetry_missing=true and policy=null. Features are never fabricated.",
+    "api_key": "not-needed",
+    "_api_key_doc": "Most local endpoints ignore this. Do NOT put a real secret here; use an env var in your own local config if your endpoint needs auth.",
+    "timeout_s": 120
+  },
+
+  "task_sources": [
+    {
+      "_doc": "PUBLIC smoke batch — safe for committed samples and tests.",
+      "path": "data/prompts/agents_a1_smoke_batch.jsonl",
+      "kind": "public_smoke"
+    },
+    {
+      "_doc": "OPTIONAL local private queue — gitignored, real prompts, NEVER committed. Absent by default.",
+      "path": "reports/shadow/private/agents_a1_tasks_local.jsonl",
+      "kind": "private_local",
+      "optional": true
+    }
+  ],
+
+  "batch": {
+    "_doc": "Bounded workload — start small. size is the per-run cap; cap is the hard maximum this config permits.",
+    "size": 25,
+    "cap": 100
+  },
+
+  "verifiers": {
+    "_doc": "Reuse the M10 supervisor verifier toggles. Each produces an auto_outcome signal only; none is gold.",
+    "exact_answer_match": true,
+    "regex_or_schema_check": true,
+    "math_checker": true,
+    "code_test_stub": true,
+    "retrieval_required_heuristic": true,
+    "self_consistency": true,
+    "self_consistency_samples": 3
+  },
+
+  "escalation": {
+    "_doc": "When to flag a record for later HUMAN review. Advisory only; never sets a human outcome.",
+    "low_confidence_below": 0.55,
+    "self_consistency_min_agreement": 0.67,
+    "high_impact_levels": ["high", "critical"],
+    "escalate_on_verifier_contradiction": true
+  },
+
+  "resume": {
+    "_doc": "Resume/retry-safe: on re-run, prompt_ids already present in the run log are skipped and only missing tasks are appended.",
+    "enabled": true
+  },
+
+  "run": {
+    "_doc": "deterministic=true uses placeholder timestamps + the deterministic dry-run output so committed samples are reproducible. mode dry-run needs no network; live is HUMAN-GATED (operator serves the endpoint first).",
+    "deterministic": true,
+    "mode": "dry-run",
+    "run_log": "reports/shadow/private/agents_a1_run_local.jsonl",
+    "review_queue": "reports/shadow/private/agents_a1_review_local.jsonl",
+    "run_meta": "reports/shadow/private/agents_a1_run_meta_local.json",
+    "_paths_doc": "All default outputs are under the gitignored private dir — raw prompt/output text stays local. Commit only aggregate-only or redacted artifacts."
+  }
+}

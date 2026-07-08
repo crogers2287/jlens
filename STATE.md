@@ -340,3 +340,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.7 (2026-07-08 18:06 EDT) — step 8 COMPLETE → M10 DONE
 - tests/test_autonomous_supervisor.py 5/5 pass; full suite green (27 tests). All M10 deliverables present: config, auto_outcome_v1 schema, verifiers, supervisor, aggregate report + committed sample, doc, tests. auto_outcome separate from human fields (verified untouched); telemetry_missing honest; escalation exercised; no private text committed; production thresholds gated. M10 STOP CONDITION MET.
 - HAND OFF TO HUMAN: run local workload → auto_outcome candidates + escalations accumulate → review escalated subset → calibration unlocks production thresholds via gold audit.
+
+## M11 Agents-A1 workload — Iteration M11.1 (2026-07-08 18:13 EDT) — step 1 COMPLETE (run config + ignore fix)
+- New M11 loop prompt installed (bounded Agents-A1 workload; smoke-path build) via /prompt-master. steer.md synced post-M10 (7cf9b3b). NOTE: operator confirmed fusion is OFF — 3090s available; a genuinely LIVE Agents-A1 run is now authorized as the harness-complete follow-up (confirm serving approach first; don't disrupt llama-swap's existing models/config).
+- config/agents_a1_shadow_run.json (run_id cd08d63a145be1d2). Hardened .gitignore to reports/shadow/private/* except README (run-meta .json was previously not ignored).
+- Next step 2: data/prompts/agents_a1_smoke_batch.jsonl (public ~25-task batch).

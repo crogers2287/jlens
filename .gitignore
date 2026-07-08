@@ -9,4 +9,5 @@ nohup.out
 data/raw/
 *.parquet
 reports/risk_heads.json
-reports/shadow/private/*.jsonl
+reports/shadow/private/*
+!reports/shadow/private/README.md

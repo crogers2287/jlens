@@ -269,3 +269,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M8 Outcome review — Iteration M8.1 (2026-07-08 14:37 EDT) — step 1 COMPLETE (outcome schema)
 - New M8 loop prompt (CPU-only, never-fabricate-outcomes). schema/shadow_outcome_v1.json: outcome + review_meta, null=unreviewed, rejects bad type/unknown/range. Validated.
 - Next step 2: src/build_review_queue.py → reports/shadow/review_queue_sample.jsonl (all-null, validated).
+
+## M8 Outcome review — Iteration M8.2 (2026-07-08 14:43 EDT) — step 2 COMPLETE (review queue)
+- src/build_review_queue.py → reports/shadow/review_queue_sample.jsonl: 9 all-null unreviewed records (public prompts), all validate. reviewed=0/9. No fabricated outcomes.
+- Next step 3: src/review_shadow_log.py (safe non-interactive CLI to set fields; refuses bad type/unknown/unknown-id).

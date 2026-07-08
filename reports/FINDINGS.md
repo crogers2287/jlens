@@ -637,3 +637,10 @@ production thresholds stay gold-gated.
   fully-reviewed record validates; bad-type (user_agreed:"yes"), unknown field,
   and review_confidence>1 all REJECTED. Humans set outcomes; schema enforces the
   shape, never fabricates.
+
+## 49. Review-queue builder (M8 step 2)
+- `src/build_review_queue.py` → `reports/shadow/review_queue_sample.jsonl`:
+  converts shadow records (public realuse_sample + shadow_log) into 9 deduped
+  shadow_outcome_v1 records with EVERY outcome + review_meta field null
+  (reviewed=0/9). NEVER sets an outcome value. All 9 validate against
+  schema/shadow_outcome_v1.json; asserted all-null. Public prompts only.

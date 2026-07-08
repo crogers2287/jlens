@@ -174,3 +174,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M3 Risk Heads — Iteration 30 (2026-07-08 11:14 EDT) — step 4 COMPLETE (train/eval + LABEL GATE)
 - src/train_risk_heads.py + src/eval_risk_heads.py: calibrated baselines + metrics (AUROC/AUPRC/ECE/false-low/false-high/latency). LABEL GATE verified: refuses on all-null seed AND missing file (exit 1, per-label diagnostics). No training, no fabricated labels.
 - Next step 5 (FINAL): LABELING_HANDOFF.md → then loop STOP + operator hand-off.
+
+## M3 Risk Heads — Iteration 31 (2026-07-08 11:18 EDT) — step 5 COMPLETE → M3 SCAFFOLDING DONE
+- LABELING_HANDOFF.md (10 labels defined + examples, null rule, ≥50/family, false-low-risk priority, run command). All 7 M3 artifacts present; gate refuses seed.
+- M3 STOP CONDITION MET. Human labeling is the next action — loop stops and hands off.

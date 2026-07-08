@@ -338,3 +338,21 @@ awaits labeled data to become a calibrated governor.
   min-per-label (10) with both classes. Verified all three refusal paths on the
   current all-null seed — NO head is trained, NO label is fabricated. Training
   body executes only once a human provides labels.
+
+## 25. Labeling handoff (M3 step 5) — M3 scaffolding COMPLETE
+- `LABELING_HANDOFF.md`: per-label definition + positive/negative example for all
+  10 labels (8 prompt-time, 2 generation-time), the true/false/**null** rule
+  (null=unknown, never guess), the ≥50/label + prompt-held-out requirement, why
+  false-low-risk > false-high-risk, and the exact train/eval command (which
+  refuses until labeled).
+- All M3 stop-condition artifacts verified present; the label gate still refuses
+  the all-null seed. M3 scaffolding milestone COMPLETE — hand off to the operator
+  for human labeling.
+
+### M3 summary
+Built the full label-gated risk-modeling scaffold WITHOUT fabricating a single
+label: risk_labels_v1.json (rejects unknown labels), 32 all-null seed records,
+risk_features.py (M2 KEEP features, drift barred by assertion), calibrated
+train/eval skeleton that provably refuses unlabeled data, and LABELING_HANDOFF.md.
+Next action is HUMAN: label ≥50 prompts/family, then re-run the loop to train +
+calibrate the heads.

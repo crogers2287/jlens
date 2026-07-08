@@ -1059,3 +1059,15 @@ had auto_was_wrong=None (escalated on low confidence, no applicable verifier) so
 they populate human_reviewed_count but not agreement. Honest: only objectively
 determinable ground truth set; null left where undeterminable; auto_outcome stays
 a candidate.
+
+## 79. First auto-vs-human agreement (M12 step 4)
+Ran agents_a1_run_report over the reviewed escalated queue → public-safe
+reports/outcomes/agents_a1_reviewed_summary_sample.json (aggregate-only, no text,
+commit-safe). This is the reviewed SUBSET (7 escalated rows), so n_completed=7 /
+escalation_rate=1.0 by construction. The headline: FIRST auto_vs_human_agreement =
+{n_compared: 1, agreement_rate: 0.0}, human_reviewed_count=7, auto_was_wrong_count=1.
+Agreement is 0% on the single comparable row precisely because sm_regex_01's auto
+verdict was the #75 false-positive (auto=wrong vs human=right). The 6 explain rows
+were reviewed correct but had auto_was_wrong=None (low-confidence escalation, no
+verifier) so they don't enter the agreement denominator. This is the pre-fix
+baseline; step 5's before/after shows the JSON verifier flipping that row.

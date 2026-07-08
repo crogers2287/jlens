@@ -386,3 +386,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M12 Verifier calibration — Iteration M12.3 (2026-07-08 19:52 EDT) — step 3 COMPLETE (objective review)
 - Reviewed all 7 escalated live rows vs public benchmark ground truth (operator_review) → gitignored agents_a1_reviewed_live.jsonl (valid, unstaged). All objectively correct (was_wrong=False). sm_regex_01 = the one agreement-comparable row (auto=wrong, human=right → the false-positive). 6 explain rows auto=None (low-conf escalation).
 - Next step 4: run agents_a1_run_report over reviewed queue → public reviewed aggregate + first auto_vs_human_agreement.
+
+## M12 Verifier calibration — Iteration M12.4 (2026-07-08 19:55 EDT) — step 4 COMPLETE (first agreement)
+- Public reviewed aggregate agents_a1_reviewed_summary_sample.json (over 7-row reviewed subset): FIRST auto_vs_human_agreement = n_compared 1, rate 0.0 (sm_regex_01 auto=wrong vs human=right = the false-positive); human_reviewed_count 7. No text keys; commit-safe.
+- Next step 5: before/after escalation comparison (old regex vs new json verifier on the live JSON row).

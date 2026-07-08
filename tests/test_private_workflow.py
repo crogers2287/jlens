@@ -49,15 +49,18 @@ def _reviewed(level, was_wrong):
 def test_private_dir_gitignored():
     gi = (ROOT / ".gitignore").read_text()
     assert "reports/shadow/private/" in gi, "private dir not in .gitignore"
-    # the pattern must not accidentally ignore the README
-    assert "reports/shadow/private/README.md" not in gi
-    # belt-and-suspenders: git itself agrees (skip silently if git absent)
+    # git itself is the source of truth (skip silently if git absent):
+    # a private log is ignored, the README is NOT.
     import shutil, subprocess
     if shutil.which("git"):
-        r = subprocess.run(
+        ignored = subprocess.run(
             ["git", "check-ignore", "reports/shadow/private/realuse_local.jsonl"],
             cwd=ROOT, capture_output=True, text=True)
-        assert r.returncode == 0 and "private" in r.stdout
+        assert ignored.returncode == 0 and "private" in ignored.stdout
+        readme = subprocess.run(
+            ["git", "check-ignore", "reports/shadow/private/README.md"],
+            cwd=ROOT, capture_output=True, text=True)
+        assert readme.returncode != 0, "README must NOT be ignored"
 
 
 # ---- (b) redaction strips text, keeps structure + booleans ------------------

@@ -365,3 +365,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M11 Agents-A1 workload — Iteration M11.6 (2026-07-08 18:25 EDT) — step 6 COMPLETE (run doc)
 - docs/AGENTS_A1_SHADOW_RUN.md: smoke + live (serve-endpoint-first) runs, resume/retry, escalated-subset review, aggregate report + commit-safe, guardrails/gating. Commands verified vs flags.
 - Next step 7 (FINAL): tests/test_agents_a1_shadow_run.py, then M11 harness DONE (live Agents-A1 GPU run = deliberate follow-up on the now-available 3090s).
+
+## M11 Agents-A1 workload — Iteration M11.7 (2026-07-08 18:28 EDT) — step 7 COMPLETE → M11 HARNESS DONE
+- tests/test_agents_a1_shadow_run.py 5/5 pass; full suite green (32 tests). Fixed test_private_workflow gitignore assertion (git check-ignore README) after private-dir ignore hardening. All M11 harness deliverables present: config, smoke batch, resume-safe runner, escalation queue, aggregate report + sample, doc, tests. Private raw logs gitignored + never staged; auto never wrote human fields; production thresholds gated. M11 HARNESS STOP CONDITION MET.
+- NEXT (deliberate, authorized 3090s): serve Agents-A1-Q8_0-GGUF on a free port + run 25-task batch --mode live → escalation queue → review. Operator confirmed fusion off.

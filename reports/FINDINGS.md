@@ -964,3 +964,30 @@ guardrails/gating (no private raw logs/text committed; auto_outcome candidate no
 gold; human fields never written; telemetry_missing honest; failures counted +
 continue; production/final thresholds gold/audit gated). Commands verified vs real
 CLI flags. Public fixtures in every example.
+
+## 73. Agents-A1 shadow-run tests (M11 step 7) — HARNESS COMPLETE
+`tests/test_agents_a1_shadow_run.py` (5 tests, CPU-only, no network, FAKE
+endpoints) locks the M11 harness: (a) run config validates (model=Agents-A1,
+batch size≤cap, resume bool, run_id stable 16-hex, batch bound respected);
+(b) RESUME — a second run over the same out-log adds zero rows, skips all;
+(c) aggregate report has NO text keys + correct metadata counts (n_completed,
+n_failed=0, escalation_count) and agreement null until a SYNTHETIC human review
+(then n_compared=1, rate 1.0); (d) escalation queue = only escalated rows, human
+fields null, all auto_outcome_v1-valid; (e) endpoint-failure path counts n_failed
+== n_tasks and continues without crashing. Also fixed test_private_workflow's
+gitignore assertion to use `git check-ignore` (README not ignored) after the
+private-dir ignore was hardened to `reports/shadow/private/*` + README negation.
+Full suite green: 32 tests (agents-a1 5, autonomous 5, decode-stub 4,
+shadow-wrapper 4, outcome-review 5, policy-engine 4, private-workflow 5).
+
+### M11 summary — Agents-A1 bounded workload harness
+jlens now has a bounded, resumable, privacy-safe run harness: it drives a task
+batch through a local Agents-A1 endpoint, records auto_outcome candidates to a
+gitignored private log, counts endpoint failures and continues, resumes without
+duplicating, emits a local escalation review queue (only-escalated, human-null),
+and an aggregate-only run report (no prompt/output text) with full run metadata.
+Verified end-to-end on the deterministic smoke path. REMAINING (deliberate,
+now-authorized on the 3090s): serve InternScience/Agents-A1-Q8_0-GGUF on a free
+port and run the 25-task batch in --mode live, then review the escalated subset —
+the reviewed records are what eventually unlock production thresholds via a gold
+audit.

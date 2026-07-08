@@ -991,3 +991,18 @@ now-authorized on the 3090s): serve InternScience/Agents-A1-Q8_0-GGUF on a free
 port and run the 25-task batch in --mode live, then review the escalated subset —
 the reviewed records are what eventually unlock production thresholds via a gold
 audit.
+
+## 74. FIRST LIVE Agents-A1 run (M11 capstone) — real 25-task batch
+Ran the bounded batch LIVE against the Agents-A1 Q8_0 endpoint already served by
+llama-swap on fred (:9069, model id `agents-a1`, Q8_0 no-mtp across both 3090s) —
+no model serving needed. run_id 88e140ea5d129bc3: 25/25 completed, 0 failed, all
+telemetry_missing (GGUF, no router logits), ~1 min wall. Results (auto_outcome
+candidates, NOT gold): math 5/5 and exact-answer 5/5 judged correct; regex 3/4
+pass (1 escalated — likely format strictness, not a model error); current_info
+correctly flagged auto_needed_retrieval (not judged wrong); open-ended explain
+tasks escalated on low confidence (no applicable verifier). escalation_count=7
+(rate 0.28): 1 candidate-wrong + 6 unverifiable. Committed public-safe aggregate
+reports/outcomes/agents_a1_run_summary_live.json (check_commit_safe clean, no
+text). Raw run/review/meta logs stayed in the gitignored private dir. Human
+outcome fields untouched (auto never writes them); production thresholds still
+gated. NEXT: human-review the 7 escalated rows → first auto-vs-human agreement.

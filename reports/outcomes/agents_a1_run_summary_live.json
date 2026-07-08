@@ -1,0 +1,35 @@
+{
+ "run_id": "88e140ea5d129bc3",
+ "model": "agents-a1",
+ "endpoint_alias": "agents-a1-llamaswap",
+ "n_tasks": 25,
+ "n_completed": 25,
+ "n_failed": 0,
+ "n_telemetry_missing": 25,
+ "level_distribution": {
+  "unscored": 25
+ },
+ "recommended_action_distribution": {
+  "unscored": 25
+ },
+ "auto_verdict_distribution": {
+  "ok": 13,
+  "wrong": 1,
+  "undecided": 11
+ },
+ "escalation_count": 7,
+ "escalation_rate": 0.28,
+ "verifier_distribution": {
+  "math_checker": 5,
+  "retrieval_required_heuristic": 25,
+  "exact_answer_match": 5,
+  "regex_or_schema_check": 4
+ },
+ "auto_needed_retrieval_count": 5,
+ "auto_needed_checker_count": 5,
+ "auto_was_wrong_count": 1,
+ "human_reviewed_count": 0,
+ "auto_vs_human_agreement": null,
+ "privacy_check_status": "aggregate-only: no prompt/output/notes text",
+ "note": "auto_outcome is a CANDIDATE, not gold. Prototype numbers; production/final thresholds stay gold/audit gated."
+}

@@ -63,7 +63,10 @@ def check_arch(config) -> None:
             "retry with --trust-remote-code (records a Decision in STATE.md "
             "first)."
         )
-    if not hasattr(config, "num_experts") and not hasattr(config, "num_local_experts"):
+    # Multimodal wrappers (…ForConditionalGeneration) nest the LM config under
+    # text_config (e.g. Qwen3.6-35B-A3B: text_config.num_experts=256).
+    moe_cfg = getattr(config, "text_config", None) or config
+    if not hasattr(moe_cfg, "num_experts") and not hasattr(moe_cfg, "num_local_experts"):
         sys.exit(f"[jlens] {mt} config has no expert count — not a MoE checkpoint?")
 
 

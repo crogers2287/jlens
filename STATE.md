@@ -1,7 +1,8 @@
 # jlens — Interpretability Sidecar for Qwen3.5/3.6 MoE — STATE
 
 Current phase: 0
-Iteration count: 6
+Iteration count: 7
+Loop status: RUNNING (gates cleared by user "Do it all, use the 3.6 variant") 
 
 ## Phase 0 — Feasibility (exit: go/no-go memo in STATE.md)
 - [x] Create project venv + dir layout (jlens/{src,probes,data,lenses,reports})
@@ -39,4 +40,12 @@ iter 2 | venv + dir layout | .venv (Python 3.12.3) + src/probes/data/lenses/repo
 iter 3 | transformers MoE verification | VERIFIED qwen3_5_moe router logits (transformers 5.13.0, citations in Decisions); qwen3_6 arch ABSENT — flagged risk | next: VRAM math + 4-bit capture test (needs torch install first — flag at gate if large)
 iter 4 | torch wiring + VRAM math | system torch 2.5.1+cu121 reused via pyvenv.cfg (no download); VRAM math done — 4-bit 35B-A3B fits on 2×3090 (~19.3 GB); GPU capture test GATED on user approving llama-swap unload | next: author capture script (src/capture_router_logits.py) — no GPU needed to write+lint it
 iter 5 | capture script authored | src/capture_router_logits.py written (arch guard for missing qwen3_6, NF4 config, CPU-streamed captures); py_compile OK, --help OK; bitsandbytes missing → added to approval gate | next: author data/prompts.jsonl starter set + analysis-side loader (src/load_captures.py), both CPU-only
+iter 7 | git init + commit ce5e890; loop PARKED | all CPU-only work exhausted; awaiting user approval: (1) pip install bitsandbytes (download), (2) llama-swap unload window on the 2×3090s, (3) confirm target checkpoint + its config.json model_type (qwen3_6 absent from transformers 5.13.0) | next after gate: run capture on 12-prompt set, then load_captures.py analysis
 iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: code/math/multilingual/factual/reasoning/creative+json) + src/load_captures.py (routing_summary: entropy, dead experts, top-k load); unit-tested with synthetic tensors — all assertions pass | next: git init+commit the repo, then BLOCKED on user gate (bitsandbytes install + llama-swap unload window) for the live capture run
+
+## Iteration 8 (2026-07-08 07:04 EDT)
+- Gates cleared: bitsandbytes 0.49.2 installed; llama-swap unloaded via :9069/unload (both 3090s freed, 50/18 MiB); target confirmed = Qwen/Qwen3.6-35B-A3B snapshot 995ad96e.
+- Decision: Qwen3.6-35B-A3B config is a ForConditionalGeneration wrapper — model_type qwen3_5_moe (supported by transformers 5.13.0, no trust_remote_code needed), LM params nested under text_config (num_experts=256, top-k 8, 40 layers).
+- Fix: capture_router_logits.py check_arch() now descends into text_config for expert-count detection.
+- Capture launched: PID 691145, nf4, 12 prompts, out=data/captures/qwen3_6_35b_a3b, log=logs/capture_36_run2.log.
+- Next after capture: load_captures.py analysis on the .pt outputs.

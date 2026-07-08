@@ -219,3 +219,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M5 Telemetry+Prototype — Iteration 41 (2026-07-08 12:19 EDT) — step 2 IN FLIGHT (GPU capture)
 - llama-swap unloaded (:9069/unload, GPUs free 50/18). Launched M5 router-only decode capture: worker PID 869647, --router-only --max-new-tokens 24, 16 prompts → data/captures/benchmark_m5/. Log logs/capture_m5.log. Monitor b361upjos armed (1h timeout < ~1.3h runtime → heartbeat-poll too).
 - On exit: export v3 decode (step 3), features (step 4), join (step 5), real prototype train/eval (step 6).
+
+## M5 — Iteration 42 (2026-07-08 13:22 EDT) — steps 2–3 COMPLETE (capture + v3 export)
+- 16/16 router-only captures done; reports/schema/benchmark_m5_decode.jsonl = 384 records, all valid v3. GPUs freed.
+- Next step 4: reports/features/benchmark_m5_features.jsonl via risk_features (drift excluded), then join (5) + real prototype train/eval (6).

@@ -486,3 +486,9 @@ gold-gated; audit queue promotes benchmark_gold→gold via human review only.
   label for a smoke prototype — indicative, not a final claim. Licenses permit the
   prompt text (TruthfulQA Apache / FEVER CC-BY-SA / GSM8K MIT); raw sources stay
   gitignored.
+
+## 35. M5 decode capture + v3 export (M5 steps 2–3)
+- Router-only decode telemetry captured for all 16 sample prompts (24 gen tokens
+  each; ~5 min/prompt, ~1.3h; GPUs then freed for llama-swap). Raw .pt gitignored.
+- Exported → reports/schema/benchmark_m5_decode.jsonl: 384 decode-token records
+  (v3 weighted, incl. topk_mass), all validate against schema/v3_decode.json.

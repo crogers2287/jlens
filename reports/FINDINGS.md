@@ -492,3 +492,9 @@ gold-gated; audit queue promotes benchmark_gold→gold via human review only.
   each; ~5 min/prompt, ~1.3h; GPUs then freed for llama-swap). Raw .pt gitignored.
 - Exported → reports/schema/benchmark_m5_decode.jsonl: 384 decode-token records
   (v3 weighted, incl. topk_mass), all validate against schema/v3_decode.json.
+
+## 36. M5 features + label↔feature join (M5 steps 4–5)
+- reports/features/benchmark_m5_features.jsonl: 16 rows (M2 KEEP features, drift
+  excluded/asserted). src/join_labels_features.py → reports/benchmark_m5_join.json:
+  16/16 matched. Joined-set class balance: answerable_from_memory 4T/4F (trainable),
+  unsupported_or_hallucinated 4T/8F (trainable). This is the prototype training table.

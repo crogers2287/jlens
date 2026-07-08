@@ -223,3 +223,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M5 — Iteration 42 (2026-07-08 13:22 EDT) — steps 2–3 COMPLETE (capture + v3 export)
 - 16/16 router-only captures done; reports/schema/benchmark_m5_decode.jsonl = 384 records, all valid v3. GPUs freed.
 - Next step 4: reports/features/benchmark_m5_features.jsonl via risk_features (drift excluded), then join (5) + real prototype train/eval (6).
+
+## M5 — Iteration 43 (2026-07-08 13:22 EDT) — steps 4–5 COMPLETE (features + join)
+- benchmark_m5_features.jsonl (16 rows, drift excluded). join → 16/16 matched; both covered labels both-class (ansmem 4/4, unsup 4T/8F). Next step 6: REAL prototype train/eval (LOO, tiny-n honest metrics).

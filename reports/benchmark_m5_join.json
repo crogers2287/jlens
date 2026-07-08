@@ -1,0 +1,48 @@
+{
+ "n_matched": 16,
+ "n_features": 16,
+ "n_labels": 23169,
+ "n_features_without_labels": 0,
+ "n_labels_without_features": 23153,
+ "joined_label_balance": {
+  "answerable_from_memory": {
+   "n_true": 4,
+   "n_false": 4,
+   "n_null": 8
+  },
+  "needs_exact_citation": {
+   "n_true": 8,
+   "n_false": 0,
+   "n_null": 8
+  },
+  "needs_math_verification": {
+   "n_true": 4,
+   "n_false": 0,
+   "n_null": 12
+  },
+  "unsupported_or_hallucinated": {
+   "n_true": 4,
+   "n_false": 8,
+   "n_null": 4
+  }
+ },
+ "features_without_labels": [],
+ "matched_ids": [
+  "fever_0000ceade3f14c17cb71a431b5c8a81b",
+  "fever_0012688fe66997f1084223a3c200dbc1",
+  "fever_00190f9903d5b4db4af56561ad4af500",
+  "fever_0020972d9f190ff5d2fd41e7fba7c58a",
+  "fever_00226973079e47c0fd4b61ed9c9eb894",
+  "fever_002533b094838cb2df08788bcce44e1f",
+  "fever_0029da7cb9f63594b010cf4ebd5c181e",
+  "fever_003f9929030f64bab475e284a8b0d07b",
+  "gsm8k_0",
+  "gsm8k_1",
+  "gsm8k_10",
+  "gsm8k_100",
+  "tqa_0_c5971ef7b",
+  "tqa_100_c0a8ed082",
+  "tqa_101_c0a8ed082",
+  "tqa_102_c1778d8b5"
+ ]
+}

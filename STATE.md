@@ -328,3 +328,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.4 (2026-07-08 17:57 EDT) — step 4 COMPLETE (supervisor end-to-end)
 - src/autonomous_shadow_supervisor.py + public fixture data/prompts/autonomous_tasks_sample.jsonl (6 tasks). Run: 6 auto_outcome_v1-valid records, escalated=4, telemetry_missing all true + policy null (honest GGUF), needs_retrieval flagged on current-info, human outcome/review_meta all null (auto never writes). Default out = gitignored private log.
 - Next step 5: src/autonomous_outcome_report.py (aggregate-only run summary, no text; committed sample from public fixtures).
+
+## M10 Autonomous supervisor — Iteration M10.5 (2026-07-08 18:01 EDT) — steps 5–6 COMPLETE (aggregate report + sample)
+- src/autonomous_outcome_report.py (aggregate-only, no-text guard) + committed reports/outcomes/autonomous_summary_sample.json from public fixture: 6 records, telemetry_missing=6, escalation rate 0.667, agreement null (no human review). Leak grep clean; check_commit_safe passes.
+- Next step 7: docs/AUTONOMOUS_SHADOW_SUPERVISOR.md (end-to-end, guardrails, gating).

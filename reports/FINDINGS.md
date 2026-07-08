@@ -841,3 +841,16 @@ math/exact/regex/current-info/plain). Verified end-to-end: 6 valid records,
 true + policy all null, current-info task flagged auto_needed_retrieval, and
 human fields confirmed all-null. Advisory/shadow only; auto_outcome is a
 candidate, not gold.
+
+## 64. Autonomous run report + committed sample (M10 steps 5–6)
+`src/autonomous_outcome_report.py` emits an AGGREGATE-ONLY summary of an
+autonomous run: n_total, n_telemetry_missing, level/action distributions
+(policy null → "unscored"), verifier_name distribution, escalation count+rate,
+auto_field_nonnull_counts, confidence buckets, and auto-vs-human agreement
+computed ONLY over human-reviewed rows (null until humans review). Output is
+built from fixed numeric/label keys with a recursive no-text-string guard.
+Committed sample reports/outcomes/autonomous_summary_sample.json (from the PUBLIC
+task fixture run): 6 records, telemetry_missing=6, policy all unscored (honest
+GGUF), escalation rate 0.667, auto_was_wrong non-null on 4, auto_vs_human_agreement
+null. Verified: zero text-preview/notes keys (leak grep clean); check_commit_safe
+PASSES. auto_outcome stays a candidate; production/final thresholds gold/audit gated.

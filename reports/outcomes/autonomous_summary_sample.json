@@ -1,0 +1,33 @@
+{
+ "n_total": 6,
+ "n_telemetry_missing": 6,
+ "level_distribution": {
+  "unscored": 6
+ },
+ "recommended_action_distribution": {
+  "unscored": 6
+ },
+ "verifier_name_distribution": {
+  "math_checker": 2,
+  "retrieval_required_heuristic": 6,
+  "self_consistency": 6,
+  "exact_answer_match": 1,
+  "regex_or_schema_check": 1
+ },
+ "escalation": {
+  "count": 4,
+  "rate": 0.6667
+ },
+ "auto_field_nonnull_counts": {
+  "auto_judged": 6,
+  "auto_was_wrong": 4,
+  "auto_needed_retrieval": 6,
+  "auto_needed_checker": 2,
+  "escalate_for_review": 6
+ },
+ "confidence_buckets": {
+  "high[0.75,1]": 6
+ },
+ "auto_vs_human_agreement": null,
+ "note": "Aggregate-only; no prompt/output/notes text. auto_outcome is a CANDIDATE, not gold \u2014 auto-vs-human agreement is computed only over human-reviewed rows. Prototype numbers; production/final thresholds stay gold/audit gated."
+}

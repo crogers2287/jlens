@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/v1.json",
+  "title": "jlens routing-signature capture schema v1",
+  "description": "Frozen contract for one prompt's router-derived signal. One object per JSONL line. Router-only: no hidden states or raw logits.",
+  "type": "object",
+  "required": ["schema_version", "model", "model_type", "run_id", "prompt_id",
+               "domain", "tokens", "num_layers", "num_experts", "top_k", "layers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "model": {"type": "string"},
+    "model_type": {"type": "string"},
+    "run_id": {"type": "string"},
+    "prompt_id": {"type": "string"},
+    "domain": {"type": "string"},
+    "tokens": {"type": "integer", "minimum": 1},
+    "num_layers": {"type": "integer", "minimum": 1},
+    "num_experts": {"type": "integer", "minimum": 1},
+    "top_k": {"type": "integer", "minimum": 1},
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["layer", "logits_shape", "topk_experts", "topk_probs", "entropy"],
+        "additionalProperties": false,
+        "properties": {
+          "layer": {"type": "integer", "minimum": 0},
+          "logits_shape": {
+            "type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2
+          },
+          "topk_experts": {
+            "type": "array",
+            "items": {"type": "array", "items": {"type": "integer"}}
+          },
+          "topk_probs": {
+            "type": "array",
+            "items": {"type": "array", "items": {"type": "number"}}
+          },
+          "entropy": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}

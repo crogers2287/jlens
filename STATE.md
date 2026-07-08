@@ -89,3 +89,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Per-layer sweep: mid-third strongest (L13-26 mean 0.613), best L20=0.712, weak at L0 (0.233) and late motor zone (L33 0.369). All-layer > best single layer → multi-layer tap required.
 - r3 overlap stability check committed (findings #8). Reports: r3_token_probe.json, r3_layer_sweep.json, r3_overlap.json.
 - Tasks #17/#18 satisfied. Next roadmap item: 2. Freeze capture schema v1 (CPU-only, no gate).
+
+## Iteration 13 (2026-07-08 08:26 EDT) — Roadmap item 2 COMPLETE (freeze capture schema v1)
+- src/export_schema.py + schema/v1.json (draft-07) + SCHEMA.md; router-only JSONL (topk_experts/topk_probs/full-dist entropy per layer).
+- r3 exported → reports/schema/r3.jsonl (32 objs, 3.52 MB), all validate against schema/v1.json (jsonschema present in venv).
+- Next roadmap item: 3. Sidecar head bakeoff on routing signatures (centroid→logreg→SVM→GBM→MLP, calibration/ECE). CPU-only. This item's completion is the loop's STOP condition.

@@ -84,3 +84,13 @@ Tool: `src/expert_overlap.py` → `reports/qwen3_6_35b_a3b_r3_overlap.json`.
   math|reason still tightest (J=0.507), depth terciles 0.48/0.41/0.47.
 - Exclusive-expert ranking stable: lang (442) and math (342) still carve the
   most private capacity; code_py/creative least. Directionally matches r2.
+
+## 9. Capture schema v1 frozen (roadmap item 2)
+- `src/export_schema.py` + `schema/v1.json` (JSON Schema draft-07) + `SCHEMA.md`.
+- Router-only JSONL projection: per prompt, per layer → topk_experts,
+  topk_probs (softmax over top-k), and full-distribution entropy (nats).
+- r3 exported to `reports/schema/r3.jsonl` (32 objects, 3.52 MB vs ~120 MB raw
+  .pt) — all 32 validate against schema/v1.json.
+- This is the frozen contract sidecar heads (item 3) train on; raw .pt stays
+  gitignored. `entropy` is over the full 256-way softmax so it doubles as the
+  routing-confidence feature for the future risk head.

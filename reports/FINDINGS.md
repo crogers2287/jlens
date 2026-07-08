@@ -305,3 +305,10 @@ awaits labeled data to become a calibrated governor.
   records; **REJECTS** unknown label keys, missing labels, and non-bool/null
   values. This is the contract the human-labeling handoff writes against; the
   trainer refuses until non-null labels exist.
+
+## 22. Label scaffold (M3 step 2)
+- `src/build_label_scaffold.py` → `data/labels/risk_labels_seed.jsonl`: 32
+  all-null records (union of data/prompts.jsonl + r4 decode prompt_ids), one per
+  prompt. labeler=null, all 10 labels=null — the generator NEVER invents a value.
+- Verified: 32 records, all validate against schema/risk_labels_v1.json, all
+  confirmed all-null; file is tracked (not gitignored). Awaiting human labeling.

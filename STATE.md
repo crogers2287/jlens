@@ -162,3 +162,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M3 Risk Heads — Iteration 27 (2026-07-08 11:01 EDT) — step 1 COMPLETE (risk-label schema)
 - New M3 loop prompt installed (label-gated scaffolding-only). schema/risk_labels_v1.json: 10-label multi-label, true/false/null, required labeler, rejects unknown/missing/bad-type. Validated.
 - Next step 2: src/build_label_scaffold.py → data/labels/risk_labels_seed.jsonl (all-null records, validated).
+
+## M3 Risk Heads — Iteration 28 (2026-07-08 11:06 EDT) — step 2 COMPLETE (label scaffold)
+- src/build_label_scaffold.py → data/labels/risk_labels_seed.jsonl (32 all-null records, all validate, tracked). No fabricated labels.
+- Next step 3: src/risk_features.py → reports/features/r4_risk_features.jsonl (M2 KEEP features, drift EXCLUDED).

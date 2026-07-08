@@ -1,0 +1,6 @@
+{"prompt_id": "auto_math_1", "prompt": "What is 6*7?", "task_category": "math", "known_answer": "42", "expression": "6*7"}
+{"prompt_id": "auto_math_2", "prompt": "Compute 12+30.", "task_category": "math", "known_answer": "42", "expression": "12+30"}
+{"prompt_id": "auto_exact_1", "prompt": "What is the capital of France?", "task_category": "exact_answer", "known_answer": "Paris"}
+{"prompt_id": "auto_regex_1", "prompt": "Return a JSON object with a single key.", "task_category": "format", "pattern": "^\\{.*\\}$"}
+{"prompt_id": "auto_fresh_1", "prompt": "What is the current price of gold today?", "task_category": "current_info"}
+{"prompt_id": "auto_plain_1", "prompt": "Explain what a prime number is.", "task_category": "explain"}

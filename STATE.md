@@ -324,3 +324,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.3 (2026-07-08 17:53 EDT) — step 3 COMPLETE (verifier adapters)
 - src/verifiers.py: 6 adapters (exact/regex/math/code-fixture-stub/retrieval-heuristic/self-consistency). Evidence hashed (no raw text, verified). code_test_stub runs fixture callable only (no arbitrary exec). self-consistency disagreement=undecided(escalation) not fail. All verified on fixtures.
 - Next step 4: src/autonomous_shadow_supervisor.py (fake-endpoint end-to-end run → auto_outcome records + escalation; telemetry_missing honest; human fields untouched).
+
+## M10 Autonomous supervisor — Iteration M10.4 (2026-07-08 17:57 EDT) — step 4 COMPLETE (supervisor end-to-end)
+- src/autonomous_shadow_supervisor.py + public fixture data/prompts/autonomous_tasks_sample.jsonl (6 tasks). Run: 6 auto_outcome_v1-valid records, escalated=4, telemetry_missing all true + policy null (honest GGUF), needs_retrieval flagged on current-info, human outcome/review_meta all null (auto never writes). Default out = gitignored private log.
+- Next step 5: src/autonomous_outcome_report.py (aggregate-only run summary, no text; committed sample from public fixtures).

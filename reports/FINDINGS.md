@@ -823,3 +823,21 @@ regex ok/bad, math expr pass/fail + ref pass + no-number undecided, code
 no-fixture/ok/no, retrieval cat+kw/none, self-consistency agree(pass 1.0)/disagree
 (undecided 0.667). Verdicts feed the auto_outcome CANDIDATE only — never gold, never
 the human fields.
+
+## 63. Autonomous shadow supervisor (M10 step 4)
+`src/autonomous_shadow_supervisor.py` runs a task queue against a local endpoint
+(dry-run deterministic default / live via config / injectable fake for tests),
+and per task: gets model output, attaches telemetry IF a feature row exists else
+sets telemetry_missing=true + policy=null (honest GGUF — never fabricates
+features), runs enabled+applicable verifiers, assembles an auto_outcome CANDIDATE
+(aggregate verifier_confidence; hashed combined evidence), and escalates when
+confidence<threshold OR correctness verifiers contradict OR policy level is
+high-impact OR self-consistency agreement<min OR auto_was_wrong. HUMAN
+outcome/review_meta fields are ALWAYS null — the supervisor never writes them.
+Records validate against auto_outcome_v1 and default to the gitignored private
+log. Public task fixture data/prompts/autonomous_tasks_sample.jsonl (6 tasks:
+math/exact/regex/current-info/plain). Verified end-to-end: 6 valid records,
+4 escalated (correctness fails vs the dry-run stub output), telemetry_missing all
+true + policy all null, current-info task flagged auto_needed_retrieval, and
+human fields confirmed all-null. Advisory/shadow only; auto_outcome is a
+candidate, not gold.

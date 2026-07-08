@@ -273,3 +273,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M8 Outcome review — Iteration M8.2 (2026-07-08 14:43 EDT) — step 2 COMPLETE (review queue)
 - src/build_review_queue.py → reports/shadow/review_queue_sample.jsonl: 9 all-null unreviewed records (public prompts), all validate. reviewed=0/9. No fabricated outcomes.
 - Next step 3: src/review_shadow_log.py (safe non-interactive CLI to set fields; refuses bad type/unknown/unknown-id).
+
+## M8 Outcome review — Iteration M8.3 (2026-07-08 14:47 EDT) — step 3 COMPLETE (review CLI)
+- src/review_shadow_log.py: explicit-flag review, validates, --dry-run, refuses bad bool/range/unknown-id, never guesses. Exercised on throwaway copy; committed queue stays all-null.
+- Next step 4: src/outcome_report.py → reports/outcomes/outcome_coverage.json (honest 0-reviewed).

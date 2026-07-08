@@ -644,3 +644,14 @@ production thresholds stay gold-gated.
   shadow_outcome_v1 records with EVERY outcome + review_meta field null
   (reviewed=0/9). NEVER sets an outcome value. All 9 validate against
   schema/shadow_outcome_v1.json; asserted all-null. Public prompts only.
+
+## 50. Safe review CLI (M8 step 3)
+- `src/review_shadow_log.py`: non-interactive CLI to set outcome/review_meta on
+  ONE queue record (by --prompt-id) from EXPLICIT human flags. Writes only the
+  passed fields, validates the whole record against schema/shadow_outcome_v1.json,
+  supports --dry-run, and REFUSES invalid booleans (e.g. "maybe"), out-of-range
+  confidence, and unknown prompt_ids. NEVER auto-fills/guesses.
+- Exercised on a THROWAWAY copy (not the committed queue): dry-run validates
+  without writing; a write sets was_wrong + reviewer and re-validates; bad type +
+  unknown id both refused. Committed review_queue_sample.jsonl remains all-null —
+  no fabricated outcomes committed.

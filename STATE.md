@@ -295,3 +295,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M9 Private workflow — Iteration M9.2 (2026-07-08 16:05 EDT) — step 3 COMPLETE (redaction) [step 2 doc folds into step 6]
 - src/redact_shadow_log.py: scrubs prompt/output/notes, keeps structure/bools; verified on public fixture, no text leak.
 - Next step 4: src/private_outcome_summary.py → reports/outcomes/private_summary_sample.json (aggregate-only, no text).
+
+## M9 Private workflow — Iteration M9.3 (2026-07-08 16:12 EDT) — step 4 COMPLETE (aggregate summary)
+- src/private_outcome_summary.py → reports/outcomes/private_summary_sample.json: total/reviewed/unreviewed, level + action distributions, per-outcome-field non-null counts, calibration (reviewed-only, null when 0). Output built from scratch + recursive no-text-string guard. Verified on public fixture: 6 records, 0 reviewed, no leaked text.
+- Next step 5: src/check_commit_safe.py (guard: refuse private-path refs + unredacted prompt/output/notes text; pass aggregate/all-null/redacted).

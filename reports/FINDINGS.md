@@ -709,3 +709,17 @@ human judgment begins.
 - Verified on the PUBLIC fixture: 6 records redacted — text fields gone, all
   structural fields + booleans preserved, and NO original prompt text leaks
   anywhere in the output. Enables safe sharing of a private log.
+
+## 56. Aggregate-only summary is safe by construction (M9 step 4)
+`src/private_outcome_summary.py` builds its output dict from a fixed set of
+count/label keys, so free text (prompt/output/notes) never enters — a recursive
+`_assert_no_text` guard then hard-fails if any forbidden key ever holds a
+STRING value (integer counts like `outcome_field_nonnull_counts.notes` are
+allowed; they are aggregates, not text). Verified on the PUBLIC fixture
+(reports/shadow/realuse_sample.jsonl → reports/outcomes/private_summary_sample.json):
+6 records, 0 reviewed (honest null calibration — nobody has reviewed yet),
+level_distribution {low:3, medium:1, critical:2}, action_distribution
+{answer_locally:3, verify:1, require_confirmation:2}. Grep for the fixture's
+prompt text ("watermelon", "artificial intelligence", "dry-run fixture output")
+returned NOTHING in the summary — no leak. This makes the summary committable
+even when its INPUT is a private real-use log.

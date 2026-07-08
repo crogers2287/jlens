@@ -1,0 +1,25 @@
+{
+ "n_total": 6,
+ "n_reviewed": 0,
+ "n_unreviewed": 6,
+ "level_distribution": {
+  "low": 3,
+  "medium": 1,
+  "critical": 2
+ },
+ "recommended_action_distribution": {
+  "answer_locally": 3,
+  "verify": 1,
+  "require_confirmation": 2
+ },
+ "outcome_field_nonnull_counts": {
+  "user_agreed": 0,
+  "was_wrong": 0,
+  "needed_retrieval": 0,
+  "needed_checker": 0,
+  "notes": 0
+ },
+ "reviewers": {},
+ "calibration": null,
+ "note": "Aggregate-only; contains no prompt/output/notes text. Calibration (if any) is from human-reviewed rows only; prototype numbers \u2014 production/final thresholds stay gold/audit gated."
+}

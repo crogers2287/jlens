@@ -1019,3 +1019,16 @@ deliberate decision): use re.search without ^…$ anchors (+re.DOTALL) or a real
 json.loads-based schema check for the JSON case. This is the auto-vs-human loop
 working as designed: auto_outcome is a candidate, humans correct it, and the
 corrections are the calibration signal.
+
+## 76. JSON-aware verifier (M12 step 1)
+Added `json_object_check(output, required_keys, expected_type)` to src/verifiers.py
+(fixes the #75 false-positive). Strips whitespace and `json.loads`; on failure,
+extracts the FIRST balanced {...}/[...] substring (brace matching that respects
+strings/escapes) so trailing prose / markdown fences are tolerated; checks
+expected_type (object/array) + required_keys. Returns hashed-evidence verdict
+(pass on valid JSON meeting requirements, fail otherwise). regex_or_schema_check
+left UNCHANGED for true regex tasks; json_object_check registered in ADAPTERS.
+Verified: the live case `{ "result": "success" }` PASSES (was the false-wrong),
+valid+trailing-prose PASSES, markdown-fenced PASSES, required-key-present PASSES,
+missing-key/garbage/truncated FAIL, array vs object type checks correct, no
+evidence text leak. (Also added the missing `import json`.)

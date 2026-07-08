@@ -12,6 +12,7 @@ raw prompt/output text. No network, no arbitrary command execution.
 """
 from __future__ import annotations
 
+import json
 import re
 from typing import Optional
 
@@ -145,10 +146,79 @@ def self_consistency(samples, **_):
     return _result("self_consistency", round(agreement, 4), verdict, f"n={n}")
 
 
+def _first_json_value(text: str):
+    """Extract + parse the first balanced {...} or [...] substring, or None.
+
+    Tolerates leading/trailing prose or markdown fences by scanning for the
+    first opener and matching braces respecting strings/escapes.
+    """
+    s = text or ""
+    start = None
+    for i, ch in enumerate(s):
+        if ch in "{[":
+            start = i
+            open_ch, close_ch = ch, ("}" if ch == "{" else "]")
+            break
+    if start is None:
+        return None
+    depth, in_str, esc = 0, False, False
+    for j in range(start, len(s)):
+        ch = s[j]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == open_ch:
+            depth += 1
+        elif ch == close_ch:
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(s[start:j + 1])
+                except (json.JSONDecodeError, ValueError):
+                    return None
+    return None
+
+
+def json_object_check(output: str, required_keys=None, expected_type="object", **_):
+    """Validate that the output is (or contains) a JSON value of expected_type.
+
+    Parses the stripped output, or the first balanced {...}/[...] substring if
+    there is surrounding prose/whitespace. PASS on valid JSON meeting the type +
+    required_keys requirements; FAIL otherwise. Evidence is hashed, never raw.
+    """
+    text = (output or "").strip()
+    val = None
+    try:
+        val = json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        val = _first_json_value(text)          # tolerate trailing/leading prose
+    if val is None:
+        return _result("json_object_check", 0.8, VERDICT_FAIL, "unparseable")
+    if expected_type == "object" and not isinstance(val, dict):
+        return _result("json_object_check", 0.75, VERDICT_FAIL, "not-object")
+    if expected_type == "array" and not isinstance(val, list):
+        return _result("json_object_check", 0.75, VERDICT_FAIL, "not-array")
+    if required_keys and isinstance(val, dict):
+        missing = [k for k in required_keys if k not in val]
+        if missing:
+            return _result("json_object_check", 0.8, VERDICT_FAIL,
+                           "missing:" + ",".join(sorted(missing)))
+    return _result("json_object_check", 0.85, VERDICT_PASS,
+                   expected_type, *(sorted(required_keys) if required_keys else []))
+
+
 # Registry keyed by config toggle name.
 ADAPTERS = {
     "exact_answer_match": exact_answer_match,
     "regex_or_schema_check": regex_or_schema_check,
+    "json_object_check": json_object_check,
     "math_checker": math_checker,
     "code_test_stub": code_test_stub,
     "retrieval_required_heuristic": retrieval_required_heuristic,

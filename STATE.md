@@ -373,3 +373,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M11 Agents-A1 workload — Iteration M11.8 (2026-07-08 18:36 EDT) — LIVE RUN DONE (capstone)
 - FIRST live Agents-A1 run: endpoint already served by llama-swap on fred :9069 (model `agents-a1`, Q8_0 no-mtp, both 3090s) — no serving needed. run_id 88e140ea5d129bc3: 25/25 completed, 0 failed, telemetry_missing 25, escalated 7 (rate 0.28), ~1min. Auto verdicts (candidates): math 5/5 + exact 5/5 correct, regex 3/4 (1 escalated), current_info flagged needs-retrieval, explain escalated low-conf. Committed public aggregate agents_a1_run_summary_live.json (commit-safe, no text); private raw logs gitignored.
 - NEXT: human-review the 7 escalated rows (reports/shadow/private/agents_a1_review_live.jsonl) via the M8 review CLI → first auto-vs-human agreement; then M12 (calibration / broader run / label converters per steer).
+
+## M12 Verifier calibration — Iteration M12.1 (2026-07-08 19:44 EDT) — step 1 COMPLETE (JSON verifier)
+- New M12 loop prompt installed (verifier hardening + reviewed calibration) via /prompt-master. steer.md synced post-M11 (c792170).
+- src/verifiers.py: json_object_check (json.loads + balanced-brace extraction, type + required_keys, hashed evidence); regex unchanged; registered. Fixes #75 live false-positive. 9 cases verified; no leak.
+- Next step 2: route JSON tasks to json_object_check in _run_verifiers + update smoke batch JSON row to json_check.

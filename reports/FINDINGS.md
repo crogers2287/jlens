@@ -692,3 +692,11 @@ reviewed-only, honest "pending" at 0 reviewed), a reviewer guide, and tests.
 Nothing fabricated: outcomes are set only by a human; production thresholds stay
 gold/audit gated. This closes the feedback loop — the project now ends where
 human judgment begins.
+
+## 54. Private-log dir convention (M9 step 1)
+- `.gitignore` gains `reports/shadow/private/*.jsonl` — private real-use shadow
+  logs (real prompt/output text) are LOCAL-ONLY, never committed. Committed a
+  `reports/shadow/private/README.md` stub (the only tracked file there)
+  explaining the local-only rule + the redact/aggregate/check-commit-safe path.
+- Verified: git check-ignore blocks reports/shadow/private/realuse_local.jsonl;
+  the README is NOT ignored.

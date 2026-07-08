@@ -287,3 +287,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M8 Outcome review — Iteration M8.6 (2026-07-08 14:58 EDT) — step 7 COMPLETE → M8 DONE
 - tests/test_outcome_review.py 5/5 pass; all 4 suites pass (17 tests). All M8 artifacts present; committed queue all-null; final refuses. M8 STOP CONDITION MET. Hand off to HUMAN reviewer: annotate outcomes → calibration → (once enough reviewed) unlock production thresholds via gold audit.
+
+## M9 Private workflow — Iteration M9.1 (2026-07-08 15:59 EDT) — step 1 COMPLETE (private dir gitignored)
+- New M9 loop prompt (privacy-as-invariant, CPU-only). .gitignore blocks reports/shadow/private/*.jsonl; README stub committed. Verified check-ignore.
+- Next step 2: document local private-log generation (public-fixture example only) — folded into step 6 doc.

@@ -806,3 +806,20 @@ everywhere; null = undecided/unknown. Verified: schema self-checks; a good
 record validates; non-bool telemetry_missing, unknown top-level field, unknown
 auto_outcome field, and confidence>1 all rejected; an all-null (undecided) auto
 record is valid. auto_outcome is a candidate, never gold.
+
+## 62. Verifier adapters (M10 step 3)
+`src/verifiers.py` — six cheap adapters, each returning
+{name, confidence 0..1, verdict (pass/fail/undecided), evidence_hash}:
+exact_answer_match, regex_or_schema_check, math_checker (safe arithmetic-only
+eval of a whitelisted expression, else compares final numbers), code_test_stub
+(runs a TRUSTED in-process FIXTURE callable only — no arbitrary/untrusted command
+execution; low-confidence no-op without a fixture), retrieval_required_heuristic
+(flags freshness/current-info tasks → auto_needed_retrieval), and self_consistency
+(compares small-N samples; DISAGREEMENT → verdict "undecided" = ESCALATION signal,
+never "fail"/proof-of-wrong; confidence = agreement fraction). Evidence is a stable
+non-reversible hash of inputs (evidence_hash), NEVER raw text — verified no leak on
+a token-bearing input. All adapters verified on fixtures: exact hit/miss/undecided,
+regex ok/bad, math expr pass/fail + ref pass + no-number undecided, code
+no-fixture/ok/no, retrieval cat+kw/none, self-consistency agree(pass 1.0)/disagree
+(undecided 0.667). Verdicts feed the auto_outcome CANDIDATE only — never gold, never
+the human fields.

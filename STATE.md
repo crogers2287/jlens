@@ -320,3 +320,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.2 (2026-07-08 17:49 EDT) — step 2 COMPLETE (auto_outcome schema)
 - schema/auto_outcome_v1.json: NEW draft-07, separate from frozen shadow_outcome_v1 (confirmed). auto_outcome candidate fields + telemetry_missing bool; human outcome/review_meta present but supervisor never writes them. 6 validation behaviors verified (good validates; bad bool/unknown-field/conf>1 rejected; undecided all-null valid).
 - Next step 3: src/verifiers.py (6 cheap verifier adapters, evidence hashed, self-consistency disagreement=escalation).
+
+## M10 Autonomous supervisor — Iteration M10.3 (2026-07-08 17:53 EDT) — step 3 COMPLETE (verifier adapters)
+- src/verifiers.py: 6 adapters (exact/regex/math/code-fixture-stub/retrieval-heuristic/self-consistency). Evidence hashed (no raw text, verified). code_test_stub runs fixture callable only (no arbitrary exec). self-consistency disagreement=undecided(escalation) not fail. All verified on fixtures.
+- Next step 4: src/autonomous_shadow_supervisor.py (fake-endpoint end-to-end run → auto_outcome records + escalation; telemetry_missing honest; human fields untouched).

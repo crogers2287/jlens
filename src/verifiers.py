@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""Cheap verifier adapters for the M10 autonomous shadow supervisor.
+
+Each adapter inspects a task + model output and returns a VerdictResult:
+  {name, confidence (0..1), evidence_hash, verdict}
+where verdict is one of "pass" / "fail" / "undecided" (or a signal-specific
+string for heuristics). Verdicts feed the auto_outcome CANDIDATE — they are
+NEVER gold labels, and never touch the human outcome fields.
+
+Privacy: evidence is stored as a STABLE NON-REVERSIBLE HASH of the inputs, never
+raw prompt/output text. No network, no arbitrary command execution.
+"""
+from __future__ import annotations
+
+import re
+from typing import Optional
+
+VERDICT_PASS = "pass"
+VERDICT_FAIL = "fail"
+VERDICT_UNDECIDED = "undecided"
+
+
+def evidence_hash(*parts) -> str:
+    """Stable non-reversible tag over the given parts — no original text leaks."""
+    h = 0
+    for p in parts:
+        for ch in str(p):
+            h = (h * 131 + ord(ch)) & 0xFFFFFFFFFFFFFFFF
+    return f"[h:{h:016x}]"
+
+
+def _result(name, confidence, verdict, *evidence_parts):
+    return {"name": name, "confidence": round(float(confidence), 4),
+            "verdict": verdict, "evidence_hash": evidence_hash(name, *evidence_parts)}
+
+
+_NUM_RE = re.compile(r"-?\d[\d,]*\.?\d*")
+
+
+def _final_number(text: str) -> Optional[str]:
+    nums = _NUM_RE.findall(text or "")
+    return nums[-1].replace(",", "") if nums else None
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"\s+", " ", (s or "").strip().lower()).rstrip(".")
+
+
+# --- adapters ---------------------------------------------------------------
+def exact_answer_match(output: str, known_answer: Optional[str] = None, **_):
+    """Compare the model's final answer to a known reference answer."""
+    if known_answer is None:
+        return _result("exact_answer_match", 0.0, VERDICT_UNDECIDED, "no-ref")
+    hit = _norm(known_answer) in _norm(output) or _norm(output) == _norm(known_answer)
+    return _result("exact_answer_match", 0.9 if hit else 0.85,
+                   VERDICT_PASS if hit else VERDICT_FAIL, known_answer, output)
+
+
+def regex_or_schema_check(output: str, pattern: Optional[str] = None, **_):
+    """Check the output matches a required regex/format (e.g. JSON-ish, id form)."""
+    if not pattern:
+        return _result("regex_or_schema_check", 0.0, VERDICT_UNDECIDED, "no-pattern")
+    try:
+        ok = re.search(pattern, output or "") is not None
+    except re.error:
+        return _result("regex_or_schema_check", 0.0, VERDICT_UNDECIDED, "bad-pattern")
+    return _result("regex_or_schema_check", 0.8 if ok else 0.75,
+                   VERDICT_PASS if ok else VERDICT_FAIL, pattern)
+
+
+def math_checker(output: str, known_answer: Optional[str] = None,
+                 expression: Optional[str] = None, **_):
+    """Deterministically verify a numeric answer when possible.
+
+    Prefers evaluating a safe arithmetic `expression`; else compares the output's
+    final number to `known_answer`. Never eval()s arbitrary text.
+    """
+    truth = None
+    if expression is not None:
+        if re.fullmatch(r"[\d\s+\-*/().]+", expression or ""):
+            try:
+                truth = str(eval(expression, {"__builtins__": {}}, {}))  # arithmetic only
+            except (SyntaxError, ZeroDivisionError, TypeError, ValueError):
+                truth = None
+    if truth is None and known_answer is not None:
+        truth = _final_number(known_answer)
+    if truth is None:
+        return _result("math_checker", 0.0, VERDICT_UNDECIDED, "no-truth")
+    got = _final_number(output)
+    if got is None:
+        return _result("math_checker", 0.3, VERDICT_UNDECIDED, "no-number-in-output")
+    try:
+        hit = abs(float(got) - float(truth)) < 1e-6
+    except ValueError:
+        hit = _norm(got) == _norm(truth)
+    return _result("math_checker", 0.95 if hit else 0.9,
+                   VERDICT_PASS if hit else VERDICT_FAIL, truth, got)
+
+
+def code_test_stub(output: str, fixture_test=None, **_):
+    """Run FIXTURE tests only — never arbitrary/untrusted commands.
+
+    `fixture_test` is an OPTIONAL in-process callable(output)->bool provided by a
+    trusted fixture. With no fixture this is a low-confidence no-op (by design:
+    real code execution is out of scope for the autonomous loop).
+    """
+    if fixture_test is None:
+        return _result("code_test_stub", 0.1, VERDICT_UNDECIDED, "no-fixture")
+    try:
+        ok = bool(fixture_test(output))
+    except Exception:  # a fixture that errors is a fail signal, not a crash
+        return _result("code_test_stub", 0.6, VERDICT_FAIL, "fixture-raised")
+    return _result("code_test_stub", 0.85 if ok else 0.8,
+                   VERDICT_PASS if ok else VERDICT_FAIL, "fixture")
+
+
+_FRESH_RE = re.compile(
+    r"\b(today|current|currently|latest|now|this year|as of|2024|2025|2026|"
+    r"price|stock|weather|news|who is the (president|ceo)|when did .* (release|launch))\b",
+    re.I)
+
+
+def retrieval_required_heuristic(output: str, prompt: str = "",
+                                 task_category: Optional[str] = None, **_):
+    """Flag tasks that likely need fresh/grounded info (auto_needed_retrieval)."""
+    needs = (task_category in {"current_info", "retrieval", "news"} or
+             bool(_FRESH_RE.search(prompt or "")))
+    # confidence reflects how sure the heuristic is, not correctness of the answer
+    return _result("retrieval_required_heuristic", 0.7 if needs else 0.5,
+                   VERDICT_FAIL if needs else VERDICT_PASS,
+                   task_category or "none")
+
+
+def self_consistency(samples, **_):
+    """Compare small-N samples. DISAGREEMENT is an ESCALATION signal, NOT proof
+    the answer is wrong. Returns agreement fraction as confidence."""
+    finals = [_final_number(s) or _norm(s) for s in (samples or [])]
+    n = len(finals)
+    if n < 2:
+        return _result("self_consistency", 0.0, VERDICT_UNDECIDED, "n<2")
+    top = max(set(finals), key=finals.count)
+    agreement = finals.count(top) / n
+    # high agreement = consistent (pass-ish); low = escalate (undecided, not fail)
+    verdict = VERDICT_PASS if agreement == 1.0 else VERDICT_UNDECIDED
+    return _result("self_consistency", round(agreement, 4), verdict, f"n={n}")
+
+
+# Registry keyed by config toggle name.
+ADAPTERS = {
+    "exact_answer_match": exact_answer_match,
+    "regex_or_schema_check": regex_or_schema_check,
+    "math_checker": math_checker,
+    "code_test_stub": code_test_stub,
+    "retrieval_required_heuristic": retrieval_required_heuristic,
+    "self_consistency": self_consistency,
+}

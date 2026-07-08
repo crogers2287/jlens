@@ -284,3 +284,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M8 Outcome review — Iteration M8.5 (2026-07-08 14:55 EDT) — step 6 COMPLETE (review guide)
 - docs/SHADOW_OUTCOME_REVIEW.md: reviewer flow, field meanings, null-if-unsure, calibration explanation, honesty+gating. Next step 7 (FINAL): tests/test_outcome_review.py.
+
+## M8 Outcome review — Iteration M8.6 (2026-07-08 14:58 EDT) — step 7 COMPLETE → M8 DONE
+- tests/test_outcome_review.py 5/5 pass; all 4 suites pass (17 tests). All M8 artifacts present; committed queue all-null; final refuses. M8 STOP CONDITION MET. Hand off to HUMAN reviewer: annotate outcomes → calibration → (once enough reviewed) unlock production thresholds via gold audit.

@@ -674,3 +674,21 @@ production thresholds stay gold-gated.
   unsure — never guess" rule, what false-low-risk / false-high-risk measure, and
   the honesty + gating rules (never fabricate; production stays gold-gated;
   public prompts only).
+
+## 53. Outcome-review tests (M8 step 7) — MILESTONE COMPLETE
+- `tests/test_outcome_review.py` (5 tests, all PASS): schema accepts null +
+  reviewed, rejects bad-type/unknown/range; build_review_queue emits all-null
+  valid records; review CLI sets a field on a throwaway fixture and re-validates;
+  calibration computes FLR 0.5 / FHR 0.0 from reviewed-only synthetic fixtures;
+  calibration returns None (pending) when nothing reviewed. All 4 jlens suites
+  pass (17 tests). Committed queue verified still all-null; train --mode final
+  still refuses (gold-gated). M8 COMPLETE.
+
+### M8 summary
+jlens now has the human-review + calibration loop: schema/shadow_outcome_v1
+(null=unreviewed), an all-null review queue builder, a safe explicit-flag review
+CLI (never guesses), a coverage report, calibration (false-low/high-risk from
+reviewed-only, honest "pending" at 0 reviewed), a reviewer guide, and tests.
+Nothing fabricated: outcomes are set only by a human; production thresholds stay
+gold/audit gated. This closes the feedback loop — the project now ends where
+human judgment begins.

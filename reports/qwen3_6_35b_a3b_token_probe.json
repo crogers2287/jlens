@@ -1,0 +1,7 @@
+{
+ "top_k": 8,
+ "n_tokens": 264,
+ "layer": null,
+ "grouped_cv_accuracy": 0.578125,
+ "chance": 0.20833333333333334
+}

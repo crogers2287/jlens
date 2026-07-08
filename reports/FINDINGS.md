@@ -442,3 +442,13 @@ calibrate the heads.
   BFCL→format_or_tool_mode_shift; prompt-injection benchmark→context_attack;
   SWE-bench→needs_user_file_context; GAIA/BrowseComp→needs_current_info;
   HumanEval/MBPP→needs_code_execution; stable closed-book QA→citation/math negatives.
+
+## 32. Audit-sampling script (M4 step 7)
+- `src/audit_sample.py` → `data/labels/audit_queue.jsonl`: deterministic
+  evenly-spaced stride sample of N=10 records per source (30 total: 10 each
+  TruthfulQA/FEVER/GSM8K) for human spot-check.
+- The script ONLY QUEUES — every queued record keeps label_source=benchmark_gold
+  and audit_status="pending"; a human confirms/rejects and the operator
+  manually promotes confirmed records to label_source="gold" (benchmark_gold →
+  project-gold). Verified: queue non-empty, nothing auto-promoted, identical on
+  re-run (deterministic, no RNG).

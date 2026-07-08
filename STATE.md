@@ -202,3 +202,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 37 (2026-07-08 11:57 EDT) — step 6 COMPLETE (coverage + gate)
 - src/coverage_report.py → reports/coverage/benchmark_coverage.json. 2 labels PASS (answerable_from_memory, unsupported_or_hallucinated); 8 fail (2 single-class needing negatives, 6 no-data needing second-wave sources). Gate = both-class + minority≥10.
 - Next step 7: src/audit_sample.py → data/labels/audit_queue.jsonl (benchmark_gold→project-gold spot-check).
+
+## M4 Benchmark-Gold — Iteration 38 (2026-07-08 12:01 EDT) — step 7 COMPLETE (audit sampling)
+- src/audit_sample.py → data/labels/audit_queue.jsonl: 30 records (10/source, deterministic stride). Stays benchmark_gold, audit_status=pending; human promotes to gold manually. No auto-promotion.
+- Next step 8 (FINAL): wire train_risk_heads.py to accept benchmark v2 labels + honor coverage gate (prototype only when gate passes; final still gold-gated).

@@ -262,3 +262,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M7 Local shadow wrapper — Iteration M7.4 (2026-07-08 14:26 EDT) — step 4 COMPLETE (tests)
 - tests/test_local_shadow_wrapper.py 4/4 pass (dry-run/scored/null/stubbed-live). No real network. Other suites pass. Next step 5 (FINAL): reports/shadow/realuse_sample.jsonl (public prompts).
+
+## M7 Local shadow wrapper — Iteration M7.5 (2026-07-08 14:29 EDT) — step 5 COMPLETE → M7 DONE
+- reports/shadow/realuse_sample.jsonl (6 public records, 3 answer_locally/1 verify/2 require_confirmation, outcome null). Doc sample section. All M7 artifacts present; final refuses. M7 STOP CONDITION MET. Hand off: annotate outcome fields in real use; scale/gold-audit for production thresholds.

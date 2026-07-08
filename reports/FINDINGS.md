@@ -610,3 +610,19 @@ CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gat
   action); policy=null + no-telemetry note when no feature row; live mode goes
   through a STUBBED requests.post (asserts exactly one call, no real network).
   PolicyEngine + decode-capture suites still pass (no regression).
+
+## 47. M7 public sample log (M7 step 5) — MILESTONE COMPLETE
+- `reports/shadow/realuse_sample.jsonl`: 6 real-use records from dry-run over
+  PUBLIC benchmark prompts (TruthfulQA/GSM8K only). Advice spread 3 answer_locally
+  / 1 verify / 2 require_confirmation; all outcome fields null (awaiting human
+  review). Doc gained a sample-log run section.
+- All M7 artifacts present; train --mode final still REFUSES (gold-gated). M7
+  COMPLETE.
+
+### M7 summary
+jlens now produces REAL-USE shadow logs: the local wrapper obtains a model output
+(dry-run fixture or optional live endpoint), attaches telemetry when a feature row
+exists (else policy=null — GGUF has no router logits), scores via PolicyEngine v0,
+and logs an advisory record with human-review outcome fields. Advisory/shadow only
+— never executes; require_confirmation is a recommendation. Public prompts only;
+production thresholds stay gold-gated.

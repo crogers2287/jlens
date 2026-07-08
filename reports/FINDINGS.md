@@ -253,3 +253,25 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
   routing feature alongside the (stronger) entropy_final_logits + sel_prob.
   Caveat: 512 tokens / 16 prompts — ±0.16 is suggestive, needs the M3 labeled set
   to confirm.
+
+## 19. Decode domain-shift probe (M2 step 7) — soft per-token, but a real code↔prose signal
+- `src/decode_domain_shift.py`: trains the r3 sidecar domain head (logreg on r3
+  prefill signatures) and applies it per decode token + to each r4 prefill sig.
+  Report: `reports/qwen3_6_35b_a3b_r4_domain_shift.json`.
+- **r3 head transfers to r4 prefill perfectly: 16/16** predicted domains match the
+  true label — the domain sidecar generalizes to an unseen run.
+- Per-token decode routing keeps REAL domain signal but soft: **72% of decode
+  tokens predict the correct domain** (mean label-vs-decode disagree 0.281) vs
+  12.5% chance — well above noise — yet at low per-token confidence (mean
+  max-proba 0.249, margin 0.099). Single-token routing is sparse (8 experts/layer
+  vs prefill's ~160), so predictions are correct-on-average but not sharp.
+- **The "switches" are partly meaningful, not just noise.** Secondary votes are
+  systematic: `lang` (prose/natural-language) dominates the non-true votes and
+  concentrates on `<think>`/explanation spans. Clean-code output stays on-domain
+  (code_py_01: 30/32 code_py); `<think>`-heavy prompts split (code_py_02/03: ~15
+  code_py / ~12 lang). Decode routing captures a genuine **code↔prose mode
+  shift** — when the model reasons/explains, its routing resembles the prose
+  domain.
+- Consequence: a WINDOWED/smoothed decode-domain estimate (not per-token) is a
+  viable mode-shift feature for the risk head; per-token is too sparse for a hard
+  label. Caveat: 16 prompts.

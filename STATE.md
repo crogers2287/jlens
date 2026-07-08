@@ -149,3 +149,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 24 (2026-07-08 10:44 EDT) — step 6 COMPLETE (weighted drift / schema v3)
 - schema/v3_decode.json (v2 superset) + exporter --weighted; r4 weighted export 512 recs valid vs v3. Weighted drift STILL ~0 (×entropy -0.062, ×sel_prob +0.030) → drift dead both ways. BUT topk_mass×entropy +0.165, ×sel_prob -0.157 → first routing→confidence link. Risk head: drop drift, keep topk_mass + entropy/sel_prob.
 - Next step 7: decode domain-shift probe (reuse r3 sidecar head on decode-step signatures).
+
+## M2 DecodeGuard — Iteration 25 (2026-07-08 10:50 EDT) — step 7 COMPLETE (domain-shift probe)
+- src/decode_domain_shift.py: r3 head → r4 prefill 16/16; per-token decode 72% on-domain (vs 12.5% chance) but low conf 0.25; secondary votes systematically `lang` on <think>/prose spans → real code↔prose mode shift. Windowed decode-domain = viable mode-shift feature. Report: r4_domain_shift.json.
+- Next step 8 (FINAL): M3_RISK_LABELING.md (10-label taxonomy, dataset design, feature list, calibrated baselines, metrics). Then loop STOP → hand off to operator for labels.

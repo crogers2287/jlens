@@ -215,3 +215,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M5 loop prompt installed (~16-prompt smoke, operator-approved). src/build_benchmark_prompts.py → data/prompts/benchmark_m5_sample.jsonl: 16 prompts (4×TQA-correct/GSM8K/FEVER-SUPPORTS/FEVER-REFUTES), both covered labels both-class, text reconstructed. Proxy-label caveat recorded.
 - Next step 2: GPU-gated router-only decode capture (~1.5h, pre-authorized). Unload llama-swap, background run, Monitor + heartbeat.
 - NOTE: STATE iteration count now 40 — this counter spans M1-M5; the "stop at 40" guard refers to per-milestone runaway, not this cumulative log. M5 continues.
+
+## M5 Telemetry+Prototype — Iteration 41 (2026-07-08 12:19 EDT) — step 2 IN FLIGHT (GPU capture)
+- llama-swap unloaded (:9069/unload, GPUs free 50/18). Launched M5 router-only decode capture: worker PID 869647, --router-only --max-new-tokens 24, 16 prompts → data/captures/benchmark_m5/. Log logs/capture_m5.log. Monitor b361upjos armed (1h timeout < ~1.3h runtime → heartbeat-poll too).
+- On exit: export v3 decode (step 3), features (step 4), join (step 5), real prototype train/eval (step 6).

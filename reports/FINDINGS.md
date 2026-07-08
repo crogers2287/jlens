@@ -370,3 +370,14 @@ calibrate the heads.
   (CC-BY-NC) → store derived labels + ids + minimal text, flag non_commercial,
   never redistribute forbidden raw text. FEVER (CC-BY-SA) is the redistribution-
   friendlier alternate to SciFact. No downloads this step (registry only).
+
+## 27. Risk labels schema v2 — provenance superset (M4 step 2)
+- `schema/risk_labels_v2.json` (draft-07): v1's 10-label body (true/false/null,
+  null=UNKNOWN) unchanged, plus provenance fields — source_dataset, source_split,
+  source_record_id, source_label, source_license, label_source
+  (enum bronze|silver|benchmark_gold|gold), label_confidence, non_commercial.
+- Provenance fields are optional (hand-labeled v2 rows without a source still
+  validate); converters MUST fill them for benchmark rows.
+- Verified: check_schema passes; a benchmark_gold record validates; unknown label
+  keys STILL rejected; an invalid label_source enum ("platinum") rejected. v1
+  frozen/untouched.

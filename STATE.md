@@ -182,3 +182,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 32 (2026-07-08 11:33 EDT) — step 1 COMPLETE (source registry)
 - New M4 loop prompt installed (benchmark-gold ingestion). data/registry/benchmark_sources.json: first wave TruthfulQA(Apache)/SciFact(CC-BY-NC)/GSM8K(MIT) + alternates + second wave; all 10 labels covered, licenses recorded, first-wave ≤5MB. SciFact NC flagged (FEVER alt).
 - Next step 2: schema/risk_labels_v2.json (v1 superset + provenance fields).
+
+## M4 Benchmark-Gold — Iteration 33 (2026-07-08 11:40 EDT) — step 2 COMPLETE (schema v2)
+- schema/risk_labels_v2.json: v1 superset + provenance (source_*, label_source enum, label_confidence, non_commercial). Validates; rejects unknown labels + bad label_source. v1 frozen.
+- Next step 3: converter #1 (TruthfulQA → answerable_from_memory / unsupported_or_hallucinated) via huggingface_hub raw pull.

@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/risk_labels_v2.json",
+  "title": "jlens M4 risk labels v2 (benchmark provenance superset)",
+  "description": "v1 superset: same 10-label multi-label body (true/false/null; null = UNKNOWN, not false) plus dataset PROVENANCE fields for benchmark/silver/gold ingestion. v1 stays frozen; v2 records set schema_version=2. Unknown label keys are still rejected.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "prompt_id",
+    "labeler",
+    "labels"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "prompt_id": {
+      "type": "string"
+    },
+    "labeler": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "human labeler id/name; null = unlabeled scaffold row (not yet labeled)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "optional free-text labeler note"
+    },
+    "labels": {
+      "type": "object",
+      "required": [
+        "answerable_from_memory",
+        "needs_current_info",
+        "needs_exact_citation",
+        "needs_math_verification",
+        "needs_code_execution",
+        "needs_user_file_context",
+        "high_stakes_or_sensitive",
+        "context_attack_present",
+        "unsupported_or_hallucinated",
+        "format_or_tool_mode_shift"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {},
+      "properties": {
+        "answerable_from_memory": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "needs_current_info": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "needs_exact_citation": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "needs_math_verification": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "needs_code_execution": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "needs_user_file_context": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "high_stakes_or_sensitive": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "context_attack_present": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "unsupported_or_hallucinated": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "format_or_tool_mode_shift": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "source_dataset": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_split": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_record_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_license": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "label_source": {
+      "enum": [
+        "bronze",
+        "silver",
+        "benchmark_gold",
+        "gold",
+        null
+      ]
+    },
+    "label_confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "non_commercial": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

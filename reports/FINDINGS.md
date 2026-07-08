@@ -312,3 +312,16 @@ awaits labeled data to become a calibrated governor.
   prompt. labeler=null, all 10 labels=null — the generator NEVER invents a value.
 - Verified: 32 records, all validate against schema/risk_labels_v1.json, all
   confirmed all-null; file is tracked (not gitignored). Awaiting human labeling.
+
+## 23. Risk feature extractor (M3 step 3) — drift barred by assertion
+- `src/risk_features.py` → `reports/features/r4_risk_features.jsonl`: 16 rows (one
+  per r4 prompt). Feature groups = the M2 KEEP set: prefill domain pred + margin
+  (r3 head), entropy_final (mean/max/std), selected_token_prob (mean/min/std),
+  topk_mass (mean/min/std, from v3 export), windowed decode-domain-shift
+  (off-prefill-domain frac + switch count), low-confidence & high-entropy spike
+  counts.
+- **Drift explicitly excluded and enforced**: a runtime assertion fails the
+  extractor if any of the 4 drift keys appears in a row; verified 0 drift keys in
+  all 16 rows. Independent re-check confirms all feature groups present.
+- These rows join the (currently all-null) labels by prompt_id once a human
+  labels; the trainer stays blocked until then.

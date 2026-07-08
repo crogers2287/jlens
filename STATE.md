@@ -166,3 +166,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M3 Risk Heads — Iteration 28 (2026-07-08 11:06 EDT) — step 2 COMPLETE (label scaffold)
 - src/build_label_scaffold.py → data/labels/risk_labels_seed.jsonl (32 all-null records, all validate, tracked). No fabricated labels.
 - Next step 3: src/risk_features.py → reports/features/r4_risk_features.jsonl (M2 KEEP features, drift EXCLUDED).
+
+## M3 Risk Heads — Iteration 29 (2026-07-08 11:10 EDT) — step 3 COMPLETE (risk features)
+- src/risk_features.py → reports/features/r4_risk_features.jsonl (16 rows, M2 KEEP features, drift barred by assertion + verified). r3 head reused for prefill domain pred + windowed decode-domain shift.
+- Next step 4: src/train_risk_heads.py + src/eval_risk_heads.py — calibrated baselines that REFUSE on all-null labels (prove the guard fires).

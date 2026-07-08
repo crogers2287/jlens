@@ -626,3 +626,14 @@ exists (else policy=null — GGUF has no router logits), scores via PolicyEngine
 and logs an advisory record with human-review outcome fields. Advisory/shadow only
 — never executes; require_confirmation is a recommendation. Public prompts only;
 production thresholds stay gold-gated.
+
+## 48. Reviewed-outcome schema v1 (M8 step 1)
+- `schema/shadow_outcome_v1.json` (draft-07): shadow record + outcome{user_agreed,
+  was_wrong, needed_retrieval, needed_checker (bool|null), notes (str|null)} +
+  review_meta{reviewer, reviewed_at (placeholder, no wall-clock), review_source
+  (str|null), review_confidence (0..1|null)}. null = UNREVIEWED (not false);
+  additionalProperties:false everywhere.
+- Verified: valid draft-07; all-null (unreviewed) record validates;
+  fully-reviewed record validates; bad-type (user_agreed:"yes"), unknown field,
+  and review_confidence>1 all REJECTED. Humans set outcomes; schema enforces the
+  shape, never fabricates.

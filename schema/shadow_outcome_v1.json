@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/shadow_outcome_v1.json",
+  "title": "jlens shadow-record outcome review v1",
+  "description": "A shadow record plus HUMAN-reviewed outcome + review metadata. null = UNREVIEWED (not false). Outcome/review fields are set ONLY by a human — never fabricated. Unknown fields are rejected.",
+  "type": "object",
+  "required": ["prompt_id", "policy", "outcome", "review_meta"],
+  "additionalProperties": false,
+  "properties": {
+    "prompt_id": {"type": "string"},
+    "model": {"type": ["string", "null"]},
+    "feature_source": {"type": ["string", "null"]},
+    "prompt_preview": {"type": ["string", "null"]},
+    "output_preview": {"type": ["string", "null"]},
+    "policy": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "level": {"type": ["string", "null"]},
+        "recommended_action": {"type": ["string", "null"]},
+        "scores": {"type": ["object", "null"]},
+        "explanation": {"type": ["string", "null"]}
+      }
+    },
+    "policy_note": {"type": ["string", "null"]},
+    "mode": {"type": ["string", "null"]},
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["user_agreed", "was_wrong", "needed_retrieval",
+                   "needed_checker", "notes"],
+      "properties": {
+        "user_agreed": {"type": ["boolean", "null"]},
+        "was_wrong": {"type": ["boolean", "null"]},
+        "needed_retrieval": {"type": ["boolean", "null"]},
+        "needed_checker": {"type": ["boolean", "null"]},
+        "notes": {"type": ["string", "null"]}
+      }
+    },
+    "review_meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "reviewed_at", "review_source", "review_confidence"],
+      "properties": {
+        "reviewer": {"type": ["string", "null"]},
+        "reviewed_at": {"type": ["string", "null"],
+                        "description": "placeholder string; no wall-clock in this env"},
+        "review_source": {"type": ["string", "null"]},
+        "review_confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+      }
+    }
+  }
+}

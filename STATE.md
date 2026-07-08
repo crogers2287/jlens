@@ -265,3 +265,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M7 Local shadow wrapper — Iteration M7.5 (2026-07-08 14:29 EDT) — step 5 COMPLETE → M7 DONE
 - reports/shadow/realuse_sample.jsonl (6 public records, 3 answer_locally/1 verify/2 require_confirmation, outcome null). Doc sample section. All M7 artifacts present; final refuses. M7 STOP CONDITION MET. Hand off: annotate outcome fields in real use; scale/gold-audit for production thresholds.
+
+## M8 Outcome review — Iteration M8.1 (2026-07-08 14:37 EDT) — step 1 COMPLETE (outcome schema)
+- New M8 loop prompt (CPU-only, never-fabricate-outcomes). schema/shadow_outcome_v1.json: outcome + review_meta, null=unreviewed, rejects bad type/unknown/range. Validated.
+- Next step 2: src/build_review_queue.py → reports/shadow/review_queue_sample.jsonl (all-null, validated).

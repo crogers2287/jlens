@@ -866,3 +866,31 @@ fields null; telemetry_missing honest; no real tool exec beyond fixtures; hashed
 evidence; private dir gitignored) and gating (production/final thresholds
 gold/audit gated until enough human-reviewed records; auto_outcome promoted only
 by later audit). Public fixtures in every example.
+
+## 66. Autonomous-supervisor tests (M10 step 8) — MILESTONE COMPLETE
+`tests/test_autonomous_supervisor.py` (5 tests, CPU-only, no network, FAKE
+in-process endpoints) locks the M10 invariants: (a) a fake-endpoint run yields
+auto_outcome_v1-valid records with telemetry_missing=true + policy=null; (b) each
+verifier's verdict/confidence on a fixture, self-consistency disagreement =
+undecided (escalation) never fail, code stub runs a trusted fixture only, and
+evidence is a hash with no raw-text leak; (c) auto_outcome_v1 validates good
+records and rejects unknown top-level/auto fields, confidence>1, and non-bool
+telemetry_missing; (d) the aggregate summary has NO prompt/output/notes keys and
+computes correct counts + escalation (2 of 3 with a deterministic wrong-answer
+fake) with auto_vs_human_agreement null until review; (e) auto judgments NEVER
+populate the human outcome/review_meta fields, and agreement is computed ONLY
+over a SYNTHETIC human-reviewed row. Full suite green: 27 tests (autonomous 5,
+decode-stub 4, shadow-wrapper 4, outcome-review 5, policy-engine 4,
+private-workflow 5).
+
+### M10 summary — Autonomous shadow supervisor
+The manual bottleneck is gone: jlens can now run a task queue autonomously
+against a local (Agents-A1 GGUF) endpoint, apply six cheap verifiers, and record
+an auto_outcome CANDIDATE per task — with hashed evidence, honest telemetry_missing
+when GGUF exposes no router logits, and low-confidence/contradictory/high-impact
+cases escalated for later human review. auto_outcome is never gold and never
+touches the human outcome fields; only aggregate-only summaries leave the machine,
+gated by check_commit_safe. Production/final thresholds remain gold/audit gated.
+HAND OFF TO HUMAN: run a local workload → auto_outcome candidates + escalations
+accumulate → review the escalated subset → calibration eventually unlocks
+production thresholds via a gold audit.

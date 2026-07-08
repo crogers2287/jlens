@@ -336,3 +336,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.6 (2026-07-08 18:04 EDT) — step 7 COMPLETE (workflow doc)
 - docs/AUTONOMOUS_SHADOW_SUPERVISOR.md: end-to-end (config→run→verifiers→auto/human separation→escalation→aggregate→commit-safe), public-fixture examples, commands verified vs real flags, guardrails + gating.
 - Next step 8 (FINAL): tests/test_autonomous_supervisor.py, then M10 DONE.
+
+## M10 Autonomous supervisor — Iteration M10.7 (2026-07-08 18:06 EDT) — step 8 COMPLETE → M10 DONE
+- tests/test_autonomous_supervisor.py 5/5 pass; full suite green (27 tests). All M10 deliverables present: config, auto_outcome_v1 schema, verifiers, supervisor, aggregate report + committed sample, doc, tests. auto_outcome separate from human fields (verified untouched); telemetry_missing honest; escalation exercised; no private text committed; production thresholds gated. M10 STOP CONDITION MET.
+- HAND OFF TO HUMAN: run local workload → auto_outcome candidates + escalations accumulate → review escalated subset → calibration unlocks production thresholds via gold audit.

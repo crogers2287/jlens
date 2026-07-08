@@ -1,8 +1,8 @@
-# steer.md — post-M8 real-use calibration steering
+# steer.md — post-M9 autonomous calibration steering
 
 Read this first before continuing `jlens`.
 
-M1 through M8 are complete. Do not redo benchmark ingestion, the M5 smoke test, PolicyEngine v0, the local shadow wrapper, or the outcome-review tooling.
+M1 through M9 are complete. Do not redo benchmark ingestion, the M5 smoke test, PolicyEngine v0, the local shadow wrapper, outcome-review tooling, or the private-log workflow.
 
 ## Completed milestones
 
@@ -15,23 +15,45 @@ M5: end-to-end benchmark telemetry smoke prototype
 M6: PolicyEngine v0 advisory/shadow runtime
 M7: local shadow wrapper + real-use log schema
 M8: outcome review + calibration loop
+M9: private real-use logging + safe aggregate/redaction workflow
+```
+
+## Current model/runtime context
+
+The current autonomous local model target is:
+
+```text
+InternScience/Agents-A1-Q8_0-GGUF
+served through llama.cpp or another OpenAI-compatible local endpoint
+Qwen-family / Qwen3-style agentic model assumptions
+```
+
+Important limitation:
+
+```text
+GGUF endpoint usage may not expose raw router logits or full internal telemetry.
+When internal feature rows are unavailable, policy can still log agent actions,
+outputs, checks, verifier results, and outcome signals. Mark policy=null or
+telemetry_missing rather than fabricating features.
 ```
 
 ## Current capability
 
-`jlens` now has the full shadow feedback loop:
+`jlens` now has the full private shadow feedback loop:
 
 ```text
 local shadow wrapper
 PolicyEngine v0 advisory scorer
-shadow logs
+private log workflow
+redaction/export tool
+aggregate-only private summary
+commit-safe guard
 review queue builder
 safe outcome review CLI
 outcome schema
-outcome coverage report
-calibration notes from reviewed-only data
+reviewed-only calibration reports
 human reviewer guide
-tests for policy/runtime/review tooling
+tests for policy/runtime/review/private workflow
 ```
 
 Current behavior:
@@ -39,8 +61,9 @@ Current behavior:
 ```text
 - scores telemetry feature rows when available
 - logs advisory recommendations
-- queues shadow records for review
-- lets a reviewer mark outcome fields explicitly
+- keeps private logs local and gitignored
+- redacts prompt/output/notes text when exporting
+- summarizes reviewed outcomes without committing private text
 - computes calibration only from reviewed records
 - stays advisory/shadow only
 - final thresholds remain gold/audit gated
@@ -49,15 +72,15 @@ Current behavior:
 Current interpretation:
 
 ```text
-The technical loop is now complete.
-The next bottleneck is real reviewed data.
-Do not fabricate outcomes.
-Do not tune thresholds from unreviewed logs.
+The safety and privacy plumbing is built.
+The remaining bottleneck is not more manual tooling; it is autonomous use.
+M10 should build an autonomous supervisor loop that runs tasks, judges outcomes,
+records evidence, and escalates only uncertain cases.
 ```
 
 ## Feature decision
 
-Keep these feature groups:
+Keep these feature groups when telemetry is available:
 
 ```text
 entropy_final_logits
@@ -79,14 +102,14 @@ drift_from_previous_token_weighted
 
 Drift remains provenance/debug only.
 
-## Next milestone: M9 private real-use logging + review workflow
+## Next milestone: M10 autonomous shadow supervisor
 
-M9 should move from public samples and fixtures into a local-only real-use workflow. The goal is to collect private shadow logs locally, review them, and produce calibration summaries without committing sensitive content.
+M10 should remove the manual bottleneck without pretending the system is production-calibrated. Build an autonomous loop that can run local tasks, collect outputs, apply cheap verifiers, create auto-outcome candidates, and escalate ambiguous/high-impact cases for later review.
 
 Suggested command:
 
 ```text
-/jlens-m9-private-shadow-review-loop
+/jlens-m10-autonomous-shadow-supervisor-loop
 ```
 
 Read first:
@@ -97,76 +120,122 @@ reports/FINDINGS.md
 docs/POLICY_ENGINE_V0.md
 docs/M7_SHADOW_RUNTIME.md
 docs/SHADOW_OUTCOME_REVIEW.md
+docs/PRIVATE_SHADOW_WORKFLOW.md
 schema/shadow_outcome_v1.json
 src/local_shadow_wrapper.py
-src/build_review_queue.py
-src/review_shadow_log.py
-src/outcome_report.py
-reports/shadow/realuse_sample.jsonl
-reports/outcomes/calibration_notes.md
+src/policy_engine.py
+src/private_outcome_summary.py
+src/redact_shadow_log.py
+src/check_commit_safe.py
 ```
 
-M9 objectives:
+M10 objectives:
 
 ```text
-1. Add a local-only private log directory convention that is gitignored.
-2. Add scripts or docs for running real prompts through the wrapper into local private logs.
-3. Add a redaction/export tool that can produce scrubbed review samples if explicitly requested.
-4. Add a local review workflow for marking outcomes on private logs.
-5. Add aggregate-only reports that can be safely committed: counts, rates, calibration summaries, no prompt text.
-6. Add checks that refuse to commit private logs or unredacted prompt/output text.
-7. Add examples using public fixture logs only.
-8. Keep production thresholds gated until enough reviewed real-use records exist.
-9. Update STATE.md and reports/FINDINGS.md.
+1. Add an autonomous supervisor config for a local OpenAI-compatible endpoint.
+2. Support the current Agents-A1 GGUF model target explicitly.
+3. Run a task queue from public fixtures and local private queues.
+4. For each task: call model, capture output, attach telemetry if available, call PolicyEngine if possible, and write a private shadow record.
+5. Add verifier adapters for cheap checks: exact-answer match, regex/schema check, math checker, code/test command stub, retrieval-required heuristic, and self-consistency sample comparison.
+6. Add an auto-outcome candidate layer separate from human outcome fields.
+7. Never overwrite human-reviewed outcome fields with auto judgments.
+8. Assign confidence to auto-outcomes and escalate low-confidence, contradictory, or high-impact cases.
+9. Produce aggregate-only autonomous run summaries with no prompt/output text.
+10. Add tests using fake endpoints and public fixtures only.
 ```
 
-Outcome fields to preserve:
+Separate human and autonomous fields:
 
 ```text
-user_agreed
-was_wrong
-needed_retrieval
-needed_checker
-notes
+outcome:
+  user_agreed
+  was_wrong
+  needed_retrieval
+  needed_checker
+  notes
+
+auto_outcome:
+  auto_judged
+  auto_was_wrong
+  auto_needed_retrieval
+  auto_needed_checker
+  verifier_names
+  verifier_confidence
+  verifier_evidence_hash
+  escalate_for_review
+  auto_notes_redacted
 ```
 
-Review metadata:
+Verifier guidance:
 
 ```text
-reviewer
-reviewed_at
-review_source
-review_confidence
+exact-answer tasks:
+  compare final answer against known answer
+
+math tasks:
+  extract answer and verify with deterministic calculation when possible
+
+code tasks:
+  run fixture tests only; do not run arbitrary untrusted commands by default
+
+retrieval/current-info tasks:
+  mark auto_needed_retrieval=true when task category or heuristic requires freshness/citation
+
+self-consistency:
+  run small N samples and flag disagreement, not as proof of wrongness but as escalation signal
 ```
 
-M9 deliverables:
+Autonomy guardrails:
 
 ```text
-local/private-log path documented and gitignored
-src/redact_shadow_log.py or equivalent
-src/private_outcome_summary.py or equivalent
-docs/PRIVATE_SHADOW_WORKFLOW.md
-reports/outcomes/private_summary_sample.json
-fixture tests for redaction and aggregate reports
+- Autonomous review may create auto_outcome candidates.
+- Human outcome fields remain null until reviewed by a human or explicit trusted process.
+- Production thresholds remain gated.
+- No private prompt/output text in committed files.
+- No real tool execution beyond approved fixture commands.
+- If telemetry is missing from GGUF serving, log telemetry_missing honestly.
+- Do not count auto_outcome as gold unless a later audit promotes it.
+```
+
+M10 deliverables:
+
+```text
+config/autonomous_supervisor_v0.json
+src/autonomous_shadow_supervisor.py
+src/verifiers.py
+schema/auto_outcome_v1.json
+src/autonomous_outcome_report.py
+docs/AUTONOMOUS_SHADOW_SUPERVISOR.md
+reports/outcomes/autonomous_summary_sample.json
+fixture tests for fake endpoint, verifier adapters, auto_outcome schema, and aggregate-only summaries
 updated STATE.md and reports/FINDINGS.md
 ```
 
-M9 stop condition:
+M10 stop condition:
 
 ```text
-private real-use logs can be generated locally
-review queue can be built locally
-reviewed outcomes can be summarized without committing private text
-redaction/export path exists for safe sharing
-aggregate-only reports are commit-safe
-production thresholds remain gated
+autonomous supervisor runs fixture tasks end-to-end
+local endpoint config supports Agents-A1 GGUF style serving
+auto_outcome candidates are recorded separately from human outcomes
+aggregate summaries contain no private text
+telemetry_missing is represented honestly when needed
+ambiguous cases are escalated for review
+production thresholds remain gold/audit gated
 ```
 
-## Parallel track after M9
+## Parallel track after M10
 
-Continue benchmark scaling only after the private real-use workflow exists.
+After the autonomous supervisor exists, run a local private workload and accumulate:
 
-Benchmark scale targets:
+```text
+auto_outcome candidates
+human-reviewed subset
+aggregate-only summaries
+calibration notes
+escalation counts
+```
+
+Benchmark scale targets remain:
 
 ```text
 64-128 prompts for quick calibration check
@@ -183,11 +252,13 @@ false-low-risk
 false-high-risk
 latency
 threshold behavior
+review escalation rate
+auto-vs-human agreement where reviewed
 ```
 
 ## Later data expansion for remaining labels
 
-After the private review workflow exists, add second-wave converters to cover the remaining labels:
+After autonomous shadow supervision exists, add second-wave converters to cover remaining labels:
 
 ```text
 HumanEval or MBPP -> needs_code_execution
@@ -208,6 +279,7 @@ DecodeGuard: entropy, selected-token confidence, router concentration, windowed 
 PolicyEngine: advisory/shadow v0 now, calibrated route decisions later
 ReviewLoop: human/audit outcome labels from shadow logs
 PrivateOps: local-only private logs + safe aggregate reporting
+AutoSupervisor: autonomous task runs + verifier-backed auto_outcome candidates
 HiddenLens: future phase only after the risk governor baseline is validated
 ```
 

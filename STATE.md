@@ -153,3 +153,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 25 (2026-07-08 10:50 EDT) — step 7 COMPLETE (domain-shift probe)
 - src/decode_domain_shift.py: r3 head → r4 prefill 16/16; per-token decode 72% on-domain (vs 12.5% chance) but low conf 0.25; secondary votes systematically `lang` on <think>/prose spans → real code↔prose mode shift. Windowed decode-domain = viable mode-shift feature. Report: r4_domain_shift.json.
 - Next step 8 (FINAL): M3_RISK_LABELING.md (10-label taxonomy, dataset design, feature list, calibrated baselines, metrics). Then loop STOP → hand off to operator for labels.
+
+## M2 DecodeGuard — Iteration 26 (2026-07-08 10:55 EDT) — step 8 COMPLETE → MILESTONE DONE
+- M3_RISK_LABELING.md written (taxonomy, dataset, features grounded in M2 evidence, calibrated baselines, metrics, false-low-risk priority).
+- ALL steer.md stop-condition artifacts present: r4_decode.jsonl (validated), decode_drift.json, drift_notes.md, router-only mode, schema v3, M3 plan. STATE+FINDINGS updated, all pushed.
+- LOOP STOP CONDITION MET. M3 execution is human-gated (risk labels) — handing off to operator.

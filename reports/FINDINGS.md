@@ -275,3 +275,23 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
 - Consequence: a WINDOWED/smoothed decode-domain estimate (not per-token) is a
   viable mode-shift feature for the risk head; per-token is too sparse for a hard
   label. Caveat: 16 prompts.
+
+## 20. M3 risk-labeling plan (M2 step 8) — DecodeGuard milestone COMPLETE
+- `M3_RISK_LABELING.md`: 10-label taxonomy (8 prompt-time + 2 generation-time),
+  ≥50 prompts/family, prompt-held-out splits, calibrated baselines
+  (logreg/SVM/tiny_mlp + hand-score-for-comparison), metrics
+  (AUROC/AUPRC/ECE/false-low-risk/false-high-risk/latency), false-low-risk
+  prioritized over false-high-risk.
+- Feature set grounded in M2 evidence: EXCLUDES drift (dead), leads with
+  entropy_final_logits + selected_token_prob, includes topk_mass and a WINDOWED
+  domain-shift feature; scale target ≥500 prompts (all M2 caveats are n=16/32).
+- Execution is HUMAN-GATED (risk labels). Loop stops here per steer.md stop
+  condition; hand off to operator.
+
+### DecodeGuard M2 — summary of the empirical story
+Router-only decode telemetry is feasible on 3090-class HW. Of the candidate
+decode-time signals: routing DRIFT is a dead end; ENTROPY + SELECTED-TOKEN
+PROB are the real uncertainty signal (spiking at mode boundaries); TOPK_MASS is
+a weak-but-real routing-concentration signal; WINDOWED DOMAIN-SHIFT captures a
+code↔prose transition. These define the M3 risk-head feature set. Everything
+awaits labeled data to become a calibrated governor.

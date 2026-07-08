@@ -152,3 +152,18 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
   vs 0.175 chance. Stratified folds keep all 8 domains present in train+test,
   so no folds are skipped and the estimate is cleaner (and higher).
 - Report: reports/qwen3_6_35b_a3b_r3_token_probe_sgkf.json.
+
+## 13. Decode schema v2 + exporter (M2 item 3)
+- `schema/v2_decode.json` (draft-07): one record per GENERATED token —
+  per-layer routing signature (topk_experts/topk_probs/full_entropy) plus
+  decode-time signal (entropy_final_logits, selected_token_prob) and two drift
+  measures. `schema/v1.json` (prefill) left frozen/untouched.
+- `src/export_decode_schema.py`: reads `decode_steps` from decode captures,
+  computes per-token per-layer expert-usage vectors, and derives:
+  - `drift_from_prefill_signature` = cosine distance of the token's routing
+    from the prompt's prefill signature
+  - `drift_from_previous_token` = cosine distance from the prior token (null@0)
+- VERIFIED CPU-only: schema passes `Draft7Validator.check_schema`; exporter
+  dry-run on a synthetic 4-token decode capture → 4 records, all validate
+  against v2, drift/entropy/prob fields correct. Real r4 export happens in
+  item 4 after the GPU decode capture.

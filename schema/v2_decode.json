@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/v2_decode.json",
+  "title": "jlens decode-step routing schema v2",
+  "description": "One record per GENERATED token during greedy decode. Router-only. Adds decode-time fields (final-logit entropy, selected-token prob, routing drift) on top of the per-layer routing signature. schema/v1.json (prefill) remains frozen and unchanged.",
+  "type": "object",
+  "required": ["schema_version", "model", "model_type", "run_id", "prompt_id",
+               "domain", "generated_token_index", "generated_token_id",
+               "generated_token_text", "selected_token_prob",
+               "entropy_final_logits", "num_experts", "top_k", "router_layers",
+               "drift_from_prefill_signature", "drift_from_previous_token"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 2},
+    "model": {"type": "string"},
+    "model_type": {"type": "string"},
+    "run_id": {"type": "string"},
+    "prompt_id": {"type": "string"},
+    "domain": {"type": "string"},
+    "generated_token_index": {"type": "integer", "minimum": 0},
+    "generated_token_id": {"type": "integer"},
+    "generated_token_text": {"type": "string"},
+    "selected_token_prob": {"type": "number", "minimum": 0, "maximum": 1},
+    "entropy_final_logits": {"type": "number", "minimum": 0},
+    "num_experts": {"type": "integer", "minimum": 1},
+    "top_k": {"type": "integer", "minimum": 1},
+    "router_layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["layer", "topk_experts", "topk_probs", "full_entropy"],
+        "additionalProperties": false,
+        "properties": {
+          "layer": {"type": "integer", "minimum": 0},
+          "topk_experts": {"type": "array", "items": {"type": "integer"}},
+          "topk_probs": {"type": "array", "items": {"type": "number"}},
+          "full_entropy": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "drift_from_prefill_signature": {
+      "type": "number", "minimum": 0, "maximum": 2,
+      "description": "cosine distance of this token's per-layer expert-usage vector from the prompt prefill signature (0=identical routing, higher=drift)"
+    },
+    "drift_from_previous_token": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 2,
+      "description": "cosine distance from the previous generated token's routing (null for index 0)"
+    }
+  }
+}

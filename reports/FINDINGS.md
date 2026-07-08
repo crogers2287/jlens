@@ -221,3 +221,15 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
 - Verdict: unweighted drift NOT usable as a risk feature; lead the risk head with
   entropy_final_logits + selected_token_prob. Step 6 (weighted drift) is the
   make-or-break test for whether drift contributes anything.
+
+## 17. Router-only decode mode + resume-skip (M2 step 5)
+- capture_router_logits.py: `--router-only`/`--no-hidden-states` (output_hidden_states=False,
+  payload hidden_states=None) and `--overwrite`. Default = resume-skip: an existing
+  .pt that loads with router_logits is skipped (`_valid_capture`), corrupt/partial
+  files are re-captured. Backward compatible (prefill-only path unchanged).
+- Rationale: DecodeGuard needs no hidden states; router-only shrinks payloads and
+  lets interrupted captures resume without redoing completed prompts (would have
+  saved the r4 cap/restart friction).
+- tests/test_decode_capture.py extended to 4 tests, all PASS: prefill-only intact,
+  decode intact, router-only omits hidden states (decode still works), resume-skip
+  valid/missing/corrupt detection. Loaders/exporters tolerate hidden_states=None.

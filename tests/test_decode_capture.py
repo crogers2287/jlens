@@ -11,7 +11,7 @@ from pathlib import Path
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from capture_router_logits import capture_one  # noqa: E402
+from capture_router_logits import _valid_capture, capture_one  # noqa: E402
 
 N_LAYERS, N_EXP, VOCAB, HID = 3, 8, 16, 4
 
@@ -76,7 +76,37 @@ def test_decode_captures_per_token():
     assert len(router) == N_LAYERS and router[0].shape == (4, N_EXP)
 
 
+def test_router_only_skips_hidden_states():
+    # default: hidden states present
+    _, _, hidden_full, _ = capture_one(
+        StubTok(), StubModel(), "hello", 128, max_new_tokens=0)
+    assert hidden_full is not None and len(hidden_full) == N_LAYERS + 1
+    # router-only: hidden states omitted (None)
+    _, router, hidden_ro, steps = capture_one(
+        StubTok(), StubModel(), "hello", 128, max_new_tokens=3, router_only=True)
+    assert hidden_ro is None
+    assert len(router) == N_LAYERS  # router logits still captured
+    assert len(steps) == 3          # decode still works router-only
+
+
+def test_valid_capture_resume_skip(tmp_path=None):
+    import tempfile
+    import torch
+    d = Path(tempfile.mkdtemp())
+    missing = d / "nope.pt"
+    assert _valid_capture(missing) is False
+    good = d / "good.pt"
+    torch.save({"router_logits": [torch.randn(4, N_EXP)],
+                "hidden_states": None}, good)
+    assert _valid_capture(good) is True
+    corrupt = d / "bad.pt"
+    corrupt.write_bytes(b"not a torch file")
+    assert _valid_capture(corrupt) is False
+
+
 if __name__ == "__main__":
     test_prefill_only_no_decode()
     test_decode_captures_per_token()
-    print("[jlens] decode-capture stub tests PASSED")
+    test_router_only_skips_hidden_states()
+    test_valid_capture_resume_skip()
+    print("[jlens] decode-capture stub tests PASSED (4 tests)")

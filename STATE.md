@@ -141,3 +141,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 DecodeGuard — Iteration 22 (2026-07-08 10:35 EDT) — step 4 COMPLETE (drift interpretation)
 - reports/qwen3_6_35b_a3b_r4_decode_drift_notes.md: verdict unweighted-drift WEAK, entropy/sel_prob is the decode signal (mode-boundary tokens ```/<think>/\n\n spike entropy at t0-1; top-drift tokens are confident templates; 0/8 spike overlap).
 - Next step 5: router-only decode mode (--router-only/--no-hidden-states/--overwrite) + resume-skip + tests.
+
+## M2 DecodeGuard — Iteration 23 (2026-07-08 10:39 EDT) — step 5 COMPLETE (router-only mode)
+- capture_router_logits.py: --router-only/--no-hidden-states + --overwrite + resume-skip (_valid_capture). tests → 4 pass. hidden_states=None tolerated downstream.
+- Next step 6: weighted drift features (schema/v3_decode.json, top-k-prob-weighted signatures) — the make-or-break test for whether drift contributes any signal.

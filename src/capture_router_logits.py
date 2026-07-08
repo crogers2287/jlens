@@ -52,6 +52,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--max-gpu-mem-gib", type=float, default=23.0,
                    help="per-GPU max_memory cap passed to accelerate "
                         "(default 23.0 for an empty 24GiB 3090)")
+    p.add_argument("--router-only", "--no-hidden-states", dest="router_only",
+                   action="store_true",
+                   help="do not request or store hidden states (router logits "
+                        "only) — smaller payload; DecodeGuard needs no hidden "
+                        "states")
+    p.add_argument("--overwrite", action="store_true",
+                   help="re-capture prompts whose output .pt already exists "
+                        "(default: skip existing valid captures / resume)")
     return p.parse_args(argv)
 
 
@@ -126,12 +134,13 @@ def _final_logit_stats(logits, tok_id):
 
 
 def capture_one(tok, model, text: str, max_prompt_tokens: int,
-                max_new_tokens: int = 0):
+                max_new_tokens: int = 0, router_only: bool = False):
     """Prefill capture; when max_new_tokens>0 ALSO greedily decodes that many
     tokens, capturing per-generated-token router logits, final-logit entropy,
     and the selected-token probability.
 
     Returns (input_ids, prefill_router, prefill_hidden, decode_steps).
+    prefill_hidden is None when router_only=True (hidden states not requested).
     decode_steps is None when max_new_tokens==0 (prefill-only, no regression).
     Each decode step is a dict:
       {generated_token_index, generated_token_id, generated_token_text,
@@ -148,10 +157,11 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
     want_decode = max_new_tokens > 0
     with torch.inference_mode():
         out = model(**ids, output_router_logits=True,
-                    output_hidden_states=True, use_cache=want_decode)
+                    output_hidden_states=not router_only, use_cache=want_decode)
     # Stream everything to CPU fp16 immediately to free GPU activations.
     router = [r.squeeze(0).to("cpu", torch.float16) for r in out.router_logits]
-    hidden = [h.squeeze(0).to("cpu", torch.float16) for h in out.hidden_states]
+    hidden = (None if router_only else
+              [h.squeeze(0).to("cpu", torch.float16) for h in out.hidden_states])
     input_ids = ids["input_ids"].squeeze(0).cpu()
 
     if not want_decode:
@@ -184,6 +194,18 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
     return input_ids, router, hidden, decode_steps
 
 
+def _valid_capture(path: Path) -> bool:
+    """True if path exists and loads as a capture with router_logits (resume-skip)."""
+    if not path.exists():
+        return False
+    try:
+        import torch
+        d = torch.load(path, map_location="cpu", weights_only=False)
+        return isinstance(d, dict) and bool(d.get("router_logits"))
+    except Exception:
+        return False  # corrupt/partial -> re-capture
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     out_dir = Path(args.out)
@@ -192,33 +214,40 @@ def main(argv: list[str] | None = None) -> int:
     import torch  # deferred so --help works without GPU deps
 
     tok, model, cfg = load_model(args)
-    n = 0
+    n = skipped = 0
     with open(args.prompts, encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
             if not line:
                 continue
             rec = json.loads(line)
+            dest = out_dir / f"{rec['id']}.pt"
+            if not args.overwrite and _valid_capture(dest):
+                skipped += 1
+                print(f"[jlens] skip {rec['id']}: existing valid capture "
+                      f"(use --overwrite to replace)")
+                continue
             input_ids, router, hidden, decode_steps = capture_one(
                 tok, model, rec["text"], args.max_prompt_tokens,
-                max_new_tokens=args.max_new_tokens)
+                max_new_tokens=args.max_new_tokens, router_only=args.router_only)
             payload = {
                 "prompt_id": rec["id"],
                 "input_ids": input_ids,
                 "router_logits": router,
-                "hidden_states": hidden,
+                "hidden_states": hidden,  # None when --router-only
                 "model_type": cfg.model_type,
                 "model_path": str(args.model),
             }
             if decode_steps is not None:
                 payload["decode_steps"] = decode_steps
-            torch.save(payload, out_dir / f"{rec['id']}.pt")
+            torch.save(payload, dest)
             n += 1
             gen = f", {len(decode_steps)} gen tokens" if decode_steps else ""
+            hid = "0 (router-only)" if hidden is None else str(len(hidden))
             print(f"[jlens] captured {rec['id']}: "
-                  f"{len(router)} router layers, {len(hidden)} hidden layers, "
+                  f"{len(router)} router layers, {hid} hidden layers, "
                   f"{input_ids.shape[0]} tokens{gen}")
-    print(f"[jlens] done — {n} prompts -> {out_dir}")
+    print(f"[jlens] done — {n} captured, {skipped} skipped -> {out_dir}")
     return 0
 
 

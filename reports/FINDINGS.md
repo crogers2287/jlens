@@ -854,3 +854,15 @@ task fixture run): 6 records, telemetry_missing=6, policy all unscored (honest
 GGUF), escalation rate 0.667, auto_was_wrong non-null on 4, auto_vs_human_agreement
 null. Verified: zero text-preview/notes keys (leak grep clean); check_commit_safe
 PASSES. auto_outcome stays a candidate; production/final thresholds gold/audit gated.
+
+## 65. Autonomous supervisor doc (M10 step 7)
+`docs/AUTONOMOUS_SHADOW_SUPERVISOR.md` documents the end-to-end autonomous flow:
+config → run supervisor (dry-run public-fixture + live Agents-A1 GGUF examples) →
+verifier signal table → auto_outcome-vs-human namespace separation → escalation
+triggers → aggregate-only report → check_commit_safe gate. Commands verified vs
+real CLI flags (supervisor --config/--tasks/--out/--mode; report --in/--out;
+guard positional). States guardrails (auto_outcome candidate not gold; human
+fields null; telemetry_missing honest; no real tool exec beyond fixtures; hashed
+evidence; private dir gitignored) and gating (production/final thresholds
+gold/audit gated until enough human-reviewed records; auto_outcome promoted only
+by later audit). Public fixtures in every example.

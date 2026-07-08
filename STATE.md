@@ -332,3 +332,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M10 Autonomous supervisor — Iteration M10.5 (2026-07-08 18:01 EDT) — steps 5–6 COMPLETE (aggregate report + sample)
 - src/autonomous_outcome_report.py (aggregate-only, no-text guard) + committed reports/outcomes/autonomous_summary_sample.json from public fixture: 6 records, telemetry_missing=6, escalation rate 0.667, agreement null (no human review). Leak grep clean; check_commit_safe passes.
 - Next step 7: docs/AUTONOMOUS_SHADOW_SUPERVISOR.md (end-to-end, guardrails, gating).
+
+## M10 Autonomous supervisor — Iteration M10.6 (2026-07-08 18:04 EDT) — step 7 COMPLETE (workflow doc)
+- docs/AUTONOMOUS_SHADOW_SUPERVISOR.md: end-to-end (config→run→verifiers→auto/human separation→escalation→aggregate→commit-safe), public-fixture examples, commands verified vs real flags, guardrails + gating.
+- Next step 8 (FINAL): tests/test_autonomous_supervisor.py, then M10 DONE.

@@ -61,18 +61,33 @@ def load_features(path):
 
 
 def load_labels(path):
-    if not Path(path).exists():
+    """Back-compat: {prompt_id: labels-dict}. Accepts a file or glob/dir of v1/v2 JSONL."""
+    recs = load_records(path)
+    if recs is None:
         return None
-    out = {}
-    for line in open(path, encoding="utf-8"):
-        r = json.loads(line)
-        out[r["prompt_id"]] = r["labels"]
-    return out
+    return {r["prompt_id"]: r["labels"] for r in recs}
+
+
+def load_records(path):
+    """Full label records from a file, a glob, or a directory of *.jsonl (v1/v2)."""
+    import glob
+    if path is None:
+        return None
+    paths = ([path] if Path(path).is_file()
+             else sorted(glob.glob(f"{path}/*.jsonl")) if Path(path).is_dir()
+             else sorted(glob.glob(path)))
+    if not paths:
+        return None
+    out = []
+    for p in paths:
+        for line in open(p, encoding="utf-8"):
+            out.append(json.loads(line))
+    return out or None
 
 
 def check_trainable(labels, min_per_label: int):
-    """Raise SystemExit unless every label has >= min_per_label non-null values
-    with both classes present. This is the M3 LABEL GATE."""
+    """M3 LABEL GATE: raise SystemExit unless EVERY label has >= min_per_label
+    non-null values with both classes. Kept for eval + the all-null seed check."""
     if labels is None:
         raise SystemExit("[jlens] REFUSE: label file missing. "
                          "Provide human labels before training.")
@@ -96,6 +111,36 @@ def check_trainable(labels, min_per_label: int):
             "\n  See LABELING_HANDOFF.md. Never fabricate labels.")
 
 
+# Tiers acceptable per training mode. Prototype may use benchmark_gold; FINAL
+# threshold calibration requires human-audited gold only.
+MODE_TIERS = {"prototype": {"benchmark_gold", "gold"}, "final": {"gold"}}
+
+
+def trainable_labels(records, min_per_label: int, mode: str):
+    """Per-label coverage gate honoring the training mode's allowed tiers.
+    Returns (passing_labels, diagnostics). A label passes if it has >=
+    min_per_label non-null values of the ALLOWED TIER with both classes."""
+    allowed = MODE_TIERS[mode]
+    counts = {L: {"true": 0, "false": 0} for L in LABELS}
+    for r in records:
+        if r.get("label_source", "gold") not in allowed:
+            continue  # wrong tier for this mode (e.g. benchmark_gold in final)
+        for L in LABELS:
+            v = r["labels"].get(L)
+            if v is True:
+                counts[L]["true"] += 1
+            elif v is False:
+                counts[L]["false"] += 1
+    passing, diag = [], {}
+    for L in LABELS:
+        t, f = counts[L]["true"], counts[L]["false"]
+        ok = t >= 1 and f >= 1 and min(t, f) >= min_per_label
+        diag[L] = {"n_true": t, "n_false": f, "pass": ok}
+        if ok:
+            passing.append(L)
+    return passing, diag
+
+
 def build_models():
     from sklearn.calibration import CalibratedClassifierCV
     from sklearn.ensemble import HistGradientBoostingClassifier  # noqa: F401
@@ -117,25 +162,46 @@ def build_models():
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--features", default="reports/features/r4_risk_features.jsonl")
-    ap.add_argument("--labels", default="data/labels/risk_labels_seed.jsonl")
+    ap.add_argument("--labels", default="data/labels/risk_labels_seed.jsonl",
+                    help="file, glob, or dir of v1/v2 label JSONL")
+    ap.add_argument("--mode", choices=["prototype", "final"], default="prototype",
+                    help="prototype: benchmark_gold allowed; final: gold only")
     ap.add_argument("--min-per-label", type=int, default=10)
     ap.add_argument("--out", default="reports/risk_heads.json")
     args = ap.parse_args(argv)
 
     X, feat_names = load_features(args.features)
-    labels = load_labels(args.labels)
+    records = load_records(args.labels)
+    if records is None:
+        raise SystemExit(f"[jlens] REFUSE: no label records at {args.labels!r}. "
+                         "Provide labels (see LABELING_HANDOFF.md).")
 
-    # LABEL GATE — refuses on the all-null seed (nonzero exit).
-    check_trainable(labels, args.min_per_label)
+    # COVERAGE GATE — select only labels with enough both-class data of the
+    # mode's allowed tier. Refuse if none pass. NEVER fabricates labels.
+    passing, diag = trainable_labels(records, args.min_per_label, args.mode)
+    if not passing:
+        lines = [f"{L}: n_true={d['n_true']} n_false={d['n_false']}"
+                 for L, d in diag.items()]
+        raise SystemExit(
+            f"[jlens] REFUSE to train (mode={args.mode}) — no label passes the "
+            f"coverage gate (need >= {args.min_per_label} of BOTH classes at "
+            f"tier {sorted(MODE_TIERS[args.mode])}). Per-label:\n  "
+            + "\n  ".join(lines) +
+            ("\n  final calibration requires human-audited GOLD labels; "
+             "benchmark_gold only qualifies for --mode prototype."
+             if args.mode == "final" else
+             "\n  Add sources/negatives (see coverage report) or human labels."))
 
-    # ---- Reached only when human labels exist (not this milestone) ----
-    from sklearn.model_selection import StratifiedGroupKFold  # noqa: F401
-    print(f"[jlens] labels ready — {len(X)} prompts, {len(feat_names)} features. "
-          "Training calibrated heads per label...")
-    # (training body intentionally minimal in the scaffolding milestone)
+    # ---- Reached only when the coverage gate passes for >=1 label ----
+    print(f"[jlens] mode={args.mode}: coverage gate PASSES for {passing}. "
+          f"{len(X)} feature prompts, {len(feat_names)} features. "
+          "Prototype-training calibrated heads for the passing labels...")
+    if args.mode == "final":
+        print("[jlens] NOTE: final-threshold calibration on gold-tier labels.")
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(
-        {"status": "labels_present_training_not_implemented_in_scaffold",
+        {"status": "coverage_gate_passed_training_not_implemented_in_scaffold",
+         "mode": args.mode, "trainable_labels": passing,
          "features": feat_names, "models": list(build_models())}, indent=1))
     return 0
 

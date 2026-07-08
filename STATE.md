@@ -206,3 +206,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 38 (2026-07-08 12:01 EDT) — step 7 COMPLETE (audit sampling)
 - src/audit_sample.py → data/labels/audit_queue.jsonl: 30 records (10/source, deterministic stride). Stays benchmark_gold, audit_status=pending; human promotes to gold manually. No auto-promotion.
 - Next step 8 (FINAL): wire train_risk_heads.py to accept benchmark v2 labels + honor coverage gate (prototype only when gate passes; final still gold-gated).
+
+## M4 Benchmark-Gold — Iteration 39 (2026-07-08 12:05 EDT) — step 8 COMPLETE → M4 DONE
+- train_risk_heads.py: tier×coverage gate (--mode prototype allows benchmark_gold; final requires gold). Verified: all-null seed REFUSE; benchmark prototype PASS (2 labels); benchmark final REFUSE; below-threshold REFUSE.
+- ALL M4 stop-condition artifacts present. M4 STOP CONDITION MET — benchmark set can populate training, prototype gated on coverage, final gated on gold. Hand off: add second-wave sources for the 8 uncovered labels + human audit benchmark_gold→gold.

@@ -452,3 +452,23 @@ calibrate the heads.
   manually promotes confirmed records to label_source="gold" (benchmark_gold →
   project-gold). Verified: queue non-empty, nothing auto-promoted, identical on
   re-run (deterministic, no RNG).
+
+## 33. Trainer honors coverage gate (M4 step 8) — MILESTONE COMPLETE
+- `src/train_risk_heads.py` now accepts v1/v2 label files (file/glob/dir) and
+  gates by TIER × coverage: `--mode prototype` allows benchmark_gold+gold;
+  `--mode final` requires human-audited gold. `trainable_labels()` selects only
+  labels with ≥min both-class values of the allowed tier; refuses if none pass.
+- Verified 4 behaviors: (1) all-null v1 seed → REFUSE; (2) benchmark set
+  (prototype) → PASS for answerable_from_memory + unsupported_or_hallucinated;
+  (3) same set (final) → REFUSE (benchmark_gold ≠ gold — final needs audited
+  gold); (4) synthetic below-threshold → REFUSE. All exits correct (0/1/1/1).
+- Prototype training is now unlockable on the 2 covered labels; final threshold
+  calibration stays gold-gated. Training body still a scaffold stub (no
+  fabricated results).
+
+### M4 summary
+Ingested 23,172 public benchmark-gold records (TruthfulQA/FEVER/GSM8K) into
+risk_labels_v2 with full provenance + licensing, WITHOUT fabricating a label.
+Coverage gate: 2/10 labels training-ready; the rest have a documented source
+shopping list. Trainer prototype-trains only covered labels; final stays
+gold-gated; audit queue promotes benchmark_gold→gold via human review only.

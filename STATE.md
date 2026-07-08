@@ -186,3 +186,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 33 (2026-07-08 11:40 EDT) — step 2 COMPLETE (schema v2)
 - schema/risk_labels_v2.json: v1 superset + provenance (source_*, label_source enum, label_confidence, non_commercial). Validates; rejects unknown labels + bad label_source. v1 frozen.
 - Next step 3: converter #1 (TruthfulQA → answerable_from_memory / unsupported_or_hallucinated) via huggingface_hub raw pull.
+
+## M4 Benchmark-Gold — Iteration 34 (2026-07-08 11:44 EDT) — step 3 COMPLETE (TruthfulQA converter)
+- src/convert_truthfulqa.py → data/labels/benchmark/truthfulqa.jsonl: 5918 benchmark_gold records, unsupported_or_hallucinated 3318T/2600F, answerable_from_memory 2600T/rest-null. All validate v2. Raw parquet gitignored (data/raw/, *.parquet).
+- Next step 4: converter #2 (SciFact or FEVER → needs_exact_citation / unsupported_or_hallucinated).

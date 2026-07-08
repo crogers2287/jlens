@@ -381,3 +381,18 @@ calibrate the heads.
 - Verified: check_schema passes; a benchmark_gold record validates; unknown label
   keys STILL rejected; an invalid label_source enum ("platinum") rejected. v1
   frozen/untouched.
+
+## 28. Converter #1: TruthfulQA → benchmark_gold (M4 step 3)
+- `src/convert_truthfulqa.py`: pulls the generation parquet via huggingface_hub
+  (no `datasets` install; pyarrow/pandas already present) → cached under
+  data/raw/ (gitignored). Emits one benchmark_gold record per human answer.
+- Output `data/labels/benchmark/truthfulqa.jsonl`: **5,918 records** (2,600
+  correct + 3,318 incorrect). Mapping: correct → unsupported_or_hallucinated=false
+  + answerable_from_memory=true; incorrect → unsupported_or_hallucinated=true;
+  all 8 other labels null (null=unknown, never guessed).
+- Class balance: unsupported_or_hallucinated n_true=3318 / n_false=2600 / n_null=0
+  (both classes, far above the coverage gate min of 10); answerable_from_memory
+  set true only on correct answers (null on the myths — we don't claim a myth is
+  un-answerable-from-memory). All 5,918 rows validate against schema/risk_labels_v2.json.
+- License Apache-2.0 (non_commercial=false). Raw parquet stays out of git; only
+  the derived JSONL + converter are committed.

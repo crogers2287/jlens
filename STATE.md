@@ -127,3 +127,9 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Collaborator pushed steer.md (fbad779) — authoritative DecodeGuard steering doc. Fast-forwarded local; .gitignore hardened (*.py[cod], .pytest_cache/).
 - Loop prompt (~/.claude/commands/jlens-loop.md) rewritten via /prompt-master to read steer.md FIRST and follow its 8-step plan: (1) finish r4 + resume-skip, (2) export+validate (new validate_jsonl_schema.py), (3) rich decode_drift.py, (4) drift interpretation notes, (5) router-only decode mode + --overwrite + tests, (6) weighted drift features (schema v3), (7) decode domain-shift probe (reuse r3 head), (8) M3_RISK_LABELING.md. Stop when all delivered; human labels gate M3.
 - r4 status: STILL RUNNING (~10/32), Monitor b63tp5qsj timed out (1h<runtime) → heartbeat polling is now sole wake signal. Capture writes one .pt/prompt so partial progress is safe.
+
+## M2 DecodeGuard — Iterations 19–20 (2026-07-08 10:24 EDT) — steps 1–2 COMPLETE
+- r4 decode capture CAPPED at 16/32 (operator decision, sufficient; GPUs freed). 512 decode tokens, all 8 domains. Documented reason per steer step-1 exit criteria.
+- Export → reports/schema/r4_decode.jsonl (512 recs). New src/validate_jsonl_schema.py → all 512 valid vs schema/v2_decode.json.
+- First-look: unweighted drift_from_prefill ~0.72 flat (structural offset), uncorrelated with entropy/sel_prob → weighted drift (step 6) + domain-shift probe (step 7) are the load-bearing follow-ups. (resume-skip deferred to step 5 with --overwrite; not needed since capture capped, not resumed.)
+- Next step 3: src/decode_drift.py rich report.

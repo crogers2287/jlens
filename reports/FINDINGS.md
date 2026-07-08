@@ -167,3 +167,25 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
   dry-run on a synthetic 4-token decode capture → 4 records, all validate
   against v2, drift/entropy/prob fields correct. Real r4 export happens in
   item 4 after the GPU decode capture.
+
+## 14. r4 decode capture (16/32, intentional cap) + export/validate (M2 steps 1–2)
+- r4 decode capture stopped at **16/32 prompts** (512 decode tokens, all 8 domains
+  represented) by operator decision — sufficient for the drift analysis and
+  frees the fleet GPUs ~80 min early. bf16+CPU-offload decode ran ~5.3 min/prompt
+  (PCIe-bound). Documented per steer.md step-1 exit criteria ("all 32 OR a
+  documented reason for fewer").
+- Exported → `reports/schema/r4_decode.jsonl` (512 records). New
+  `src/validate_jsonl_schema.py` (draft-07, per-line, nonzero on first invalid):
+  **all 512 records valid** against `schema/v2_decode.json`.
+- First-look drift signal (drives steps 3,6,7):
+  - drift_from_prefill mean 0.723 (sd 0.104), **flat across token index 0→31**
+    (no stabilization) → unweighted count-drift-from-prefill is a near-constant
+    structural offset (decode routes 1 token at a time vs prefill's whole prompt),
+    NOT a per-token signal.
+  - drift×entropy_final = −0.08, drift×selected_token_prob = +0.06 (≈ 0) →
+    routing drift does NOT track output uncertainty at the unweighted level.
+  - Real variation lives in entropy_final (max 2.85) / sel_prob (min 0.28) — the
+    confidence spikes, independent of drift.
+  - Implication: unweighted drift is too blunt; weighted drift (step 6) and the
+    domain-shift probe (step 7) are the load-bearing follow-ups. Do NOT treat
+    drift as a risk signal on this evidence.

@@ -178,3 +178,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M3 Risk Heads — Iteration 31 (2026-07-08 11:18 EDT) — step 5 COMPLETE → M3 SCAFFOLDING DONE
 - LABELING_HANDOFF.md (10 labels defined + examples, null rule, ≥50/family, false-low-risk priority, run command). All 7 M3 artifacts present; gate refuses seed.
 - M3 STOP CONDITION MET. Human labeling is the next action — loop stops and hands off.
+
+## M4 Benchmark-Gold — Iteration 32 (2026-07-08 11:33 EDT) — step 1 COMPLETE (source registry)
+- New M4 loop prompt installed (benchmark-gold ingestion). data/registry/benchmark_sources.json: first wave TruthfulQA(Apache)/SciFact(CC-BY-NC)/GSM8K(MIT) + alternates + second wave; all 10 labels covered, licenses recorded, first-wave ≤5MB. SciFact NC flagged (FEVER alt).
+- Next step 2: schema/risk_labels_v2.json (v1 superset + provenance fields).

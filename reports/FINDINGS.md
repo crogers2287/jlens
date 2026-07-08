@@ -356,3 +356,17 @@ risk_features.py (M2 KEEP features, drift barred by assertion), calibrated
 train/eval skeleton that provably refuses unlabeled data, and LABELING_HANDOFF.md.
 Next action is HUMAN: label ≥50 prompts/family, then re-run the loop to train +
 calibrate the heads.
+
+## 26. Benchmark dataset source registry (M4 step 1)
+- `data/registry/benchmark_sources.json`: first wave (TruthfulQA Apache-2.0,
+  SciFact CC-BY-NC-2.0, GSM8K MIT) + alternates (SimpleQA, FEVER, HumanEval, MBPP)
+  + second wave (BeaverTails/PKU-SafeRLHF, BFCL, deepset/prompt-injections,
+  SWE-bench, GAIA). Each source: hf repo_id, split, task, exact license, size,
+  tier=benchmark_gold, and the jlens-label mapping rule.
+- Verified: every source has a license; all mappings target valid jlens labels;
+  **all 10 labels covered** across the registry; first-wave sizes ≤5 MB (well
+  under the 1 GB download gate).
+- Licensing policy recorded: SciFact/BeaverTails/PKU-SafeRLHF are NON-COMMERCIAL
+  (CC-BY-NC) → store derived labels + ids + minimal text, flag non_commercial,
+  never redistribute forbidden raw text. FEVER (CC-BY-SA) is the redistribution-
+  friendlier alternate to SciFact. No downloads this step (registry only).

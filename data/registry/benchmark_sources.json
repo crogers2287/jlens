@@ -1,0 +1,87 @@
+{
+  "registry_version": 1,
+  "description": "Benchmark-gold dataset sources for jlens M4 risk-label ingestion. tier=benchmark_gold means labels were created/verified by humans for the dataset's ORIGINAL task; a jlens-semantics audit (project-gold) is still required before final threshold calibration. Sizes are approximate; verify license on the HF dataset card before redistribution.",
+  "first_wave": [
+    {
+      "name": "TruthfulQA",
+      "hf_repo_id": "truthful_qa",
+      "config": "generation",
+      "split": "validation",
+      "original_task": "truthfulness QA (817 questions, human-written true/false reference answers over common misconceptions)",
+      "license": "Apache-2.0",
+      "approx_size": "~1 MB",
+      "tier": "benchmark_gold",
+      "jlens_labels_mapped": {
+        "unsupported_or_hallucinated": "reference FALSE/myth answer -> true; reference truthful answer -> false",
+        "answerable_from_memory": "stable-knowledge questions -> true (closed-book, no retrieval needed)"
+      },
+      "notes": "Chosen as converter #1 source. Small, permissive, directly targets know-what-you-know / hallucination."
+    },
+    {
+      "name": "SciFact",
+      "hf_repo_id": "allenai/scifact",
+      "config": "claims",
+      "split": "train",
+      "original_task": "scientific claim verification against evidence abstracts (SUPPORT / CONTRADICT / NOINFO)",
+      "license": "CC-BY-NC-2.0",
+      "approx_size": "~3 MB",
+      "tier": "benchmark_gold",
+      "jlens_labels_mapped": {
+        "unsupported_or_hallucinated": "CONTRADICT/refuted -> true; SUPPORT -> false",
+        "needs_exact_citation": "claim verification requires cited evidence -> true"
+      },
+      "notes": "Converter #2 source (FEVER is the alternate). NON-COMMERCIAL license (CC-BY-NC): store ids + derived labels + claim text per card terms; flag non-commercial in outputs. FEVER (license: CC-BY-SA-3.0 + GPLv3 code) is the redistribution-friendlier alternate if NC is a problem."
+    },
+    {
+      "name": "GSM8K",
+      "hf_repo_id": "gsm8k",
+      "config": "main",
+      "split": "test",
+      "original_task": "grade-school math word problems with human-written step solutions and a final numeric answer",
+      "license": "MIT",
+      "approx_size": "~5 MB",
+      "tier": "benchmark_gold",
+      "jlens_labels_mapped": {
+        "needs_math_verification": "every item is a numeric word problem -> true",
+        "answerable_from_memory": "self-contained, no retrieval -> true (leave null if uncertain per item)"
+      },
+      "notes": "Converter #3 source. MIT, small. A bare prompt does NOT set unsupported_or_hallucinated — that needs the target model's OUTPUT graded against the gold answer (later step)."
+    }
+  ],
+  "alternates": [
+    {"name": "SimpleQA", "hf_repo_id": "basicv8vc/SimpleQA", "license": "MIT",
+     "maps": ["answerable_from_memory", "unsupported_or_hallucinated"],
+     "notes": "alt to TruthfulQA — short factuality, correct/incorrect graded answers"},
+    {"name": "FEVER", "hf_repo_id": "fever", "config": "v1.0", "license": "CC-BY-SA-3.0",
+     "maps": ["needs_exact_citation", "unsupported_or_hallucinated"],
+     "notes": "alt to SciFact — larger, redistribution-friendlier (SA) claim verification"},
+    {"name": "HumanEval", "hf_repo_id": "openai_humaneval", "license": "MIT",
+     "maps": ["needs_code_execution", "unsupported_or_hallucinated"],
+     "notes": "alt to GSM8K — code tasks; unit-test pass/fail grades code correctness of model output"},
+    {"name": "MBPP", "hf_repo_id": "mbpp", "license": "CC-BY-4.0",
+     "maps": ["needs_code_execution"], "notes": "alt code source"}
+  ],
+  "second_wave": [
+    {"name": "BeaverTails", "hf_repo_id": "PKU-Alignment/BeaverTails",
+     "license": "CC-BY-NC-4.0", "maps": ["high_stakes_or_sensitive"],
+     "notes": "safety meta-label / harm categories; NON-COMMERCIAL"},
+    {"name": "PKU-SafeRLHF", "hf_repo_id": "PKU-Alignment/PKU-SafeRLHF",
+     "license": "CC-BY-NC-4.0", "maps": ["high_stakes_or_sensitive"],
+     "notes": "safe/unsafe preference data; NON-COMMERCIAL"},
+    {"name": "BFCL (Berkeley Function-Calling Leaderboard)",
+     "hf_repo_id": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+     "license": "Apache-2.0", "maps": ["format_or_tool_mode_shift"],
+     "notes": "expected tool-call/format; label applies to TARGET MODEL output vs expected format"},
+    {"name": "prompt-injection benchmark (e.g. deepset/prompt-injections)",
+     "hf_repo_id": "deepset/prompt-injections", "license": "unknown-verify-card",
+     "maps": ["context_attack_present"],
+     "notes": "benign vs injected; VERIFY license on card before redistribution"},
+    {"name": "SWE-bench", "hf_repo_id": "princeton-nlp/SWE-bench",
+     "license": "MIT", "maps": ["needs_user_file_context"],
+     "notes": "repo-context tasks -> needs_user_file_context=true"},
+    {"name": "GAIA", "hf_repo_id": "gaia-benchmark/GAIA", "license": "CC-BY-4.0",
+     "maps": ["needs_current_info"],
+     "notes": "web/tool tasks -> needs_current_info=true; store dataset date/cutoff (time-relative label)"}
+  ],
+  "licensing_policy": "Record source_license on every emitted record. For NON-COMMERCIAL (CC-BY-NC*) or unverified sources, store only derived labels + record ids + minimal source text and flag non_commercial=true; never redistribute raw text a license forbids. Prefer MIT/Apache/CC-BY(-SA) sources for the primary training set."
+}

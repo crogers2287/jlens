@@ -303,3 +303,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M9 Private workflow — Iteration M9.4 (2026-07-08 16:17 EDT) — step 5 COMPLETE (commit-safety guard)
 - src/check_commit_safe.py: refuses private-log paths, private-dir refs, and unredacted prompt/output/notes text; passes aggregate/all-null-text/redacted. All 6 cases verified. Conservative by design (can't distinguish public benchmark text from private) → workflow commits only aggregates/redacted going forward.
 - Next step 6: docs/PRIVATE_SHADOW_WORKFLOW.md (end-to-end local-only workflow, public-fixture examples, gating note).
+
+## M9 Private workflow — Iteration M9.5 (2026-07-08 16:22 EDT) — step 6 COMPLETE (workflow doc) [folds step 2]
+- docs/PRIVATE_SHADOW_WORKFLOW.md: local-only end-to-end (generate→review→aggregate/redact→guard→commit), public-fixture examples, commands verified vs real flags, gating note. Scoped check_commit_safe private-path content check to JSON records only (prose passes) — re-verified 5 cases.
+- Next step 7 (FINAL): tests/test_private_workflow.py, then M9 DONE.

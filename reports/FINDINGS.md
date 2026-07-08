@@ -739,3 +739,17 @@ ALL unredacted prompt/output text (including the M7/M8 public benchmark
 review_queue_sample.jsonl, committed earlier under explicit public-demo
 approval). Going forward the M9 workflow commits only aggregate summaries or
 redacted logs; raw text queues stay in the gitignored private dir.
+
+## 58. Private shadow workflow doc + guard scoping (M9 step 6)
+`docs/PRIVATE_SHADOW_WORKFLOW.md` documents the end-to-end local-only flow:
+generate a private log (gitignored) → review locally (M8 CLI) → make a shareable
+artifact (aggregate-only summary OR redacted log) → run check_commit_safe.py
+before staging. Every example uses the PUBLIC fixture; documented commands match
+the wrappers' real flags (--mode/--prompts/--log; build_review_queue --inputs/--out;
+review_shadow_log --queue/--prompt-id/...). Also refined check_commit_safe: the
+private-path *content* check now applies to parsed JSON records only, so prose
+(docs, FINDINGS narrative) that merely MENTIONS the private path passes —
+documentation is not a leak. File-path check + JSON text-field check + JSON
+private-path-reference check still FAIL on real leaks. Re-verified all 5 cases.
+Gating restated: production/final thresholds stay gold/audit gated until enough
+reviewed real-use records exist; scores stay PROTOTYPE tiny-n M5 numbers.

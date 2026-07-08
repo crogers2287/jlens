@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """Commit-safety guard for jlens real-use artifacts (M9).
 
-Scans one or more files and EXITS NONZERO if any is unsafe to commit:
+Targets structured shadow / outcome artifacts (JSON / JSONL). Scans one or more
+files and EXITS NONZERO if any is unsafe to commit:
   1. the file's own path is a private-log path (reports/shadow/private/*.jsonl,
      which is gitignored and must never be staged — the README is exempt);
-  2. its content references a private-log path (reports/shadow/private/…);
+  2. a parsed JSON record references a private-log path in a field value
+     (a data linkage to reports/shadow/private/…);
   3. it carries UNREDACTED free text in prompt_preview / output_preview /
      outcome.notes (a non-empty string that is not a redaction marker).
 
 It PASSES (exit 0) for aggregate-only summaries (no text keys), all-null review
-queues, and redacted files (text == '[redacted]' or '[redacted:<hash>]').
+queues, redacted files (text == '[redacted]' or '[redacted:<hash>]'), and
+non-JSON prose (docs / FINDINGS narrative) that merely *mentions* the private
+path — documentation is not a data leak; the structured-artifact checks above
+are what protect real prompt/output text.
 
 Run this before staging anything under reports/:
   python src/check_commit_safe.py reports/outcomes/private_summary_sample.json \
@@ -87,9 +92,9 @@ def check_file(path: str) -> list[str]:
         try:
             records = [json.loads(stripped)]
         except json.JSONDecodeError:
-            # Not JSON — only guard the private-path substring for non-JSON files.
-            if PRIVATE_DIR in raw:
-                reasons.append(f"{path}: text references private path {PRIVATE_DIR}")
+            # Not a structured JSON/JSONL artifact — prose/docs. These carry no
+            # record-shaped text fields; a mention of the private path is
+            # documentation, not a leak. The file-path check (1) already ran.
             return reasons
 
     for i, rec in enumerate(records):

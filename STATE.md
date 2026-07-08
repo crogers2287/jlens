@@ -194,3 +194,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 35 (2026-07-08 11:48 EDT) — step 4 COMPLETE (FEVER converter)
 - src/convert_fever.py → data/labels/benchmark/fever.jsonl: 15935 records (CC-BY-SA, valid.jsonl 6.5MB). unsupported_or_hallucinated 4887T/4638F/6410N; needs_exact_citation 9525T/0F (data-gap: needs a no-citation source for negatives). All validate v2.
 - Next step 5: converter #3 (GSM8K → needs_math_verification, or HumanEval/MBPP → needs_code_execution).
+
+## M4 Benchmark-Gold — Iteration 36 (2026-07-08 11:53 EDT) — step 5 COMPLETE (GSM8K, ≥3 converters)
+- src/convert_gsm8k.py → data/labels/benchmark/gsm8k.jsonl: 1319 records (MIT). needs_math_verification 1319T; answerable_from_memory 1319F. 3 converters total = 23172 records. answerable_from_memory + unsupported_or_hallucinated now both-class across sources.
+- Next step 6: src/coverage_report.py → reports/coverage/benchmark_coverage.json + coverage GATE.

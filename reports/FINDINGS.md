@@ -410,3 +410,17 @@ calibrate the heads.
   claim-verification set only yields citation-needed positives. The coverage gate
   will (correctly) fail that label until a "no-citation-needed" source (stable
   closed-book QA) supplies negatives. Honest partial coverage, per null≠false.
+
+## 30. Converter #3: GSM8K → benchmark_gold (M4 step 5) — 3 converters done
+- `src/convert_gsm8k.py`: pulls gsm8k main/test parquet (MIT, ~2MB) via
+  huggingface_hub. Output `data/labels/benchmark/gsm8k.jsonl`: **1,319 records**,
+  all v2-valid. Mapping: every item → needs_math_verification=true,
+  answerable_from_memory=false (requires derivation, not recall). Gold answer
+  kept in provenance (source_label) so target-model output can be graded for
+  unsupported_or_hallucinated downstream.
+- **≥3 benchmark_gold converters delivered** — 23,172 total records
+  (TruthfulQA 5,918 + FEVER 15,935 + GSM8K 1,319).
+- Cross-source coverage emerging: answerable_from_memory now has BOTH classes
+  (TruthfulQA 2600 true + GSM8K 1319 false); unsupported_or_hallucinated strongly
+  covered (TruthfulQA + FEVER). Single-source labels (needs_math_verification,
+  needs_exact_citation) still lack negatives — the coverage report will quantify.

@@ -954,3 +954,13 @@ sample reports/outcomes/agents_a1_run_summary_sample.json from the PUBLIC smoke
 run: run_id cd08d63a145be1d2, 25 completed, 0 failed, telemetry_missing 25 (honest
 GGUF), escalation rate 0.52, agreement null. Verified: zero text keys (leak grep
 clean); check_commit_safe PASSES.
+
+## 72. Agents-A1 run doc (M11 step 6)
+`docs/AGENTS_A1_SHADOW_RUN.md`: smoke run (deterministic), live run (serve the
+Agents-A1 GGUF endpoint on a free port first — the runner never starts models;
+leave llama-swap's own models alone), resume/retry behavior, escalated-subset
+review (links the M8 review CLI), aggregate report + commit-safe gate, and
+guardrails/gating (no private raw logs/text committed; auto_outcome candidate not
+gold; human fields never written; telemetry_missing honest; failures counted +
+continue; production/final thresholds gold/audit gated). Commands verified vs real
+CLI flags. Public fixtures in every example.

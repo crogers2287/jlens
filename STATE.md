@@ -361,3 +361,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M11 Agents-A1 workload — Iteration M11.5 (2026-07-08 18:24 EDT) — step 5 COMPLETE (aggregate run report + sample)
 - src/agents_a1_run_report.py (metadata + distributions, no-text guard) + committed reports/outcomes/agents_a1_run_summary_sample.json from public smoke run: 25 completed, escalation rate 0.52, agreement null, no text keys, commit-safe.
 - Next step 6: docs/AGENTS_A1_SHADOW_RUN.md (run locally, resume, review escalated, live path HUMAN-GATED, guardrails).
+
+## M11 Agents-A1 workload — Iteration M11.6 (2026-07-08 18:25 EDT) — step 6 COMPLETE (run doc)
+- docs/AGENTS_A1_SHADOW_RUN.md: smoke + live (serve-endpoint-first) runs, resume/retry, escalated-subset review, aggregate report + commit-safe, guardrails/gating. Commands verified vs flags.
+- Next step 7 (FINAL): tests/test_agents_a1_shadow_run.py, then M11 harness DONE (live Agents-A1 GPU run = deliberate follow-up on the now-available 3090s).

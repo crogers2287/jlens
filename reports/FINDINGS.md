@@ -536,3 +536,15 @@ end; scaling data is the next lever.
 - Explicitly PROTOTYPE thresholds (not production); `blocks_real_actions:false`;
   final thresholds `gold_audit_gated`. Verified: loads, bands contiguous & cover
   [0,1], every level maps to a valid v0 action, posture flags correct.
+
+## 39. PolicyEngine v0 scorer (M6 step 2)
+- `src/policy_engine.py`: PolicyEngine fits the two covered-label heads from the
+  M5 join table (reuses train_risk_heads `_flatten_features`; drift excluded +
+  asserted), then `score(feature_row)` returns {prompt_id, level, scores{label:p},
+  risk, recommended_action, explanation}. Overall risk = max per-label risk
+  contribution; level via config bands; level→v0 action. ADVISORY-only: no file
+  writes, never blocks/executes.
+- Verified on the 16 M5 rows: all return the 4-field shape. Sensible spread —
+  6 critical→require_confirmation, 4 medium→verify, 6 low→answer_locally. FEVER
+  claim-verification prompts (highest telemetry uncertainty) correctly land
+  critical. Prototype thresholds only; no production claim.

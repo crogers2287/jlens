@@ -234,3 +234,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M6 PolicyEngine v0 — Iteration M6.1 (2026-07-08 13:45 EDT) — step 1 COMPLETE (config)
 - New M6 loop prompt (advisory/shadow, CPU-only). config/policy_engine_v0.json: risk = max(1-p_ansmem, p_unsup); bands low/med/high/critical → answer_locally/verify/retrieve/require_confirmation. Prototype-only, no gating. Validated.
 - Next step 2: src/policy_engine.py (fit M5 heads, score(feature_row)→{level,scores,recommended_action,explanation}, advisory-only).
+
+## M6 PolicyEngine v0 — Iteration M6.2 (2026-07-08 13:52 EDT) — step 2 COMPLETE (scorer)
+- src/policy_engine.py: fits M5 heads, score()→{level,scores,risk,recommended_action,explanation}, advisory-only. 16/16 M5 rows scored; FEVER→critical/require_confirmation, spread 6crit/4med/6low.
+- Next step 3: src/risk_runtime.py CLI + shadow log (reports/shadow/shadow_log.jsonl).

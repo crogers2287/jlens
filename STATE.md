@@ -133,3 +133,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Export → reports/schema/r4_decode.jsonl (512 recs). New src/validate_jsonl_schema.py → all 512 valid vs schema/v2_decode.json.
 - First-look: unweighted drift_from_prefill ~0.72 flat (structural offset), uncorrelated with entropy/sel_prob → weighted drift (step 6) + domain-shift probe (step 7) are the load-bearing follow-ups. (resume-skip deferred to step 5 with --overwrite; not needed since capture capped, not resumed.)
 - Next step 3: src/decode_drift.py rich report.
+
+## M2 DecodeGuard — Iteration 21 (2026-07-08 10:31 EDT) — step 3 COMPLETE (decode_drift.py)
+- src/decode_drift.py → reports/qwen3_6_35b_a3b_r4_decode_drift.json (512 tok, full steer metric set + spikes). drift flat & uncorrelated with confidence; entropy spikes = format/mode-shift tokens (``` code fence #1). Risk head should use entropy/sel_prob, not unweighted drift.
+- Next step 4: drift interpretation notes (.md).

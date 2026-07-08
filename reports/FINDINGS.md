@@ -189,3 +189,22 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
   - Implication: unweighted drift is too blunt; weighted drift (step 6) and the
     domain-shift probe (step 7) are the load-bearing follow-ups. Do NOT treat
     drift as a risk signal on this evidence.
+
+## 15. DecodeGuard drift report (M2 step 3)
+- `src/decode_drift.py` → `reports/qwen3_6_35b_a3b_r4_decode_drift.json` (512
+  tokens, 16 prompts, 8 domains). Full metric set: distributions, by_domain,
+  by_token_index, Pearson correlations, top spike records.
+- Confirms the partial read at full resolution:
+  - drift_from_prefill mean 0.723 (sd 0.104), FLAT across position (t0=0.653,
+    t31=0.664) — structural offset, not a per-token signal.
+  - All drift↔confidence correlations ≈ 0: drift_prefill×entropy −0.078,
+    ×sel_prob +0.056; drift_prev×entropy −0.108, ×sel_prob +0.118.
+  - **Entropy/confidence carries the mode-shift signal, NOT drift**: the #1
+    entropy spike is the ` ``` ` code-fence token (code_py_01 @idx1, H=2.85,
+    sel_prob 0.39); lowest sel_prob is `**` markdown (fact_01, 0.28). Format/
+    structure-transition tokens light up entropy_final while routing drift stays
+    flat.
+- Takeaway for the risk head: use entropy_final_logits + selected_token_prob as
+  the decode-time uncertainty features; unweighted routing drift is not
+  predictive. Whether WEIGHTED drift (step 6) recovers signal is the open
+  question.

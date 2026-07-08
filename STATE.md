@@ -105,3 +105,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New loop prompt (M2 DecodeGuard) installed via /prompt-master. Fixes confirmed prefill-only bug.
 - capture_one() now does real greedy decode when --max-new-tokens>0 (KV-cache, per-token router logits + final-logit entropy + selected-token prob). Prefill path unchanged at max_new_tokens=0.
 - Verified by tests/test_decode_capture.py (CPU stub, no GPU). Next item 2: token_probe.py GroupKFold → StratifiedGroupKFold.
+
+## M2 DecodeGuard — Iteration 16 (2026-07-08) — item 2 COMPLETE (StratifiedGroupKFold)
+- token_probe.py GroupKFold → StratifiedGroupKFold (fallback to GroupKFold if infeasible). r3 all-layer token acc 0.816 → 0.863 vs 0.175 chance.
+- Report: reports/qwen3_6_35b_a3b_r3_token_probe_sgkf.json. Next item 3: schema/v2_decode.json + exporter.

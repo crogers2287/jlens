@@ -141,3 +141,14 @@ sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
 - VERIFIED CPU-only via `tests/test_decode_capture.py` (HF-interface stub, no
   GPU/download): asserts k steps → k records with all 6 fields + correct router
   shapes, and prefill-only stays prefill-only. Both tests PASS.
+
+## 12. token_probe CV upgraded to StratifiedGroupKFold (M2 item 2)
+- BUG: token_probe.py used plain GroupKFold; with 32 prompts / 8 domains this
+  produced folds that fully dropped a domain (the code then skipped them),
+  biasing the estimate. sidecar_bakeoff.py already used StratifiedGroupKFold.
+- FIX: token_probe now uses StratifiedGroupKFold (shuffle, seed 0), GroupKFold
+  fallback only if a domain has fewer prompts than n_splits.
+- r3 all-layer token accuracy: **0.816 (GroupKFold) → 0.863 (StratifiedGroupKFold)**
+  vs 0.175 chance. Stratified folds keep all 8 domains present in train+test,
+  so no folds are skipped and the estimate is cleaner (and higher).
+- Report: reports/qwen3_6_35b_a3b_r3_token_probe_sgkf.json.

@@ -49,11 +49,22 @@ def build_token_features(captures_dir: str | Path, top_k: int,
 
 
 def grouped_cv_accuracy(X, y, g, n_splits: int = 4) -> float:
+    # StratifiedGroupKFold: keeps each prompt's tokens wholly in one fold
+    # (no leakage) AND balances domain proportions across folds. Matches
+    # sidecar_bakeoff.py. Falls back to GroupKFold only if stratification is
+    # infeasible (a domain with fewer prompts than n_splits).
     from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import GroupKFold
+    from sklearn.model_selection import GroupKFold, StratifiedGroupKFold
+
+    try:
+        splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True,
+                                        random_state=0)
+        splits = list(splitter.split(X, y, g))
+    except ValueError:
+        splits = list(GroupKFold(n_splits=n_splits).split(X, y, g))
 
     accs = []
-    for tr, te in GroupKFold(n_splits=n_splits).split(X, y, g):
+    for tr, te in splits:
         if len(set(y[tr])) < len(set(y)):  # a domain fully held out -> skip fold
             continue
         clf = LogisticRegression(max_iter=1000, C=1.0)

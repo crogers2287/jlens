@@ -357,3 +357,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M11 Agents-A1 workload — Iteration M11.4 (2026-07-08 18:21 EDT) — step 4 COMPLETE (escalation queue)
 - src/make_escalation_review_queue.py: only escalate_for_review==true rows → local gitignored queue; auto_outcome kept for reviewer context; human outcome/review_meta forced null. Smoke: 13/25 escalated, queue=13 (matches), human-null, valid.
 - Next step 5: src/agents_a1_run_report.py (aggregate-only run report + metadata) + committed public sample.
+
+## M11 Agents-A1 workload — Iteration M11.5 (2026-07-08 18:24 EDT) — step 5 COMPLETE (aggregate run report + sample)
+- src/agents_a1_run_report.py (metadata + distributions, no-text guard) + committed reports/outcomes/agents_a1_run_summary_sample.json from public smoke run: 25 completed, escalation rate 0.52, agreement null, no text keys, commit-safe.
+- Next step 6: docs/AGENTS_A1_SHADOW_RUN.md (run locally, resume, review escalated, live path HUMAN-GATED, guardrails).

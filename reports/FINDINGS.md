@@ -941,3 +941,16 @@ run never does). Verified on the smoke run: 13/25 escalated → queue size 13
 (matches run escalation_count), only escalated rows included, human fields all
 null, auto_outcome retained, every record auto_outcome_v1-valid, queue gitignored
 and unstaged.
+
+## 71. Agents-A1 aggregate run report + committed sample (M11 step 5)
+`src/agents_a1_run_report.py` merges run metadata (run-meta sidecar) with run-log
+distributions into an AGGREGATE-ONLY report: run_id, model, endpoint_alias,
+n_tasks/n_completed/n_failed/n_telemetry_missing, level & action distributions,
+auto_verdict_distribution, escalation_count+rate, verifier_distribution,
+auto_needed_retrieval/checker/was_wrong counts, human_reviewed_count,
+auto_vs_human_agreement (reviewed-only, null until review), privacy_check_status.
+Built from fixed numeric/label keys with a recursive no-text guard. Committed
+sample reports/outcomes/agents_a1_run_summary_sample.json from the PUBLIC smoke
+run: run_id cd08d63a145be1d2, 25 completed, 0 failed, telemetry_missing 25 (honest
+GGUF), escalation rate 0.52, agreement null. Verified: zero text keys (leak grep
+clean); check_commit_safe PASSES.

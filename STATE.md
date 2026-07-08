@@ -114,3 +114,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - schema/v2_decode.json (draft-07) + src/export_decode_schema.py. Per-generated-token records with drift_from_prefill_signature + drift_from_previous_token (cosine on per-layer expert-usage vectors).
 - Verified: schema is valid draft-07; exporter dry-run on synthetic decode capture → 4 records all validate. v1 frozen schema untouched.
 - Next item 4: GPU-gated r4 decode capture (--max-new-tokens 32) on Qwen3.6-35B-A3B. PRE-AUTHORIZED. Unload llama-swap first, run in background, arm Monitor.
+
+## M2 DecodeGuard — Iteration 18 (2026-07-08 08:54 EDT) — item 4 IN FLIGHT (r4 decode capture)
+- llama-swap unloaded (:9069/unload, both 3090s free 50/18 MiB). Launched r4 decode capture PID 2184628: --max-new-tokens 32, bf16, --max-gpu-mem-gib 20, expandable_segments, 32 prompts → data/captures/qwen3_6_35b_a3b_r4_decode/. Log: logs/capture_r4_decode.log. Monitor b63tp5qsj armed on PID.
+- On exit: export → reports/schema/r4_decode.jsonl (validate against schema/v2_decode.json), then item 5 drift analysis.

@@ -1,8 +1,8 @@
-# steer.md — post-M4 steering
+# steer.md — post-M5 steering
 
 Read this first before continuing `jlens`.
 
-M1, M2, M3, and M4 are complete. Do not restart benchmark-gold ingestion from scratch.
+M1, M2, M3, M4, and M5 are complete. Do not restart benchmark-gold ingestion or the 16-prompt M5 smoke test.
 
 ## Current state
 
@@ -13,54 +13,52 @@ M1: RouterGuard feasibility
 M2: DecodeGuard telemetry and feature discovery
 M3: risk-labeling scaffold and training gate
 M4: benchmark-gold ingestion foundation
+M5: end-to-end benchmark telemetry smoke prototype
 ```
 
-M4 delivered:
+M5 delivered:
 
 ```text
-data/registry/benchmark_sources.json
-schema/risk_labels_v2.json
-src/convert_truthfulqa.py
-src/convert_fever.py
-src/convert_gsm8k.py
-data/labels/benchmark/truthfulqa.jsonl
-data/labels/benchmark/fever.jsonl
-data/labels/benchmark/gsm8k.jsonl
-src/coverage_report.py
-reports/coverage/benchmark_coverage.json
-src/audit_sample.py
-data/labels/audit_queue.jsonl
-train_risk_heads.py tier/coverage gate updates
+src/build_benchmark_prompts.py
+data/prompts/benchmark_m5_sample.jsonl
+router-only decode capture for 16 benchmark prompts
+reports/schema/benchmark_m5_decode.jsonl
+reports/features/benchmark_m5_features.jsonl
+src/join_labels_features.py
+reports/benchmark_m5_join.json
+real prototype training/eval path in src/train_risk_heads.py
+reports/risk_heads_prototype.json
+updated STATE.md and reports/FINDINGS.md
 ```
 
-Benchmark-gold records currently ingested:
+M5 result:
 
 ```text
-TruthfulQA: 5,918 records
-FEVER:      15,935 records
-GSM8K:       1,319 records
-Total:      23,172 records
+answerable_from_memory:
+  LOO smoke AUROC about 0.875 on n=8
+
+unsupported_or_hallucinated:
+  LOO smoke AUROC about 0.844 best ranking model on n=12
 ```
 
-Coverage gate result:
+Interpretation:
 
 ```text
-PASS:
-  answerable_from_memory
-  unsupported_or_hallucinated
-
-FAIL / needs more data:
-  needs_current_info
-  needs_exact_citation
-  needs_math_verification
-  needs_code_execution
-  needs_user_file_context
-  high_stakes_or_sensitive
-  context_attack_present
-  format_or_tool_mode_shift
+The telemetry carries real ranking signal.
+The operating thresholds are not production-ready.
+The sample is tiny.
+Calibration and false-low-risk remain the main blockers.
 ```
 
-Important: benchmark labels alone are not enough to train the actual telemetry risk heads. The risk heads need matching feature rows from the target model. Labels and telemetry must join by `prompt_id`.
+Important caveats:
+
+```text
+- M5 uses only 16 prompts.
+- Labels are prompt-level benchmark proxies, not final graded target-model outputs.
+- answerable_from_memory is currently confounded with domain/source mix.
+- unsupported_or_hallucinated ranking signal is promising, but default thresholds are bad.
+- final mode remains gold/audit gated.
+```
 
 ## Working features
 
@@ -86,14 +84,14 @@ drift_from_previous_token_weighted
 
 Reason: M2 showed drift does not track confidence. Keep drift only for provenance/debugging.
 
-## Next milestone: M5 benchmark telemetry + prototype head
+## Next milestone: M6 scale benchmark telemetry + calibration
 
-M5 should turn the ingested benchmark labels into actual trainable examples by capturing target-model telemetry for a balanced benchmark subset.
+M6 should scale the proven M5 path before adding too many new labels.
 
 Suggested command:
 
 ```text
-/jlens-m5-benchmark-telemetry-loop
+/jlens-m6-scale-telemetry-loop
 ```
 
 Read first:
@@ -101,6 +99,9 @@ Read first:
 ```text
 steer.md
 reports/FINDINGS.md
+reports/risk_heads_prototype.json
+reports/benchmark_m5_join.json
+reports/features/benchmark_m5_features.jsonl
 reports/coverage/benchmark_coverage.json
 schema/risk_labels_v2.json
 data/registry/benchmark_sources.json
@@ -109,74 +110,90 @@ M3_RISK_LABELING.md
 LABELING_HANDOFF.md
 ```
 
-M5 objectives:
+M6 objectives:
 
 ```text
-1. Build benchmark prompt exporter.
-2. Export balanced prompt packs for the two currently covered labels.
-3. Capture router-only decode telemetry for that subset.
-4. Export decode schema / v3 weighted schema as needed.
-5. Build risk_features for benchmark prompt_ids.
-6. Join benchmark labels to matching feature rows.
-7. Replace trainer stub with real prototype training/eval for covered labels.
-8. Preserve final calibration gate: final mode still requires gold/audited labels.
+1. Scale the benchmark prompt sample from 16 to a balanced larger set.
+2. Focus first on the two labels already proven end-to-end:
+   - answerable_from_memory
+   - unsupported_or_hallucinated
+3. Avoid source/domain confounds where possible.
+4. Capture router-only decode telemetry for the larger sample.
+5. Export v3 decode records and risk features.
+6. Join labels to feature rows by prompt_id.
+7. Train/evaluate with a real held-out split where possible, not only leave-one-out.
+8. Report AUROC, AUPRC, ECE, false-low-risk, false-high-risk, latency, and threshold behavior.
+9. Tune prototype operating points for low false-low-risk.
+10. Keep final threshold calibration gold/audit gated.
 ```
 
-Recommended first target:
+Sampling guidance:
 
 ```text
-prototype labels:
-  answerable_from_memory
-  unsupported_or_hallucinated
+First target:
+  200-500 total prompts if runtime is acceptable
 
-sources:
-  TruthfulQA
-  FEVER
-  GSM8K for answerable_from_memory negatives
+Smoke target if runtime is tight:
+  64-128 total prompts
+
+Do not capture all 23k benchmark records yet.
 ```
 
-Do not try to capture all 23k records first. Start with a balanced sample:
+Recommended M6 sample design:
 
 ```text
-200-500 examples per class if runtime is acceptable
-or smaller smoke test first
+answerable_from_memory true:
+  TruthfulQA correct / stable QA
+
+answerable_from_memory false:
+  GSM8K math prompts and/or other non-recall tasks
+
+unsupported_or_hallucinated true:
+  TruthfulQA incorrect / FEVER refutes
+
+unsupported_or_hallucinated false:
+  TruthfulQA correct / FEVER supports
 ```
 
-The benchmark prompt exporter must either:
+Guardrails:
 
 ```text
-- reconstruct prompts from source datasets by source_record_id, or
-- create a derived prompt pack with only permitted text under source license rules
+- Preserve prompt_id linkage from labels to telemetry features.
+- Do not use drift fields as model features.
+- Do not treat null as false.
+- Do not commit raw captures, raw data caches, model weights, or transient output stubs.
+- Do not report production claims from smoke metrics.
+- If a metric improves, also report false-low-risk and threshold behavior.
 ```
 
-Do not commit restricted raw datasets. Keep raw caches under `data/raw/` and gitignored.
-
-## M5 deliverables
+## M6 deliverables
 
 ```text
-src/build_benchmark_prompts.py
-data/prompts/benchmark_m5_sample.jsonl or equivalent
-capture command docs for router-only decode
-reports/features/benchmark_m5_features.jsonl
-label-feature join report
-real train/eval implementation for prototype mode
-prototype metrics for covered labels
+data/prompts/benchmark_m6_sample.jsonl
+capture command docs or script for benchmark_m6
+reports/schema/benchmark_m6_decode.jsonl or equivalent
+reports/features/benchmark_m6_features.jsonl
+reports/benchmark_m6_join.json
+reports/risk_heads_m6.json
+calibration/threshold report
 updated STATE.md and reports/FINDINGS.md
 ```
 
-M5 stop condition:
+M6 stop condition:
 
 ```text
-benchmark labels and telemetry features join by prompt_id
-prototype training runs for at least one covered label
-metrics are reported honestly
-final mode remains gold-gated
+larger benchmark telemetry set captured
+labels and features join cleanly
+prototype heads train/evaluate on larger data
+threshold behavior is reported honestly
+false-low-risk is explicitly measured
+final mode remains gold/audit gated
 raw captures and raw datasets remain uncommitted
 ```
 
-## Next data expansion after M5 smoke/prototype
+## After M6: data expansion for the remaining labels
 
-Add second-wave converters to cover the 8 failing labels:
+Once the two covered labels are scaled and calibrated, add second-wave converters to cover the remaining labels:
 
 ```text
 HumanEval or MBPP -> needs_code_execution
@@ -200,4 +217,4 @@ HiddenLens: future phase only after the risk governor baseline is validated
 
 ## Repository hygiene
 
-Do not commit raw captures, logs, caches, local environments, model weights, or large generated artifacts unless explicitly intended.
+Do not commit raw captures, logs, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

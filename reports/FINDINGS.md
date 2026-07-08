@@ -596,3 +596,10 @@ CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gat
 - Verified both paths: TQA prompts (feature rows exist) score low→answer_locally;
   an unknown prompt → policy=null with the GGUF-no-telemetry note; all outcome
   fields null. Records carry the full metadata shape.
+
+## 45. M7 runtime schema doc (M7 step 3)
+- `docs/M7_SHADOW_RUNTIME.md`: documents the real-use runtime record (matches the
+  wrapper's emitted shape exactly, incl. policy=null + policy_note path), dry-run
+  and live run commands, the advisory/shadow posture, that require_confirmation
+  never executes, final thresholds gold-gated, and the privacy rule (public
+  prompts only in committed logs).

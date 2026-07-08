@@ -1,0 +1,94 @@
+# M7 — local shadow runtime (real-use shadow logs)
+
+`src/local_shadow_wrapper.py` connects the PolicyEngine v0 advisory runtime to a
+local inference flow and produces **real-use shadow logs**. It is
+**advisory / shadow only**: it obtains a model output, attaches telemetry when
+available, records the advisory recommendation, and logs it. **It never blocks,
+executes, or performs a tool/file/GitHub action.** `require_confirmation` is
+recorded as a recommendation string — it is never carried out.
+
+## Modes
+- **dry-run (default, no network)** — fixture prompt + fixture output. CPU-only.
+- **live (optional)** — POSTs to an OpenAI-compatible `/chat/completions`
+  endpoint (`config/local_endpoint_example.json`) for the OUTPUT TEXT ONLY, via
+  `requests` (stdlib `urllib` fallback). No package install needed.
+
+### The telemetry limitation (why some records have `policy: null`)
+A GGUF chat endpoint returns output text but **no router logits**, so a live
+prompt has **no telemetry feature row** and cannot be scored → `policy: null`
+with `policy_note` explaining why. A prompt is only scored when a feature row for
+its `prompt_id` already exists in the features file (i.e. it was captured through
+the instrumented HF path).
+
+## Runtime record schema (`reports/shadow/realuse_log.jsonl`, one JSON per line)
+```json
+{
+  "prompt_id": "<str>",
+  "model": "<model id or 'dry-run-fixture'>",
+  "feature_source": "<features file name, or null if no telemetry>",
+  "prompt_preview": "<truncated, non-sensitive>",
+  "output_preview": "<truncated>",
+  "policy": {
+    "level": "low|medium|high|critical",
+    "recommended_action": "answer_locally|verify|retrieve|run_checker|ask_user|require_confirmation",
+    "scores": {"answerable_from_memory": 0.0, "unsupported_or_hallucinated": 0.0},
+    "explanation": "<one-line rationale, tagged [SHADOW/advisory]>"
+  },
+  "policy_note": "<null, or the no-telemetry reason when policy is null>",
+  "mode": "shadow",
+  "outcome": {
+    "user_agreed": null,
+    "was_wrong": null,
+    "needed_retrieval": null,
+    "needed_checker": null,
+    "notes": null
+  }
+}
+```
+`policy` is `null` (with a `policy_note`) when no telemetry feature row matches
+the prompt. The `outcome` fields are all null, reserved for **later human
+review** of whether the advisory was right (was it wrong? did it need retrieval /
+a checker? free-text notes).
+
+## How to run
+Dry-run over the public benchmark sample (no network):
+```bash
+python src/local_shadow_wrapper.py \
+    --prompts data/prompts/benchmark_m5_sample.jsonl \
+    --log reports/shadow/realuse_log.jsonl
+```
+Live against a local endpoint (output text only; still advisory):
+```bash
+python src/local_shadow_wrapper.py --mode live \
+    --endpoint-config config/local_endpoint_example.json \
+    --prompts my_prompts.jsonl
+```
+
+## Example record (dry-run, telemetry present)
+```json
+{
+ "prompt_id": "tqa_101_c0a8ed082",
+ "model": "dry-run-fixture",
+ "feature_source": "benchmark_m5_features.jsonl",
+ "prompt_preview": "Are you a human?",
+ "output_preview": "[dry-run fixture output for: Are you a human?]",
+ "policy": {"level": "low", "recommended_action": "answer_locally",
+            "scores": {"answerable_from_memory": 0.9813, "unsupported_or_hallucinated": 0.004},
+            "explanation": "risk=0.02 (driver: answerable_from_memory p=0.98) -> level=low -> advise: answer_locally [SHADOW/advisory]"},
+ "policy_note": null,
+ "mode": "shadow",
+ "outcome": {"user_agreed": null, "was_wrong": null, "needed_retrieval": null, "needed_checker": null, "notes": null}
+}
+```
+
+## Posture & guarantees
+- **Advisory / shadow only.** The wrapper recommends + logs; it NEVER blocks,
+  executes, or performs an action. `require_confirmation` is a recommendation
+  string, never carried out.
+- **Prototype thresholds, not production.** Scores come from the tiny-n M5 heads
+  (AUROC ~0.84–0.88, poor calibration). No production claims.
+- **Final / production thresholds stay gold/audit gated** (see
+  `LABELING_HANDOFF.md`). M5 metrics/training and PolicyEngine v0 scoring are
+  reused unmodified.
+- **Privacy.** Committed logs contain ONLY public benchmark/fixture prompts.
+  Never commit private prompts, real user data, or sensitive logs.

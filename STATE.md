@@ -256,3 +256,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M7 Local shadow wrapper — Iteration M7.2 (2026-07-08 14:18 EDT) — step 2 COMPLETE (wrapper)
 - src/local_shadow_wrapper.py: dry-run default + optional live; scored path (feature row present) and policy=null path (no telemetry) both verified; advisory-only, no actions. reports/shadow/realuse_log.jsonl written (public TQA prompts).
 - Next step 3: docs/M7_SHADOW_RUNTIME.md (record schema + run instructions).
+
+## M7 Local shadow wrapper — Iteration M7.3 (2026-07-08 14:22 EDT) — step 3 COMPLETE (runtime doc)
+- docs/M7_SHADOW_RUNTIME.md matches the emitted record; run instructions + posture + privacy rule. Next step 4: fixture tests (stubbed live). Then step 5 sample log.

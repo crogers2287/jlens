@@ -396,3 +396,17 @@ calibrate the heads.
   un-answerable-from-memory). All 5,918 rows validate against schema/risk_labels_v2.json.
 - License Apache-2.0 (non_commercial=false). Raw parquet stays out of git; only
   the derived JSONL + converter are committed.
+
+## 29. Converter #2: FEVER → benchmark_gold (M4 step 4)
+- `src/convert_fever.py`: pulls copenlu/fever_gold_evidence valid.jsonl (6.5 MB,
+  **CC-BY-SA-3.0** — chosen over SciFact CC-BY-NC for redistribution) via
+  huggingface_hub. Output `data/labels/benchmark/fever.jsonl`: **15,935 records**,
+  all v2-valid.
+- Mapping: REFUTES → unsupported_or_hallucinated=true; SUPPORTS → false;
+  NOT ENOUGH INFO → null. verifiable claim → needs_exact_citation=true (else null).
+- Class balance: unsupported_or_hallucinated n_true=4887 / n_false=4638 / n_null=6410
+  (strong both-class); needs_exact_citation n_true=9525 / n_false=0 / n_null=6410.
+- DATA-GAP flagged: needs_exact_citation has NO false examples from FEVER — a
+  claim-verification set only yields citation-needed positives. The coverage gate
+  will (correctly) fail that label until a "no-citation-needed" source (stable
+  closed-book QA) supplies negatives. Honest partial coverage, per null≠false.

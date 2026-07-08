@@ -190,3 +190,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 34 (2026-07-08 11:44 EDT) — step 3 COMPLETE (TruthfulQA converter)
 - src/convert_truthfulqa.py → data/labels/benchmark/truthfulqa.jsonl: 5918 benchmark_gold records, unsupported_or_hallucinated 3318T/2600F, answerable_from_memory 2600T/rest-null. All validate v2. Raw parquet gitignored (data/raw/, *.parquet).
 - Next step 4: converter #2 (SciFact or FEVER → needs_exact_citation / unsupported_or_hallucinated).
+
+## M4 Benchmark-Gold — Iteration 35 (2026-07-08 11:48 EDT) — step 4 COMPLETE (FEVER converter)
+- src/convert_fever.py → data/labels/benchmark/fever.jsonl: 15935 records (CC-BY-SA, valid.jsonl 6.5MB). unsupported_or_hallucinated 4887T/4638F/6410N; needs_exact_citation 9525T/0F (data-gap: needs a no-citation source for negatives). All validate v2.
+- Next step 5: converter #3 (GSM8K → needs_math_verification, or HumanEval/MBPP → needs_code_execution).

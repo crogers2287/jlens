@@ -1,5 +1,6 @@
 .venv/
 data/captures/
+*.pt
 logs/
 __pycache__/
 *.py[cod]

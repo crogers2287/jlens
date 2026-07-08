@@ -908,3 +908,10 @@ reports/shadow/private/* (all file types, was *.jsonl only) with
 !reports/shadow/private/README.md — closes a gap where a run-meta .json would not
 have been ignored. Verified: run_meta.json / run/review .jsonl all ignored, README
 still tracked + committed.
+
+## 68. Public smoke batch fixture (M11 step 2)
+`data/prompts/agents_a1_smoke_batch.jsonl` — 25 PUBLIC benchmark-style tasks
+demonstrating the real workload batch format: 5 math (known_answer+expression),
+5 exact_answer (known_answer), 4 format/regex (pattern), 4 current_info, 7 plain
+explain. Verified: valid JSONL, every row has prompt_id+prompt, unique ids,
+within the batch cap (100). No private text — safe to commit as run input.

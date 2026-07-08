@@ -345,3 +345,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M11 loop prompt installed (bounded Agents-A1 workload; smoke-path build) via /prompt-master. steer.md synced post-M10 (7cf9b3b). NOTE: operator confirmed fusion is OFF — 3090s available; a genuinely LIVE Agents-A1 run is now authorized as the harness-complete follow-up (confirm serving approach first; don't disrupt llama-swap's existing models/config).
 - config/agents_a1_shadow_run.json (run_id cd08d63a145be1d2). Hardened .gitignore to reports/shadow/private/* except README (run-meta .json was previously not ignored).
 - Next step 2: data/prompts/agents_a1_smoke_batch.jsonl (public ~25-task batch).
+
+## M11 Agents-A1 workload — Iteration M11.2 (2026-07-08 18:15 EDT) — step 2 COMPLETE (public smoke batch)
+- data/prompts/agents_a1_smoke_batch.jsonl: 25 public tasks (math5/exact5/regex4/current_info4/explain7), unique ids, within cap. Public input, tracked.
+- Next step 3: src/run_agents_a1_shadow_batch.py (bounded + resume-safe wrapper + run metadata + failure counting).

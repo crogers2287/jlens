@@ -1,0 +1,25 @@
+{"prompt_id": "sm_math_01", "prompt": "What is 6*7?", "task_category": "math", "known_answer": "42", "expression": "6*7"}
+{"prompt_id": "sm_math_02", "prompt": "Compute 12+30.", "task_category": "math", "known_answer": "42", "expression": "12+30"}
+{"prompt_id": "sm_math_03", "prompt": "What is 144 divided by 12?", "task_category": "math", "known_answer": "12", "expression": "144/12"}
+{"prompt_id": "sm_math_04", "prompt": "What is 15% of 200?", "task_category": "math", "known_answer": "30", "expression": "200*15/100"}
+{"prompt_id": "sm_math_05", "prompt": "What is 2 to the power of 10?", "task_category": "math", "known_answer": "1024", "expression": "2**10"}
+{"prompt_id": "sm_exact_01", "prompt": "What is the capital of France?", "task_category": "exact_answer", "known_answer": "Paris"}
+{"prompt_id": "sm_exact_02", "prompt": "What is the chemical symbol for gold?", "task_category": "exact_answer", "known_answer": "Au"}
+{"prompt_id": "sm_exact_03", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7"}
+{"prompt_id": "sm_exact_04", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
+{"prompt_id": "sm_exact_05", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
+{"prompt_id": "sm_regex_01", "prompt": "Return a JSON object with a single key named result.", "task_category": "format", "pattern": "^\\{.*\\}$"}
+{"prompt_id": "sm_regex_02", "prompt": "Reply with a US ZIP code (5 digits).", "task_category": "format", "pattern": "\\b\\d{5}\\b"}
+{"prompt_id": "sm_regex_03", "prompt": "Give an ISO date in YYYY-MM-DD form.", "task_category": "format", "pattern": "\\d{4}-\\d{2}-\\d{2}"}
+{"prompt_id": "sm_regex_04", "prompt": "Return a hex color code.", "task_category": "format", "pattern": "#[0-9a-fA-F]{6}"}
+{"prompt_id": "sm_fresh_01", "prompt": "What is the current price of gold today?", "task_category": "current_info"}
+{"prompt_id": "sm_fresh_02", "prompt": "Who is the current CEO of Twitter?", "task_category": "current_info"}
+{"prompt_id": "sm_fresh_03", "prompt": "What is the latest iPhone model released this year?", "task_category": "current_info"}
+{"prompt_id": "sm_fresh_04", "prompt": "What is today's weather in Tampa?", "task_category": "current_info"}
+{"prompt_id": "sm_plain_01", "prompt": "Explain what a prime number is.", "task_category": "explain"}
+{"prompt_id": "sm_plain_02", "prompt": "Describe how photosynthesis works in one paragraph.", "task_category": "explain"}
+{"prompt_id": "sm_plain_03", "prompt": "Summarize the water cycle briefly.", "task_category": "explain"}
+{"prompt_id": "sm_plain_04", "prompt": "What are the primary colors?", "task_category": "explain"}
+{"prompt_id": "sm_plain_05", "prompt": "Give a one-sentence definition of gravity.", "task_category": "explain"}
+{"prompt_id": "sm_plain_06", "prompt": "Explain the difference between weather and climate.", "task_category": "explain"}
+{"prompt_id": "sm_plain_07", "prompt": "What is the boiling point of water at sea level in Celsius?", "task_category": "explain"}

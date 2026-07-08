@@ -1,0 +1,11 @@
+{
+  "_doc": "EXAMPLE OpenAI-compatible local-endpoint config for the M7 shadow wrapper's optional --mode live. This is a PLACEHOLDER, not a secret and not a real internal host. Copy to a local (gitignored) config and edit for your own endpoint. Dry-run mode needs none of this.",
+  "base_url": "http://localhost:9069/v1",
+  "_base_url_doc": "OpenAI-compatible base URL (e.g. a local llama-swap / vLLM / Ollama-OpenAI shim). The wrapper POSTs {base_url}/chat/completions.",
+  "model": "<local-model-name>",
+  "_model_doc": "Model id the endpoint serves. NOTE: a GGUF chat endpoint returns OUTPUT TEXT only — no router logits — so live prompts have NO telemetry feature row and score policy=null.",
+  "api_key": "not-needed",
+  "_api_key_doc": "Most local endpoints ignore this. Do NOT put a real secret here; use an env var in your own local config if your endpoint needs auth.",
+  "timeout_s": 60,
+  "_timeout_s_doc": "Per-request timeout in seconds for live mode."
+}

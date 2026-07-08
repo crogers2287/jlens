@@ -578,3 +578,10 @@ jlens now has a RUNTIME layer: an advisory, shadow-mode risk governor that score
 a prompt's telemetry (two covered labels) into a level + recommended action and
 logs every call — never blocking, never executing. Config → scorer → shadow-log
 CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gated.
+
+## 43. M7 local-endpoint example config (M7 step 1)
+- `config/local_endpoint_example.json`: EXAMPLE OpenAI-compatible endpoint
+  (base_url localhost placeholder, model placeholder, api_key "not-needed",
+  timeout) with per-field _doc. Placeholder only — no secret, no real host.
+  Notes the GGUF-has-no-router-logits reality (live prompts → policy=null).
+  Verified: loads, localhost placeholder, no secret.

@@ -248,3 +248,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M6 PolicyEngine v0 — Iteration M6.5 (2026-07-08 14:04 EDT) — step 5 COMPLETE → M6 DONE
 - docs/POLICY_ENGINE_V0.md (schemas, action semantics, worked example, posture). All M6 artifacts present; final mode still refuses. M6 STOP CONDITION MET. Hand off: annotate shadow-log outcomes; scale (M6-scaling track) + gold audit for production thresholds.
+
+## M7 Local shadow wrapper — Iteration M7.1 (2026-07-08 14:10 EDT) — step 1 COMPLETE (endpoint config)
+- New M7 loop prompt (CPU-only, dry-run default, advisory/shadow). config/local_endpoint_example.json: placeholder OpenAI-compat endpoint, no secret. Validated.
+- Next step 2: src/local_shadow_wrapper.py (dry-run default; live optional; policy=null when no feature row; real-use log).

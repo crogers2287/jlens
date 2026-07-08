@@ -723,3 +723,19 @@ level_distribution {low:3, medium:1, critical:2}, action_distribution
 prompt text ("watermelon", "artificial intelligence", "dry-run fixture output")
 returned NOTHING in the summary — no leak. This makes the summary committable
 even when its INPUT is a private real-use log.
+
+## 57. Commit-safety guard (M9 step 5)
+`src/check_commit_safe.py` scans staged files and exits nonzero if any (1) is a
+private-log path (reports/shadow/private/*.jsonl, README exempt), (2) references
+that private dir anywhere in its content, or (3) carries UNREDACTED
+prompt_preview / output_preview / outcome.notes text (a non-empty string that is
+not a `[redacted]` / `[redacted:<hash>]` marker). It PASSES aggregate-only
+summaries, all-null-text queues, and redacted files. Verified: PASS on
+private_summary_sample.json and an all-null-text queue; PASS on a redacted file;
+FAIL on real prompt_preview text, FAIL on unredacted outcome.notes, FAIL on a
+private-log path. DESIGN NOTE: the guard is deliberately conservative — it
+cannot tell public benchmark prompt text from private real-use text, so it flags
+ALL unredacted prompt/output text (including the M7/M8 public benchmark
+review_queue_sample.jsonl, committed earlier under explicit public-demo
+approval). Going forward the M9 workflow commits only aggregate summaries or
+redacted logs; raw text queues stay in the gitignored private dir.

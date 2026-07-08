@@ -299,3 +299,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M9 Private workflow — Iteration M9.3 (2026-07-08 16:12 EDT) — step 4 COMPLETE (aggregate summary)
 - src/private_outcome_summary.py → reports/outcomes/private_summary_sample.json: total/reviewed/unreviewed, level + action distributions, per-outcome-field non-null counts, calibration (reviewed-only, null when 0). Output built from scratch + recursive no-text-string guard. Verified on public fixture: 6 records, 0 reviewed, no leaked text.
 - Next step 5: src/check_commit_safe.py (guard: refuse private-path refs + unredacted prompt/output/notes text; pass aggregate/all-null/redacted).
+
+## M9 Private workflow — Iteration M9.4 (2026-07-08 16:17 EDT) — step 5 COMPLETE (commit-safety guard)
+- src/check_commit_safe.py: refuses private-log paths, private-dir refs, and unredacted prompt/output/notes text; passes aggregate/all-null-text/redacted. All 6 cases verified. Conservative by design (can't distinguish public benchmark text from private) → workflow commits only aggregates/redacted going forward.
+- Next step 6: docs/PRIVATE_SHADOW_WORKFLOW.md (end-to-end local-only workflow, public-fixture examples, gating note).

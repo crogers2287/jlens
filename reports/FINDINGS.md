@@ -472,3 +472,17 @@ risk_labels_v2 with full provenance + licensing, WITHOUT fabricating a label.
 Coverage gate: 2/10 labels training-ready; the rest have a documented source
 shopping list. Trainer prototype-trains only covered labels; final stays
 gold-gated; audit queue promotes benchmark_gold→gold via human review only.
+
+## 34. M5 benchmark prompt sample (M5 step 1)
+- `src/build_benchmark_prompts.py` → `data/prompts/benchmark_m5_sample.jsonl`:
+  16 prompts, deterministic + class-balanced for the two covered labels, prompt
+  text reconstructed from cached raw sources (data/raw, gitignored) by
+  source_record_id. Composition: 4 TruthfulQA-correct + 4 GSM8K + 4 FEVER-SUPPORTS
+  + 4 FEVER-REFUTES.
+- Balance: answerable_from_memory 4T/4F/8null; unsupported_or_hallucinated
+  4T/8F/4null — both covered labels have both classes.
+- **METHODOLOGICAL CAVEAT (recorded):** the benchmark label describes a reference
+  ANSWER, but telemetry is captured on the PROMPT. This is a prompt-level PROXY
+  label for a smoke prototype — indicative, not a final claim. Licenses permit the
+  prompt text (TruthfulQA Apache / FEVER CC-BY-SA / GSM8K MIT); raw sources stay
+  gitignored.

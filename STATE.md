@@ -210,3 +210,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M4 Benchmark-Gold — Iteration 39 (2026-07-08 12:05 EDT) — step 8 COMPLETE → M4 DONE
 - train_risk_heads.py: tier×coverage gate (--mode prototype allows benchmark_gold; final requires gold). Verified: all-null seed REFUSE; benchmark prototype PASS (2 labels); benchmark final REFUSE; below-threshold REFUSE.
 - ALL M4 stop-condition artifacts present. M4 STOP CONDITION MET — benchmark set can populate training, prototype gated on coverage, final gated on gold. Hand off: add second-wave sources for the 8 uncovered labels + human audit benchmark_gold→gold.
+
+## M5 Telemetry+Prototype — Iteration 40 (2026-07-08 12:11 EDT) — step 1 COMPLETE (M5 sample)
+- New M5 loop prompt installed (~16-prompt smoke, operator-approved). src/build_benchmark_prompts.py → data/prompts/benchmark_m5_sample.jsonl: 16 prompts (4×TQA-correct/GSM8K/FEVER-SUPPORTS/FEVER-REFUTES), both covered labels both-class, text reconstructed. Proxy-label caveat recorded.
+- Next step 2: GPU-gated router-only decode capture (~1.5h, pre-authorized). Unload llama-swap, background run, Monitor + heartbeat.
+- NOTE: STATE iteration count now 40 — this counter spans M1-M5; the "stop at 40" guard refers to per-milestone runaway, not this cumulative log. M5 continues.

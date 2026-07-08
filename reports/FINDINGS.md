@@ -557,3 +557,10 @@ end; scaling data is the next lever.
   wall-clock (env-safe --ts placeholder). Records only — never blocks/executes.
 - Verified: 3 advisories logged, every line parses with all required keys,
   mode=shadow, outcome_note=null. Shadow log is tracked (small/shareable).
+
+## 41. PolicyEngine v0 tests (M6 step 4)
+- `tests/test_policy_engine.py` (4 tests, all PASS): config loads + shadow/advisory
+  posture + every level maps to a valid v0 action; score() 4-field shape on a real
+  M5 row (both label scores in [0,1], valid action/level); level→action correct at
+  band-representative risk values; shadow_entry shape + round-trips through a
+  written JSONL line. Decode-capture tests still pass (no regression).

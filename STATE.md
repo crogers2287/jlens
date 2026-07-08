@@ -242,3 +242,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M6 PolicyEngine v0 — Iteration M6.3 (2026-07-08 13:56 EDT) — step 3 COMPLETE (shadow runtime)
 - src/risk_runtime.py + reports/shadow/shadow_log.jsonl. Advisory-only, records never acts. Verified 3 entries parse w/ required keys.
 - Next step 4: tests/test_policy_engine.py (config/score/mapping/log). Then step 5 docs.
+
+## M6 PolicyEngine v0 — Iteration M6.4 (2026-07-08 14:00 EDT) — step 4 COMPLETE (tests)
+- tests/test_policy_engine.py 4/4 pass (config/score/band-mapping/shadow-log). decode tests still pass. Next step 5 (FINAL): docs/POLICY_ENGINE_V0.md.

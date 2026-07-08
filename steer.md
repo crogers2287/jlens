@@ -1,8 +1,8 @@
-# steer.md — post-M3 benchmark-gold steering
+# steer.md — post-M4 steering
 
 Read this first before continuing `jlens`.
 
-M2 DecodeGuard is complete. M3 scaffolding is complete. The next phase should use existing human-verified public datasets wherever possible, not rely only on local hand labeling.
+M1, M2, M3, and M4 are complete. Do not restart benchmark-gold ingestion from scratch.
 
 ## Current state
 
@@ -12,49 +12,59 @@ Completed:
 M1: RouterGuard feasibility
 M2: DecodeGuard telemetry and feature discovery
 M3: risk-labeling scaffold and training gate
+M4: benchmark-gold ingestion foundation
 ```
 
-M3/M4 planning docs delivered:
+M4 delivered:
 
 ```text
-schema/risk_labels_v1.json
-data/labels/risk_labels_seed.jsonl
-src/build_label_scaffold.py
-src/risk_features.py
-reports/features/r4_risk_features.jsonl
-src/train_risk_heads.py
-src/eval_risk_heads.py
-LABELING_HANDOFF.md
-SILVER_LABEL_SOURCE_PLAN.md
-GOLD_DATASET_SOURCE_PLAN.md
+data/registry/benchmark_sources.json
+schema/risk_labels_v2.json
+src/convert_truthfulqa.py
+src/convert_fever.py
+src/convert_gsm8k.py
+data/labels/benchmark/truthfulqa.jsonl
+data/labels/benchmark/fever.jsonl
+data/labels/benchmark/gsm8k.jsonl
+src/coverage_report.py
+reports/coverage/benchmark_coverage.json
+src/audit_sample.py
+data/labels/audit_queue.jsonl
+train_risk_heads.py tier/coverage gate updates
 ```
 
-The current seed label file is intentionally all-null. Training correctly refuses all-null labels.
-
-## Labeling tiers
-
-Use four tiers:
+Benchmark-gold records currently ingested:
 
 ```text
-bronze = deterministic labels from rules or dataset metadata
-silver = frontier-model judge labels
-benchmark-gold = public human-verified benchmark labels for their original task
-gold = local human-audited labels for jlens semantics
+TruthfulQA: 5,918 records
+FEVER:      15,935 records
+GSM8K:       1,319 records
+Total:      23,172 records
 ```
 
-Policy:
+Coverage gate result:
 
 ```text
-prototype training may use bronze + silver + benchmark-gold
-serious risk-head training should prioritize benchmark-gold
-final operating thresholds require gold or benchmark-gold with local audit
-null is unknown, never false
-label_source and confidence should be recorded on generated labels
+PASS:
+  answerable_from_memory
+  unsupported_or_hallucinated
+
+FAIL / needs more data:
+  needs_current_info
+  needs_exact_citation
+  needs_math_verification
+  needs_code_execution
+  needs_user_file_context
+  high_stakes_or_sensitive
+  context_attack_present
+  format_or_tool_mode_shift
 ```
+
+Important: benchmark labels alone are not enough to train the actual telemetry risk heads. The risk heads need matching feature rows from the target model. Labels and telemetry must join by `prompt_id`.
 
 ## Working features
 
-Keep these feature groups for future heads:
+Keep these feature groups:
 
 ```text
 entropy_final_logits
@@ -76,82 +86,107 @@ drift_from_previous_token_weighted
 
 Reason: M2 showed drift does not track confidence. Keep drift only for provenance/debugging.
 
-## Next milestone: M4 benchmark-gold ingestion
+## Next milestone: M5 benchmark telemetry + prototype head
 
-M4 should build source registry + converters for public benchmark-gold datasets first. Frontier-judge silver labels remain useful but should not be the primary source if human-verified benchmark labels exist.
-
-Read:
-
-```text
-GOLD_DATASET_SOURCE_PLAN.md
-SILVER_LABEL_SOURCE_PLAN.md
-LABELING_HANDOFF.md
-M3_RISK_LABELING.md
-schema/risk_labels_v1.json
-reports/features/r4_risk_features.jsonl
-reports/FINDINGS.md
-```
+M5 should turn the ingested benchmark labels into actual trainable examples by capturing target-model telemetry for a balanced benchmark subset.
 
 Suggested command:
 
 ```text
-/jlens-benchmark-gold-loop
+/jlens-m5-benchmark-telemetry-loop
 ```
 
-The loop should:
+Read first:
 
 ```text
-1. Read steer.md first.
-2. Read GOLD_DATASET_SOURCE_PLAN.md.
-3. Build a dataset source registry with license/availability notes.
-4. Add converters from benchmark datasets into risk_labels_v1 format.
-5. Start with 3 high-value benchmark-gold sources.
-6. Add coverage reports by label, class balance, source, and tier.
-7. Add local-audit hooks so benchmark-gold can become project-gold.
-8. Keep frontier-judge silver labeling as optional fallback/augmentation.
-9. Allow prototype training on benchmark-gold only when coverage gate passes.
-10. Keep final threshold calibration gated on gold or audited benchmark-gold.
-11. Do not treat null as false.
-12. Do not use drift as a model feature.
+steer.md
+reports/FINDINGS.md
+reports/coverage/benchmark_coverage.json
+schema/risk_labels_v2.json
+data/registry/benchmark_sources.json
+GOLD_DATASET_SOURCE_PLAN.md
+M3_RISK_LABELING.md
+LABELING_HANDOFF.md
 ```
 
-Recommended first converters:
+M5 objectives:
 
 ```text
-TruthfulQA or SimpleQA -> answerable_from_memory / unsupported_or_hallucinated
-FEVER or SciFact -> needs_exact_citation / unsupported_or_hallucinated
-GSM8K or HumanEval/MBPP -> needs_math_verification or needs_code_execution
+1. Build benchmark prompt exporter.
+2. Export balanced prompt packs for the two currently covered labels.
+3. Capture router-only decode telemetry for that subset.
+4. Export decode schema / v3 weighted schema as needed.
+5. Build risk_features for benchmark prompt_ids.
+6. Join benchmark labels to matching feature rows.
+7. Replace trainer stub with real prototype training/eval for covered labels.
+8. Preserve final calibration gate: final mode still requires gold/audited labels.
 ```
 
-Recommended second wave:
+Recommended first target:
 
 ```text
-BeaverTails or PKU-SafeRLHF -> high_stakes_or_sensitive
-BFCL or tool-use datasets -> format_or_tool_mode_shift
+prototype labels:
+  answerable_from_memory
+  unsupported_or_hallucinated
+
+sources:
+  TruthfulQA
+  FEVER
+  GSM8K for answerable_from_memory negatives
+```
+
+Do not try to capture all 23k records first. Start with a balanced sample:
+
+```text
+200-500 examples per class if runtime is acceptable
+or smaller smoke test first
+```
+
+The benchmark prompt exporter must either:
+
+```text
+- reconstruct prompts from source datasets by source_record_id, or
+- create a derived prompt pack with only permitted text under source license rules
+```
+
+Do not commit restricted raw datasets. Keep raw caches under `data/raw/` and gitignored.
+
+## M5 deliverables
+
+```text
+src/build_benchmark_prompts.py
+data/prompts/benchmark_m5_sample.jsonl or equivalent
+capture command docs for router-only decode
+reports/features/benchmark_m5_features.jsonl
+label-feature join report
+real train/eval implementation for prototype mode
+prototype metrics for covered labels
+updated STATE.md and reports/FINDINGS.md
+```
+
+M5 stop condition:
+
+```text
+benchmark labels and telemetry features join by prompt_id
+prototype training runs for at least one covered label
+metrics are reported honestly
+final mode remains gold-gated
+raw captures and raw datasets remain uncommitted
+```
+
+## Next data expansion after M5 smoke/prototype
+
+Add second-wave converters to cover the 8 failing labels:
+
+```text
+HumanEval or MBPP -> needs_code_execution
+GAIA or BrowseComp -> needs_current_info
+SWE-bench -> needs_user_file_context
+BFCL -> format_or_tool_mode_shift
 prompt-injection benchmark -> context_attack_present
-SWE-bench/GitHub issue tasks -> needs_user_file_context
-BrowseComp/GAIA-style tasks -> needs_current_info
-```
-
-M4 deliverables:
-
-```text
-dataset source registry
-at least 3 benchmark-gold converters
-converted risk_labels JSONL outputs
-coverage report by label/source/tier
-prototype-training command that refuses weak coverage
-audit-sampling script for benchmark-gold -> project-gold promotion
-updated FINDINGS and STATE
-```
-
-M4 stop condition:
-
-```text
-benchmark-gold sources can populate a training set
-coverage report shows class balance by label and source
-prototype training is allowed only when coverage gate passes
-final calibration remains gated on gold/audited benchmark-gold labels
+BeaverTails or PKU-SafeRLHF -> high_stakes_or_sensitive
+stable closed-book QA -> needs_exact_citation false examples
+non-math stable QA -> needs_math_verification false examples
 ```
 
 ## Final architecture

@@ -1,0 +1,111 @@
+{
+ "top_k": 8,
+ "n_captures": 12,
+ "loo_accuracy_all_layers": 0.0,
+ "majority_chance": 0.16666666666666666,
+ "misclassified": [
+  {
+   "name": "code_py_01.pt",
+   "true": "code_py",
+   "pred": "math"
+  },
+  {
+   "name": "code_rust_01.pt",
+   "true": "code_rust",
+   "pred": "lang"
+  },
+  {
+   "name": "creative_01.pt",
+   "true": "creative",
+   "pred": "fact"
+  },
+  {
+   "name": "fact_01.pt",
+   "true": "fact",
+   "pred": "lang"
+  },
+  {
+   "name": "fact_02.pt",
+   "true": "fact",
+   "pred": "lang"
+  },
+  {
+   "name": "json_tool_01.pt",
+   "true": "json_tool",
+   "pred": "lang"
+  },
+  {
+   "name": "lang_es_01.pt",
+   "true": "lang",
+   "pred": "fact"
+  },
+  {
+   "name": "lang_zh_01.pt",
+   "true": "lang",
+   "pred": "fact"
+  },
+  {
+   "name": "math_01.pt",
+   "true": "math",
+   "pred": "lang"
+  },
+  {
+   "name": "math_02.pt",
+   "true": "math",
+   "pred": "reason"
+  },
+  {
+   "name": "reason_01.pt",
+   "true": "reason",
+   "pred": "math"
+  },
+  {
+   "name": "reason_02.pt",
+   "true": "reason",
+   "pred": "math"
+  }
+ ],
+ "per_layer_loo_accuracy": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "best_layer": 0
+}

@@ -49,6 +49,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--trust-remote-code", action="store_true",
                    help="needed only if model_type is not in transformers "
                         "(e.g. a qwen3_6 arch newer than the installed lib)")
+    p.add_argument("--max-gpu-mem-gib", type=float, default=23.0,
+                   help="per-GPU max_memory cap passed to accelerate "
+                        "(default 23.0 for an empty 24GiB 3090)")
     return p.parse_args(argv)
 
 
@@ -83,6 +86,21 @@ def load_model(args):
         trust_remote_code=args.trust_remote_code,
         torch_dtype=torch.bfloat16,
     )
+    # accelerate's auto-map default headroom spills modules to CPU even when
+    # both 3090s are empty; bnb-4bit then refuses to load. Cap explicitly.
+    if torch.cuda.is_available():
+        kwargs["max_memory"] = {
+            i: f"{args.max_gpu_mem_gib}GiB" for i in range(torch.cuda.device_count())
+        }
+        if args.dtype == "bf16":
+            # bf16 (~66GiB weights) can't fit 2x3090 — the fused 3D expert
+            # tensors (32.7B of 34.7B params, meta-verified 2026-07-08) are
+            # invisible to bnb, so nf4 is a dead end for qwen3_5_moe. Allow
+            # accelerate to stream the overflow from RAM; prefill-only capture
+            # makes the PCIe cost irrelevant. Cap below the 60GiB available so
+            # the OS/tokenizer keep headroom.
+            kwargs["max_memory"]["cpu"] = "52GiB"
+            kwargs["offload_folder"] = None  # RAM only, never disk
     if args.dtype == "nf4":
         from transformers import BitsAndBytesConfig  # requires bitsandbytes
         kwargs["quantization_config"] = BitsAndBytesConfig(

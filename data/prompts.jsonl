@@ -10,3 +10,23 @@
 {"id": "reason_02", "text": "Alice is taller than Bob. Bob is taller than Carol. Carol is taller than Dave. Who is the second tallest?"}
 {"id": "creative_01", "text": "Write a four-line poem about a lighthouse keeper who has never seen the sea by daylight."}
 {"id": "json_tool_01", "text": "Return a JSON object with keys 'name', 'port', and 'enabled' describing a hypothetical web service. JSON only, no prose."}
+{"id": "code_py_02", "text": "Implement an LRU cache in Python using collections.OrderedDict with get and put methods."}
+{"id": "code_py_03", "text": "Write a Python generator that yields all permutations of a string without using itertools."}
+{"id": "code_py_04", "text": "Debug this Python snippet: `def f(x=[]): x.append(1); return x` — explain the mutable default argument pitfall and fix it."}
+{"id": "code_rust_02", "text": "Write a Rust function that reads a file and counts word frequencies using a HashMap, handling errors with Result."}
+{"id": "code_rust_03", "text": "Explain the difference between Box, Rc, and Arc in Rust and when to use each."}
+{"id": "code_rust_04", "text": "Implement a generic binary search in Rust over a sorted slice, returning Option<usize>."}
+{"id": "creative_02", "text": "Describe an abandoned train station at dusk in second person, three sentences, no dialogue."}
+{"id": "creative_03", "text": "Write the opening paragraph of a mystery novel set in a floating city, first person, present tense."}
+{"id": "creative_04", "text": "Compose a short fable about a clockmaker and a sparrow, ending with a moral."}
+{"id": "json_tool_02", "text": "Given tools get_weather(city) and send_email(to, subject, body), produce the JSON tool call to email Bob the forecast for Paris."}
+{"id": "json_tool_03", "text": "Return a JSON object describing a book with fields title, author, year, genres (array), and in_print (boolean). No prose."}
+{"id": "json_tool_04", "text": "Convert this sentence to a JSON API call: 'Schedule a meeting with Dana next Tuesday at 3pm about the Q3 budget.'"}
+{"id": "fact_03", "text": "Which planet has the longest day relative to its year, and why? Answer factually."}
+{"id": "fact_04", "text": "Name the three longest rivers in the world in order and the continents they flow through."}
+{"id": "lang_fr_01", "text": "Explique en francais pourquoi le ciel est bleu, en trois phrases simples."}
+{"id": "lang_ja_01", "text": "日本語で自己紹介の丁寧な例文を三つ書いてください。"}
+{"id": "math_03", "text": "Solve the system: 2x + 3y = 12 and x - y = 1. Show your work."}
+{"id": "math_04", "text": "What is the probability of rolling a sum of 8 with two fair six-sided dice? Express as a fraction."}
+{"id": "reason_03", "text": "A farmer must cross a river with a wolf, a goat, and a cabbage in a two-seat boat. Plan the crossings step by step."}
+{"id": "reason_04", "text": "On an island of knights (always truthful) and knaves (always lying), A says: B is a knave. B says: we are both knaves. What are A and B?"}

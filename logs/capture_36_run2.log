@@ -1,2 +1,24 @@
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Fetching 26 files:   0%|          | 0/26 [00:00<?, ?it/s]
+Fetching 26 files:   0%|          | 0/26 [00:00<?, ?it/s]Fetching 26 files:   4%|▍         | 1/26 [03:53<1:37:13, 233.36s/it]Fetching 26 files:  38%|███▊      | 10/26 [04:40<05:47, 21.72s/it]  Fetching 26 files:  42%|████▏     | 11/26 [05:10<05:40, 22.69s/it]Fetching 26 files:  46%|████▌     | 12/26 [06:16<06:52, 29.43s/it]Fetching 26 files:  54%|█████▍    | 14/26 [06:38<04:45, 23.80s/it]Fetching 26 files:  62%|██████▏   | 16/26 [07:21<03:50, 23.10s/it]Fetching 26 files:  69%|██████▉   | 18/26 [07:48<02:41, 20.24s/it]Fetching 26 files:  77%|███████▋  | 20/26 [07:55<01:31, 15.20s/it]Fetching 26 files:  85%|████████▍ | 22/26 [08:25<01:00, 15.05s/it]Fetching 26 files:  88%|████████▊ | 23/26 [08:53<00:52, 17.36s/it]Fetching 26 files:  92%|█████████▏| 24/26 [09:00<00:30, 15.32s/it]Fetching 26 files:  96%|█████████▌| 25/26 [09:03<00:12, 12.56s/it]Fetching 26 files: 100%|██████████| 26/26 [09:03<00:00, 20.91s/it]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Traceback (most recent call last):
+  File "/home/crogers2287/agentstuff/jlens/src/capture_router_logits.py", line 153, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/crogers2287/agentstuff/jlens/src/capture_router_logits.py", line 123, in main
+    tok, model, cfg = load_model(args)
+                      ^^^^^^^^^^^^^^^^
+  File "/home/crogers2287/agentstuff/jlens/src/capture_router_logits.py", line 96, in load_model
+    model = AutoModelForCausalLM.from_pretrained(args.model, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/crogers2287/agentstuff/jlens/.venv/lib/python3.12/site-packages/transformers/models/auto/auto_factory.py", line 402, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/crogers2287/agentstuff/jlens/.venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4348, in from_pretrained
+    device_map = _get_device_map(model, device_map, max_memory, hf_quantizer)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/crogers2287/agentstuff/jlens/.venv/lib/python3.12/site-packages/transformers/integrations/accelerate.py", line 374, in _get_device_map
+    hf_quantizer.validate_environment(device_map=device_map)
+  File "/home/crogers2287/agentstuff/jlens/.venv/lib/python3.12/site-packages/transformers/quantizers/quantizer_bnb_4bit.py", line 74, in validate_environment
+    raise ValueError(
+ValueError: Some modules are dispatched on the CPU or the disk. Make sure you have enough GPU RAM to fit the quantized model. If you want to dispatch the model on the CPU or the disk while keeping these modules in 32-bit, you need to set `llm_int8_enable_fp32_cpu_offload=True` and pass a custom `device_map` to `from_pretrained`. Check https://huggingface.co/docs/transformers/main/en/main_classes/quantization#offload-between-cpu-and-gpu for more details. 

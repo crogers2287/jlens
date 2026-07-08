@@ -1,5 +1,6 @@
 .venv/
+data/captures/
+logs/
 __pycache__/
 *.pyc
-data/captures/
-reports/
+nohup.out

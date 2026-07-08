@@ -49,3 +49,36 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Fix: capture_router_logits.py check_arch() now descends into text_config for expert-count detection.
 - Capture launched: PID 691145, nf4, 12 prompts, out=data/captures/qwen3_6_35b_a3b, log=logs/capture_36_run2.log.
 - Next after capture: load_captures.py analysis on the .pt outputs.
+- Decision (2026-07-08): nf4 abandoned for Qwen3.6-35B-A3B — meta-device audit showed 32.7B/34.7B params live in fused 3D expert tensors (mlp.experts.gate_up_proj/down_proj) that bitsandbytes cannot quantize (nn.Linear only); nf4 est 62GiB > 46GiB VRAM. Pivot: --dtype bf16 + accelerate CPU offload (max_memory cpu=52GiB added to capture_router_logits.py). RAM check: 60GiB available, model 67GB on disk, ~20GiB overflow streams over PCIe. Prefill-only => speed irrelevant, bf16 > nf4 for logit fidelity anyway.
+- Iteration 9 fix (2026-07-08): bf16 run 1 OOM'd on GPU0 — accelerate pre_forward stages offloaded expert tensors (~1.07GiB each bf16) on-GPU but 23GiB cap left no headroom, plus ollama nomic-embed-text woke mid-run and took 800MiB. Relaunch: --max-gpu-mem-gib 20 (≈3.5GiB staging headroom/GPU, survives embed-model wakes), PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True, nomic unloaded via ollama stop.
+
+## Iteration 9 (2026-07-08 07:30 EDT) — CAPTURE + ANALYSIS COMPLETE
+- bf16 r2 capture succeeded: 12/12 prompts -> data/captures/qwen3_6_35b_a3b (~49MB, 40 router layers + 41 hidden layers each). Runtime ~4 min incl. load; 20GiB caps + expandable_segments held (no OOM, survived with offload streaming).
+- load_captures.py upgraded: default --top-k 8 (matches num_experts_per_tok), corpus-level aggregate_usage(), --json report writer. Report: reports/qwen3_6_35b_a3b_routing.json.
+- Findings (12 prompts, 264 tokens total, top-8 of 256, 40 MoE layers):
+  * Aggregate routing entropy 80-93% of max per layer — healthy load balancing, no collapsed layers.
+  * L0-L2 most diffuse (90-93%), mid-stack (L7-L21) most specialized (80-83%) — matches the shared/general->specialized depth pattern seen in DeepSeek/Qwen MoE papers.
+  * 17-89 experts per layer never selected across corpus — expected at 264 tokens, NOT evidence of dead experts; needs a larger corpus to claim true deadness.
+  * Per-prompt active sets are small (46-63/256 in late layers) -> strong per-domain specialization signal, good substrate for the interpretability sidecar.
+- Next: cross-domain expert-overlap analysis (do code vs math vs lang prompts route to disjoint expert sets?) — this is the core sidecar question.
+
+## Iteration 10 (2026-07-08) — Cross-domain expert-overlap analysis [COMPLETED]
+- Built src/expert_overlap.py: per-layer Jaccard of top-8 expert sets across 8 domains (code_py, code_rust, creative, fact, json_tool, lang, math, reason); report → reports/qwen3_6_35b_a3b_overlap.json
+- ANSWER to core sidecar question: domains do NOT route to disjoint expert sets, but are far from identical:
+  - mean pairwise Jaccard 0.29–0.43 (top-k=8, 40 layers) — substantial sharing everywhere
+  - most-similar pair: math|reason J=0.431; code_py|code_rust J=0.422 (semantic neighbors cluster)
+  - least-similar: fact|json_tool J=0.294; code_py|reason J=0.295
+  - depth terciles nearly flat (early 0.354 / mid 0.325 / late 0.363) — specialization is NOT concentrated at one depth; mid-stack slightly more specialized
+  - exclusive experts are real and domain-skewed: lang=620 (peak L39), math=560 (peak L12), reason=375, fact=346 vs code_py only 54 — multilingual + math carve out the most private capacity
+- Implication for interpretability sidecar: a routing-based domain classifier is viable (expert-set signatures separate domains), but expert-ablation domain surgery will have collateral damage due to ~30-40% overlap. Lang/math exclusive experts are the best ablation targets.
+- Next: expert-set domain classifier probe — predict prompt domain from routing signature alone (per-layer expert histogram → logistic probe), quantify separability.
+
+## Iteration 11 (2026-07-08) — Domain separability of routing signatures [COMPLETED]
+- Built src/routing_probe.py (per-layer expert-usage histogram -> 10240-dim signature, logistic LOO probe) + NN-retrieval fallback.
+- LOO probe returned 0.000 — INVALID, not a negative result: 4/8 domains are singletons, so their class is absent from LOO training folds by construction; n=12 vs 10240 dims.
+- Honest test at n=12: cosine NN retrieval on full signatures:
+  - retrieval@1 = 6/8 on 2-sample domains (misses: lang_es->json_tool, math_02->reason)
+  - mean intra-domain cosine 0.5517 vs inter-domain 0.3738 (gap +0.178)
+  - code_py<->code_rust are mutual NNs (cos 0.591) — code forms a cluster even across languages
+- Conclusion: routing signature alone separates domains at coarse grain; sidecar domain-detection head is feasible.
+- Next: expand data/prompts.jsonl to >=4 prompts/domain (~32 total), re-capture, then re-run probe validly.

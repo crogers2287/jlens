@@ -252,3 +252,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M7 Local shadow wrapper — Iteration M7.1 (2026-07-08 14:10 EDT) — step 1 COMPLETE (endpoint config)
 - New M7 loop prompt (CPU-only, dry-run default, advisory/shadow). config/local_endpoint_example.json: placeholder OpenAI-compat endpoint, no secret. Validated.
 - Next step 2: src/local_shadow_wrapper.py (dry-run default; live optional; policy=null when no feature row; real-use log).
+
+## M7 Local shadow wrapper — Iteration M7.2 (2026-07-08 14:18 EDT) — step 2 COMPLETE (wrapper)
+- src/local_shadow_wrapper.py: dry-run default + optional live; scored path (feature row present) and policy=null path (no telemetry) both verified; advisory-only, no actions. reports/shadow/realuse_log.jsonl written (public TQA prompts).
+- Next step 3: docs/M7_SHADOW_RUNTIME.md (record schema + run instructions).

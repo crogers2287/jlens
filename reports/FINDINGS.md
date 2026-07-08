@@ -585,3 +585,14 @@ CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gat
   timeout) with per-field _doc. Placeholder only — no secret, no real host.
   Notes the GGUF-has-no-router-logits reality (live prompts → policy=null).
   Verified: loads, localhost placeholder, no secret.
+
+## 44. M7 local shadow wrapper (M7 step 2)
+- `src/local_shadow_wrapper.py`: --mode dry-run (default, no network, fixture
+  output) and --mode live (OpenAI-compatible /chat/completions via requests, urllib
+  fallback — output text only). Per prompt: get output → attach feature row by
+  prompt_id if present → PolicyEngine.score, else policy=null + note. Writes a
+  real-use runtime record to reports/shadow/realuse_log.jsonl. ADVISORY only —
+  never performs a tool/file/GitHub action; require_confirmation is a recommendation.
+- Verified both paths: TQA prompts (feature rows exist) score low→answer_locally;
+  an unknown prompt → policy=null with the GGUF-no-telemetry note; all outcome
+  fields null. Records carry the full metadata shape.

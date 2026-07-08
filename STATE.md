@@ -245,3 +245,6 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 
 ## M6 PolicyEngine v0 — Iteration M6.4 (2026-07-08 14:00 EDT) — step 4 COMPLETE (tests)
 - tests/test_policy_engine.py 4/4 pass (config/score/band-mapping/shadow-log). decode tests still pass. Next step 5 (FINAL): docs/POLICY_ENGINE_V0.md.
+
+## M6 PolicyEngine v0 — Iteration M6.5 (2026-07-08 14:04 EDT) — step 5 COMPLETE → M6 DONE
+- docs/POLICY_ENGINE_V0.md (schemas, action semantics, worked example, posture). All M6 artifacts present; final mode still refuses. M6 STOP CONDITION MET. Hand off: annotate shadow-log outcomes; scale (M6-scaling track) + gold audit for production thresholds.

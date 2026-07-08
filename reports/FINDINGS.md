@@ -564,3 +564,17 @@ end; scaling data is the next lever.
   M5 row (both label scores in [0,1], valid action/level); level→action correct at
   band-representative risk values; shadow_entry shape + round-trips through a
   written JSONL line. Decode-capture tests still pass (no regression).
+
+## 42. PolicyEngine v0 docs (M6 step 5) — MILESTONE COMPLETE
+- `docs/POLICY_ENGINE_V0.md`: policy output schema, shadow-log schema, v0 action
+  semantics, a WORKED end-to-end example (FEVER prompt → critical →
+  require_confirmation), the advisory/shadow posture, and the explicit statement
+  that final/production thresholds stay gold/audit gated + M5 path preserved.
+- All M6 artifacts present. train --mode final still REFUSES (gold-gated). M6
+  PolicyEngine v0 COMPLETE.
+
+### M6 summary
+jlens now has a RUNTIME layer: an advisory, shadow-mode risk governor that scores
+a prompt's telemetry (two covered labels) into a level + recommended action and
+logs every call — never blocking, never executing. Config → scorer → shadow-log
+CLI → tests (4/4) → docs. Prototype-only; production decisions stay gold-gated.

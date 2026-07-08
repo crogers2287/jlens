@@ -122,3 +122,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M2 item 4 — progress note (2026-07-08 09:21 EDT, heartbeat)
 - r4 decode capture steady ~5.3 min/prompt (CPU-offload PCIe-bound, GPU util ~25%); full 32 prompts ≈ 2.8h. 4/32 done (code_py_01, code_rust_01, math_01, math_02).
 - Worker PID 2184631 (30GB RSS); wrapper 2184628. Monitor b63tp5qsj has 1h timeout < job runtime → switching to heartbeat polling as the real wake signal. Capture pre-authorized; letting it run rather than waste the 4 done + reload.
+
+## steer.md adopted (2026-07-08 09:52 EDT)
+- Collaborator pushed steer.md (fbad779) — authoritative DecodeGuard steering doc. Fast-forwarded local; .gitignore hardened (*.py[cod], .pytest_cache/).
+- Loop prompt (~/.claude/commands/jlens-loop.md) rewritten via /prompt-master to read steer.md FIRST and follow its 8-step plan: (1) finish r4 + resume-skip, (2) export+validate (new validate_jsonl_schema.py), (3) rich decode_drift.py, (4) drift interpretation notes, (5) router-only decode mode + --overwrite + tests, (6) weighted drift features (schema v3), (7) decode domain-shift probe (reuse r3 head), (8) M3_RISK_LABELING.md. Stop when all delivered; human labels gate M3.
+- r4 status: STILL RUNNING (~10/32), Monitor b63tp5qsj timed out (1h<runtime) → heartbeat polling is now sole wake signal. Capture writes one .pt/prompt so partial progress is safe.

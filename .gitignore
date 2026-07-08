@@ -2,5 +2,6 @@
 data/captures/
 logs/
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
 nohup.out

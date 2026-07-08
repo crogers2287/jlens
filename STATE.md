@@ -378,3 +378,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M12 loop prompt installed (verifier hardening + reviewed calibration) via /prompt-master. steer.md synced post-M11 (c792170).
 - src/verifiers.py: json_object_check (json.loads + balanced-brace extraction, type + required_keys, hashed evidence); regex unchanged; registered. Fixes #75 live false-positive. 9 cases verified; no leak.
 - Next step 2: route JSON tasks to json_object_check in _run_verifiers + update smoke batch JSON row to json_check.
+
+## M12 Verifier calibration — Iteration M12.2 (2026-07-08 19:50 EDT) — step 2 COMPLETE (JSON routing)
+- _run_verifiers routes json_check/json_required tasks → json_object_check; regex guarded to skip json tasks (regex for regex only); escalation/confidence math untouched. Smoke fixture sm_regex_01 → json_check+json_required. Routing verified; full suite green.
+- Next step 3: review the 7 escalated live records (objective/ground-truth) → gitignored reviewed queue.

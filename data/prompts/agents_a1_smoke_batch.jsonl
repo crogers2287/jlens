@@ -8,7 +8,7 @@
 {"prompt_id": "sm_exact_03", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7"}
 {"prompt_id": "sm_exact_04", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
 {"prompt_id": "sm_exact_05", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
-{"prompt_id": "sm_regex_01", "prompt": "Return a JSON object with a single key named result.", "task_category": "format", "pattern": "^\\{.*\\}$"}
+{"prompt_id": "sm_regex_01", "prompt": "Return a JSON object with a single key named result.", "task_category": "json", "json_check": true, "json_required": ["result"]}
 {"prompt_id": "sm_regex_02", "prompt": "Reply with a US ZIP code (5 digits).", "task_category": "format", "pattern": "\\b\\d{5}\\b"}
 {"prompt_id": "sm_regex_03", "prompt": "Give an ISO date in YYYY-MM-DD form.", "task_category": "format", "pattern": "\\d{4}-\\d{2}-\\d{2}"}
 {"prompt_id": "sm_regex_04", "prompt": "Return a hex color code.", "task_category": "format", "pattern": "#[0-9a-fA-F]{6}"}

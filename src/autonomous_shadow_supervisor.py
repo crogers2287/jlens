@@ -67,7 +67,14 @@ def _run_verifiers(task, output, samples, cfg):
     if enabled("exact_answer_match") and task.get("known_answer") is not None \
             and task.get("task_category") != "math":
         results.append(VZ.exact_answer_match(output, known_answer=task["known_answer"]))
-    if enabled("regex_or_schema_check") and task.get("pattern"):
+    if enabled("json_object_check") and (task.get("json_check")
+                                         or task.get("json_required")):
+        results.append(VZ.json_object_check(
+            output, required_keys=task.get("json_required"),
+            expected_type=task.get("json_type", "object")))
+    # regex is for TRUE regex tasks only — not JSON tasks (M12)
+    if enabled("regex_or_schema_check") and task.get("pattern") \
+            and not task.get("json_check"):
         results.append(VZ.regex_or_schema_check(output, pattern=task["pattern"]))
     if enabled("math_checker") and (task.get("expression") is not None
                                     or task.get("task_category") == "math"):

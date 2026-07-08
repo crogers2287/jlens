@@ -1032,3 +1032,14 @@ Verified: the live case `{ "result": "success" }` PASSES (was the false-wrong),
 valid+trailing-prose PASSES, markdown-fenced PASSES, required-key-present PASSES,
 missing-key/garbage/truncated FAIL, array vs object type checks correct, no
 evidence text leak. (Also added the missing `import json`.)
+
+## 77. JSON-task routing (M12 step 2)
+Routed JSON tasks to the new verifier in autonomous_shadow_supervisor._run_verifiers:
+a task with `json_check` true (or `json_required` keys) now runs json_object_check
+(with required_keys + optional json_type), and the regex verifier is guarded to
+skip json_check tasks — "regex for regex tasks only." Confidence/escalation math
+unchanged (additive routing only). Updated data/prompts/agents_a1_smoke_batch.jsonl
+sm_regex_01 to task_category "json" + json_check + json_required ["result"] (dropped
+the full-anchor pattern). Verified: a JSON task runs json_object_check and NOT regex
+(verdict pass on valid JSON+trailing text); a real regex task still runs
+regex_or_schema_check; full suite stays green.

@@ -1,8 +1,8 @@
-# steer.md — post-M5 runtime steering
+# steer.md — post-M6 integration steering
 
 Read this first before continuing `jlens`.
 
-M1 through M5 are complete. Do not redo the M4 benchmark ingestion or the 16-prompt M5 smoke test.
+M1 through M6 are complete. Do not redo benchmark ingestion, the M5 smoke test, or the PolicyEngine v0 runtime.
 
 ## Completed milestones
 
@@ -12,25 +12,32 @@ M2: DecodeGuard telemetry and feature discovery
 M3: risk-labeling scaffold and training gate
 M4: benchmark-gold ingestion foundation
 M5: end-to-end benchmark telemetry smoke prototype
+M6: PolicyEngine v0 advisory/shadow runtime
 ```
 
-## M5 result
+## Current capability
+
+`jlens` now has:
 
 ```text
-answerable_from_memory:
-  LOO smoke AUROC about 0.875 on n=8
-
-unsupported_or_hallucinated:
-  LOO smoke AUROC about 0.844 best ranking model on n=12
+config/policy_engine_v0.json
+src/policy_engine.py
+src/risk_runtime.py
+docs/POLICY_ENGINE_V0.md
+tests/test_policy_engine.py
+reports/shadow/shadow_log.jsonl
 ```
 
-Interpretation:
+PolicyEngine v0 scores existing feature rows, emits a level plus recommended action, and writes shadow-log entries. It is advisory only and uses prototype thresholds only.
+
+Current interpretation:
 
 ```text
 Telemetry has real ranking signal.
 The sample is tiny.
-Current thresholds are not production-ready.
+Thresholds are prototype-only.
 Calibration remains the main blocker.
+The runtime is ready for real-use shadow integration.
 ```
 
 ## Feature decision
@@ -57,24 +64,14 @@ drift_from_previous_token_weighted
 
 Drift remains provenance/debug only.
 
-## Next milestone: M6 PolicyEngine v0 + shadow testing
+## Next milestone: M7 local inference wrapper + real-use shadow logs
 
-M6 should implement the first usable runtime layer now. Do not wait for perfect calibration before building the interface.
-
-Default posture:
-
-```text
-advisory first
-shadow mode by default
-log every recommendation
-prototype thresholds only
-no production claims yet
-```
+M7 should connect the existing advisory runtime to a local inference flow so `jlens` starts producing real-use shadow logs.
 
 Suggested command:
 
 ```text
-/jlens-m6-policyengine-shadow-loop
+/jlens-m7-local-shadow-integration-loop
 ```
 
 Read first:
@@ -82,69 +79,81 @@ Read first:
 ```text
 steer.md
 reports/FINDINGS.md
+docs/POLICY_ENGINE_V0.md
+config/policy_engine_v0.json
+src/policy_engine.py
+src/risk_runtime.py
 reports/risk_heads_prototype.json
 reports/benchmark_m5_join.json
 reports/features/benchmark_m5_features.jsonl
-reports/coverage/benchmark_coverage.json
 schema/risk_labels_v2.json
-data/registry/benchmark_sources.json
-GOLD_DATASET_SOURCE_PLAN.md
-M3_RISK_LABELING.md
-LABELING_HANDOFF.md
 ```
 
-M6 objectives:
+M7 objectives:
 
 ```text
-1. Build src/policy_engine.py.
-2. Add a runtime scorer that loads the existing prototype report/config.
-3. Return a small result object: level, scores, recommended_action, explanation.
-4. Add a config file for prototype thresholds and actions.
-5. Add shadow logging for prompt_id, feature source, scores, recommendation, and outcome note.
-6. Keep ordinary chat advisory-only.
-7. Keep final mode and production thresholds gold/audit gated.
-8. Add tests for config loading, score parsing, action mapping, and log writing.
-9. Add docs showing how to score an existing feature JSONL row.
-10. Preserve the M5 metrics and training path.
+1. Build a local inference wrapper or adapter around an OpenAI-compatible local endpoint.
+2. Keep the first integration simple: accept prompt, call model, attach feature row when available, call PolicyEngine, write shadow log.
+3. Support an offline mode that scores precomputed feature rows and records associated prompt/output metadata.
+4. Define a runtime record schema for real-use shadow logs.
+5. Add outcome fields for later review: user_agreed, was_wrong, needed_retrieval, needed_checker, notes.
+6. Keep recommendations advisory only for normal chat.
+7. For tool/file/GitHub workflows, emit require_confirmation as a recommendation only; do not perform actions directly.
+8. Add docs showing how to run the wrapper against a local endpoint.
+9. Add tests using fixtures or a fake local endpoint.
+10. Update STATE.md and reports/FINDINGS.md.
 ```
 
-Recommended v0 actions:
+Recommended runtime output:
 
-```text
-answer_locally
-verify
-retrieve
-run_checker
-ask_user
-require_confirmation
+```json
+{
+  "prompt_id": "realuse_...",
+  "model": "local-model-name",
+  "feature_source": "...",
+  "policy": {
+    "level": "low|medium|high|critical",
+    "recommended_action": "answer_locally|verify|retrieve|run_checker|ask_user|require_confirmation",
+    "scores": {},
+    "explanation": "..."
+  },
+  "outcome": {
+    "user_agreed": null,
+    "was_wrong": null,
+    "needed_retrieval": null,
+    "needed_checker": null,
+    "notes": null
+  }
+}
 ```
 
-M6 deliverables:
+M7 deliverables:
 
 ```text
-src/policy_engine.py
-src/risk_runtime.py or equivalent CLI wrapper
-config/policy_engine_v0.json
-policy output schema docs
-shadow log schema docs
-tests for scoring and logging
+src/local_shadow_wrapper.py or equivalent
+runtime/shadow log schema doc
+example config for local OpenAI-compatible endpoint
+fixture-based tests
+README/docs for running shadow mode
+sample small log if safe and non-sensitive
 updated STATE.md and reports/FINDINGS.md
 ```
 
-M6 stop condition:
+M7 stop condition:
 
 ```text
-PolicyEngine v0 can score a feature row
-recommendation is produced
-recommendation is logged
-ordinary chat remains advisory
-final mode remains gold/audit gated
-raw captures and raw datasets remain uncommitted
+local wrapper can run in dry-run or fixture mode
+PolicyEngine v0 is invoked by the wrapper
+shadow recommendation is logged with prompt/output metadata
+outcome fields exist for later review
+normal chat remains advisory
+no private prompts or sensitive logs are committed
+no raw captures or model weights are committed
 ```
 
-## Parallel track after PolicyEngine v0
+## Parallel track after M7
 
-After the runtime layer exists, continue scaling the M5 path.
+After the real-use shadow wrapper exists, continue scaling and calibration.
 
 ```text
 64-128 prompts for quick calibration check
@@ -163,6 +172,21 @@ latency
 threshold behavior
 ```
 
+## Later data expansion for remaining labels
+
+After the runtime exists and the two covered labels are exercised in real-use shadow mode, add second-wave converters to cover the remaining labels:
+
+```text
+HumanEval or MBPP -> needs_code_execution
+GAIA or BrowseComp -> needs_current_info
+SWE-bench -> needs_user_file_context
+BFCL -> format_or_tool_mode_shift
+prompt-injection benchmark -> context_attack_present
+BeaverTails or PKU-SafeRLHF -> high_stakes_or_sensitive
+stable closed-book QA -> needs_exact_citation false examples
+non-math stable QA -> needs_math_verification false examples
+```
+
 ## Final architecture
 
 ```text
@@ -174,4 +198,4 @@ HiddenLens: future phase only after the risk governor baseline is validated
 
 ## Repository hygiene
 
-Do not commit raw captures, logs, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit raw captures, private prompts, sensitive logs, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

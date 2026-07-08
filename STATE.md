@@ -170,3 +170,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M3 Risk Heads — Iteration 29 (2026-07-08 11:10 EDT) — step 3 COMPLETE (risk features)
 - src/risk_features.py → reports/features/r4_risk_features.jsonl (16 rows, M2 KEEP features, drift barred by assertion + verified). r3 head reused for prefill domain pred + windowed decode-domain shift.
 - Next step 4: src/train_risk_heads.py + src/eval_risk_heads.py — calibrated baselines that REFUSE on all-null labels (prove the guard fires).
+
+## M3 Risk Heads — Iteration 30 (2026-07-08 11:14 EDT) — step 4 COMPLETE (train/eval + LABEL GATE)
+- src/train_risk_heads.py + src/eval_risk_heads.py: calibrated baselines + metrics (AUROC/AUPRC/ECE/false-low/false-high/latency). LABEL GATE verified: refuses on all-null seed AND missing file (exit 1, per-label diagnostics). No training, no fabricated labels.
+- Next step 5 (FINAL): LABELING_HANDOFF.md → then loop STOP + operator hand-off.

@@ -325,3 +325,16 @@ awaits labeled data to become a calibrated governor.
   all 16 rows. Independent re-check confirms all feature groups present.
 - These rows join the (currently all-null) labels by prompt_id once a human
   labels; the trainer stays blocked until then.
+
+## 24. Calibrated train/eval skeleton + LABEL GATE (M3 step 4)
+- `src/train_risk_heads.py` + `src/eval_risk_heads.py`. Baselines wired:
+  calibrated logreg / linear SVM / tiny MLP (CalibratedClassifierCV, isotonic) +
+  hand-score baseline for comparison only. Prompt-held-out (StratifiedGroupKFold).
+- Metrics implemented + unit-sane: AUROC, AUPRC, ECE, false-low-risk rate,
+  false-high-risk rate, latency. `false_low_risk` = P(pred neg | truly pos) —
+  the costly miss, prioritized over `false_high_risk`.
+- **LABEL GATE proven**: `check_trainable()` refuses (nonzero exit, clear
+  per-label message) when the label file is missing, all-null, or below
+  min-per-label (10) with both classes. Verified all three refusal paths on the
+  current all-null seed — NO head is trained, NO label is fabricated. Training
+  body executes only once a human provides labels.

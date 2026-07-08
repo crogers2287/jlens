@@ -1,0 +1,102 @@
+{
+ "mode": "prototype",
+ "trainable_labels": [
+  "answerable_from_memory",
+  "unsupported_or_hallucinated"
+ ],
+ "min_per_label": 3,
+ "features": [
+  "prefill_pred_margin",
+  "prefill_pred_correct",
+  "decode_offdomain_frac",
+  "decode_domain_switches",
+  "low_conf_spike_count",
+  "high_entropy_spike_count",
+  "entropy_final.mean",
+  "entropy_final.extreme",
+  "entropy_final.std",
+  "selected_token_prob.mean",
+  "selected_token_prob.extreme",
+  "selected_token_prob.std",
+  "topk_mass.mean",
+  "topk_mass.extreme",
+  "topk_mass.std"
+ ],
+ "cv": "leave-one-out (tiny-n smoke prototype)",
+ "caveats": [
+  "Tiny n (see per-label n): metrics are INDICATIVE, not conclusive.",
+  "answerable_from_memory is confounded with domain (TruthfulQA trivia vs GSM8K math) \u2014 a head may learn topic, not the risk concept.",
+  "Labels are prompt-level PROXIES from benchmark reference answers; telemetry is on the prompt, not a graded model output.",
+  "Calibration (ECE) is unreliable at this n; final thresholds stay gold-gated."
+ ],
+ "results": {
+  "answerable_from_memory": {
+   "n": 8,
+   "n_pos": 4,
+   "n_neg": 4,
+   "pos_rate": 0.5,
+   "models": {
+    "logreg": {
+     "auroc": 0.875,
+     "auprc": 0.887,
+     "ece": 0.335,
+     "false_low_risk_rate": 0.5,
+     "false_high_risk_rate": 0.25,
+     "predict_latency_ms": 3.714
+    },
+    "linsvm": {
+     "auroc": 0.5,
+     "auprc": 0.732,
+     "ece": 0.37,
+     "false_low_risk_rate": 0.5,
+     "false_high_risk_rate": 0.75,
+     "predict_latency_ms": 1.321
+    },
+    "hand_score": {
+     "auroc": 0.875,
+     "auprc": 0.917,
+     "ece": 0.286,
+     "false_low_risk_rate": 0.25,
+     "false_high_risk_rate": 0.25,
+     "predict_latency_ms": 0.015
+    }
+   },
+   "best_model": "logreg",
+   "best_auroc": 0.875
+  },
+  "unsupported_or_hallucinated": {
+   "n": 12,
+   "n_pos": 4,
+   "n_neg": 8,
+   "pos_rate": 0.333,
+   "models": {
+    "logreg": {
+     "auroc": 0.688,
+     "auprc": 0.57,
+     "ece": 0.315,
+     "false_low_risk_rate": 0.25,
+     "false_high_risk_rate": 0.125,
+     "predict_latency_ms": 5.55
+    },
+    "linsvm": {
+     "auroc": 0.844,
+     "auprc": 0.861,
+     "ece": 0.154,
+     "false_low_risk_rate": 1.0,
+     "false_high_risk_rate": 0.0,
+     "predict_latency_ms": 1.468
+    },
+    "hand_score": {
+     "auroc": 0.656,
+     "auprc": 0.469,
+     "ece": 0.424,
+     "false_low_risk_rate": 0.25,
+     "false_high_risk_rate": 0.375,
+     "predict_latency_ms": 0.014
+    }
+   },
+   "best_model": "linsvm",
+   "best_auroc": 0.844
+  }
+ }
+}

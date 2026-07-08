@@ -126,3 +126,18 @@ chance 0.125.
 
 **Verdict:** the routerguard sidecar is feasible on 3090-class hardware with
 sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.
+
+## 11. Decode-capture wiring fixed (M2 item 1)
+- BUG (confirmed): `capture_one()` was prefill-only — no `max_new_tokens` param,
+  call site never passed it, so the advertised `--max-new-tokens` CLI flag was
+  a no-op. Decode capture never happened.
+- FIX: `capture_one()` now takes `max_new_tokens`; when >0 it prefills with
+  `use_cache=True` then greedily decodes k tokens via KV cache, capturing per
+  generated token: per-layer router logits (forward that consumed the token),
+  final-logit entropy, and selected-token probability. `max_new_tokens==0`
+  path is byte-for-byte the old prefill-only behavior (no regression).
+- Call site threads `args.max_new_tokens`; `.pt` gains a `decode_steps` list
+  only when decoding.
+- VERIFIED CPU-only via `tests/test_decode_capture.py` (HF-interface stub, no
+  GPU/download): asserts k steps → k records with all 6 fields + correct router
+  shapes, and prefill-only stays prefill-only. Both tests PASS.

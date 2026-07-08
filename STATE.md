@@ -100,3 +100,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Results (chance 0.125): logreg/linear_svm 0.938 acc (accuracy ceiling); tiny_mlp best deployable (ECE 0.133, 0.16ms, top2 1.000); hist_gbm collapses to chance at n=32.
 - Report: reports/qwen3_6_35b_a3b_r3_bakeoff.json. Verdict: routerguard sidecar feasible, sub-ms overhead, recommend calibrated tiny_mlp.
 - Loop hard-stop condition ("sidecar head bakeoff has calibrated results committed") SATISFIED → stopping. Post-loop next items (NOT auto-run, need operator go): 4. retrieval-need labels, 5. decode-step capture, 6. learned risk head.
+
+## M2 DecodeGuard — Iteration 15 (2026-07-08) — item 1 COMPLETE (real greedy decode)
+- New loop prompt (M2 DecodeGuard) installed via /prompt-master. Fixes confirmed prefill-only bug.
+- capture_one() now does real greedy decode when --max-new-tokens>0 (KV-cache, per-token router logits + final-logit entropy + selected-token prob). Prefill path unchanged at max_new_tokens=0.
+- Verified by tests/test_decode_capture.py (CPU stub, no GPU). Next item 2: token_probe.py GroupKFold → StratifiedGroupKFold.

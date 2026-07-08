@@ -116,19 +116,72 @@ def load_model(args):
     return tok, model, cfg
 
 
-def capture_one(tok, model, text: str, max_prompt_tokens: int):
+def _final_logit_stats(logits, tok_id):
+    """entropy (nats) of softmax(final logits) + prob of the chosen token."""
+    import torch
+
+    probs = torch.softmax(logits.float(), dim=-1)
+    ent = float(-(probs * probs.clamp_min(1e-12).log()).sum(-1).mean())
+    return ent, float(probs.reshape(-1)[tok_id].item())
+
+
+def capture_one(tok, model, text: str, max_prompt_tokens: int,
+                max_new_tokens: int = 0):
+    """Prefill capture; when max_new_tokens>0 ALSO greedily decodes that many
+    tokens, capturing per-generated-token router logits, final-logit entropy,
+    and the selected-token probability.
+
+    Returns (input_ids, prefill_router, prefill_hidden, decode_steps).
+    decode_steps is None when max_new_tokens==0 (prefill-only, no regression).
+    Each decode step is a dict:
+      {generated_token_index, generated_token_id, generated_token_text,
+       selected_token_prob, entropy_final_logits, router_logits[per-layer]}
+    router_logits on a step are the routing activations of the forward pass
+    that CONSUMED that generated token; entropy/prob are the predictive-
+    distribution stats that SELECTED it.
+    """
     import torch
 
     ids = tok(text, return_tensors="pt", truncation=True,
               max_length=max_prompt_tokens)
     ids = {k: v.to(model.device) for k, v in ids.items()}
+    want_decode = max_new_tokens > 0
     with torch.inference_mode():
         out = model(**ids, output_router_logits=True,
-                    output_hidden_states=True, use_cache=False)
+                    output_hidden_states=True, use_cache=want_decode)
     # Stream everything to CPU fp16 immediately to free GPU activations.
     router = [r.squeeze(0).to("cpu", torch.float16) for r in out.router_logits]
     hidden = [h.squeeze(0).to("cpu", torch.float16) for h in out.hidden_states]
-    return ids["input_ids"].squeeze(0).cpu(), router, hidden
+    input_ids = ids["input_ids"].squeeze(0).cpu()
+
+    if not want_decode:
+        return input_ids, router, hidden, None
+
+    decode_steps = []
+    past = out.past_key_values
+    next_logits = out.logits[:, -1, :]  # predicts the first generated token
+    eos = getattr(tok, "eos_token_id", None)
+    for step in range(max_new_tokens):
+        tok_id = int(next_logits.argmax(-1).item())
+        ent, sel_prob = _final_logit_stats(next_logits, tok_id)
+        with torch.inference_mode():
+            out = model(input_ids=torch.tensor([[tok_id]], device=model.device),
+                        past_key_values=past, output_router_logits=True,
+                        use_cache=True)
+        past = out.past_key_values
+        decode_steps.append({
+            "generated_token_index": step,
+            "generated_token_id": tok_id,
+            "generated_token_text": tok.decode([tok_id]),
+            "selected_token_prob": sel_prob,
+            "entropy_final_logits": ent,
+            "router_logits": [r.squeeze(0).to("cpu", torch.float16)
+                              for r in out.router_logits],
+        })
+        if eos is not None and tok_id == eos:
+            break
+        next_logits = out.logits[:, -1, :]
+    return input_ids, router, hidden, decode_steps
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -146,23 +199,25 @@ def main(argv: list[str] | None = None) -> int:
             if not line:
                 continue
             rec = json.loads(line)
-            input_ids, router, hidden = capture_one(
-                tok, model, rec["text"], args.max_prompt_tokens)
-            torch.save(
-                {
-                    "prompt_id": rec["id"],
-                    "input_ids": input_ids,
-                    "router_logits": router,
-                    "hidden_states": hidden,
-                    "model_type": cfg.model_type,
-                    "model_path": str(args.model),
-                },
-                out_dir / f"{rec['id']}.pt",
-            )
+            input_ids, router, hidden, decode_steps = capture_one(
+                tok, model, rec["text"], args.max_prompt_tokens,
+                max_new_tokens=args.max_new_tokens)
+            payload = {
+                "prompt_id": rec["id"],
+                "input_ids": input_ids,
+                "router_logits": router,
+                "hidden_states": hidden,
+                "model_type": cfg.model_type,
+                "model_path": str(args.model),
+            }
+            if decode_steps is not None:
+                payload["decode_steps"] = decode_steps
+            torch.save(payload, out_dir / f"{rec['id']}.pt")
             n += 1
+            gen = f", {len(decode_steps)} gen tokens" if decode_steps else ""
             print(f"[jlens] captured {rec['id']}: "
                   f"{len(router)} router layers, {len(hidden)} hidden layers, "
-                  f"{input_ids.shape[0]} tokens")
+                  f"{input_ids.shape[0]} tokens{gen}")
     print(f"[jlens] done — {n} prompts -> {out_dir}")
     return 0
 

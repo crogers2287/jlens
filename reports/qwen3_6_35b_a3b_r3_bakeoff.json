@@ -1,0 +1,53 @@
+{
+ "n_prompts": 32,
+ "n_features": 10240,
+ "domains": [
+  "code_py",
+  "code_rust",
+  "creative",
+  "fact",
+  "json_tool",
+  "lang",
+  "math",
+  "reason"
+ ],
+ "chance": 0.125,
+ "results": {
+  "nearest_centroid": {
+   "accuracy": 0.9062,
+   "accuracy_std": 0.0541,
+   "top2_accuracy": null,
+   "ece": null,
+   "predict_latency_ms": 1.9129
+  },
+  "logreg": {
+   "accuracy": 0.9375,
+   "accuracy_std": 0.0625,
+   "top2_accuracy": 1.0,
+   "ece": 0.7042,
+   "predict_latency_ms": 0.986
+  },
+  "linear_svm": {
+   "accuracy": 0.9375,
+   "accuracy_std": 0.0625,
+   "top2_accuracy": 0.8125,
+   "ece": 0.4043,
+   "predict_latency_ms": 1.367
+  },
+  "hist_gbm": {
+   "accuracy": 0.125,
+   "accuracy_std": 0.0,
+   "top2_accuracy": 0.25,
+   "ece": 0.0,
+   "predict_latency_ms": 6.0846
+  },
+  "tiny_mlp": {
+   "accuracy": 0.875,
+   "accuracy_std": 0.0884,
+   "top2_accuracy": 1.0,
+   "ece": 0.1332,
+   "predict_latency_ms": 0.1561
+  }
+ },
+ "best_head": "logreg"
+}

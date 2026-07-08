@@ -94,3 +94,35 @@ Tool: `src/expert_overlap.py` → `reports/qwen3_6_35b_a3b_r3_overlap.json`.
 - This is the frozen contract sidecar heads (item 3) train on; raw .pt stays
   gitignored. `entropy` is over the full 256-way softmax so it doubles as the
   routing-confidence feature for the future risk head.
+
+## 10. Sidecar head bakeoff (roadmap item 3) — LOOP STOP CONDITION MET
+Tool: `src/sidecar_bakeoff.py` → `reports/qwen3_6_35b_a3b_r3_bakeoff.json`.
+Prompt-level routing signature (10240-dim: 40 layers × 256-expert usage hist),
+StratifiedGroupKFold(4), each prompt its own group. 32 prompts, 8 domains,
+chance 0.125.
+
+| head | acc | top-2 | ECE | predict ms |
+|---|---|---|---|---|
+| logreg | **0.938** | 1.000 | 0.704 | 0.99 |
+| linear_svm | **0.938** | 0.812 | 0.404 | 1.37 |
+| nearest_centroid | 0.906 | – | – | 1.91 |
+| **tiny_mlp** | 0.875 | 1.000 | **0.133** | **0.16** |
+| hist_gbm | 0.125 | 0.250 | 0.000 | 6.09 |
+
+- **Router-only domain detection works**: 3 of 5 heads ≥0.90 (7.5× chance).
+- **Accuracy ceiling** = linear models (logreg/SVM, 0.938) — routing signatures
+  are close to linearly separable by domain.
+- **Best deployable head = tiny_mlp**: best calibration (ECE 0.133 vs logreg's
+  0.704 overconfidence), fastest predict (0.16 ms/prompt), perfect top-2, only
+  ~6 pts below the linear accuracy ceiling. For a risk head, calibration + speed
+  matter more than raw top-1, so tiny_mlp wins.
+- **hist_gbm collapses to chance** at n=32 over 10240 features — boosting needs
+  far more data; documented limitation, revisit at n≥200.
+- **Honest caveats**: n=32 is tiny → accuracies optimistic, ECE estimates
+  coarse. This is a viability baseline, not a production number. A Platt/isotonic
+  calibration wrapper should sit on whichever head ships. logreg's high accuracy
+  but poor ECE is exactly why the risk head must be LEARNED + calibrated (not the
+  external review's hand-set linear blend).
+
+**Verdict:** the routerguard sidecar is feasible on 3090-class hardware with
+sub-millisecond per-prompt overhead. Recommended head: calibrated tiny_mlp.

@@ -1,0 +1,12 @@
+{"id": "code_py_01", "text": "Write a Python function that merges two sorted lists into one sorted list without using sort()."}
+{"id": "code_rust_01", "text": "Explain what the borrow checker would say about returning a reference to a local variable in Rust, with a minimal example."}
+{"id": "math_01", "text": "Compute the derivative of f(x) = x^3 * ln(x) and simplify. Show each step."}
+{"id": "math_02", "text": "A bag has 5 red and 7 blue marbles. Two are drawn without replacement. What is the probability both are red?"}
+{"id": "lang_zh_01", "text": "请用中文解释什么是混合专家模型（Mixture of Experts），并举一个例子。"}
+{"id": "lang_es_01", "text": "Traduce al español y explica: 'The router sends each token to the two most relevant experts.'"}
+{"id": "fact_01", "text": "What year did the Apollo 11 mission land on the Moon, and who were the three crew members?"}
+{"id": "fact_02", "text": "List the four largest moons of Jupiter in order of discovery announcement."}
+{"id": "reason_01", "text": "If all bloops are razzies and some razzies are lazzies, can we conclude some bloops are lazzies? Explain."}
+{"id": "reason_02", "text": "Alice is taller than Bob. Bob is taller than Carol. Carol is taller than Dave. Who is the second tallest?"}
+{"id": "creative_01", "text": "Write a four-line poem about a lighthouse keeper who has never seen the sea by daylight."}
+{"id": "json_tool_01", "text": "Return a JSON object with keys 'name', 'port', and 'enabled' describing a hypothetical web service. JSON only, no prose."}

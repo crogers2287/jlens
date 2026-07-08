@@ -930,3 +930,14 @@ run 1 completed=25 escalated=13 telemetry_missing=25 (honest GGUF), all records
 auto_outcome_v1-valid; run 2 skipped=25 completed=0 (resume adds zero, log stays
 25 lines); run_id stable (cd08d63a145be1d2); injected failing endpoint → n_failed=25
 n_completed=0, run continued without crashing; private artifacts unstaged/gitignored.
+
+## 70. Escalation review queue builder (M11 step 4)
+`src/make_escalation_review_queue.py` reads a run log and emits a LOCAL,
+gitignored review queue containing ONLY records with
+auto_outcome.escalate_for_review==true. The auto_outcome candidate is KEPT so the
+human reviewer sees why each row escalated; the HUMAN outcome/review_meta fields
+are forced null (the reviewer fills them per docs/SHADOW_OUTCOME_REVIEW.md — the
+run never does). Verified on the smoke run: 13/25 escalated → queue size 13
+(matches run escalation_count), only escalated rows included, human fields all
+null, auto_outcome retained, every record auto_outcome_v1-valid, queue gitignored
+and unstaged.

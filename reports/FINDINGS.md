@@ -295,3 +295,13 @@ PROB are the real uncertainty signal (spiking at mode boundaries); TOPK_MASS is
 a weak-but-real routing-concentration signal; WINDOWED DOMAIN-SHIFT captures a
 code↔prose transition. These define the M3 risk-head feature set. Everything
 awaits labeled data to become a calibrated governor.
+
+## 21. M3 risk-label schema v1 (M3 step 1)
+- `schema/risk_labels_v1.json` (draft-07): one record per prompt, 10-label
+  multi-label. Each label true|false|**null** (null = UNKNOWN, not false).
+  Required `labeler` (string|null; non-null = finalized/human-labeled).
+  additionalProperties:false at both levels + all 10 labels required.
+- Verified: valid draft-07; accepts all-null scaffold + partially-labeled
+  records; **REJECTS** unknown label keys, missing labels, and non-bool/null
+  values. This is the contract the human-labeling handoff writes against; the
+  trainer refuses until non-null labels exist.

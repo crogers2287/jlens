@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/risk_labels_v1.json",
+  "title": "jlens M3 risk labels v1",
+  "description": "One record per prompt. Multi-label. Each label is true (present), false (absent), or null (UNKNOWN — not yet judged; null != false). A finalized record MUST have a non-null human `labeler`. Unknown label keys are rejected.",
+  "type": "object",
+  "required": ["schema_version", "prompt_id", "labeler", "labels"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "prompt_id": {"type": "string"},
+    "labeler": {
+      "type": ["string", "null"],
+      "description": "human labeler id/name; null = unlabeled scaffold row (not yet labeled)"
+    },
+    "notes": {"type": "string", "description": "optional free-text labeler note"},
+    "labels": {
+      "type": "object",
+      "required": [
+        "answerable_from_memory", "needs_current_info", "needs_exact_citation",
+        "needs_math_verification", "needs_code_execution",
+        "needs_user_file_context", "high_stakes_or_sensitive",
+        "context_attack_present", "unsupported_or_hallucinated",
+        "format_or_tool_mode_shift"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {},
+      "properties": {
+        "answerable_from_memory": {"type": ["boolean", "null"]},
+        "needs_current_info": {"type": ["boolean", "null"]},
+        "needs_exact_citation": {"type": ["boolean", "null"]},
+        "needs_math_verification": {"type": ["boolean", "null"]},
+        "needs_code_execution": {"type": ["boolean", "null"]},
+        "needs_user_file_context": {"type": ["boolean", "null"]},
+        "high_stakes_or_sensitive": {"type": ["boolean", "null"]},
+        "context_attack_present": {"type": ["boolean", "null"]},
+        "unsupported_or_hallucinated": {"type": ["boolean", "null"]},
+        "format_or_tool_mode_shift": {"type": ["boolean", "null"]}
+      }
+    }
+  }
+}

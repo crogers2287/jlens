@@ -158,3 +158,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - M3_RISK_LABELING.md written (taxonomy, dataset, features grounded in M2 evidence, calibrated baselines, metrics, false-low-risk priority).
 - ALL steer.md stop-condition artifacts present: r4_decode.jsonl (validated), decode_drift.json, drift_notes.md, router-only mode, schema v3, M3 plan. STATE+FINDINGS updated, all pushed.
 - LOOP STOP CONDITION MET. M3 execution is human-gated (risk labels) — handing off to operator.
+
+## M3 Risk Heads — Iteration 27 (2026-07-08 11:01 EDT) — step 1 COMPLETE (risk-label schema)
+- New M3 loop prompt installed (label-gated scaffolding-only). schema/risk_labels_v1.json: 10-label multi-label, true/false/null, required labeler, rejects unknown/missing/bad-type. Validated.
+- Next step 2: src/build_label_scaffold.py → data/labels/risk_labels_seed.jsonl (all-null records, validated).

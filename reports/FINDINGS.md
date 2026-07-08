@@ -526,3 +526,13 @@ router-only decode telemetry → v3 export → drift-excluded features → label
 real LOO prototype training. Ranking signal is real (AUROC ~0.84–0.88); operating
 points are not (tiny-n, uncalibrated). Pipeline is now complete and honest end to
 end; scaling data is the next lever.
+
+## 38. PolicyEngine v0 config (M6 step 1)
+- `config/policy_engine_v0.json`: shadow/advisory posture; scores only the two
+  M5-covered labels. Overall risk = max of per-label risk contributions
+  (answerable_from_memory risk = 1−p; unsupported_or_hallucinated risk = p). Four
+  contiguous score bands over [0,1] → v0 actions: low→answer_locally,
+  medium→verify, high→retrieve, critical→require_confirmation.
+- Explicitly PROTOTYPE thresholds (not production); `blocks_real_actions:false`;
+  final thresholds `gold_audit_gated`. Verified: loads, bands contiguous & cover
+  [0,1], every level maps to a valid v0 action, posture flags correct.

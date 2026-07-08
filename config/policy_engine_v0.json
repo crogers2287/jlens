@@ -1,0 +1,41 @@
+{
+  "config_version": 0,
+  "_doc": "jlens PolicyEngine v0 — ADVISORY / SHADOW config. Prototype thresholds ONLY (from the M5 smoke heads); these are NOT production values. Final/production thresholds stay gold/audit gated. The engine recommends + logs; it NEVER blocks or executes.",
+  "mode": "shadow",
+  "advisory": true,
+  "scored_labels": ["answerable_from_memory", "unsupported_or_hallucinated"],
+  "_scored_labels_doc": "The only two labels with M5 end-to-end coverage. All other risk labels are unscored in v0 (null = unknown, never assumed safe).",
+
+  "risk_score": {
+    "_doc": "The engine's overall risk score per prompt = the probability of the RISKIEST scored condition. For answerable_from_memory the RISK direction is FALSE (not answerable from memory -> needs grounding), so its risk contribution = 1 - p(answerable). For unsupported_or_hallucinated the risk direction is TRUE, so its contribution = p(unsupported). Overall risk = max of the two contributions.",
+    "components": {
+      "answerable_from_memory": {"risk_is": "false", "contribution": "1 - p"},
+      "unsupported_or_hallucinated": {"risk_is": "true", "contribution": "p"}
+    }
+  },
+
+  "levels": {
+    "_doc": "Score bands on the overall risk score in [0,1]. Lower bound inclusive, upper exclusive; 'critical' catches the top. PROTOTYPE bands — tune on gold-audited data before any production use.",
+    "low": [0.0, 0.35],
+    "medium": [0.35, 0.55],
+    "high": [0.55, 0.75],
+    "critical": [0.75, 1.01]
+  },
+
+  "level_action_map": {
+    "_doc": "Recommended v0 action per level. Advisory only. Actions: answer_locally (respond from the model directly), verify (self-check / second pass), retrieve (pull grounding/RAG), run_checker (math/code/tool verification), ask_user (clarify), require_confirmation (get human sign-off before an autonomous action).",
+    "low": "answer_locally",
+    "medium": "verify",
+    "high": "retrieve",
+    "critical": "require_confirmation"
+  },
+
+  "v0_actions": ["answer_locally", "verify", "retrieve", "run_checker",
+                 "ask_user", "require_confirmation"],
+
+  "gating": {
+    "_doc": "v0 is shadow/advisory. It does NOT gate real actions. Final/production thresholds and any real gating require gold/audit-tier labels (see LABELING_HANDOFF.md) — NOT these prototype bands.",
+    "final_thresholds": "gold_audit_gated",
+    "blocks_real_actions": false
+  }
+}

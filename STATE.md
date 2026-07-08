@@ -230,3 +230,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M5 — Iteration 44 (2026-07-08 13:23 EDT) — step 6 COMPLETE → M5 DONE
 - Real LOO prototype heads trained: answerable_from_memory AUROC 0.875, unsupported_or_hallucinated AUROC 0.844 (ranking real vs chance); BUT tiny-n → bad calibration + false-low-risk at 0.5 threshold. final mode still refuses. reports/risk_heads_prototype.json.
 - ALL M5 stop-condition artifacts present. M5 STOP CONDITION MET. Hand off: scale sample (more prompts/class), add second-wave sources for 8 uncovered labels, human-audit benchmark_gold→gold for final calibration.
+
+## M6 PolicyEngine v0 — Iteration M6.1 (2026-07-08 13:45 EDT) — step 1 COMPLETE (config)
+- New M6 loop prompt (advisory/shadow, CPU-only). config/policy_engine_v0.json: risk = max(1-p_ansmem, p_unsup); bands low/med/high/critical → answer_locally/verify/retrieve/require_confirmation. Prototype-only, no gating. Validated.
+- Next step 2: src/policy_engine.py (fit M5 heads, score(feature_row)→{level,scores,recommended_action,explanation}, advisory-only).

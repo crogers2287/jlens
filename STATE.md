@@ -456,3 +456,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.5 (2026-07-09 01:33 EDT) — step 5 COMPLETE (numeric before/after)
 - Public agents_a1_numeric_beforeafter_sample.json: old exact_answer_match fail → new numeric_tolerant_check pass; numeric row flips wrong→ok + de-escalates. M13 finding fixed. commit-safe.
 - Next step 6: docs/M14_VERIFIER_COVERAGE.md.
+
+## M14 Verifier coverage — Iteration M14.6 (2026-07-09 01:37 EDT) — step 6 COMPLETE (doc)
+- docs/M14_VERIFIER_COVERAGE.md: numeric verifier + explain rubric + routing + metadata-field table + before/after + gating.
+- Next step 7 (FINAL): tests (numeric/exact/routing/rubric/before-after), then M14 DONE.

@@ -1267,3 +1267,11 @@ finding on a representative approximate/unit-converted output. OLD exact_answer_
 within rel_tolerance of 300000). With CORRECTNESS wiring the numeric row flips
 auto_was_wrong True→False and escalate True→False — the M13 false-positive is fixed.
 (Descriptive note references the public speed-of-light constant, not private text.)
+
+## 96. M14 verifier-coverage doc (M14 step 6)
+docs/M14_VERIFIER_COVERAGE.md: the M13 finding, numeric_tolerant_check behavior +
+routing, explain_rubric_check strategy (rubric-only, never overclaims), the new
+optional task-metadata fields (numeric/expected_value/tolerance/rel_tolerance/
+expected_units/accepted_values/required_facts) with a table, the before/after
+numeric flip (exact_answer_match fail → numeric_tolerant_check pass), and gating.
+Public fixtures/aggregates only.

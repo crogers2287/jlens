@@ -1334,3 +1334,14 @@ review), current_info 10/0/0 (flagged needs-retrieval), explain 18/17/0 (unverif
 open-ended), rubric 15/1/0 (explain_rubric_check escalated 1 weak-coverage as designed).
 The escalation rate has fallen monotonically 0.28→0.164→0.073 as verifier coverage
 improved. auto_outcome candidates only; production thresholds gated.
+
+## 101. M15 aggregate report + escalation queue (M15 step 4)
+Public-safe reports/outcomes/agents_a1_m15_summary_sample.json (aggregate-only, no
+task text, commit-safe): 261 completed / 0 failed / telemetry_missing 261;
+auto_verdict {ok 231, wrong 1, undecided 29}; escalation 19 (rate 0.0728);
+verifier_distribution {math_checker 160, retrieval_required_heuristic 261,
+exact_answer_match 20, numeric_tolerant_check 20, json_object_check 10,
+regex_or_schema_check 8, explain_rubric_check 15} — all 7 verifiers active at scale
+incl the two M14 additions; auto_needed_checker 160, auto_needed_retrieval 12,
+auto_was_wrong 1; agreement null (pre-review). Escalation queue (gitignored) =
+19/261, all escalated, human null. No leak; private unstaged.

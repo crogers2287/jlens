@@ -477,3 +477,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.3 (2026-07-09 02:12 EDT) — step 3 COMPLETE (LIVE 261-task run)
 - LIVE agents-a1 run run_id 25ca35429474c407: 261/261 completed, 0 failed, telemetry_missing 261, escalated 19 (rate 0.073 vs M13 0.164 vs M11 0.28), auto_was_wrong 1. json auto_wrong=0 + numeric auto_wrong=0 → BOTH fixes hold at scale. explain 17/18 escalated (unverifiable); rubric 1 weak-coverage; exact 1 miss. Records valid, human-null, private unstaged.
 - Next step 4: aggregate report (public) + escalation queue (gitignored).
+
+## M15 Larger run — Iteration M15.4 (2026-07-09 02:14 EDT) — step 4 COMPLETE (aggregate + escalation queue)
+- Public agents_a1_m15_summary_sample.json: 261 completed, ok231/wrong1/undecided29, escalation 19 (0.0728), verifier dist all 7 (numeric 20, rubric 15), agreement null. Escalation queue gitignored (19/261, human-null). No text; commit-safe.
+- Next step 5: review a representative escalated subset (objective) → public reviewed-subset summary.

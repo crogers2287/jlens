@@ -32,7 +32,7 @@ sys.path.insert(0, str(ROOT))
 import verifiers as VZ  # noqa: E402
 import local_shadow_wrapper as LSW  # noqa: E402
 
-CORRECTNESS = {"exact_answer_match", "regex_or_schema_check",
+CORRECTNESS = {"exact_answer_match", "regex_or_schema_check", "json_object_check",
                "math_checker", "code_test_stub"}
 
 

@@ -1,0 +1,31 @@
+{
+ "run_id": "88e140ea5d129bc3",
+ "n_records": 25,
+ "verifier_check_on_representative_output": {
+  "input": "valid JSON object + trailing prose",
+  "regex_full_anchor": "fail",
+  "json_object_check": "pass"
+ },
+ "json_row_after": {
+  "auto_was_wrong": false,
+  "escalate_for_review": false
+ },
+ "before": {
+  "verifier": "regex_full_anchor",
+  "escalation_count": 7,
+  "auto_was_wrong_count": 1
+ },
+ "after": {
+  "verifier": "json_object_check",
+  "escalation_count": 6,
+  "auto_was_wrong_count": 0
+ },
+ "delta": {
+  "escalation_count": -1,
+  "auto_was_wrong_count": -1
+ },
+ "flipped_wrong_to_ok": [
+  "sm_regex_01"
+ ],
+ "note": "Counts only, no prompt/output text. The JSON task's verdict re-scored on a representative valid-JSON+trailing-prose output; regex full-anchor FAILS it, json_object_check PASSES it, so the row flips wrong->ok and no longer escalates. auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

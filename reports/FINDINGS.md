@@ -1071,3 +1071,15 @@ verdict was the #75 false-positive (auto=wrong vs human=right). The 6 explain ro
 were reviewed correct but had auto_was_wrong=None (low-confidence escalation, no
 verifier) so they don't enter the agreement denominator. This is the pre-fix
 baseline; step 5's before/after shows the JSON verifier flipping that row.
+
+## 80. Before/after verifier comparison + CORRECTNESS wiring (M12 step 5)
+Completing the fix: json_object_check must be in the supervisor's CORRECTNESS set
+or its verdict never feeds auto_was_wrong (a JSON pass left the row undecided).
+Added it (it IS a correctness checker; this completes the verifier wiring, it does
+not change the escalation formula/thresholds). Public-safe before/after report
+reports/outcomes/agents_a1_verifier_beforeafter_sample.json (counts only, no text):
+on a representative valid-JSON+trailing-prose output the OLD regex full-anchor
+FAILS and json_object_check PASSES, so sm_regex_01 flips wrong→ok and no longer
+escalates (auto_was_wrong False, escalate False). Batch impact: escalation 7→6,
+auto_was_wrong 1→0 (delta −1/−1). Full suite still green (27 tests). This is the
+verifier-quality improvement the M11 finding called for, quantified.

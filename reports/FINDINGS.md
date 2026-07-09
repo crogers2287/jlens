@@ -1529,3 +1529,11 @@ numeric M14+M16), remaining_gaps (open-explain verifier_gap, rubric synonyms),
 action_routing_planned_only (retrieval 12/checker 160/review 19/no_action 70).
 Verified: recursive no-text guard PASS, leak grep clean, agreement only where
 comparable, check_commit_safe PASS, no private staged.
+
+## 116. M17 reviewed-calibration doc (M17 step 3)
+docs/M17_REVIEWED_CALIBRATION.md: what the reviewed data says (44 scanned/19
+reviewed/3 comparable; per-category table), the two found-by-review-and-fixed
+verifier false-positives (JSON M12, numeric M14+M16), category maturity
+(usable_shadow: exact/numeric/json/math/regex; needs_more_review: explain-rubric
+synonyms; verifier_gap: open-ended explain), the M16 action-routing planned-only
+counts, and gating. Public fixtures/aggregates only. Commands match real flags.

@@ -539,3 +539,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M17 Reviewed calibration — Iteration M17.2 (2026-07-09 03:10 EDT) — step 2 COMPLETE (committed summary)
 - Public agents_a1_reviewed_calibration_summary.json committed: category-level reviewed/comparable/agreement, fixed_findings, remaining_gaps, action planned-only. No-text guard + leak grep clean; commit-safe; private unstaged.
 - Next step 3: docs/M17_REVIEWED_CALIBRATION.md.
+
+## M17 Reviewed calibration — Iteration M17.3 (2026-07-09 03:13 EDT) — step 3 COMPLETE (doc)
+- docs/M17_REVIEWED_CALIBRATION.md: category table + agreement, fixed false-positives, category maturity (usable_shadow/needs_more_review/verifier_gap), action planned-only, gating.
+- Next step 4 (FINAL): tests/test_reviewed_calibration.py, then M17 DONE.

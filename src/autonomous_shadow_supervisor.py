@@ -33,6 +33,7 @@ import verifiers as VZ  # noqa: E402
 import local_shadow_wrapper as LSW  # noqa: E402
 
 CORRECTNESS = {"exact_answer_match", "regex_or_schema_check", "json_object_check",
+               "numeric_tolerant_check", "explain_rubric_check",
                "math_checker", "code_test_stub"}
 
 
@@ -64,8 +65,21 @@ def _run_verifiers(task, output, samples, cfg):
     def enabled(name):
         return toggles.get(name, True)
 
+    _numeric = task.get("numeric") or any(
+        task.get(k) is not None for k in
+        ("expected_value", "tolerance", "rel_tolerance", "expected_units", "accepted_values"))
+    if enabled("numeric_tolerant_check") and _numeric:
+        results.append(VZ.numeric_tolerant_check(
+            output, expected_value=task.get("expected_value"),
+            tolerance=task.get("tolerance"), rel_tolerance=task.get("rel_tolerance"),
+            expected_units=task.get("expected_units"),
+            accepted_values=task.get("accepted_values")))
+    if enabled("explain_rubric_check") and task.get("required_facts"):
+        results.append(VZ.explain_rubric_check(
+            output, required_facts=task.get("required_facts")))
+    # exact_answer_match is for PURE-STRING exact answers — not numeric tasks (M14)
     if enabled("exact_answer_match") and task.get("known_answer") is not None \
-            and task.get("task_category") != "math":
+            and task.get("task_category") != "math" and not _numeric:
         results.append(VZ.exact_answer_match(output, known_answer=task["known_answer"]))
     if enabled("json_object_check") and (task.get("json_check")
                                          or task.get("json_required")):

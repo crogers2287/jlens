@@ -444,3 +444,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.2 (2026-07-09 01:22 EDT) — step 2 COMPLETE (explain rubric)
 - src/verifiers.py: explain_rubric_check (rubric-only fact checklist; PASS at full coverage; escalate on weak/absent rubric; never gold without rubric). 5 cases verified; registered. Full suite green.
 - Next step 3: route numeric tasks → numeric_tolerant_check + explain-rubric tasks → explain_rubric_check; add both to CORRECTNESS.
+
+## M14 Verifier coverage — Iteration M14.3 (2026-07-09 01:26 EDT) — step 3 COMPLETE (routing + CORRECTNESS)
+- _run_verifiers routes numeric→numeric_tolerant_check, required_facts→explain_rubric_check; exact_answer_match skips numeric (kept for pure strings). Both new verifiers added to CORRECTNESS (escalation math unchanged). Routing verified 3 ways; suite green.
+- Next step 4: public numeric/rubric fixture rows + metadata; verify routing.

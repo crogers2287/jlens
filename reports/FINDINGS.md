@@ -1237,3 +1237,14 @@ explanation is gold without a rubric (verified: no PASS without required_facts).
 Hashed evidence; registered in ADAPTERS. Verified: full-coverage PASS, missing-fact
 → undecided, weak coverage → undecided, no-rubric → undecided, empty-rubric →
 undecided; no evidence leak. Full suite green.
+
+## 93. Numeric + explain-rubric routing + CORRECTNESS wiring (M14 step 3)
+autonomous_shadow_supervisor._run_verifiers now routes: a task with numeric
+metadata (numeric:true OR any of expected_value/tolerance/rel_tolerance/
+expected_units/accepted_values) → numeric_tolerant_check; a task with
+required_facts → explain_rubric_check; exact_answer_match is guarded to skip
+numeric tasks (kept for PURE-STRING exact answers). Added numeric_tolerant_check
+and explain_rubric_check to CORRECTNESS so their verdicts feed auto_was_wrong
+(completes wiring; escalation/confidence math UNCHANGED). Verified: numeric task →
+numeric_tolerant_check (exact avoided); string exact task → exact_answer_match;
+explain-rubric task → explain_rubric_check; CORRECTNESS contains both. Full suite green.

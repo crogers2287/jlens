@@ -1258,3 +1258,12 @@ rel_tolerance, expected_units, accepted_values), and 2 explain-rubric tasks with
 required_facts checklists. Verified: valid JSONL, every row has prompt_id+prompt,
 numeric rows route to numeric_tolerant_check (exact_answer_match avoided), rubric
 rows route to explain_rubric_check. Public — tracked, no private text.
+
+## 95. Numeric before/after — M13 flip (M14 step 5)
+Public-safe reports/outcomes/agents_a1_numeric_beforeafter_sample.json (verdicts/
+counts only, no task text; check_commit_safe clean): re-scored the M13 speed-of-light
+finding on a representative approximate/unit-converted output. OLD exact_answer_match
+= fail (wanted literal "300000"); NEW numeric_tolerant_check = pass (299,792 km/s
+within rel_tolerance of 300000). With CORRECTNESS wiring the numeric row flips
+auto_was_wrong True→False and escalate True→False — the M13 false-positive is fixed.
+(Descriptive note references the public speed-of-light constant, not private text.)

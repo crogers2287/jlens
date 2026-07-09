@@ -1,0 +1,26 @@
+{
+ "finding": "M13 exact_answer_match numeric strictness (speed of light)",
+ "verifier_check_on_representative_output": {
+  "input": "approximate/unit-converted numeric answer (km/s)",
+  "old_exact_answer_match": "fail",
+  "new_numeric_tolerant_check": "pass"
+ },
+ "numeric_row_after": {
+  "auto_was_wrong": false,
+  "escalate_for_review": false
+ },
+ "before": {
+  "verifier": "exact_answer_match",
+  "auto_was_wrong": true,
+  "escalated": true
+ },
+ "after": {
+  "verifier": "numeric_tolerant_check",
+  "auto_was_wrong": false,
+  "escalated": false
+ },
+ "flipped_wrong_to_ok": [
+  "num_light_kms"
+ ],
+ "note": "Counts/verdicts only, no task text. Re-scored on a representative approximate/unit-converted numeric output; old exact_answer_match FAILS (wanted literal 300000), numeric_tolerant_check PASSES (299,792 km/s within rel_tolerance of 300000), so the row flips wrong->ok and no longer escalates. auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

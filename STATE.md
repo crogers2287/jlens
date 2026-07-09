@@ -452,3 +452,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.4 (2026-07-09 01:29 EDT) — step 4 COMPLETE (public numeric/rubric fixture)
 - data/prompts/agents_a1_numeric_batch.jsonl: 4 numeric (metadata numeric/expected_value/tolerance/rel_tolerance/expected_units) + 2 explain-rubric (required_facts). All route correctly (numeric→numeric_tolerant_check, rubric→explain_rubric_check). Public, tracked.
 - Next step 5: before/after showing the numeric verifier flips the M13 speed-of-light false-positive.
+
+## M14 Verifier coverage — Iteration M14.5 (2026-07-09 01:33 EDT) — step 5 COMPLETE (numeric before/after)
+- Public agents_a1_numeric_beforeafter_sample.json: old exact_answer_match fail → new numeric_tolerant_check pass; numeric row flips wrong→ok + de-escalates. M13 finding fixed. commit-safe.
+- Next step 6: docs/M14_VERIFIER_COVERAGE.md.

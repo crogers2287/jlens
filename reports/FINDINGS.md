@@ -1375,3 +1375,11 @@ numeric-TAGGED auto_was_wrong=0 (M14 fix). M15's single auto_was_wrong is a
 task-metadata gap (untagged string-exact numeric row), not a regression. M15
 verifier_distribution adds numeric_tolerant_check (20) + explain_rubric_check (15).
 auto_outcome candidate; production gated.
+
+## 104. M15 run doc (M15 step 7)
+docs/M15_LARGER_AGENTS_A1_RUN.md: deterministic 261-task batch build (8-category
+table with verifier mapping), live run against the already-served agents-a1 on
+fred (call-endpoint-never-serve), resume/failure handling, aggregate + escalation
++ representative-subset review, two-baseline comparison, results (escalation trend
+0.28→0.164→0.073; both fixes held; task-metadata-gap + rubric-synonym findings),
+and gating. Commands match real CLI flags. Public fixtures/aggregates only.

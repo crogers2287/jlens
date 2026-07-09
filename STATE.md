@@ -489,3 +489,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.6 (2026-07-09 02:18 EDT) — step 6 COMPLETE (two-baseline comparison)
 - Public agents_a1_m15_vs_baseline.json: escalation trend [0.28, 0.164, 0.073] monotonic across M11/M12→M13→M15 at 25→110→261 tasks; JSON+numeric fixes held (0 auto_wrong each at scale); single M15 auto_wrong = task-metadata gap. No text; commit-safe.
 - Next step 7: docs/M15_LARGER_AGENTS_A1_RUN.md.
+
+## M15 Larger run — Iteration M15.7 (2026-07-09 02:20 EDT) — step 7 COMPLETE (run doc)
+- docs/M15_LARGER_AGENTS_A1_RUN.md: build + live run + resume + aggregate/escalation/review + two-baseline comparison + results + gating. Commands verified.
+- Next step 8 (FINAL): tests/test_m15_larger_run.py, then M15 DONE.

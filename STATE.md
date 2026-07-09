@@ -473,3 +473,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.2 (2026-07-09 02:02 EDT) — step 2 COMPLETE (run config)
 - config/agents_a1_m15_run.json: agents-a1 endpoint, batch 300/cap 500, numeric+rubric verifiers enabled, 1 call/task (261 calls). run_id stable; private paths gitignored.
 - Next step 3: LIVE 261-task run against agents-a1 on fred (background + poll).
+
+## M15 Larger run — Iteration M15.3 (2026-07-09 02:12 EDT) — step 3 COMPLETE (LIVE 261-task run)
+- LIVE agents-a1 run run_id 25ca35429474c407: 261/261 completed, 0 failed, telemetry_missing 261, escalated 19 (rate 0.073 vs M13 0.164 vs M11 0.28), auto_was_wrong 1. json auto_wrong=0 + numeric auto_wrong=0 → BOTH fixes hold at scale. explain 17/18 escalated (unverifiable); rubric 1 weak-coverage; exact 1 miss. Records valid, human-null, private unstaged.
+- Next step 4: aggregate report (public) + escalation queue (gitignored).

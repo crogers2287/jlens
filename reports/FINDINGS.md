@@ -1320,3 +1320,17 @@ byte-identical (deterministic). Public prompts only.
 self_consistency_samples=1 (261 calls); escalation thresholds reused; resume
 enabled; deterministic; private out paths (run/meta/review) gitignored. Verified:
 loads, sha256 run_id stable, private paths gitignored. No secrets.
+
+## 100. M15 LIVE 261-task Agents-A1 run (M15 step 3) — both verifier fixes HOLD at scale
+Ran the 261-task batch LIVE against agents-a1 (fred llama-swap :9069) via a capped
+model_fn. run_id 25ca35429474c407: 261/261 completed, 0 failed, all telemetry_missing
+(GGUF), ~8 min. All records auto_outcome_v1-valid; human fields all null; private log
+gitignored + unstaged. escalation_count 19 (rate 0.073 — DOWN again from M13's 0.164
+and M11's 0.28). HEADLINE: json auto_was_wrong=0 AND numeric auto_was_wrong=0 — the
+M12 JSON fix and M14 numeric fix BOTH HOLD at scale. Per-verifier-category
+(total/escalated/auto_wrong): math 160/0/0, numeric 20/0/0 (approx/unit-converted
+answers pass cleanly), json 10/0/0, regex 8/0/0, exact 20/1/1 (one string miss to
+review), current_info 10/0/0 (flagged needs-retrieval), explain 18/17/0 (unverifiable
+open-ended), rubric 15/1/0 (explain_rubric_check escalated 1 weak-coverage as designed).
+The escalation rate has fallen monotonically 0.28→0.164→0.073 as verifier coverage
+improved. auto_outcome candidates only; production thresholds gated.

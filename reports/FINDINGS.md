@@ -1345,3 +1345,21 @@ regex_or_schema_check 8, explain_rubric_check 15} — all 7 verifiers active at 
 incl the two M14 additions; auto_needed_checker 160, auto_needed_retrieval 12,
 auto_was_wrong 1; agreement null (pre-review). Escalation queue (gitignored) =
 19/261, all escalated, human null. No leak; private unstaged.
+
+## 102. M15 representative escalated-subset review (M15 step 5)
+Reviewed a representative 6/19 escalated M15 subset against public benchmark ground
+truth (operator_review): m15_e_019 (speed of light, STRING exact) + m15_k_003
+(gravity, rubric) + 4 explain facts. All objectively correct → was_wrong=False.
+Public reviewed-subset summary reports/outcomes/agents_a1_m15_reviewed_subset_sample.json
+(no text, commit-safe): human_reviewed_count 6, auto_vs_human_agreement {n_compared 1,
+rate 0.0}. TWO instructive escalations:
+(1) m15_e_019 auto_was_wrong=True is a TASK-METADATA GAP, not a verifier bug — this
+speed-of-light row comes from the reused M13 exact_tasks pool WITHOUT numeric
+metadata, so it routes to exact_answer_match (strict) instead of the M14
+numeric_tolerant_check. The numeric-TAGGED version (numeric pool, 20/20) passed. Fix:
+tag numeric-answer exact benchmark rows with numeric metadata (candidate for a later
+milestone).
+(2) m15_k_003 (rubric) escalated but did NOT claim wrong — the model said "fundamental
+interaction" where the rubric keyword was "force" (synonym not matched). explain_rubric_check
+correctly escalated for review rather than falsely marking wrong — working as designed;
+suggests rubric facts could allow synonyms later. auto_outcome candidate; production gated.

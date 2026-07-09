@@ -481,3 +481,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.4 (2026-07-09 02:14 EDT) — step 4 COMPLETE (aggregate + escalation queue)
 - Public agents_a1_m15_summary_sample.json: 261 completed, ok231/wrong1/undecided29, escalation 19 (0.0728), verifier dist all 7 (numeric 20, rubric 15), agreement null. Escalation queue gitignored (19/261, human-null). No text; commit-safe.
 - Next step 5: review a representative escalated subset (objective) → public reviewed-subset summary.
+
+## M15 Larger run — Iteration M15.5 (2026-07-09 02:16 EDT) — step 5 COMPLETE (reviewed subset)
+- Reviewed representative 6/19 escalated (objective) → gitignored subset + public agents_a1_m15_reviewed_subset_sample.json: human_reviewed_count 6, agreement n=1 rate 0.0. m15_e_019 = task-metadata gap (string speed-of-light lacks numeric metadata → exact_answer_match strict; numeric-tagged version passed). m15_k_003 rubric escalated on synonym (interaction vs force) — as designed, not wrong. No text; commit-safe.
+- Next step 6: M15-vs-BOTH-baselines comparison report.

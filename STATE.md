@@ -497,3 +497,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.8 (2026-07-09 02:24 EDT) — step 8 COMPLETE → M15 DONE
 - tests/test_m15_larger_run.py 4/4 pass; full suite green (49 tests). All M15 deliverables: generator + 261-task batch, run config, LIVE 261-task run (escalation 0.073, 0 failed, both fixes hold), aggregate + escalation queue, reviewed subset (agreement n=1), two-baseline comparison (trend 0.28→0.164→0.073), doc, tests. Private never staged; auto candidate; production gated. M15 STOP CONDITION MET.
 - NEXT per steer M16: A calibration / B retrieval+checker actions / C label converters / D broader model comparison. MOTIVATED FIXTURE FIX: tag numeric-answer exact rows with numeric metadata (M15 task-metadata gap).
+
+## M16 Action routing — Iteration M16.1 (2026-07-09 02:28 EDT) — step 1 COMPLETE (metadata validator)
+- New M16 loop prompt installed (action routing + metadata cleanup; read-only actions) via /prompt-master. steer.md synced post-M15 (afca8b9).
+- src/validate_task_metadata.py: flags numeric-looking exact rows missing numeric metadata (7 in M15 batch incl speed-of-light) + json/numeric sanity. Exits nonzero on issues.
+- Next step 2: generator metadata-normalization → tag numeric exact rows; regenerate M15 batch; validator zero gaps.

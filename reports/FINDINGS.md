@@ -1406,3 +1406,15 @@ reviewed-subset, two-baseline comparison); private records stayed gitignored.
 auto_outcome candidate; production gated. NEXT per steer M16: A calibration / B
 retrieval+checker actions / C label converters / D broader model comparison — plus a
 small fixture fix (tag numeric-answer exact rows with numeric metadata) is now motivated.
+
+## 106. Task-metadata validator (M16 step 1)
+`src/validate_task_metadata.py` detects the M15 numeric-metadata gap: exact_answer
+rows whose known_answer is a clean numeric value but which carry NO numeric
+metadata (so they route to strict exact_answer_match instead of
+numeric_tolerant_check). Also basic sanity (numeric rows need expected_value; json
+rows need json_required). Reports offending prompt_ids (non-sensitive), exits
+nonzero on issues. Verified on the current data/prompts/agents_a1_m15_batch.jsonl:
+FLAGS 7 numeric-looking exact rows including m15_e_019 (speed of light, "300000")
+plus continents/hexagon/freezing-point/sqrt-81/leap-year/smallest-prime. These are
+exactly the reused string-exact numeric rows behind the M15 finding; step 2 tags
+them so they route to numeric_tolerant_check.

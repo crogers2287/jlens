@@ -1505,3 +1505,17 @@ review_needed, clean→no_action. Over the M15 run: checker 160 / no_action 70 /
 retrieval 12, all planned (nothing executed). auto_outcome candidate; production gated.
 NEXT per steer M17: A calibration / B 500-task run with action routing / C label converters
 / D broader model comparison.
+
+## 114. Reviewed calibration report (M17 step 1)
+`src/reviewed_calibration_report.py` consolidates the M11-M16 reviewed logs (read
+locally, gitignored) into a CATEGORY-LEVEL summary — aggregate-only, built from
+fixed numeric/label keys with a recursive no-text guard. Over 44 records scanned,
+19 human-reviewed, 3 comparable (both auto+human was_wrong set). Per category:
+exact reviewed 2/comparable 2/agreement 0.0/usable_shadow; regex reviewed
+1/comparable 1/agreement 0.0/usable_shadow; explain-rubric reviewed 1/comparable
+0/needs_more_review; open-explain reviewed 15/comparable 0/verifier_gap. The exact
++ regex 0.0-agreement rows are exactly the two false-positives review FOUND and that
+are now FIXED (JSON M12, numeric M14+M16) — honest historical disagreements.
+open-explain has no objective verifier (verifier_gap). Folds in M16 action-routing
+PLANNED-only counts (retrieval 12/checker 160/review 19/no_action 70). Leak grep +
+no-text guard clean; commit-safe.

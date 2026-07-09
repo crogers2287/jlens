@@ -530,3 +530,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M16 Action routing — Iteration M16.8 (2026-07-09 02:50 EDT) — step 8 COMPLETE → M16 DONE
 - tests/test_action_routing.py 5/5 pass; full suite green (54 tests). All M16 deliverables: metadata validator, generator normalization (7 exact→numeric, zero gaps), action_record_v1 schema, read-only action_router, before/after metadata report, action-routing summary, doc, tests. Actions read-only/planned; auto candidate; production gated. M16 STOP CONDITION MET.
 - NEXT per steer M17: A calibration / B 500-task run w/ action routing / C label converters / D broader model comparison.
+
+## M17 Reviewed calibration — Iteration M17.1 (2026-07-09 03:04 EDT) — step 1 COMPLETE (calibration report)
+- New M17 loop prompt installed (reviewed calibration; reporting-only) via /prompt-master. steer.md synced post-M16 (6a5c513).
+- src/reviewed_calibration_report.py: category-level over M11-M16 reviewed logs (read locally). 44 scanned/19 reviewed/3 comparable. exact+regex agreement 0.0 (the fixed false-positives); open-explain verifier_gap; rubric needs_more_review. Action planned-only counts folded in. No-text guard + guard clean.
+- Next step 2: commit the summary artifact (verify no-text + commit-safe).

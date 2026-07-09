@@ -1135,3 +1135,16 @@ per task → bounds the run at 110 calls; self-consistency skipped at n<2);
 escalation thresholds reused; resume enabled; deterministic; private out paths
 (run/meta/review) under the gitignored dir. Verified: loads, sha256 run_id stable
 (8f702be95736bbe5), private paths gitignored. No secrets.
+
+## 85. M13 LIVE 110-task Agents-A1 run (M13 step 3)
+Ran the 110-task batch LIVE against agents-a1 (fred llama-swap :9069) via a capped
+model_fn (max_tokens 384, temp 0). run_id cd3d744045af170e: 110/110 completed, 0
+failed, all telemetry_missing (GGUF), ~4 min. All records auto_outcome_v1-valid;
+human outcome/review_meta all null; private log gitignored + unstaged.
+escalation_count 18 (rate 0.164 — DOWN from the 25-task baseline's 0.28).
+Per-category (total/escalated/auto_wrong): math 44/0/0, json 10/0/0 (the M12 JSON
+verifier fix HOLDS on fresh data — zero false-positives), regex 8/0/0,
+exact_answer 20/1/1 (one genuine miss to review), current_info 10/0/0 (correctly
+flagged needs-retrieval, not escalated), explain 18/17/0 (unverifiable open-ended,
+low-confidence escalation as designed). auto_outcome candidates only; production
+thresholds gated.

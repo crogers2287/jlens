@@ -411,3 +411,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.2 (2026-07-09 00:37 EDT) — step 2 COMPLETE (run config)
 - config/agents_a1_m13_run.json: agents-a1 endpoint, batch 120/cap 250, self_consistency_samples 1 (110 calls), private out paths. run_id 8f702be95736bbe5 stable; paths ignored.
 - Next step 3: LIVE run of the 110-task batch against agents-a1 on fred (capped model_fn) → gitignored private log.
+
+## M13 Larger run — Iteration M13.3 (2026-07-09 00:44 EDT) — step 3 COMPLETE (LIVE 110-task run)
+- LIVE agents-a1 run run_id cd3d744045af170e: 110/110 completed, 0 failed, telemetry_missing 110, escalated 18 (rate 0.164 vs baseline 0.28), auto_was_wrong 1. math/json/regex 0 escalated (JSON fix validated at scale); explain 17/18 escalated (unverifiable); exact 1 wrong. Records valid, human-null, private unstaged.
+- Next step 4: aggregate report (public) + escalation queue (gitignored).

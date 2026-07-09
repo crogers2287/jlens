@@ -1562,3 +1562,13 @@ no_action 70). auto_outcome candidate; production/final thresholds gold/audit ga
 this summary is the honest per-category scoreboard of how close to gating-unlock the
 reviewed data is. NEXT per steer M18: A 500-task run w/ action routing / B retrieval+checker
 execution / C label converters / D broader model comparison.
+
+## 118. Post-M17 CLI bugfix — main() referenced renamed key
+`src/reviewed_calibration_report.py:main()` still printed `summary['total_reviewed_records']`,
+a key removed during the step-1 honesty rename to `total_records_scanned`/
+`total_reviewed`/`total_comparable`. Running the script directly (not via `build()`,
+which tests call) raised `KeyError`. Fixed the print line to use the three current
+keys. Verified: CLI now runs clean (`44 scanned, 19 reviewed, 3 comparable`); regenerated
+output is byte-identical (`diff`) to the already-committed summary, so this is a
+pure code fix with no data change. Full suite still green (58 tests); check_commit_safe
+PASS.

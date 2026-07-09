@@ -547,3 +547,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M17 Reviewed calibration — Iteration M17.4 (2026-07-09 03:16 EDT) — step 4 COMPLETE → M17 DONE
 - tests/test_reviewed_calibration.py 4/4 pass; full suite green (58 tests). All M17 deliverables: reviewed_calibration_report, committed public summary (category-level, agreement-where-comparable, fixed findings + gaps, action planned-only), doc, tests. Private reviewed logs never staged; auto candidate; production gated. M17 STOP CONDITION MET.
 - NEXT per steer M18: A 500-task run w/ action routing / B retrieval+checker execution / C label converters / D broader model comparison.
+
+## M17 Reviewed calibration — Post-completion bugfix (2026-07-09 23:27 EDT)
+- Fixed KeyError in reviewed_calibration_report.py main() (stale total_reviewed_records
+  reference from the step-1 honesty rename). CLI verified clean; regenerated output
+  byte-identical to committed artifact (no data change). Full suite 58/58 green.

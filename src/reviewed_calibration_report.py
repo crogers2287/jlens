@@ -171,7 +171,8 @@ def main(argv=None) -> int:
     assert_no_text(summary)
     out = Path(args.out); out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(summary, indent=1) + "\n")
-    print(f"[jlens] reviewed calibration: {summary['total_reviewed_records']} records "
+    print(f"[jlens] reviewed calibration: {summary['total_records_scanned']} scanned, "
+          f"{summary['total_reviewed']} reviewed, {summary['total_comparable']} comparable "
           f"across {len(summary['per_category'])} categories -> {out} (no text keys)")
     for cat, d in summary["per_category"].items():
         print(f"  {cat:22s} reviewed={d['reviewed_count']:2d} comparable={d['comparable_count']:2d} "

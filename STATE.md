@@ -415,3 +415,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.3 (2026-07-09 00:44 EDT) — step 3 COMPLETE (LIVE 110-task run)
 - LIVE agents-a1 run run_id cd3d744045af170e: 110/110 completed, 0 failed, telemetry_missing 110, escalated 18 (rate 0.164 vs baseline 0.28), auto_was_wrong 1. math/json/regex 0 escalated (JSON fix validated at scale); explain 17/18 escalated (unverifiable); exact 1 wrong. Records valid, human-null, private unstaged.
 - Next step 4: aggregate report (public) + escalation queue (gitignored).
+
+## M13 Larger run — Iteration M13.4 (2026-07-09 00:48 EDT) — step 4 COMPLETE (aggregate + escalation queue)
+- Public agents_a1_m13_summary_sample.json: 110 completed, ok81/wrong1/undecided28, escalation 18 (0.164), verifier dist (json_object_check 10, math 44, etc.), agreement null. Escalation queue gitignored (18/110, human-null). No text; commit-safe.
+- Next step 5: review a representative escalated subset (objective) → public reviewed-subset summary.

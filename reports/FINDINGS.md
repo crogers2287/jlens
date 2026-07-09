@@ -1148,3 +1148,13 @@ exact_answer 20/1/1 (one genuine miss to review), current_info 10/0/0 (correctly
 flagged needs-retrieval, not escalated), explain 18/17/0 (unverifiable open-ended,
 low-confidence escalation as designed). auto_outcome candidates only; production
 thresholds gated.
+
+## 86. M13 aggregate report + escalation queue (M13 step 4)
+Public-safe reports/outcomes/agents_a1_m13_summary_sample.json (aggregate-only, no
+task text, commit-safe): 110 completed / 0 failed / telemetry_missing 110;
+auto_verdict {ok 81, wrong 1, undecided 28}; escalation 18 (rate 0.1636);
+verifier_distribution {math_checker 44, retrieval_required_heuristic 110,
+exact_answer_match 20, json_object_check 10, regex_or_schema_check 8};
+auto_needed_checker 44, auto_needed_retrieval 11, auto_was_wrong 1; agreement null
+(pre-review). Escalation queue (gitignored) = 18/110 escalated rows, all escalated,
+human outcome/review_meta null. No leak; private unstaged.

@@ -1608,3 +1608,39 @@ M18 doc records the safety contract, commands, replay results, preview limitatio
 and unchanged production/human-review gates. Full suite green: 64 tests; all 261
 private action results validate against action_result_v1; public M18 artifacts pass
 check_commit_safe.
+
+## 123. M19 transient full-output action path
+`autonomous_shadow_supervisor.run_task(return_full_output=True)` now returns full
+output only to the private runner. With actions explicitly enabled, the runner
+routes + executes the approved action before writing the bounded runtime preview;
+only action_result_v1 persists. Actions remain disabled in other configs. Resume
+requires both runtime prompt_id and action-result task_id. No shell/network
+retrieval/dynamic callable surface added.
+
+## 124. M19 deterministic 500-task workload + live completion
+`gen_m19_batch.py` + `agents_a1_m19_run.json`: cleaned M15 261 baseline plus 239
+unique added tasks = 500 (math360/exact50/explain43/current20/json10/numeric9/
+regex8), metadata validator clean. Live run c20512612a978d60 against already-served
+agents-a1 completed 500/500, 0 endpoint failures, telemetry_missing 500, policy
+null 500, escalated 27 (0.054 vs M15 0.0728). Private detailed logs remain ignored.
+
+## 125. Full-output checker results replace the invalid M18 preview split
+M19 executed 360 allowlisted math checks on transient FULL output: 356 pass / 4
+fail. The four compact wrong answers are objective candidates (2062 vs 1972; 863
+vs 862; 3365 vs 3345; 3052 vs 3032), not truncation artifacts. auto_outcome and
+action_result remain candidates pending human calibration; no gold promotion.
+
+## 126. Retrieval reporting separates current-info from heuristic false positives
+23 fixture retrievals completed, but only 20 were actual current_info tasks. Three
+non-current routes are reported separately: weather/climate explain x2 (keyword
+`weather`) and a static discount numeric task (keyword `price`). Current-info path
+coverage is 20/20; every row still needs grounded regeneration. Fixture completion
+is not answer correctness.
+
+## 127. M19 aggregate reports, tests, and milestone completion
+Public-safe reports: M19 run summary, action execution summary, and M15/M18
+baseline comparison. `tests/test_m19_live_full_output.py` covers deterministic
+500-task generation/metadata, full-output checker handoff with no raw persistence,
+paired resume, disabled actions, fixture-only wildcard retrieval, aggregate
+no-text/baseline interpretation, and current-info separation. Production remains
+gated; detailed records and retrieval payload stay gitignored.

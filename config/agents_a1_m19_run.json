@@ -1,0 +1,55 @@
+{
+  "_doc": "M19 500-task live Agents-A1 run with explicit-opt-in transient full-output action execution. The runner calls the already-served endpoint and never serves/unloads models.",
+  "endpoint": {
+    "alias": "agents-a1-llamaswap",
+    "base_url": "http://localhost:9069/v1",
+    "model": "agents-a1",
+    "api_key": "not-needed",
+    "timeout_s": 180
+  },
+  "task_sources": [
+    {
+      "path": "data/prompts/agents_a1_m19_batch.jsonl",
+      "kind": "public"
+    }
+  ],
+  "batch": {
+    "size": 500,
+    "cap": 500
+  },
+  "verifiers": {
+    "exact_answer_match": true,
+    "regex_or_schema_check": true,
+    "json_object_check": true,
+    "numeric_tolerant_check": true,
+    "explain_rubric_check": true,
+    "math_checker": true,
+    "code_test_stub": true,
+    "retrieval_required_heuristic": true,
+    "self_consistency": true,
+    "self_consistency_samples": 1
+  },
+  "escalation": {
+    "low_confidence_below": 0.55,
+    "self_consistency_min_agreement": 0.67,
+    "high_impact_levels": ["high", "critical"],
+    "escalate_on_verifier_contradiction": true
+  },
+  "actions": {
+    "_doc": "EXPLICIT OPT-IN. Full output is passed transiently to the M18 executor and never persisted; only action_result_v1 is written.",
+    "enabled": true,
+    "results_log": "reports/shadow/private/agents_a1_m19_action_results_local.jsonl",
+    "retrieval_fixture": "reports/shadow/private/m19_retrieval_fixture_local.json"
+  },
+  "resume": {
+    "enabled": true
+  },
+  "run": {
+    "deterministic": true,
+    "mode": "live",
+    "run_log": "reports/shadow/private/agents_a1_m19_run_local.jsonl",
+    "run_meta": "reports/shadow/private/agents_a1_m19_run_meta_local.json",
+    "review_queue": "reports/shadow/private/agents_a1_m19_review_local.jsonl",
+    "_paths_doc": "All detailed outputs are gitignored. Public artifacts must be aggregate-only and commit-safe."
+  }
+}

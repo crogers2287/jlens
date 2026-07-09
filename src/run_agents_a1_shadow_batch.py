@@ -32,6 +32,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 import autonomous_shadow_supervisor as SUP  # noqa: E402
+import action_executor as EXEC  # noqa: E402
+import action_router as ROUTER  # noqa: E402
 import local_shadow_wrapper as LSW  # noqa: E402
 
 PLACEHOLDER_TS = "<deterministic-run: no wall-clock>"
@@ -41,7 +43,7 @@ def config_run_id(cfg: dict) -> str:
     return hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:16]
 
 
-def _existing_ids(out_path: Path) -> set:
+def _existing_ids(out_path: Path, key="prompt_id") -> set:
     """prompt_ids already recorded — the basis for resume."""
     ids = set()
     if out_path.exists():
@@ -49,7 +51,7 @@ def _existing_ids(out_path: Path) -> set:
             line = line.strip()
             if line:
                 try:
-                    ids.add(json.loads(line)["prompt_id"])
+                    ids.add(json.loads(line)[key])
                 except (json.JSONDecodeError, KeyError):
                     continue
     return ids
@@ -74,31 +76,71 @@ def load_batch(cfg, source_path=None):
 
 
 def run_batch(cfg, model_fn, out_path, meta_path=None, validator=None,
-              started_at=None, finished_at=None, source_path=None):
+              started_at=None, finished_at=None, source_path=None,
+              action_out_path=None, action_validator=None,
+              retrieval_adapter=None):
     """Run the bounded batch resume-safely; return the run-meta dict."""
     tasks, used_source = load_batch(cfg, source_path)
     out = Path(out_path); out.parent.mkdir(parents=True, exist_ok=True)
     deterministic = cfg.get("run", {}).get("deterministic", True)
     resume = cfg.get("resume", {}).get("enabled", True)
 
+    action_enabled = bool(cfg.get("actions", {}).get("enabled"))
+    action_out = Path(action_out_path) if action_out_path else None
+    if action_enabled and action_out is None:
+        raise ValueError("actions.enabled=true requires an action results path")
+    if action_out is not None:
+        action_out.parent.mkdir(parents=True, exist_ok=True)
+
     done = _existing_ids(out) if resume else set()
+    if resume and action_enabled:
+        # A task is complete only when both bounded runtime + action result exist.
+        # This keeps normal resume from silently skipping a missing action result.
+        done &= _existing_ids(action_out, key="task_id")
     todo = [t for t in tasks if t["prompt_id"] not in done]
 
     n_completed = n_failed = n_tel = n_esc = 0
+    n_action_completed = n_action_skipped = n_action_failed = 0
+    action_fh = action_out.open("a", encoding="utf-8") if action_enabled else None
     with out.open("a", encoding="utf-8") as fh:  # APPEND — never rewrite completed
         for t in todo:
             try:
-                rec = SUP.run_task(t, model_fn, cfg)
+                task_result = SUP.run_task(
+                    t, model_fn, cfg, return_full_output=action_enabled)
+                if action_enabled:
+                    rec, full_output = task_result
+                    action = ROUTER.route(rec)
+                    action_result = EXEC.execute_action(
+                        action, task=t, runtime={"output": full_output},
+                        enabled=True, retrieval_adapter=retrieval_adapter)
+                else:
+                    rec = task_result
             except Exception:            # endpoint failure for this task
                 n_failed += 1            # count it and CONTINUE when safe
                 continue
             if validator is not None and list(validator.iter_errors(rec)):
                 n_failed += 1
                 continue
+            if (action_enabled and action_validator is not None
+                    and list(action_validator.iter_errors(action_result))):
+                n_failed += 1
+                continue
+            if action_enabled:
+                # Full output is intentionally out of scope here: only the
+                # fixed-shape action result and bounded runtime record persist.
+                action_fh.write(json.dumps(action_result) + "\n")
+                if action_result["action_status"] == "completed":
+                    n_action_completed += 1
+                elif action_result["action_status"] == "skipped":
+                    n_action_skipped += 1
+                else:
+                    n_action_failed += 1
             fh.write(json.dumps(rec) + "\n")
             n_completed += 1
             n_tel += 1 if rec.get("telemetry_missing") else 0
             n_esc += 1 if rec.get("auto_outcome", {}).get("escalate_for_review") else 0
+    if action_fh is not None:
+        action_fh.close()
 
     ts = PLACEHOLDER_TS if deterministic else None
     meta = {
@@ -111,6 +153,10 @@ def run_batch(cfg, model_fn, out_path, meta_path=None, validator=None,
         "n_failed": n_failed,
         "n_telemetry_missing_this_run": n_tel,
         "escalation_count_this_run": n_esc,
+        "action_execution_enabled": action_enabled,
+        "n_action_completed_this_run": n_action_completed,
+        "n_action_skipped_this_run": n_action_skipped,
+        "n_action_failed_this_run": n_action_failed,
         "n_already_done_skipped": len(tasks) - len(todo),
         "started_at": (started_at if started_at is not None else ts),
         "finished_at": (finished_at if finished_at is not None else ts),
@@ -148,19 +194,34 @@ def main(argv=None) -> int:
         model_fn = LSW.dry_run_output
 
     validator = None
+    action_validator = None
     try:
         from jsonschema import Draft7Validator
         S = json.loads(Path("schema/auto_outcome_v1.json").read_text())
         validator = Draft7Validator(S)
+        AS = json.loads(Path("schema/action_result_v1.json").read_text())
+        action_validator = Draft7Validator(AS)
     except Exception:
         validator = None
+        action_validator = None
 
-    meta = run_batch(cfg, model_fn, out_path, meta_path, validator=validator)
+    acfg = cfg.get("actions", {})
+    action_out_path = acfg.get("results_log") if acfg.get("enabled") else None
+    retrieval_adapter = None
+    fixture_path = acfg.get("retrieval_fixture")
+    if acfg.get("enabled") and fixture_path:
+        retrieval_adapter = EXEC.FixtureRetrievalAdapter.from_json(fixture_path)
+
+    meta = run_batch(
+        cfg, model_fn, out_path, meta_path, validator=validator,
+        action_out_path=action_out_path, action_validator=action_validator,
+        retrieval_adapter=retrieval_adapter)
     print(f"[jlens] agents-a1 run {meta['run_id']}: "
           f"completed={meta['n_completed_this_run']} failed={meta['n_failed']} "
           f"skipped={meta['n_already_done_skipped']} escalated={meta['escalation_count_this_run']} "
           f"telemetry_missing={meta['n_telemetry_missing_this_run']} -> {out_path} "
-          f"[advisory/shadow, auto_outcome=candidate]")
+          f"actions_completed={meta['n_action_completed_this_run']} "
+          f"[advisory/shadow, auto_outcome+action_result=candidate]")
     return 0
 
 

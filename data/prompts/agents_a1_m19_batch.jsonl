@@ -1,0 +1,500 @@
+{"prompt_id": "m15_m_000", "prompt": "What is 6 + 8?", "task_category": "math", "known_answer": "14", "expression": "6+8"}
+{"prompt_id": "m15_m_001", "prompt": "What is 7 - 9?", "task_category": "math", "known_answer": "-2", "expression": "7-9"}
+{"prompt_id": "m15_m_002", "prompt": "What is 8 * 10?", "task_category": "math", "known_answer": "80", "expression": "8*10"}
+{"prompt_id": "m15_m_003", "prompt": "What is 9 + 2?", "task_category": "math", "known_answer": "11", "expression": "9+2"}
+{"prompt_id": "m15_m_004", "prompt": "What is 10 - 3?", "task_category": "math", "known_answer": "7", "expression": "10-3"}
+{"prompt_id": "m15_m_005", "prompt": "What is 11 * 4?", "task_category": "math", "known_answer": "44", "expression": "11*4"}
+{"prompt_id": "m15_m_006", "prompt": "What is 12 + 5?", "task_category": "math", "known_answer": "17", "expression": "12+5"}
+{"prompt_id": "m15_m_007", "prompt": "What is 13 - 6?", "task_category": "math", "known_answer": "7", "expression": "13-6"}
+{"prompt_id": "m15_m_008", "prompt": "What is 14 * 7?", "task_category": "math", "known_answer": "98", "expression": "14*7"}
+{"prompt_id": "m15_m_009", "prompt": "What is 15 + 8?", "task_category": "math", "known_answer": "23", "expression": "15+8"}
+{"prompt_id": "m15_m_010", "prompt": "What is 16 - 9?", "task_category": "math", "known_answer": "7", "expression": "16-9"}
+{"prompt_id": "m15_m_011", "prompt": "What is 17 * 10?", "task_category": "math", "known_answer": "170", "expression": "17*10"}
+{"prompt_id": "m15_m_012", "prompt": "What is 18 + 2?", "task_category": "math", "known_answer": "20", "expression": "18+2"}
+{"prompt_id": "m15_m_013", "prompt": "What is 19 - 3?", "task_category": "math", "known_answer": "16", "expression": "19-3"}
+{"prompt_id": "m15_m_014", "prompt": "What is 20 * 4?", "task_category": "math", "known_answer": "80", "expression": "20*4"}
+{"prompt_id": "m15_m_015", "prompt": "What is 21 + 5?", "task_category": "math", "known_answer": "26", "expression": "21+5"}
+{"prompt_id": "m15_m_016", "prompt": "What is 22 - 6?", "task_category": "math", "known_answer": "16", "expression": "22-6"}
+{"prompt_id": "m15_m_017", "prompt": "What is 23 * 7?", "task_category": "math", "known_answer": "161", "expression": "23*7"}
+{"prompt_id": "m15_m_018", "prompt": "What is 24 + 8?", "task_category": "math", "known_answer": "32", "expression": "24+8"}
+{"prompt_id": "m15_m_019", "prompt": "What is 25 - 9?", "task_category": "math", "known_answer": "16", "expression": "25-9"}
+{"prompt_id": "m15_m_020", "prompt": "What is 26 * 10?", "task_category": "math", "known_answer": "260", "expression": "26*10"}
+{"prompt_id": "m15_m_021", "prompt": "What is 27 + 2?", "task_category": "math", "known_answer": "29", "expression": "27+2"}
+{"prompt_id": "m15_m_022", "prompt": "What is 28 - 3?", "task_category": "math", "known_answer": "25", "expression": "28-3"}
+{"prompt_id": "m15_m_023", "prompt": "What is 29 * 4?", "task_category": "math", "known_answer": "116", "expression": "29*4"}
+{"prompt_id": "m15_m_024", "prompt": "What is 30 + 5?", "task_category": "math", "known_answer": "35", "expression": "30+5"}
+{"prompt_id": "m15_m_025", "prompt": "What is 31 - 6?", "task_category": "math", "known_answer": "25", "expression": "31-6"}
+{"prompt_id": "m15_m_026", "prompt": "What is 32 * 7?", "task_category": "math", "known_answer": "224", "expression": "32*7"}
+{"prompt_id": "m15_m_027", "prompt": "What is 33 + 8?", "task_category": "math", "known_answer": "41", "expression": "33+8"}
+{"prompt_id": "m15_m_028", "prompt": "What is 34 - 9?", "task_category": "math", "known_answer": "25", "expression": "34-9"}
+{"prompt_id": "m15_m_029", "prompt": "What is 35 * 10?", "task_category": "math", "known_answer": "350", "expression": "35*10"}
+{"prompt_id": "m15_m_030", "prompt": "What is 36 + 2?", "task_category": "math", "known_answer": "38", "expression": "36+2"}
+{"prompt_id": "m15_m_031", "prompt": "What is 37 - 3?", "task_category": "math", "known_answer": "34", "expression": "37-3"}
+{"prompt_id": "m15_m_032", "prompt": "What is 38 * 4?", "task_category": "math", "known_answer": "152", "expression": "38*4"}
+{"prompt_id": "m15_m_033", "prompt": "What is 39 + 5?", "task_category": "math", "known_answer": "44", "expression": "39+5"}
+{"prompt_id": "m15_m_034", "prompt": "What is 40 - 6?", "task_category": "math", "known_answer": "34", "expression": "40-6"}
+{"prompt_id": "m15_m_035", "prompt": "What is 41 * 7?", "task_category": "math", "known_answer": "287", "expression": "41*7"}
+{"prompt_id": "m15_m_036", "prompt": "What is 42 + 8?", "task_category": "math", "known_answer": "50", "expression": "42+8"}
+{"prompt_id": "m15_m_037", "prompt": "What is 43 - 9?", "task_category": "math", "known_answer": "34", "expression": "43-9"}
+{"prompt_id": "m15_m_038", "prompt": "What is 44 * 10?", "task_category": "math", "known_answer": "440", "expression": "44*10"}
+{"prompt_id": "m15_m_039", "prompt": "What is 45 + 2?", "task_category": "math", "known_answer": "47", "expression": "45+2"}
+{"prompt_id": "m15_m_040", "prompt": "What is 46 - 3?", "task_category": "math", "known_answer": "43", "expression": "46-3"}
+{"prompt_id": "m15_m_041", "prompt": "What is 47 * 4?", "task_category": "math", "known_answer": "188", "expression": "47*4"}
+{"prompt_id": "m15_m_042", "prompt": "What is 48 + 5?", "task_category": "math", "known_answer": "53", "expression": "48+5"}
+{"prompt_id": "m15_m_043", "prompt": "What is 49 - 6?", "task_category": "math", "known_answer": "43", "expression": "49-6"}
+{"prompt_id": "m15_m_044", "prompt": "What is 50 * 7?", "task_category": "math", "known_answer": "350", "expression": "50*7"}
+{"prompt_id": "m15_m_045", "prompt": "What is 51 + 8?", "task_category": "math", "known_answer": "59", "expression": "51+8"}
+{"prompt_id": "m15_m_046", "prompt": "What is 52 - 9?", "task_category": "math", "known_answer": "43", "expression": "52-9"}
+{"prompt_id": "m15_m_047", "prompt": "What is 53 * 10?", "task_category": "math", "known_answer": "530", "expression": "53*10"}
+{"prompt_id": "m15_m_048", "prompt": "What is 54 + 2?", "task_category": "math", "known_answer": "56", "expression": "54+2"}
+{"prompt_id": "m15_m_049", "prompt": "What is 55 - 3?", "task_category": "math", "known_answer": "52", "expression": "55-3"}
+{"prompt_id": "m15_m_050", "prompt": "What is 56 * 4?", "task_category": "math", "known_answer": "224", "expression": "56*4"}
+{"prompt_id": "m15_m_051", "prompt": "What is 57 + 5?", "task_category": "math", "known_answer": "62", "expression": "57+5"}
+{"prompt_id": "m15_m_052", "prompt": "What is 58 - 6?", "task_category": "math", "known_answer": "52", "expression": "58-6"}
+{"prompt_id": "m15_m_053", "prompt": "What is 59 * 7?", "task_category": "math", "known_answer": "413", "expression": "59*7"}
+{"prompt_id": "m15_m_054", "prompt": "What is 60 + 8?", "task_category": "math", "known_answer": "68", "expression": "60+8"}
+{"prompt_id": "m15_m_055", "prompt": "What is 61 - 9?", "task_category": "math", "known_answer": "52", "expression": "61-9"}
+{"prompt_id": "m15_m_056", "prompt": "What is 62 * 10?", "task_category": "math", "known_answer": "620", "expression": "62*10"}
+{"prompt_id": "m15_m_057", "prompt": "What is 63 + 2?", "task_category": "math", "known_answer": "65", "expression": "63+2"}
+{"prompt_id": "m15_m_058", "prompt": "What is 64 - 3?", "task_category": "math", "known_answer": "61", "expression": "64-3"}
+{"prompt_id": "m15_m_059", "prompt": "What is 65 * 4?", "task_category": "math", "known_answer": "260", "expression": "65*4"}
+{"prompt_id": "m15_m_060", "prompt": "What is 66 + 5?", "task_category": "math", "known_answer": "71", "expression": "66+5"}
+{"prompt_id": "m15_m_061", "prompt": "What is 67 - 6?", "task_category": "math", "known_answer": "61", "expression": "67-6"}
+{"prompt_id": "m15_m_062", "prompt": "What is 68 * 7?", "task_category": "math", "known_answer": "476", "expression": "68*7"}
+{"prompt_id": "m15_m_063", "prompt": "What is 69 + 8?", "task_category": "math", "known_answer": "77", "expression": "69+8"}
+{"prompt_id": "m15_m_064", "prompt": "What is 70 - 9?", "task_category": "math", "known_answer": "61", "expression": "70-9"}
+{"prompt_id": "m15_m_065", "prompt": "What is 71 * 10?", "task_category": "math", "known_answer": "710", "expression": "71*10"}
+{"prompt_id": "m15_m_066", "prompt": "What is 72 + 2?", "task_category": "math", "known_answer": "74", "expression": "72+2"}
+{"prompt_id": "m15_m_067", "prompt": "What is 73 - 3?", "task_category": "math", "known_answer": "70", "expression": "73-3"}
+{"prompt_id": "m15_m_068", "prompt": "What is 74 * 4?", "task_category": "math", "known_answer": "296", "expression": "74*4"}
+{"prompt_id": "m15_m_069", "prompt": "What is 75 + 5?", "task_category": "math", "known_answer": "80", "expression": "75+5"}
+{"prompt_id": "m15_m_070", "prompt": "What is 76 - 6?", "task_category": "math", "known_answer": "70", "expression": "76-6"}
+{"prompt_id": "m15_m_071", "prompt": "What is 77 * 7?", "task_category": "math", "known_answer": "539", "expression": "77*7"}
+{"prompt_id": "m15_m_072", "prompt": "What is 78 + 8?", "task_category": "math", "known_answer": "86", "expression": "78+8"}
+{"prompt_id": "m15_m_073", "prompt": "What is 79 - 9?", "task_category": "math", "known_answer": "70", "expression": "79-9"}
+{"prompt_id": "m15_m_074", "prompt": "What is 80 * 10?", "task_category": "math", "known_answer": "800", "expression": "80*10"}
+{"prompt_id": "m15_m_075", "prompt": "What is 81 + 2?", "task_category": "math", "known_answer": "83", "expression": "81+2"}
+{"prompt_id": "m15_m_076", "prompt": "What is 82 - 3?", "task_category": "math", "known_answer": "79", "expression": "82-3"}
+{"prompt_id": "m15_m_077", "prompt": "What is 83 * 4?", "task_category": "math", "known_answer": "332", "expression": "83*4"}
+{"prompt_id": "m15_m_078", "prompt": "What is 84 + 5?", "task_category": "math", "known_answer": "89", "expression": "84+5"}
+{"prompt_id": "m15_m_079", "prompt": "What is 85 - 6?", "task_category": "math", "known_answer": "79", "expression": "85-6"}
+{"prompt_id": "m15_m_080", "prompt": "What is 86 * 7?", "task_category": "math", "known_answer": "602", "expression": "86*7"}
+{"prompt_id": "m15_m_081", "prompt": "What is 87 + 8?", "task_category": "math", "known_answer": "95", "expression": "87+8"}
+{"prompt_id": "m15_m_082", "prompt": "What is 88 - 9?", "task_category": "math", "known_answer": "79", "expression": "88-9"}
+{"prompt_id": "m15_m_083", "prompt": "What is 89 * 10?", "task_category": "math", "known_answer": "890", "expression": "89*10"}
+{"prompt_id": "m15_m_084", "prompt": "What is 90 + 2?", "task_category": "math", "known_answer": "92", "expression": "90+2"}
+{"prompt_id": "m15_m_085", "prompt": "What is 91 - 3?", "task_category": "math", "known_answer": "88", "expression": "91-3"}
+{"prompt_id": "m15_m_086", "prompt": "What is 92 * 4?", "task_category": "math", "known_answer": "368", "expression": "92*4"}
+{"prompt_id": "m15_m_087", "prompt": "What is 93 + 5?", "task_category": "math", "known_answer": "98", "expression": "93+5"}
+{"prompt_id": "m15_m_088", "prompt": "What is 94 - 6?", "task_category": "math", "known_answer": "88", "expression": "94-6"}
+{"prompt_id": "m15_m_089", "prompt": "What is 95 * 7?", "task_category": "math", "known_answer": "665", "expression": "95*7"}
+{"prompt_id": "m15_m_090", "prompt": "What is 96 + 8?", "task_category": "math", "known_answer": "104", "expression": "96+8"}
+{"prompt_id": "m15_m_091", "prompt": "What is 97 - 9?", "task_category": "math", "known_answer": "88", "expression": "97-9"}
+{"prompt_id": "m15_m_092", "prompt": "What is 98 * 10?", "task_category": "math", "known_answer": "980", "expression": "98*10"}
+{"prompt_id": "m15_m_093", "prompt": "What is 99 + 2?", "task_category": "math", "known_answer": "101", "expression": "99+2"}
+{"prompt_id": "m15_m_094", "prompt": "What is 100 - 3?", "task_category": "math", "known_answer": "97", "expression": "100-3"}
+{"prompt_id": "m15_m_095", "prompt": "What is 101 * 4?", "task_category": "math", "known_answer": "404", "expression": "101*4"}
+{"prompt_id": "m15_m_096", "prompt": "What is 102 + 5?", "task_category": "math", "known_answer": "107", "expression": "102+5"}
+{"prompt_id": "m15_m_097", "prompt": "What is 103 - 6?", "task_category": "math", "known_answer": "97", "expression": "103-6"}
+{"prompt_id": "m15_m_098", "prompt": "What is 104 * 7?", "task_category": "math", "known_answer": "728", "expression": "104*7"}
+{"prompt_id": "m15_m_099", "prompt": "What is 105 + 8?", "task_category": "math", "known_answer": "113", "expression": "105+8"}
+{"prompt_id": "m15_m_100", "prompt": "What is 106 - 9?", "task_category": "math", "known_answer": "97", "expression": "106-9"}
+{"prompt_id": "m15_m_101", "prompt": "What is 107 * 10?", "task_category": "math", "known_answer": "1070", "expression": "107*10"}
+{"prompt_id": "m15_m_102", "prompt": "What is 108 + 2?", "task_category": "math", "known_answer": "110", "expression": "108+2"}
+{"prompt_id": "m15_m_103", "prompt": "What is 109 - 3?", "task_category": "math", "known_answer": "106", "expression": "109-3"}
+{"prompt_id": "m15_m_104", "prompt": "What is 110 * 4?", "task_category": "math", "known_answer": "440", "expression": "110*4"}
+{"prompt_id": "m15_m_105", "prompt": "What is 111 + 5?", "task_category": "math", "known_answer": "116", "expression": "111+5"}
+{"prompt_id": "m15_m_106", "prompt": "What is 112 - 6?", "task_category": "math", "known_answer": "106", "expression": "112-6"}
+{"prompt_id": "m15_m_107", "prompt": "What is 113 * 7?", "task_category": "math", "known_answer": "791", "expression": "113*7"}
+{"prompt_id": "m15_m_108", "prompt": "What is 114 + 8?", "task_category": "math", "known_answer": "122", "expression": "114+8"}
+{"prompt_id": "m15_m_109", "prompt": "What is 115 - 9?", "task_category": "math", "known_answer": "106", "expression": "115-9"}
+{"prompt_id": "m15_m_110", "prompt": "What is 116 * 10?", "task_category": "math", "known_answer": "1160", "expression": "116*10"}
+{"prompt_id": "m15_m_111", "prompt": "What is 117 + 2?", "task_category": "math", "known_answer": "119", "expression": "117+2"}
+{"prompt_id": "m15_m_112", "prompt": "What is 118 - 3?", "task_category": "math", "known_answer": "115", "expression": "118-3"}
+{"prompt_id": "m15_m_113", "prompt": "What is 119 * 4?", "task_category": "math", "known_answer": "476", "expression": "119*4"}
+{"prompt_id": "m15_m_114", "prompt": "What is 120 + 5?", "task_category": "math", "known_answer": "125", "expression": "120+5"}
+{"prompt_id": "m15_m_115", "prompt": "What is 121 - 6?", "task_category": "math", "known_answer": "115", "expression": "121-6"}
+{"prompt_id": "m15_m_116", "prompt": "What is 122 * 7?", "task_category": "math", "known_answer": "854", "expression": "122*7"}
+{"prompt_id": "m15_m_117", "prompt": "What is 123 + 8?", "task_category": "math", "known_answer": "131", "expression": "123+8"}
+{"prompt_id": "m15_m_118", "prompt": "What is 124 - 9?", "task_category": "math", "known_answer": "115", "expression": "124-9"}
+{"prompt_id": "m15_m_119", "prompt": "What is 125 * 10?", "task_category": "math", "known_answer": "1250", "expression": "125*10"}
+{"prompt_id": "m15_m_120", "prompt": "What is 126 + 2?", "task_category": "math", "known_answer": "128", "expression": "126+2"}
+{"prompt_id": "m15_m_121", "prompt": "What is 127 - 3?", "task_category": "math", "known_answer": "124", "expression": "127-3"}
+{"prompt_id": "m15_m_122", "prompt": "What is 128 * 4?", "task_category": "math", "known_answer": "512", "expression": "128*4"}
+{"prompt_id": "m15_m_123", "prompt": "What is 129 + 5?", "task_category": "math", "known_answer": "134", "expression": "129+5"}
+{"prompt_id": "m15_m_124", "prompt": "What is 130 - 6?", "task_category": "math", "known_answer": "124", "expression": "130-6"}
+{"prompt_id": "m15_m_125", "prompt": "What is 131 * 7?", "task_category": "math", "known_answer": "917", "expression": "131*7"}
+{"prompt_id": "m15_m_126", "prompt": "What is 132 + 8?", "task_category": "math", "known_answer": "140", "expression": "132+8"}
+{"prompt_id": "m15_m_127", "prompt": "What is 133 - 9?", "task_category": "math", "known_answer": "124", "expression": "133-9"}
+{"prompt_id": "m15_m_128", "prompt": "What is 134 * 10?", "task_category": "math", "known_answer": "1340", "expression": "134*10"}
+{"prompt_id": "m15_m_129", "prompt": "What is 135 + 2?", "task_category": "math", "known_answer": "137", "expression": "135+2"}
+{"prompt_id": "m15_m_130", "prompt": "What is 136 - 3?", "task_category": "math", "known_answer": "133", "expression": "136-3"}
+{"prompt_id": "m15_m_131", "prompt": "What is 137 * 4?", "task_category": "math", "known_answer": "548", "expression": "137*4"}
+{"prompt_id": "m15_m_132", "prompt": "What is 138 + 5?", "task_category": "math", "known_answer": "143", "expression": "138+5"}
+{"prompt_id": "m15_m_133", "prompt": "What is 139 - 6?", "task_category": "math", "known_answer": "133", "expression": "139-6"}
+{"prompt_id": "m15_m_134", "prompt": "What is 140 * 7?", "task_category": "math", "known_answer": "980", "expression": "140*7"}
+{"prompt_id": "m15_m_135", "prompt": "What is 141 + 8?", "task_category": "math", "known_answer": "149", "expression": "141+8"}
+{"prompt_id": "m15_m_136", "prompt": "What is 142 - 9?", "task_category": "math", "known_answer": "133", "expression": "142-9"}
+{"prompt_id": "m15_m_137", "prompt": "What is 143 * 10?", "task_category": "math", "known_answer": "1430", "expression": "143*10"}
+{"prompt_id": "m15_m_138", "prompt": "What is 144 + 2?", "task_category": "math", "known_answer": "146", "expression": "144+2"}
+{"prompt_id": "m15_m_139", "prompt": "What is 145 - 3?", "task_category": "math", "known_answer": "142", "expression": "145-3"}
+{"prompt_id": "m15_m_140", "prompt": "What is 146 * 4?", "task_category": "math", "known_answer": "584", "expression": "146*4"}
+{"prompt_id": "m15_m_141", "prompt": "What is 147 + 5?", "task_category": "math", "known_answer": "152", "expression": "147+5"}
+{"prompt_id": "m15_m_142", "prompt": "What is 148 - 6?", "task_category": "math", "known_answer": "142", "expression": "148-6"}
+{"prompt_id": "m15_m_143", "prompt": "What is 149 * 7?", "task_category": "math", "known_answer": "1043", "expression": "149*7"}
+{"prompt_id": "m15_m_144", "prompt": "What is 150 + 8?", "task_category": "math", "known_answer": "158", "expression": "150+8"}
+{"prompt_id": "m15_m_145", "prompt": "What is 151 - 9?", "task_category": "math", "known_answer": "142", "expression": "151-9"}
+{"prompt_id": "m15_m_146", "prompt": "What is 152 * 10?", "task_category": "math", "known_answer": "1520", "expression": "152*10"}
+{"prompt_id": "m15_m_147", "prompt": "What is 153 + 2?", "task_category": "math", "known_answer": "155", "expression": "153+2"}
+{"prompt_id": "m15_m_148", "prompt": "What is 154 - 3?", "task_category": "math", "known_answer": "151", "expression": "154-3"}
+{"prompt_id": "m15_m_149", "prompt": "What is 155 * 4?", "task_category": "math", "known_answer": "620", "expression": "155*4"}
+{"prompt_id": "m15_m_150", "prompt": "What is 156 + 5?", "task_category": "math", "known_answer": "161", "expression": "156+5"}
+{"prompt_id": "m15_m_151", "prompt": "What is 157 - 6?", "task_category": "math", "known_answer": "151", "expression": "157-6"}
+{"prompt_id": "m15_m_152", "prompt": "What is 158 * 7?", "task_category": "math", "known_answer": "1106", "expression": "158*7"}
+{"prompt_id": "m15_m_153", "prompt": "What is 159 + 8?", "task_category": "math", "known_answer": "167", "expression": "159+8"}
+{"prompt_id": "m15_m_154", "prompt": "What is 20% of 150?", "task_category": "math", "known_answer": "30", "expression": "150*20/100"}
+{"prompt_id": "m15_m_155", "prompt": "What is 15% of 300?", "task_category": "math", "known_answer": "45", "expression": "300*15/100"}
+{"prompt_id": "m15_m_156", "prompt": "What is 2 to the power of 8?", "task_category": "math", "known_answer": "256", "expression": "2**8"}
+{"prompt_id": "m15_m_157", "prompt": "What is 3 to the power of 4?", "task_category": "math", "known_answer": "81", "expression": "3**4"}
+{"prompt_id": "m15_m_158", "prompt": "What is 144 divided by 12?", "task_category": "math", "known_answer": "12", "expression": "144/12"}
+{"prompt_id": "m15_m_159", "prompt": "What is 1000 divided by 8?", "task_category": "math", "known_answer": "125", "expression": "1000/8"}
+{"prompt_id": "m15_e_000", "prompt": "What is the capital of France?", "task_category": "exact_answer", "known_answer": "Paris"}
+{"prompt_id": "m15_e_001", "prompt": "What is the capital of Japan?", "task_category": "exact_answer", "known_answer": "Tokyo"}
+{"prompt_id": "m15_e_002", "prompt": "What is the capital of Italy?", "task_category": "exact_answer", "known_answer": "Rome"}
+{"prompt_id": "m15_e_003", "prompt": "What is the capital of Canada?", "task_category": "exact_answer", "known_answer": "Ottawa"}
+{"prompt_id": "m15_e_004", "prompt": "What is the capital of Australia?", "task_category": "exact_answer", "known_answer": "Canberra"}
+{"prompt_id": "m15_e_005", "prompt": "What is the chemical symbol for gold?", "task_category": "exact_answer", "known_answer": "Au"}
+{"prompt_id": "m15_e_006", "prompt": "What is the chemical symbol for oxygen?", "task_category": "exact_answer", "known_answer": "O"}
+{"prompt_id": "m15_e_007", "prompt": "What is the chemical symbol for iron?", "task_category": "exact_answer", "known_answer": "Fe"}
+{"prompt_id": "m15_e_008", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7", "numeric": true, "expected_value": 7, "tolerance": 0.5}
+{"prompt_id": "m15_e_009", "prompt": "How many sides does a hexagon have?", "task_category": "exact_answer", "known_answer": "6", "numeric": true, "expected_value": 6, "tolerance": 0.5}
+{"prompt_id": "m15_e_010", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
+{"prompt_id": "m15_e_011", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
+{"prompt_id": "m15_e_012", "prompt": "What is the largest planet in the solar system?", "task_category": "exact_answer", "known_answer": "Jupiter"}
+{"prompt_id": "m15_e_013", "prompt": "What gas do plants primarily absorb from the air?", "task_category": "exact_answer", "known_answer": "carbon dioxide"}
+{"prompt_id": "m15_e_014", "prompt": "What is the freezing point of water in Celsius?", "task_category": "exact_answer", "known_answer": "0", "numeric": true, "expected_value": 0, "tolerance": 0.5}
+{"prompt_id": "m15_e_015", "prompt": "Who wrote the play Romeo and Juliet?", "task_category": "exact_answer", "known_answer": "Shakespeare"}
+{"prompt_id": "m15_e_016", "prompt": "What is the square root of 81?", "task_category": "exact_answer", "known_answer": "9", "numeric": true, "expected_value": 9, "tolerance": 0.5}
+{"prompt_id": "m15_e_017", "prompt": "How many days are in a leap year?", "task_category": "exact_answer", "known_answer": "366", "numeric": true, "expected_value": 366, "tolerance": 0.5}
+{"prompt_id": "m15_e_018", "prompt": "What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2", "numeric": true, "expected_value": 2, "tolerance": 0.5}
+{"prompt_id": "m15_e_019", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "known_answer": "300000", "numeric": true, "expected_value": 300000, "rel_tolerance": 0.01}
+{"prompt_id": "m15_n_000", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "numeric": true, "expected_value": 300000, "known_answer": "300000", "rel_tolerance": 0.01, "expected_units": "km"}
+{"prompt_id": "m15_n_001", "prompt": "What is the boiling point of water at sea level, in Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": 100, "known_answer": "100", "tolerance": 0.5, "expected_units": "C"}
+{"prompt_id": "m15_n_002", "prompt": "Approximately how many km is Earth's circumference?", "task_category": "exact_answer", "numeric": true, "expected_value": 40075, "known_answer": "40075", "rel_tolerance": 0.02, "expected_units": "km"}
+{"prompt_id": "m15_n_003", "prompt": "What is absolute zero in degrees Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": -273.15, "known_answer": "-273.15", "tolerance": 0.5, "expected_units": "C"}
+{"prompt_id": "m15_n_004", "prompt": "What is the approximate value of pi?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14159, "known_answer": "3.14159", "tolerance": 0.01}
+{"prompt_id": "m15_n_005", "prompt": "Approximately how many meters are in a mile?", "task_category": "exact_answer", "numeric": true, "expected_value": 1609, "known_answer": "1609", "tolerance": 5.0, "expected_units": "m"}
+{"prompt_id": "m15_n_006", "prompt": "What is the freezing point of water in Fahrenheit?", "task_category": "exact_answer", "numeric": true, "expected_value": 32, "known_answer": "32", "tolerance": 0.5, "expected_units": "F"}
+{"prompt_id": "m15_n_007", "prompt": "Approximately how many seconds are in an hour?", "task_category": "exact_answer", "numeric": true, "expected_value": 3600, "known_answer": "3600", "tolerance": 1.0}
+{"prompt_id": "m15_n_008", "prompt": "What is the approximate acceleration due to gravity, in m/s^2?", "task_category": "exact_answer", "numeric": true, "expected_value": 9.81, "known_answer": "9.81", "tolerance": 0.05}
+{"prompt_id": "m15_n_009", "prompt": "Approximately how many days are in a year?", "task_category": "exact_answer", "numeric": true, "expected_value": 365, "known_answer": "365", "tolerance": 1.0}
+{"prompt_id": "m15_n_010", "prompt": "Approximately what is 1000 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 333.33, "tolerance": 0.5, "known_answer": "333.33"}
+{"prompt_id": "m15_n_011", "prompt": "Approximately what is 100 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 14.29, "tolerance": 0.5, "known_answer": "14.29"}
+{"prompt_id": "m15_n_012", "prompt": "Approximately what is 22 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14, "tolerance": 0.5, "known_answer": "3.14"}
+{"prompt_id": "m15_n_013", "prompt": "Approximately what is 500 divided by 9?", "task_category": "exact_answer", "numeric": true, "expected_value": 55.56, "tolerance": 0.5, "known_answer": "55.56"}
+{"prompt_id": "m15_n_014", "prompt": "Approximately what is 250 divided by 6?", "task_category": "exact_answer", "numeric": true, "expected_value": 41.67, "tolerance": 0.5, "known_answer": "41.67"}
+{"prompt_id": "m15_n_015", "prompt": "Approximately what is 1000 divided by 6?", "task_category": "exact_answer", "numeric": true, "expected_value": 166.67, "tolerance": 0.5, "known_answer": "166.67"}
+{"prompt_id": "m15_n_016", "prompt": "Approximately what is 2000 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 285.71, "tolerance": 0.5, "known_answer": "285.71"}
+{"prompt_id": "m15_n_017", "prompt": "Approximately what is 355 divided by 113?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14, "tolerance": 0.5, "known_answer": "3.14"}
+{"prompt_id": "m15_n_018", "prompt": "Approximately what is 10 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.33, "tolerance": 0.5, "known_answer": "3.33"}
+{"prompt_id": "m15_n_019", "prompt": "Approximately what is 50 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 16.67, "tolerance": 0.5, "known_answer": "16.67"}
+{"prompt_id": "m15_j_000", "prompt": "Return a JSON object with a single key named \"result\".", "task_category": "json", "json_check": true, "json_required": ["result"]}
+{"prompt_id": "m15_j_001", "prompt": "Return a JSON object with keys \"name\" and \"age\".", "task_category": "json", "json_check": true, "json_required": ["name", "age"]}
+{"prompt_id": "m15_j_002", "prompt": "Return a JSON object with a key \"status\".", "task_category": "json", "json_check": true, "json_required": ["status"]}
+{"prompt_id": "m15_j_003", "prompt": "Return a JSON object with keys \"city\" and \"country\".", "task_category": "json", "json_check": true, "json_required": ["city", "country"]}
+{"prompt_id": "m15_j_004", "prompt": "Return a JSON object with a key \"ok\" set to true.", "task_category": "json", "json_check": true, "json_required": ["ok"]}
+{"prompt_id": "m15_j_005", "prompt": "Return a JSON object with keys \"id\" and \"value\".", "task_category": "json", "json_check": true, "json_required": ["id", "value"]}
+{"prompt_id": "m15_j_006", "prompt": "Return a JSON object with a key \"count\".", "task_category": "json", "json_check": true, "json_required": ["count"]}
+{"prompt_id": "m15_j_007", "prompt": "Return a JSON object with keys \"first\" and \"last\".", "task_category": "json", "json_check": true, "json_required": ["first", "last"]}
+{"prompt_id": "m15_j_008", "prompt": "Return a JSON object with a key \"message\".", "task_category": "json", "json_check": true, "json_required": ["message"]}
+{"prompt_id": "m15_j_009", "prompt": "Return a JSON object with keys \"x\", \"y\".", "task_category": "json", "json_check": true, "json_required": ["x", "y"]}
+{"prompt_id": "m15_r_000", "prompt": "Reply with a US ZIP code (5 digits).", "task_category": "regex", "pattern": "\\b\\d{5}\\b"}
+{"prompt_id": "m15_r_001", "prompt": "Give an ISO date in YYYY-MM-DD form.", "task_category": "regex", "pattern": "\\d{4}-\\d{2}-\\d{2}"}
+{"prompt_id": "m15_r_002", "prompt": "Return a hex color code.", "task_category": "regex", "pattern": "#[0-9a-fA-F]{6}"}
+{"prompt_id": "m15_r_003", "prompt": "Reply with a US phone number like 555-123-4567.", "task_category": "regex", "pattern": "\\d{3}-\\d{3}-\\d{4}"}
+{"prompt_id": "m15_r_004", "prompt": "Give a time in HH:MM 24-hour format.", "task_category": "regex", "pattern": "\\b\\d{2}:\\d{2}\\b"}
+{"prompt_id": "m15_r_005", "prompt": "Return an IPv4 address.", "task_category": "regex", "pattern": "\\b\\d{1,3}(\\.\\d{1,3}){3}\\b"}
+{"prompt_id": "m15_r_006", "prompt": "Reply with a single uppercase word.", "task_category": "regex", "pattern": "\\b[A-Z]{2,}\\b"}
+{"prompt_id": "m15_r_007", "prompt": "Give a percentage like 42%.", "task_category": "regex", "pattern": "\\b\\d{1,3}%"}
+{"prompt_id": "m15_c_000", "prompt": "What is the current price of gold today?", "task_category": "current_info"}
+{"prompt_id": "m15_c_001", "prompt": "Who is the current CEO of Twitter?", "task_category": "current_info"}
+{"prompt_id": "m15_c_002", "prompt": "What is the latest iPhone model released this year?", "task_category": "current_info"}
+{"prompt_id": "m15_c_003", "prompt": "What is today's weather in Tampa?", "task_category": "current_info"}
+{"prompt_id": "m15_c_004", "prompt": "What is the current population of Tokyo right now?", "task_category": "current_info"}
+{"prompt_id": "m15_c_005", "prompt": "What is the latest version of Python released this year?", "task_category": "current_info"}
+{"prompt_id": "m15_c_006", "prompt": "Who won the most recent Super Bowl?", "task_category": "current_info"}
+{"prompt_id": "m15_c_007", "prompt": "What is the current stock price of Apple?", "task_category": "current_info"}
+{"prompt_id": "m15_c_008", "prompt": "What are the current top news headlines?", "task_category": "current_info"}
+{"prompt_id": "m15_c_009", "prompt": "What is the exchange rate for USD to EUR right now?", "task_category": "current_info"}
+{"prompt_id": "m15_x_000", "prompt": "Explain what a prime number is.", "task_category": "explain"}
+{"prompt_id": "m15_x_001", "prompt": "Describe how photosynthesis works in one paragraph.", "task_category": "explain"}
+{"prompt_id": "m15_x_002", "prompt": "Summarize the water cycle briefly.", "task_category": "explain"}
+{"prompt_id": "m15_x_003", "prompt": "What are the primary colors?", "task_category": "explain"}
+{"prompt_id": "m15_x_004", "prompt": "Give a one-sentence definition of gravity.", "task_category": "explain"}
+{"prompt_id": "m15_x_005", "prompt": "Explain the difference between weather and climate.", "task_category": "explain"}
+{"prompt_id": "m15_x_006", "prompt": "What is the boiling point of water at sea level in Celsius?", "task_category": "explain"}
+{"prompt_id": "m15_x_007", "prompt": "Explain what an ecosystem is.", "task_category": "explain"}
+{"prompt_id": "m15_x_008", "prompt": "Describe what an integer is in mathematics.", "task_category": "explain"}
+{"prompt_id": "m15_x_009", "prompt": "Explain the concept of supply and demand briefly.", "task_category": "explain"}
+{"prompt_id": "m15_x_010", "prompt": "What is the function of the human heart?", "task_category": "explain"}
+{"prompt_id": "m15_x_011", "prompt": "Explain what renewable energy means.", "task_category": "explain"}
+{"prompt_id": "m15_x_012", "prompt": "Describe the role of DNA in living organisms.", "task_category": "explain"}
+{"prompt_id": "m15_x_013", "prompt": "Explain what inflation is in economics.", "task_category": "explain"}
+{"prompt_id": "m15_x_014", "prompt": "What is the difference between speed and velocity?", "task_category": "explain"}
+{"prompt_id": "m15_x_015", "prompt": "Explain what a noun is in grammar.", "task_category": "explain"}
+{"prompt_id": "m15_x_016", "prompt": "Describe how a rainbow forms.", "task_category": "explain"}
+{"prompt_id": "m15_x_017", "prompt": "Explain what evaporation is.", "task_category": "explain"}
+{"prompt_id": "m15_k_000", "prompt": "Explain what a prime number is.", "task_category": "explain", "required_facts": ["greater than 1", "divisor"]}
+{"prompt_id": "m15_k_001", "prompt": "Explain photosynthesis in one sentence.", "task_category": "explain", "required_facts": ["light", "energy"]}
+{"prompt_id": "m15_k_002", "prompt": "Explain what an integer is.", "task_category": "explain", "required_facts": ["whole number"]}
+{"prompt_id": "m15_k_003", "prompt": "Explain what gravity is in one sentence.", "task_category": "explain", "required_facts": ["force", "mass"]}
+{"prompt_id": "m15_k_004", "prompt": "Explain what evaporation is.", "task_category": "explain", "required_facts": ["liquid", "gas"]}
+{"prompt_id": "m15_k_005", "prompt": "Explain what an ecosystem is.", "task_category": "explain", "required_facts": ["organisms", "environment"]}
+{"prompt_id": "m15_k_006", "prompt": "Explain the difference between speed and velocity.", "task_category": "explain", "required_facts": ["direction"]}
+{"prompt_id": "m15_k_007", "prompt": "Explain what renewable energy is.", "task_category": "explain", "required_facts": ["replenish"]}
+{"prompt_id": "m15_k_008", "prompt": "Explain what the water cycle is.", "task_category": "explain", "required_facts": ["evaporation", "precipitation"]}
+{"prompt_id": "m15_k_009", "prompt": "Explain what inflation means in economics.", "task_category": "explain", "required_facts": ["prices", "rise"]}
+{"prompt_id": "m15_k_010", "prompt": "Explain what DNA does.", "task_category": "explain", "required_facts": ["genetic"]}
+{"prompt_id": "m15_k_011", "prompt": "Explain what a noun is.", "task_category": "explain", "required_facts": ["person", "place", "thing"]}
+{"prompt_id": "m15_k_012", "prompt": "Explain what a verb is.", "task_category": "explain", "required_facts": ["action"]}
+{"prompt_id": "m15_k_013", "prompt": "Explain the difference between weather and climate.", "task_category": "explain", "required_facts": ["long-term", "short-term"]}
+{"prompt_id": "m15_k_014", "prompt": "Explain what a molecule is.", "task_category": "explain", "required_facts": ["atoms"]}
+{"prompt_id": "m19_m_000", "prompt": "Compute 101 * 2 + 0. Give the final number.", "task_category": "math", "known_answer": "202", "expression": "101*2+0"}
+{"prompt_id": "m19_m_001", "prompt": "Compute 102 * 3 + 1. Give the final number.", "task_category": "math", "known_answer": "307", "expression": "102*3+1"}
+{"prompt_id": "m19_m_002", "prompt": "Compute 103 * 4 + 2. Give the final number.", "task_category": "math", "known_answer": "414", "expression": "103*4+2"}
+{"prompt_id": "m19_m_003", "prompt": "Compute 104 * 5 + 3. Give the final number.", "task_category": "math", "known_answer": "523", "expression": "104*5+3"}
+{"prompt_id": "m19_m_004", "prompt": "Compute 105 * 6 + 4. Give the final number.", "task_category": "math", "known_answer": "634", "expression": "105*6+4"}
+{"prompt_id": "m19_m_005", "prompt": "Compute 106 * 7 + 5. Give the final number.", "task_category": "math", "known_answer": "747", "expression": "106*7+5"}
+{"prompt_id": "m19_m_006", "prompt": "Compute 107 * 8 + 6. Give the final number.", "task_category": "math", "known_answer": "862", "expression": "107*8+6"}
+{"prompt_id": "m19_m_007", "prompt": "Compute 108 * 9 + 7. Give the final number.", "task_category": "math", "known_answer": "979", "expression": "108*9+7"}
+{"prompt_id": "m19_m_008", "prompt": "Compute 109 * 10 + 8. Give the final number.", "task_category": "math", "known_answer": "1098", "expression": "109*10+8"}
+{"prompt_id": "m19_m_009", "prompt": "Compute 110 * 11 + 9. Give the final number.", "task_category": "math", "known_answer": "1219", "expression": "110*11+9"}
+{"prompt_id": "m19_m_010", "prompt": "Compute 111 * 12 + 10. Give the final number.", "task_category": "math", "known_answer": "1342", "expression": "111*12+10"}
+{"prompt_id": "m19_m_011", "prompt": "Compute 112 * 13 + 11. Give the final number.", "task_category": "math", "known_answer": "1467", "expression": "112*13+11"}
+{"prompt_id": "m19_m_012", "prompt": "Compute 113 * 14 + 12. Give the final number.", "task_category": "math", "known_answer": "1594", "expression": "113*14+12"}
+{"prompt_id": "m19_m_013", "prompt": "Compute 114 * 15 + 13. Give the final number.", "task_category": "math", "known_answer": "1723", "expression": "114*15+13"}
+{"prompt_id": "m19_m_014", "prompt": "Compute 115 * 16 + 14. Give the final number.", "task_category": "math", "known_answer": "1854", "expression": "115*16+14"}
+{"prompt_id": "m19_m_015", "prompt": "Compute 116 * 17 + 15. Give the final number.", "task_category": "math", "known_answer": "1987", "expression": "116*17+15"}
+{"prompt_id": "m19_m_016", "prompt": "Compute 117 * 18 + 16. Give the final number.", "task_category": "math", "known_answer": "2122", "expression": "117*18+16"}
+{"prompt_id": "m19_m_017", "prompt": "Compute 118 * 2 + 17. Give the final number.", "task_category": "math", "known_answer": "253", "expression": "118*2+17"}
+{"prompt_id": "m19_m_018", "prompt": "Compute 119 * 3 + 18. Give the final number.", "task_category": "math", "known_answer": "375", "expression": "119*3+18"}
+{"prompt_id": "m19_m_019", "prompt": "Compute 120 * 4 + 19. Give the final number.", "task_category": "math", "known_answer": "499", "expression": "120*4+19"}
+{"prompt_id": "m19_m_020", "prompt": "Compute 121 * 5 + 20. Give the final number.", "task_category": "math", "known_answer": "625", "expression": "121*5+20"}
+{"prompt_id": "m19_m_021", "prompt": "Compute 122 * 6 + 21. Give the final number.", "task_category": "math", "known_answer": "753", "expression": "122*6+21"}
+{"prompt_id": "m19_m_022", "prompt": "Compute 123 * 7 + 22. Give the final number.", "task_category": "math", "known_answer": "883", "expression": "123*7+22"}
+{"prompt_id": "m19_m_023", "prompt": "Compute 124 * 8 + 0. Give the final number.", "task_category": "math", "known_answer": "992", "expression": "124*8+0"}
+{"prompt_id": "m19_m_024", "prompt": "Compute 125 * 9 + 1. Give the final number.", "task_category": "math", "known_answer": "1126", "expression": "125*9+1"}
+{"prompt_id": "m19_m_025", "prompt": "Compute 126 * 10 + 2. Give the final number.", "task_category": "math", "known_answer": "1262", "expression": "126*10+2"}
+{"prompt_id": "m19_m_026", "prompt": "Compute 127 * 11 + 3. Give the final number.", "task_category": "math", "known_answer": "1400", "expression": "127*11+3"}
+{"prompt_id": "m19_m_027", "prompt": "Compute 128 * 12 + 4. Give the final number.", "task_category": "math", "known_answer": "1540", "expression": "128*12+4"}
+{"prompt_id": "m19_m_028", "prompt": "Compute 129 * 13 + 5. Give the final number.", "task_category": "math", "known_answer": "1682", "expression": "129*13+5"}
+{"prompt_id": "m19_m_029", "prompt": "Compute 130 * 14 + 6. Give the final number.", "task_category": "math", "known_answer": "1826", "expression": "130*14+6"}
+{"prompt_id": "m19_m_030", "prompt": "Compute 131 * 15 + 7. Give the final number.", "task_category": "math", "known_answer": "1972", "expression": "131*15+7"}
+{"prompt_id": "m19_m_031", "prompt": "Compute 132 * 16 + 8. Give the final number.", "task_category": "math", "known_answer": "2120", "expression": "132*16+8"}
+{"prompt_id": "m19_m_032", "prompt": "Compute 133 * 17 + 9. Give the final number.", "task_category": "math", "known_answer": "2270", "expression": "133*17+9"}
+{"prompt_id": "m19_m_033", "prompt": "Compute 134 * 18 + 10. Give the final number.", "task_category": "math", "known_answer": "2422", "expression": "134*18+10"}
+{"prompt_id": "m19_m_034", "prompt": "Compute 135 * 2 + 11. Give the final number.", "task_category": "math", "known_answer": "281", "expression": "135*2+11"}
+{"prompt_id": "m19_m_035", "prompt": "Compute 136 * 3 + 12. Give the final number.", "task_category": "math", "known_answer": "420", "expression": "136*3+12"}
+{"prompt_id": "m19_m_036", "prompt": "Compute 137 * 4 + 13. Give the final number.", "task_category": "math", "known_answer": "561", "expression": "137*4+13"}
+{"prompt_id": "m19_m_037", "prompt": "Compute 138 * 5 + 14. Give the final number.", "task_category": "math", "known_answer": "704", "expression": "138*5+14"}
+{"prompt_id": "m19_m_038", "prompt": "Compute 139 * 6 + 15. Give the final number.", "task_category": "math", "known_answer": "849", "expression": "139*6+15"}
+{"prompt_id": "m19_m_039", "prompt": "Compute 140 * 7 + 16. Give the final number.", "task_category": "math", "known_answer": "996", "expression": "140*7+16"}
+{"prompt_id": "m19_m_040", "prompt": "Compute 141 * 8 + 17. Give the final number.", "task_category": "math", "known_answer": "1145", "expression": "141*8+17"}
+{"prompt_id": "m19_m_041", "prompt": "Compute 142 * 9 + 18. Give the final number.", "task_category": "math", "known_answer": "1296", "expression": "142*9+18"}
+{"prompt_id": "m19_m_042", "prompt": "Compute 143 * 10 + 19. Give the final number.", "task_category": "math", "known_answer": "1449", "expression": "143*10+19"}
+{"prompt_id": "m19_m_043", "prompt": "Compute 144 * 11 + 20. Give the final number.", "task_category": "math", "known_answer": "1604", "expression": "144*11+20"}
+{"prompt_id": "m19_m_044", "prompt": "Compute 145 * 12 + 21. Give the final number.", "task_category": "math", "known_answer": "1761", "expression": "145*12+21"}
+{"prompt_id": "m19_m_045", "prompt": "Compute 146 * 13 + 22. Give the final number.", "task_category": "math", "known_answer": "1920", "expression": "146*13+22"}
+{"prompt_id": "m19_m_046", "prompt": "Compute 147 * 14 + 0. Give the final number.", "task_category": "math", "known_answer": "2058", "expression": "147*14+0"}
+{"prompt_id": "m19_m_047", "prompt": "Compute 148 * 15 + 1. Give the final number.", "task_category": "math", "known_answer": "2221", "expression": "148*15+1"}
+{"prompt_id": "m19_m_048", "prompt": "Compute 149 * 16 + 2. Give the final number.", "task_category": "math", "known_answer": "2386", "expression": "149*16+2"}
+{"prompt_id": "m19_m_049", "prompt": "Compute 150 * 17 + 3. Give the final number.", "task_category": "math", "known_answer": "2553", "expression": "150*17+3"}
+{"prompt_id": "m19_m_050", "prompt": "Compute 151 * 18 + 4. Give the final number.", "task_category": "math", "known_answer": "2722", "expression": "151*18+4"}
+{"prompt_id": "m19_m_051", "prompt": "Compute 152 * 2 + 5. Give the final number.", "task_category": "math", "known_answer": "309", "expression": "152*2+5"}
+{"prompt_id": "m19_m_052", "prompt": "Compute 153 * 3 + 6. Give the final number.", "task_category": "math", "known_answer": "465", "expression": "153*3+6"}
+{"prompt_id": "m19_m_053", "prompt": "Compute 154 * 4 + 7. Give the final number.", "task_category": "math", "known_answer": "623", "expression": "154*4+7"}
+{"prompt_id": "m19_m_054", "prompt": "Compute 155 * 5 + 8. Give the final number.", "task_category": "math", "known_answer": "783", "expression": "155*5+8"}
+{"prompt_id": "m19_m_055", "prompt": "Compute 156 * 6 + 9. Give the final number.", "task_category": "math", "known_answer": "945", "expression": "156*6+9"}
+{"prompt_id": "m19_m_056", "prompt": "Compute 157 * 7 + 10. Give the final number.", "task_category": "math", "known_answer": "1109", "expression": "157*7+10"}
+{"prompt_id": "m19_m_057", "prompt": "Compute 158 * 8 + 11. Give the final number.", "task_category": "math", "known_answer": "1275", "expression": "158*8+11"}
+{"prompt_id": "m19_m_058", "prompt": "Compute 159 * 9 + 12. Give the final number.", "task_category": "math", "known_answer": "1443", "expression": "159*9+12"}
+{"prompt_id": "m19_m_059", "prompt": "Compute 160 * 10 + 13. Give the final number.", "task_category": "math", "known_answer": "1613", "expression": "160*10+13"}
+{"prompt_id": "m19_m_060", "prompt": "Compute 161 * 11 + 14. Give the final number.", "task_category": "math", "known_answer": "1785", "expression": "161*11+14"}
+{"prompt_id": "m19_m_061", "prompt": "Compute 162 * 12 + 15. Give the final number.", "task_category": "math", "known_answer": "1959", "expression": "162*12+15"}
+{"prompt_id": "m19_m_062", "prompt": "Compute 163 * 13 + 16. Give the final number.", "task_category": "math", "known_answer": "2135", "expression": "163*13+16"}
+{"prompt_id": "m19_m_063", "prompt": "Compute 164 * 14 + 17. Give the final number.", "task_category": "math", "known_answer": "2313", "expression": "164*14+17"}
+{"prompt_id": "m19_m_064", "prompt": "Compute 165 * 15 + 18. Give the final number.", "task_category": "math", "known_answer": "2493", "expression": "165*15+18"}
+{"prompt_id": "m19_m_065", "prompt": "Compute 166 * 16 + 19. Give the final number.", "task_category": "math", "known_answer": "2675", "expression": "166*16+19"}
+{"prompt_id": "m19_m_066", "prompt": "Compute 167 * 17 + 20. Give the final number.", "task_category": "math", "known_answer": "2859", "expression": "167*17+20"}
+{"prompt_id": "m19_m_067", "prompt": "Compute 168 * 18 + 21. Give the final number.", "task_category": "math", "known_answer": "3045", "expression": "168*18+21"}
+{"prompt_id": "m19_m_068", "prompt": "Compute 169 * 2 + 22. Give the final number.", "task_category": "math", "known_answer": "360", "expression": "169*2+22"}
+{"prompt_id": "m19_m_069", "prompt": "Compute 170 * 3 + 0. Give the final number.", "task_category": "math", "known_answer": "510", "expression": "170*3+0"}
+{"prompt_id": "m19_m_070", "prompt": "Compute 171 * 4 + 1. Give the final number.", "task_category": "math", "known_answer": "685", "expression": "171*4+1"}
+{"prompt_id": "m19_m_071", "prompt": "Compute 172 * 5 + 2. Give the final number.", "task_category": "math", "known_answer": "862", "expression": "172*5+2"}
+{"prompt_id": "m19_m_072", "prompt": "Compute 173 * 6 + 3. Give the final number.", "task_category": "math", "known_answer": "1041", "expression": "173*6+3"}
+{"prompt_id": "m19_m_073", "prompt": "Compute 174 * 7 + 4. Give the final number.", "task_category": "math", "known_answer": "1222", "expression": "174*7+4"}
+{"prompt_id": "m19_m_074", "prompt": "Compute 175 * 8 + 5. Give the final number.", "task_category": "math", "known_answer": "1405", "expression": "175*8+5"}
+{"prompt_id": "m19_m_075", "prompt": "Compute 176 * 9 + 6. Give the final number.", "task_category": "math", "known_answer": "1590", "expression": "176*9+6"}
+{"prompt_id": "m19_m_076", "prompt": "Compute 177 * 10 + 7. Give the final number.", "task_category": "math", "known_answer": "1777", "expression": "177*10+7"}
+{"prompt_id": "m19_m_077", "prompt": "Compute 178 * 11 + 8. Give the final number.", "task_category": "math", "known_answer": "1966", "expression": "178*11+8"}
+{"prompt_id": "m19_m_078", "prompt": "Compute 179 * 12 + 9. Give the final number.", "task_category": "math", "known_answer": "2157", "expression": "179*12+9"}
+{"prompt_id": "m19_m_079", "prompt": "Compute 180 * 13 + 10. Give the final number.", "task_category": "math", "known_answer": "2350", "expression": "180*13+10"}
+{"prompt_id": "m19_m_080", "prompt": "Compute 181 * 14 + 11. Give the final number.", "task_category": "math", "known_answer": "2545", "expression": "181*14+11"}
+{"prompt_id": "m19_m_081", "prompt": "Compute 182 * 15 + 12. Give the final number.", "task_category": "math", "known_answer": "2742", "expression": "182*15+12"}
+{"prompt_id": "m19_m_082", "prompt": "Compute 183 * 16 + 13. Give the final number.", "task_category": "math", "known_answer": "2941", "expression": "183*16+13"}
+{"prompt_id": "m19_m_083", "prompt": "Compute 184 * 17 + 14. Give the final number.", "task_category": "math", "known_answer": "3142", "expression": "184*17+14"}
+{"prompt_id": "m19_m_084", "prompt": "Compute 185 * 18 + 15. Give the final number.", "task_category": "math", "known_answer": "3345", "expression": "185*18+15"}
+{"prompt_id": "m19_m_085", "prompt": "Compute 186 * 2 + 16. Give the final number.", "task_category": "math", "known_answer": "388", "expression": "186*2+16"}
+{"prompt_id": "m19_m_086", "prompt": "Compute 187 * 3 + 17. Give the final number.", "task_category": "math", "known_answer": "578", "expression": "187*3+17"}
+{"prompt_id": "m19_m_087", "prompt": "Compute 188 * 4 + 18. Give the final number.", "task_category": "math", "known_answer": "770", "expression": "188*4+18"}
+{"prompt_id": "m19_m_088", "prompt": "Compute 189 * 5 + 19. Give the final number.", "task_category": "math", "known_answer": "964", "expression": "189*5+19"}
+{"prompt_id": "m19_m_089", "prompt": "Compute 190 * 6 + 20. Give the final number.", "task_category": "math", "known_answer": "1160", "expression": "190*6+20"}
+{"prompt_id": "m19_m_090", "prompt": "Compute 191 * 7 + 21. Give the final number.", "task_category": "math", "known_answer": "1358", "expression": "191*7+21"}
+{"prompt_id": "m19_m_091", "prompt": "Compute 192 * 8 + 22. Give the final number.", "task_category": "math", "known_answer": "1558", "expression": "192*8+22"}
+{"prompt_id": "m19_m_092", "prompt": "Compute 193 * 9 + 0. Give the final number.", "task_category": "math", "known_answer": "1737", "expression": "193*9+0"}
+{"prompt_id": "m19_m_093", "prompt": "Compute 194 * 10 + 1. Give the final number.", "task_category": "math", "known_answer": "1941", "expression": "194*10+1"}
+{"prompt_id": "m19_m_094", "prompt": "Compute 195 * 11 + 2. Give the final number.", "task_category": "math", "known_answer": "2147", "expression": "195*11+2"}
+{"prompt_id": "m19_m_095", "prompt": "Compute 196 * 12 + 3. Give the final number.", "task_category": "math", "known_answer": "2355", "expression": "196*12+3"}
+{"prompt_id": "m19_m_096", "prompt": "Compute 197 * 13 + 4. Give the final number.", "task_category": "math", "known_answer": "2565", "expression": "197*13+4"}
+{"prompt_id": "m19_m_097", "prompt": "Compute 198 * 14 + 5. Give the final number.", "task_category": "math", "known_answer": "2777", "expression": "198*14+5"}
+{"prompt_id": "m19_m_098", "prompt": "Compute 199 * 15 + 6. Give the final number.", "task_category": "math", "known_answer": "2991", "expression": "199*15+6"}
+{"prompt_id": "m19_m_099", "prompt": "Compute 200 * 16 + 7. Give the final number.", "task_category": "math", "known_answer": "3207", "expression": "200*16+7"}
+{"prompt_id": "m19_m_100", "prompt": "Compute 201 * 17 + 8. Give the final number.", "task_category": "math", "known_answer": "3425", "expression": "201*17+8"}
+{"prompt_id": "m19_m_101", "prompt": "Compute 202 * 18 + 9. Give the final number.", "task_category": "math", "known_answer": "3645", "expression": "202*18+9"}
+{"prompt_id": "m19_m_102", "prompt": "Compute 203 * 2 + 10. Give the final number.", "task_category": "math", "known_answer": "416", "expression": "203*2+10"}
+{"prompt_id": "m19_m_103", "prompt": "Compute 204 * 3 + 11. Give the final number.", "task_category": "math", "known_answer": "623", "expression": "204*3+11"}
+{"prompt_id": "m19_m_104", "prompt": "Compute 205 * 4 + 12. Give the final number.", "task_category": "math", "known_answer": "832", "expression": "205*4+12"}
+{"prompt_id": "m19_m_105", "prompt": "Compute 206 * 5 + 13. Give the final number.", "task_category": "math", "known_answer": "1043", "expression": "206*5+13"}
+{"prompt_id": "m19_m_106", "prompt": "Compute 207 * 6 + 14. Give the final number.", "task_category": "math", "known_answer": "1256", "expression": "207*6+14"}
+{"prompt_id": "m19_m_107", "prompt": "Compute 208 * 7 + 15. Give the final number.", "task_category": "math", "known_answer": "1471", "expression": "208*7+15"}
+{"prompt_id": "m19_m_108", "prompt": "Compute 209 * 8 + 16. Give the final number.", "task_category": "math", "known_answer": "1688", "expression": "209*8+16"}
+{"prompt_id": "m19_m_109", "prompt": "Compute 210 * 9 + 17. Give the final number.", "task_category": "math", "known_answer": "1907", "expression": "210*9+17"}
+{"prompt_id": "m19_m_110", "prompt": "Compute 211 * 10 + 18. Give the final number.", "task_category": "math", "known_answer": "2128", "expression": "211*10+18"}
+{"prompt_id": "m19_m_111", "prompt": "Compute 212 * 11 + 19. Give the final number.", "task_category": "math", "known_answer": "2351", "expression": "212*11+19"}
+{"prompt_id": "m19_m_112", "prompt": "Compute 213 * 12 + 20. Give the final number.", "task_category": "math", "known_answer": "2576", "expression": "213*12+20"}
+{"prompt_id": "m19_m_113", "prompt": "Compute 214 * 13 + 21. Give the final number.", "task_category": "math", "known_answer": "2803", "expression": "214*13+21"}
+{"prompt_id": "m19_m_114", "prompt": "Compute 215 * 14 + 22. Give the final number.", "task_category": "math", "known_answer": "3032", "expression": "215*14+22"}
+{"prompt_id": "m19_m_115", "prompt": "Compute 216 * 15 + 0. Give the final number.", "task_category": "math", "known_answer": "3240", "expression": "216*15+0"}
+{"prompt_id": "m19_m_116", "prompt": "Compute 217 * 16 + 1. Give the final number.", "task_category": "math", "known_answer": "3473", "expression": "217*16+1"}
+{"prompt_id": "m19_m_117", "prompt": "Compute 218 * 17 + 2. Give the final number.", "task_category": "math", "known_answer": "3708", "expression": "218*17+2"}
+{"prompt_id": "m19_m_118", "prompt": "Compute 219 * 18 + 3. Give the final number.", "task_category": "math", "known_answer": "3945", "expression": "219*18+3"}
+{"prompt_id": "m19_m_119", "prompt": "Compute 220 * 2 + 4. Give the final number.", "task_category": "math", "known_answer": "444", "expression": "220*2+4"}
+{"prompt_id": "m19_m_120", "prompt": "Compute 221 * 3 + 5. Give the final number.", "task_category": "math", "known_answer": "668", "expression": "221*3+5"}
+{"prompt_id": "m19_m_121", "prompt": "Compute 222 * 4 + 6. Give the final number.", "task_category": "math", "known_answer": "894", "expression": "222*4+6"}
+{"prompt_id": "m19_m_122", "prompt": "Compute 223 * 5 + 7. Give the final number.", "task_category": "math", "known_answer": "1122", "expression": "223*5+7"}
+{"prompt_id": "m19_m_123", "prompt": "Compute 224 * 6 + 8. Give the final number.", "task_category": "math", "known_answer": "1352", "expression": "224*6+8"}
+{"prompt_id": "m19_m_124", "prompt": "Compute 225 * 7 + 9. Give the final number.", "task_category": "math", "known_answer": "1584", "expression": "225*7+9"}
+{"prompt_id": "m19_m_125", "prompt": "Compute 226 * 8 + 10. Give the final number.", "task_category": "math", "known_answer": "1818", "expression": "226*8+10"}
+{"prompt_id": "m19_m_126", "prompt": "Compute 227 * 9 + 11. Give the final number.", "task_category": "math", "known_answer": "2054", "expression": "227*9+11"}
+{"prompt_id": "m19_m_127", "prompt": "Compute 228 * 10 + 12. Give the final number.", "task_category": "math", "known_answer": "2292", "expression": "228*10+12"}
+{"prompt_id": "m19_m_128", "prompt": "Compute 229 * 11 + 13. Give the final number.", "task_category": "math", "known_answer": "2532", "expression": "229*11+13"}
+{"prompt_id": "m19_m_129", "prompt": "Compute 230 * 12 + 14. Give the final number.", "task_category": "math", "known_answer": "2774", "expression": "230*12+14"}
+{"prompt_id": "m19_m_130", "prompt": "Compute 231 * 13 + 15. Give the final number.", "task_category": "math", "known_answer": "3018", "expression": "231*13+15"}
+{"prompt_id": "m19_m_131", "prompt": "Compute 232 * 14 + 16. Give the final number.", "task_category": "math", "known_answer": "3264", "expression": "232*14+16"}
+{"prompt_id": "m19_m_132", "prompt": "Compute 233 * 15 + 17. Give the final number.", "task_category": "math", "known_answer": "3512", "expression": "233*15+17"}
+{"prompt_id": "m19_m_133", "prompt": "Compute 234 * 16 + 18. Give the final number.", "task_category": "math", "known_answer": "3762", "expression": "234*16+18"}
+{"prompt_id": "m19_m_134", "prompt": "Compute 235 * 17 + 19. Give the final number.", "task_category": "math", "known_answer": "4014", "expression": "235*17+19"}
+{"prompt_id": "m19_m_135", "prompt": "Compute 236 * 18 + 20. Give the final number.", "task_category": "math", "known_answer": "4268", "expression": "236*18+20"}
+{"prompt_id": "m19_m_136", "prompt": "Compute 237 * 2 + 21. Give the final number.", "task_category": "math", "known_answer": "495", "expression": "237*2+21"}
+{"prompt_id": "m19_m_137", "prompt": "Compute 238 * 3 + 22. Give the final number.", "task_category": "math", "known_answer": "736", "expression": "238*3+22"}
+{"prompt_id": "m19_m_138", "prompt": "Compute 239 * 4 + 0. Give the final number.", "task_category": "math", "known_answer": "956", "expression": "239*4+0"}
+{"prompt_id": "m19_m_139", "prompt": "Compute 240 * 5 + 1. Give the final number.", "task_category": "math", "known_answer": "1201", "expression": "240*5+1"}
+{"prompt_id": "m19_m_140", "prompt": "Compute 241 * 6 + 2. Give the final number.", "task_category": "math", "known_answer": "1448", "expression": "241*6+2"}
+{"prompt_id": "m19_m_141", "prompt": "Compute 242 * 7 + 3. Give the final number.", "task_category": "math", "known_answer": "1697", "expression": "242*7+3"}
+{"prompt_id": "m19_m_142", "prompt": "Compute 243 * 8 + 4. Give the final number.", "task_category": "math", "known_answer": "1948", "expression": "243*8+4"}
+{"prompt_id": "m19_m_143", "prompt": "Compute 244 * 9 + 5. Give the final number.", "task_category": "math", "known_answer": "2201", "expression": "244*9+5"}
+{"prompt_id": "m19_m_144", "prompt": "Compute 245 * 10 + 6. Give the final number.", "task_category": "math", "known_answer": "2456", "expression": "245*10+6"}
+{"prompt_id": "m19_m_145", "prompt": "Compute 246 * 11 + 7. Give the final number.", "task_category": "math", "known_answer": "2713", "expression": "246*11+7"}
+{"prompt_id": "m19_m_146", "prompt": "Compute 247 * 12 + 8. Give the final number.", "task_category": "math", "known_answer": "2972", "expression": "247*12+8"}
+{"prompt_id": "m19_m_147", "prompt": "Compute 248 * 13 + 9. Give the final number.", "task_category": "math", "known_answer": "3233", "expression": "248*13+9"}
+{"prompt_id": "m19_m_148", "prompt": "Compute 249 * 14 + 10. Give the final number.", "task_category": "math", "known_answer": "3496", "expression": "249*14+10"}
+{"prompt_id": "m19_m_149", "prompt": "Compute 250 * 15 + 11. Give the final number.", "task_category": "math", "known_answer": "3761", "expression": "250*15+11"}
+{"prompt_id": "m19_m_150", "prompt": "Compute 251 * 16 + 12. Give the final number.", "task_category": "math", "known_answer": "4028", "expression": "251*16+12"}
+{"prompt_id": "m19_m_151", "prompt": "Compute 252 * 17 + 13. Give the final number.", "task_category": "math", "known_answer": "4297", "expression": "252*17+13"}
+{"prompt_id": "m19_m_152", "prompt": "Compute 253 * 18 + 14. Give the final number.", "task_category": "math", "known_answer": "4568", "expression": "253*18+14"}
+{"prompt_id": "m19_m_153", "prompt": "Compute 254 * 2 + 15. Give the final number.", "task_category": "math", "known_answer": "523", "expression": "254*2+15"}
+{"prompt_id": "m19_m_154", "prompt": "Compute 255 * 3 + 16. Give the final number.", "task_category": "math", "known_answer": "781", "expression": "255*3+16"}
+{"prompt_id": "m19_m_155", "prompt": "Compute 256 * 4 + 17. Give the final number.", "task_category": "math", "known_answer": "1041", "expression": "256*4+17"}
+{"prompt_id": "m19_m_156", "prompt": "Compute 257 * 5 + 18. Give the final number.", "task_category": "math", "known_answer": "1303", "expression": "257*5+18"}
+{"prompt_id": "m19_m_157", "prompt": "Compute 258 * 6 + 19. Give the final number.", "task_category": "math", "known_answer": "1567", "expression": "258*6+19"}
+{"prompt_id": "m19_m_158", "prompt": "Compute 259 * 7 + 20. Give the final number.", "task_category": "math", "known_answer": "1833", "expression": "259*7+20"}
+{"prompt_id": "m19_m_159", "prompt": "Compute 260 * 8 + 21. Give the final number.", "task_category": "math", "known_answer": "2101", "expression": "260*8+21"}
+{"prompt_id": "m19_m_160", "prompt": "Compute 261 * 9 + 22. Give the final number.", "task_category": "math", "known_answer": "2371", "expression": "261*9+22"}
+{"prompt_id": "m19_m_161", "prompt": "Compute 262 * 10 + 0. Give the final number.", "task_category": "math", "known_answer": "2620", "expression": "262*10+0"}
+{"prompt_id": "m19_m_162", "prompt": "Compute 263 * 11 + 1. Give the final number.", "task_category": "math", "known_answer": "2894", "expression": "263*11+1"}
+{"prompt_id": "m19_m_163", "prompt": "Compute 264 * 12 + 2. Give the final number.", "task_category": "math", "known_answer": "3170", "expression": "264*12+2"}
+{"prompt_id": "m19_m_164", "prompt": "Compute 265 * 13 + 3. Give the final number.", "task_category": "math", "known_answer": "3448", "expression": "265*13+3"}
+{"prompt_id": "m19_m_165", "prompt": "Compute 266 * 14 + 4. Give the final number.", "task_category": "math", "known_answer": "3728", "expression": "266*14+4"}
+{"prompt_id": "m19_m_166", "prompt": "Compute 267 * 15 + 5. Give the final number.", "task_category": "math", "known_answer": "4010", "expression": "267*15+5"}
+{"prompt_id": "m19_m_167", "prompt": "Compute 268 * 16 + 6. Give the final number.", "task_category": "math", "known_answer": "4294", "expression": "268*16+6"}
+{"prompt_id": "m19_m_168", "prompt": "Compute 269 * 17 + 7. Give the final number.", "task_category": "math", "known_answer": "4580", "expression": "269*17+7"}
+{"prompt_id": "m19_m_169", "prompt": "Compute 270 * 18 + 8. Give the final number.", "task_category": "math", "known_answer": "4868", "expression": "270*18+8"}
+{"prompt_id": "m19_m_170", "prompt": "Compute 271 * 2 + 9. Give the final number.", "task_category": "math", "known_answer": "551", "expression": "271*2+9"}
+{"prompt_id": "m19_m_171", "prompt": "Compute 272 * 3 + 10. Give the final number.", "task_category": "math", "known_answer": "826", "expression": "272*3+10"}
+{"prompt_id": "m19_m_172", "prompt": "Compute 273 * 4 + 11. Give the final number.", "task_category": "math", "known_answer": "1103", "expression": "273*4+11"}
+{"prompt_id": "m19_m_173", "prompt": "Compute 274 * 5 + 12. Give the final number.", "task_category": "math", "known_answer": "1382", "expression": "274*5+12"}
+{"prompt_id": "m19_m_174", "prompt": "Compute 275 * 6 + 13. Give the final number.", "task_category": "math", "known_answer": "1663", "expression": "275*6+13"}
+{"prompt_id": "m19_m_175", "prompt": "Compute 276 * 7 + 14. Give the final number.", "task_category": "math", "known_answer": "1946", "expression": "276*7+14"}
+{"prompt_id": "m19_m_176", "prompt": "Compute 277 * 8 + 15. Give the final number.", "task_category": "math", "known_answer": "2231", "expression": "277*8+15"}
+{"prompt_id": "m19_m_177", "prompt": "Compute 278 * 9 + 16. Give the final number.", "task_category": "math", "known_answer": "2518", "expression": "278*9+16"}
+{"prompt_id": "m19_m_178", "prompt": "Compute 279 * 10 + 17. Give the final number.", "task_category": "math", "known_answer": "2807", "expression": "279*10+17"}
+{"prompt_id": "m19_m_179", "prompt": "Compute 280 * 11 + 18. Give the final number.", "task_category": "math", "known_answer": "3098", "expression": "280*11+18"}
+{"prompt_id": "m19_m_180", "prompt": "Compute 281 * 12 + 19. Give the final number.", "task_category": "math", "known_answer": "3391", "expression": "281*12+19"}
+{"prompt_id": "m19_m_181", "prompt": "Compute 282 * 13 + 20. Give the final number.", "task_category": "math", "known_answer": "3686", "expression": "282*13+20"}
+{"prompt_id": "m19_m_182", "prompt": "Compute 283 * 14 + 21. Give the final number.", "task_category": "math", "known_answer": "3983", "expression": "283*14+21"}
+{"prompt_id": "m19_m_183", "prompt": "Compute 284 * 15 + 22. Give the final number.", "task_category": "math", "known_answer": "4282", "expression": "284*15+22"}
+{"prompt_id": "m19_m_184", "prompt": "Compute 285 * 16 + 0. Give the final number.", "task_category": "math", "known_answer": "4560", "expression": "285*16+0"}
+{"prompt_id": "m19_m_185", "prompt": "Compute 286 * 17 + 1. Give the final number.", "task_category": "math", "known_answer": "4863", "expression": "286*17+1"}
+{"prompt_id": "m19_m_186", "prompt": "Compute 287 * 18 + 2. Give the final number.", "task_category": "math", "known_answer": "5168", "expression": "287*18+2"}
+{"prompt_id": "m19_m_187", "prompt": "Compute 288 * 2 + 3. Give the final number.", "task_category": "math", "known_answer": "579", "expression": "288*2+3"}
+{"prompt_id": "m19_m_188", "prompt": "Compute 289 * 3 + 4. Give the final number.", "task_category": "math", "known_answer": "871", "expression": "289*3+4"}
+{"prompt_id": "m19_m_189", "prompt": "Compute 290 * 4 + 5. Give the final number.", "task_category": "math", "known_answer": "1165", "expression": "290*4+5"}
+{"prompt_id": "m19_m_190", "prompt": "Compute 291 * 5 + 6. Give the final number.", "task_category": "math", "known_answer": "1461", "expression": "291*5+6"}
+{"prompt_id": "m19_m_191", "prompt": "Compute 292 * 6 + 7. Give the final number.", "task_category": "math", "known_answer": "1759", "expression": "292*6+7"}
+{"prompt_id": "m19_m_192", "prompt": "Compute 293 * 7 + 8. Give the final number.", "task_category": "math", "known_answer": "2059", "expression": "293*7+8"}
+{"prompt_id": "m19_m_193", "prompt": "Compute 294 * 8 + 9. Give the final number.", "task_category": "math", "known_answer": "2361", "expression": "294*8+9"}
+{"prompt_id": "m19_m_194", "prompt": "Compute 295 * 9 + 10. Give the final number.", "task_category": "math", "known_answer": "2665", "expression": "295*9+10"}
+{"prompt_id": "m19_m_195", "prompt": "Compute 296 * 10 + 11. Give the final number.", "task_category": "math", "known_answer": "2971", "expression": "296*10+11"}
+{"prompt_id": "m19_m_196", "prompt": "Compute 297 * 11 + 12. Give the final number.", "task_category": "math", "known_answer": "3279", "expression": "297*11+12"}
+{"prompt_id": "m19_m_197", "prompt": "Compute 298 * 12 + 13. Give the final number.", "task_category": "math", "known_answer": "3589", "expression": "298*12+13"}
+{"prompt_id": "m19_m_198", "prompt": "Compute 299 * 13 + 14. Give the final number.", "task_category": "math", "known_answer": "3901", "expression": "299*13+14"}
+{"prompt_id": "m19_m_199", "prompt": "Compute 300 * 14 + 15. Give the final number.", "task_category": "math", "known_answer": "4215", "expression": "300*14+15"}
+{"prompt_id": "m19_e_000", "prompt": "Give only the answer: What is the symbol for silver?", "task_category": "exact_answer", "known_answer": "Ag"}
+{"prompt_id": "m19_e_001", "prompt": "Give only the answer: What is the capital of Portugal?", "task_category": "exact_answer", "known_answer": "Lisbon"}
+{"prompt_id": "m19_e_002", "prompt": "Give only the answer: What is the largest ocean?", "task_category": "exact_answer", "known_answer": "Pacific Ocean"}
+{"prompt_id": "m19_e_003", "prompt": "Give only the answer: What is the author of 1984?", "task_category": "exact_answer", "known_answer": "George Orwell"}
+{"prompt_id": "m19_e_004", "prompt": "Give only the answer: What is the chemical symbol for potassium?", "task_category": "exact_answer", "known_answer": "K"}
+{"prompt_id": "m19_e_005", "prompt": "Give only the answer: What is the capital of Kenya?", "task_category": "exact_answer", "known_answer": "Nairobi"}
+{"prompt_id": "m19_e_006", "prompt": "Give only the answer: What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2", "numeric": true, "expected_value": 2, "tolerance": 0.5}
+{"prompt_id": "m19_e_007", "prompt": "Give only the answer: What is the hardest natural mineral?", "task_category": "exact_answer", "known_answer": "diamond"}
+{"prompt_id": "m19_e_008", "prompt": "Give only the answer: What is the planet known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
+{"prompt_id": "m19_e_009", "prompt": "Give only the answer: What is the language primarily spoken in Brazil?", "task_category": "exact_answer", "known_answer": "Portuguese"}
+{"prompt_id": "m19_c_000", "prompt": "What is the current federal funds target range today?", "task_category": "current_info"}
+{"prompt_id": "m19_c_001", "prompt": "Who is the current prime minister of Canada?", "task_category": "current_info"}
+{"prompt_id": "m19_c_002", "prompt": "What is the latest stable Node.js release this year?", "task_category": "current_info"}
+{"prompt_id": "m19_c_003", "prompt": "What is today's closing price for the S&P 500?", "task_category": "current_info"}
+{"prompt_id": "m19_c_004", "prompt": "Who won the most recent NBA Finals?", "task_category": "current_info"}
+{"prompt_id": "m19_c_005", "prompt": "What is the current Bitcoin price in US dollars?", "task_category": "current_info"}
+{"prompt_id": "m19_c_006", "prompt": "What are today's top technology news headlines?", "task_category": "current_info"}
+{"prompt_id": "m19_c_007", "prompt": "What is the current temperature in Miami?", "task_category": "current_info"}
+{"prompt_id": "m19_c_008", "prompt": "What is the latest stable Rust compiler version?", "task_category": "current_info"}
+{"prompt_id": "m19_c_009", "prompt": "What is the current USD to GBP exchange rate?", "task_category": "current_info"}
+{"prompt_id": "m19_k_000", "prompt": "Explain photosynthesis.", "task_category": "explain", "required_facts": ["light", "carbon dioxide", "glucose"]}
+{"prompt_id": "m19_k_001", "prompt": "Explain plate tectonics.", "task_category": "explain", "required_facts": ["plates", "mantle", "movement"]}
+{"prompt_id": "m19_k_002", "prompt": "Explain how vaccines train immunity.", "task_category": "explain", "required_facts": ["antigen", "immune", "memory"]}
+{"prompt_id": "m19_k_003", "prompt": "Explain supply and demand.", "task_category": "explain", "required_facts": ["price", "quantity", "market"]}
+{"prompt_id": "m19_k_004", "prompt": "Explain public-key encryption.", "task_category": "explain", "required_facts": ["public key", "private key", "ciphertext"]}
+{"prompt_id": "m19_k_005", "prompt": "Explain natural selection.", "task_category": "explain", "required_facts": ["variation", "inheritance", "reproduction"]}
+{"prompt_id": "m19_k_006", "prompt": "Explain the water cycle.", "task_category": "explain", "required_facts": ["evaporation", "condensation", "precipitation"]}
+{"prompt_id": "m19_k_007", "prompt": "Explain how a battery produces electricity.", "task_category": "explain", "required_facts": ["electrode", "electrolyte", "electron"]}
+{"prompt_id": "m19_k_008", "prompt": "Explain why seasons occur.", "task_category": "explain", "required_facts": ["tilt", "orbit", "sunlight"]}
+{"prompt_id": "m19_k_009", "prompt": "Explain how DNS resolves a domain.", "task_category": "explain", "required_facts": ["resolver", "nameserver", "IP address"]}
+{"prompt_id": "m19_n_000", "prompt": "How many meters are in 3.5 kilometers?", "task_category": "numeric", "numeric": true, "expected_value": 3500, "tolerance": 0.01, "expected_units": "meters"}
+{"prompt_id": "m19_n_001", "prompt": "Convert 2.25 kilometers to meters.", "task_category": "numeric", "numeric": true, "expected_value": 2250, "tolerance": 0.01, "expected_units": "meters"}
+{"prompt_id": "m19_n_002", "prompt": "What is 18 percent of 250?", "task_category": "numeric", "numeric": true, "expected_value": 45, "tolerance": 0.01}
+{"prompt_id": "m19_n_003", "prompt": "A $120 item is discounted by 25 percent. What is the sale price?", "task_category": "numeric", "numeric": true, "expected_value": 90, "tolerance": 0.01}
+{"prompt_id": "m19_n_004", "prompt": "Convert 0.75 kilometers to meters.", "task_category": "numeric", "numeric": true, "expected_value": 750, "tolerance": 0.01, "expected_units": "meters"}
+{"prompt_id": "m19_n_005", "prompt": "What is the mean of 10, 20, 30, and 40?", "task_category": "numeric", "numeric": true, "expected_value": 25, "tolerance": 0.01}
+{"prompt_id": "m19_n_006", "prompt": "What is 7.5 multiplied by 12?", "task_category": "numeric", "numeric": true, "expected_value": 90, "tolerance": 0.01}
+{"prompt_id": "m19_n_007", "prompt": "A car travels 180 miles in 3 hours. What is its average mph?", "task_category": "numeric", "numeric": true, "expected_value": 60, "tolerance": 0.01}
+{"prompt_id": "m19_n_008", "prompt": "What is the area of a 12 by 8 rectangle?", "task_category": "numeric", "numeric": true, "expected_value": 96, "tolerance": 0.01}

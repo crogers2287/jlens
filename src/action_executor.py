@@ -67,7 +67,10 @@ class FixtureRetrievalAdapter:
         return cls(rows)
 
     def retrieve(self, task_id: str) -> dict:
-        row = self.rows.get(task_id)
+        # A trusted fixture may provide a bounded wildcard payload for execution-
+        # path tests spanning many task ids. It is still fixture-only and the
+        # task id remains part of the result evidence hash.
+        row = self.rows.get(task_id) or self.rows.get("*")
         if not row:
             raise RetrievalError("retrieval_not_found")
         if row.get("source_kind", "fixture") not in ALLOWED_RETRIEVAL_SOURCE_KINDS:

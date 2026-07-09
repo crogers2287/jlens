@@ -1,0 +1,48 @@
+{
+ "comparison": "M19 vs M15 live run and M18 legacy-preview action replay",
+ "workload_size": {
+  "m15": 261,
+  "m19": 500
+ },
+ "completion_rate": {
+  "m19": 1.0
+ },
+ "escalation_rate": {
+  "m15": 0.0728,
+  "m19": 0.054
+ },
+ "action_execution_rate": {
+  "m18_legacy_preview_replay": 0.659,
+  "m19_full_transient_output": 0.766
+ },
+ "checker_verdicts": {
+  "m18": {
+   "fail": 90,
+   "pass": 70
+  },
+  "m18_interpretation": "invalid_from_truncated_previews",
+  "m19": {
+   "fail": 4,
+   "pass": 356
+  },
+  "m19_interpretation": "valid_for_full_transient_execution_input"
+ },
+ "retrieval_followup": {
+  "m18": {
+   "planned": 12,
+   "completed": 12,
+   "executable_followup_rate": 1.0,
+   "grounded_regeneration_still_required": 12
+  },
+  "m19": {
+   "planned": 20,
+   "completed": 20,
+   "executable_followup_rate": 1.0,
+   "grounded_regeneration_still_required": 20
+  },
+  "interpretation": "fixture_completion_is_not_answer_correctness"
+ },
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only: no prompt/output/retrieved-context text"
+}

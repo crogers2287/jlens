@@ -572,3 +572,23 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   retrieval, checker allowlisting, malicious-command refusal, schema/no-text,
   and planned-vs-executed comparison. Full suite 64/64 green; production remains
   gated.
+
+## M19 Live full-output action run (2026-07-09) — MILESTONE COMPLETE
+- Built deterministic, metadata-clean 500-task batch + explicit-opt-in M19 live
+  config. Endpoint `agents-a1` was already served; runner only called it.
+- Added transient full-output return path in the supervisor and integrated the
+  M18 executor into the resumable batch runner. Full output reaches approved
+  checkers before truncation but is never persisted; resume requires paired
+  runtime/action-result ids.
+- Live run `c20512612a978d60`: 500/500 complete, 0 failed, 27 escalated (0.054
+  vs M15 0.0728), telemetry_missing 500, policy null 500.
+- 383/500 actions completed: 360 full-output math checks + 23 fixture retrievals;
+  117 review/no-action records intentionally skipped. Checker results are now
+  valid for execution input: 356 pass / 4 fail (real arithmetic miss candidates),
+  replacing M18's invalid truncated-preview split.
+- Current-info separated honestly: 20/20 fixture retrieval paths completed;
+  3 non-current heuristic false positives (2 explain weather rows, 1 numeric
+  sale-price row). All 20 still require grounded regeneration.
+- Added three aggregate reports, M19 doc, and 6 CPU/no-network tests for batch,
+  transient/no-persistence, explicit opt-in, safe retrieval, aggregation,
+  current-info separation, and resume. Candidate-only; production gated.

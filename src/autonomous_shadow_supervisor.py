@@ -166,8 +166,14 @@ def _null_human():
              "review_confidence": None})
 
 
-def run_task(task, model_fn, cfg, engine=None, feature_rows=None, n_samples=None):
-    """Produce one auto_outcome_v1 record for a task. HUMAN fields stay null."""
+def run_task(task, model_fn, cfg, engine=None, feature_rows=None, n_samples=None,
+             return_full_output=False):
+    """Produce one auto_outcome_v1 record; optionally return transient full output.
+
+    ``return_full_output`` is for M19's in-process checker handoff only. The
+    returned text must never be written to a public artifact or persistent run
+    record; the record itself continues to contain only the bounded preview.
+    """
     pid = task["prompt_id"]
     prompt = task.get("prompt", "")
     if n_samples is None:
@@ -183,7 +189,7 @@ def run_task(task, model_fn, cfg, engine=None, feature_rows=None, n_samples=None
     auto = _build_auto_outcome(results, policy, cfg)
     human_out, human_meta = _null_human()
 
-    return {
+    record = {
         "prompt_id": pid,
         "model": cfg.get("endpoint", {}).get("model"),
         "feature_source": None if row is None else "features",
@@ -198,6 +204,7 @@ def run_task(task, model_fn, cfg, engine=None, feature_rows=None, n_samples=None
         "review_meta": human_meta,  # NEVER set by the supervisor
         "auto_outcome": auto,
     }
+    return (record, output) if return_full_output else record
 
 
 def run(cfg, tasks, model_fn, out_path, engine=None, feature_rows=None, validator=None):

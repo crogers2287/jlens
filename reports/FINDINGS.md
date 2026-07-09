@@ -1429,3 +1429,14 @@ validate_task_metadata now reports ZERO gaps. 7 exact rows moved to numeric rout
 (M15 category mix: exact_answer 20→13, numeric 20→27). m15_e_019 (speed of light) now
 {numeric, expected_value 300000, rel_tolerance 0.01} → routes to numeric_tolerant_check
 (exact_answer_match avoided). Batch still deterministic, count 261. Full suite green.
+
+## 108. action_record_v1 schema (M16 step 3)
+`schema/action_record_v1.json` — NEW draft-07 schema for READ-ONLY/PLANNED action
+records (separate from frozen schemas): {task_id, action_type (enum
+retrieval_needed|checker_needed|no_action|review_needed), reason_code,
+source_verifier nullable, confidence nullable 0..1, status (enum
+planned|skipped|completed|failed), evidence_hash nullable}. additionalProperties:false;
+NO raw task-text field. Verified: schema self-checks; good record validates;
+unknown field, bad action_type/status enum, and confidence>1 rejected; minimal
+required-only record valid. status default "planned" (read-only); completed/failed
+only ever from an approved deterministic action, never fabricated.

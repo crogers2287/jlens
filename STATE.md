@@ -506,3 +506,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M16 Action routing — Iteration M16.2 (2026-07-09 02:34 EDT) — step 2 COMPLETE (generator normalization)
 - gen_m13_batch.normalize_numeric_metadata applied in both generators; regenerated M15+M13 batches. Validator zero gaps; 7 exact→numeric (exact 20→13, numeric 20→27); speed-of-light routes to numeric_tolerant_check; deterministic, 261. Suite green.
 - Next step 3: schema/action_record_v1.json.
+
+## M16 Action routing — Iteration M16.3 (2026-07-09 02:36 EDT) — step 3 COMPLETE (action_record schema)
+- schema/action_record_v1.json: draft-07, separate from frozen; action_type/status enums, no raw-text field. 6 validation behaviors verified.
+- Next step 4: src/action_router.py (read-only; retrieval/checker(approved)/review/no_action).

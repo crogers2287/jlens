@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/action_record_v1.json",
+  "title": "jlens action record v1",
+  "description": "A READ-ONLY / PLANNED next-action record derived from an auto_outcome candidate (M16). It records what action a verifier signal SUGGESTS (retrieval / checker / review / none) — it does NOT execute anything by default. NO raw task/output text: only ids, enums, a reason code, a confidence, and a hashed evidence tag. This is a SEPARATE schema; frozen schemas are not modified.",
+  "type": "object",
+  "required": ["task_id", "action_type", "reason_code", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {"type": "string"},
+    "action_type": {
+      "type": "string",
+      "enum": ["retrieval_needed", "checker_needed", "no_action", "review_needed"]
+    },
+    "reason_code": {"type": "string",
+                    "description": "short machine code, e.g. current_info_freshness, math_checker_available, low_confidence_escalation"},
+    "source_verifier": {"type": ["string", "null"],
+                        "description": "which verifier signal produced this action, or null"},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "status": {
+      "type": "string",
+      "enum": ["planned", "skipped", "completed", "failed"],
+      "description": "default 'planned' — read-only; 'skipped' when no approved checker applies. 'completed'/'failed' only ever set by an approved deterministic action, never fabricated."
+    },
+    "evidence_hash": {"type": ["string", "null"],
+                      "description": "stable non-reversible hash of inputs; NEVER raw text"}
+  }
+}

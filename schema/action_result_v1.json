@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/action_result_v1.json",
+  "title": "jlens action result v1",
+  "description": "Aggregate-safe result from an explicitly enabled M18 action executor. Links to action_record_v1 by task/action/evidence hash, stores only enums, confidence, and non-reversible hashes, and never stores retrieved context or model output. Results remain shadow candidates, never gold.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "action_type",
+    "action_evidence_hash",
+    "action_status",
+    "executor_name",
+    "result_type",
+    "result_confidence",
+    "checker_verdict",
+    "evidence_hash",
+    "followup_needed",
+    "error_code",
+    "candidate_only"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {"type": "string"},
+    "action_type": {
+      "type": "string",
+      "enum": ["retrieval_needed", "checker_needed", "no_action", "review_needed"]
+    },
+    "action_evidence_hash": {"type": ["string", "null"]},
+    "action_status": {
+      "type": "string",
+      "enum": ["completed", "skipped", "failed"]
+    },
+    "executor_name": {
+      "type": "string",
+      "enum": [
+        "disabled",
+        "none",
+        "fixture_retrieval",
+        "math_checker",
+        "json_object_check",
+        "numeric_tolerant_check"
+      ]
+    },
+    "result_type": {
+      "type": "string",
+      "enum": ["retrieved_context", "checker_result", "no_result"]
+    },
+    "result_confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "checker_verdict": {
+      "type": ["string", "null"],
+      "enum": ["pass", "fail", "undecided", null]
+    },
+    "evidence_hash": {
+      "type": "string",
+      "description": "Non-reversible hash only; raw retrieval/output text is forbidden."
+    },
+    "followup_needed": {"type": "boolean"},
+    "error_code": {
+      "type": ["string", "null"],
+      "enum": [
+        "execution_disabled",
+        "action_not_planned",
+        "action_not_executable",
+        "retrieval_adapter_unavailable",
+        "retrieval_not_found",
+        "retrieval_source_not_allowed",
+        "checker_not_approved",
+        "missing_checker_input",
+        "executor_failed",
+        null
+      ]
+    },
+    "candidate_only": {
+      "const": true,
+      "description": "Action results are shadow candidates, never gold or production approval."
+    }
+  }
+}

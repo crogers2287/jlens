@@ -1,0 +1,52 @@
+{
+ "run_id": "m18-safe-action-fixture",
+ "n_actions": 261,
+ "planned_action_type_distribution": {
+  "checker_needed": 160,
+  "no_action": 70,
+  "retrieval_needed": 12,
+  "review_needed": 19
+ },
+ "before_status_distribution": {
+  "planned": 261
+ },
+ "after_action_status_distribution": {
+  "completed": 172,
+  "skipped": 89
+ },
+ "executor_distribution": {
+  "fixture_retrieval": 12,
+  "math_checker": 160,
+  "none": 89
+ },
+ "result_type_distribution": {
+  "checker_result": 160,
+  "no_result": 89,
+  "retrieved_context": 12
+ },
+ "error_code_distribution": {
+  "action_not_executable": 89,
+  "none": 172
+ },
+ "current_info_retrieval": {
+  "planned": 12,
+  "completed": 12,
+  "executable_followup_rate": 1.0,
+  "grounded_regeneration_still_required": 12
+ },
+ "verifier_only_checkers": {
+  "planned": 160,
+  "completed": 160,
+  "checker_input_mode": "legacy_truncated_preview_replay",
+  "correctness_interpretation": "not_valid_from_legacy_truncated_previews",
+  "execution_rate": 1.0,
+  "verdict_distribution": {
+   "fail": 90,
+   "pass": 70
+  }
+ },
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only: no prompt/output/retrieved-context text",
+ "note": "Fixture/read-only action execution only. Retrieval completion proves an executable follow-up path, not answer correctness; grounded regeneration and human calibration remain required."
+}

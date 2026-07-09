@@ -552,3 +552,23 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Fixed KeyError in reviewed_calibration_report.py main() (stale total_reviewed_records
   reference from the step-1 honesty rename). CLI verified clean; regenerated output
   byte-identical to committed artifact (no data change). Full suite 58/58 green.
+
+## M18 Safe action execution (2026-07-09) — MILESTONE COMPLETE
+- Added `schema/action_result_v1.json`: aggregate-safe results linked to M16
+  action records; fixed enums/confidence/hashes only, `candidate_only=true`, no
+  raw task/output/retrieved context.
+- Added `src/action_executor.py`: execution is disabled by default; explicit
+  `--execute` enables only fixture/public-fixture retrieval and the allowlisted
+  deterministic checkers (`math_checker`, `json_object_check`,
+  `numeric_tolerant_check`). No shell/subprocess/dynamic command surface.
+- Replayed the M15/M16 distribution: 261 planned -> 172 completed (12 retrieval,
+  160 checker) + 89 intentionally skipped (19 review, 70 no-action). All 12
+  retrievals reached an executable fixture path and still require grounded
+  regeneration.
+- Honest limitation: M15 retained only truncated output previews. Checker replay
+  is 70 pass/90 fail but explicitly marked invalid for correctness measurement;
+  a future live run must pass full output transiently before logging/truncation.
+- Added public aggregate summary + M18 doc + 6 safety tests covering default-off,
+  retrieval, checker allowlisting, malicious-command refusal, schema/no-text,
+  and planned-vs-executed comparison. Full suite 64/64 green; production remains
+  gated.

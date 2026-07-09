@@ -1572,3 +1572,39 @@ keys. Verified: CLI now runs clean (`44 scanned, 19 reviewed, 3 comparable`); re
 output is byte-identical (`diff`) to the already-committed summary, so this is a
 pure code fix with no data change. Full suite still green (58 tests); check_commit_safe
 PASS.
+
+## 119. M18 aggregate-safe action results + explicit opt-in executor
+`schema/action_result_v1.json` + `src/action_executor.py`: execution defaults OFF
+(`execution_disabled`) and requires explicit `--execute`. Retrieval can only use
+the read-only FixtureRetrievalAdapter with fixture/public_fixture source kinds;
+checkers resolve through a fixed allowlist (math/json/numeric). No subprocess,
+shell, dynamic import, arbitrary callable, or model-command surface. Results link
+to action records but contain only ids/enums/confidence/hashes, never raw context
+or output; candidate-only, production gated.
+
+## 120. M18 planned-versus-executed replay
+Public-safe `agents_a1_m18_action_execution_summary.json`: replayed the M16 M15-run
+distribution (261 planned). 172 executed through approved paths: retrieval 12/12
+via fixture adapter and checker 160/160 via math_checker. 89 intentionally skipped:
+19 human-review + 70 no-action. All retrieval completions keep followup_needed=true
+because fixture context availability is not answer correctness — grounded
+regeneration remains required.
+
+## 121. Historical checker replay limitation is now explicit
+M15 private records retain only 160-character output_preview values, so the M18
+checker replay's 70 pass/90 fail split is NOT a correctness measurement (many final
+answers were truncated). The aggregate marks checker_input_mode=
+legacy_truncated_preview_replay and correctness_interpretation=
+not_valid_from_legacy_truncated_previews. Future M19 live execution must pass full
+output transiently into the executor before truncation/logging; no attempt was made
+to relabel preview artifacts as model failures.
+
+## 122. M18 safe-action tests + milestone complete
+`tests/test_action_execution.py` adds 6 CPU/no-network tests: action_result schema +
+disabled-by-default, fixture retrieval with no text leak, approved deterministic
+checker execution, malicious expression/fixture callable cannot execute, retrieval
+source allowlist/missing-adapter refusal, and aggregate before/after/no-text checks.
+M18 doc records the safety contract, commands, replay results, preview limitation,
+and unchanged production/human-review gates. Full suite green: 64 tests; all 261
+private action results validate against action_result_v1; public M18 artifacts pass
+check_commit_safe.

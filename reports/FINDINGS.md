@@ -1482,3 +1482,26 @@ the READ-ONLY action-router rules table (retrieval_needed always for current-inf
 checker_needed approved-only else skipped; review_needed; no_action) with the M15 action
 distribution, and gating (actions read-only/planned; current-info never faked; auto_outcome
 candidate; production gated). Commands match real CLI flags. Public fixtures/aggregates only.
+
+## 113. M16 action-routing tests (M16 step 8) — MILESTONE COMPLETE
+`tests/test_action_routing.py` (5 tests, CPU-only, no network): (a) validator flags a
+numeric-looking exact row missing metadata, ignores non-numeric answers, and passes the
+cleaned M15 batch; (b) generator normalization tags numeric exact rows (untouched for
+non-numeric) and they route to numeric_tolerant_check; (c) action_record_v1 validates
+good records + rejects bad enum/unknown fields; (d) action_router — current-info→
+retrieval_needed, math→checker_needed(approved), checker-with-no-approved→skipped,
+escalated→review_needed, clean→no_action, all schema-valid; (e) the M16 aggregate
+artifacts have no text keys. Full suite green: 54 tests.
+
+### M16 summary — action routing + metadata cleanup
+Closed both M15 loose ends. (1) Metadata: a validator now detects numeric-looking
+exact_answer rows missing numeric metadata, and a deterministic generator normalization
+tags them (7 reused exact rows moved exact→numeric; validator reports zero gaps; the
+speed-of-light row flips exact-match fail→numeric pass and de-escalates). (2) Action
+routing: a READ-ONLY action_router turns verifier signals into PLANNED action records
+(schema action_record_v1) — current-info→retrieval_needed (base answer never treated as
+sufficient), checker→approved deterministic checkers only (else skipped), escalated→
+review_needed, clean→no_action. Over the M15 run: checker 160 / no_action 70 / review 19 /
+retrieval 12, all planned (nothing executed). auto_outcome candidate; production gated.
+NEXT per steer M17: A calibration / B 500-task run with action routing / C label converters
+/ D broader model comparison.

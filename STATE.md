@@ -526,3 +526,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M16 Action routing — Iteration M16.7 (2026-07-09 02:46 EDT) — step 7 COMPLETE (doc)
 - docs/M16_ACTION_ROUTING.md: metadata validator+normalization, action_record schema, read-only router rules table + M15 distribution, gating. Commands verified.
 - Next step 8 (FINAL): tests/test_action_routing.py, then M16 DONE.
+
+## M16 Action routing — Iteration M16.8 (2026-07-09 02:50 EDT) — step 8 COMPLETE → M16 DONE
+- tests/test_action_routing.py 5/5 pass; full suite green (54 tests). All M16 deliverables: metadata validator, generator normalization (7 exact→numeric, zero gaps), action_record_v1 schema, read-only action_router, before/after metadata report, action-routing summary, doc, tests. Actions read-only/planned; auto candidate; production gated. M16 STOP CONDITION MET.
+- NEXT per steer M17: A calibration / B 500-task run w/ action routing / C label converters / D broader model comparison.

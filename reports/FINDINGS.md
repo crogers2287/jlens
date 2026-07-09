@@ -1083,3 +1083,12 @@ FAILS and json_object_check PASSES, so sm_regex_01 flips wrong→ok and no longe
 escalates (auto_was_wrong False, escalate False). Batch impact: escalation 7→6,
 auto_was_wrong 1→0 (delta −1/−1). Full suite still green (27 tests). This is the
 verifier-quality improvement the M11 finding called for, quantified.
+
+## 81. M12 calibration doc (M12 step 6)
+docs/M12_VERIFIER_REVIEW_CALIBRATION.md: the M11 finding, the json_object_check
+fix + JSON-vs-regex routing + CORRECTNESS wiring (thresholds unchanged), the
+objective operator/ground-truth review of the 7 escalated rows (honesty rules,
+null=unreviewed, private text never committed), the first auto-vs-human agreement
+(n=1, 0.0 — the false-positive), and the before/after (escalation 7→6, wrong 1→0).
+Gating restated (auto_outcome candidate not gold; production/final gold/audit
+gated). Public aggregates only in examples.

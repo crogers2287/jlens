@@ -394,3 +394,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M12 Verifier calibration — Iteration M12.5 (2026-07-09 00:04 EDT) — step 5 COMPLETE (before/after)
 - Added json_object_check to CORRECTNESS (its verdict now feeds auto_was_wrong — completes the wiring; escalation formula unchanged). Public before/after agents_a1_verifier_beforeafter_sample.json: regex fail vs json pass on representative output → sm_regex_01 flips wrong→ok, escalation 7→6, auto_was_wrong 1→0. Suite green; commit-safe.
 - Next step 6: docs/M12_VERIFIER_REVIEW_CALIBRATION.md.
+
+## M12 Verifier calibration — Iteration M12.6 (2026-07-09 00:06 EDT) — step 6 COMPLETE (doc)
+- docs/M12_VERIFIER_REVIEW_CALIBRATION.md: finding → JSON verifier + routing + CORRECTNESS → objective review → first agreement (n=1, 0.0) → before/after (7→6, 1→0) → gating. Public aggregates only.
+- Next step 7 (FINAL): tests (json verifier, routing, reviewed aggregate, before/after), then M12 DONE.

@@ -1,0 +1,38 @@
+{
+ "baseline_run_id": "88e140ea5d129bc3",
+ "m13_run_id": "cd3d744045af170e",
+ "baseline_m11_m12_25task": {
+  "n_tasks": 25,
+  "escalation_count": 7,
+  "escalation_rate": 0.28,
+  "auto_was_wrong_count": 1,
+  "auto_needed_retrieval_count": 5,
+  "auto_needed_checker_count": 5,
+  "n_failed": 0,
+  "n_telemetry_missing": 25,
+  "verifier_distribution": {
+   "math_checker": 5,
+   "retrieval_required_heuristic": 25,
+   "exact_answer_match": 5,
+   "regex_or_schema_check": 4
+  }
+ },
+ "m13_110task": {
+  "n_tasks": 110,
+  "escalation_count": 18,
+  "escalation_rate": 0.1636,
+  "auto_was_wrong_count": 1,
+  "auto_needed_retrieval_count": 11,
+  "auto_needed_checker_count": 44,
+  "n_failed": 0,
+  "n_telemetry_missing": 110,
+  "verifier_distribution": {
+   "math_checker": 44,
+   "retrieval_required_heuristic": 110,
+   "exact_answer_match": 20,
+   "json_object_check": 10,
+   "regex_or_schema_check": 8
+  }
+ },
+ "note": "Counts only, no task text. M13 (110 tasks) vs the M11/M12 25-task baseline. Escalation rate fell 0.28 -> 0.164. Baseline's 1 auto_was_wrong was the JSON verifier false-positive (fixed in M12); M13's 1 auto_was_wrong is a DIFFERENT verifier-strictness case (exact_answer_match on an approximate/unit-converted number \u2014 model was right). JSON tasks escalated 0 times in M13 (fix validated at scale). auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

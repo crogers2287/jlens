@@ -1172,3 +1172,14 @@ required the literal "300000" substring and failed. So exact_answer_match is too
 strict for APPROXIMATE / unit-converted numeric answers (distinct from the fixed
 JSON issue). Candidate for a future milestone (numeric-tolerant exact match) — NOT
 applied here. Reviewed subset stays gitignored; auto_outcome candidate; production gated.
+
+## 88. M13-vs-baseline comparison (M13 step 6)
+Public-safe reports/outcomes/agents_a1_m13_vs_baseline.json (counts only, no text,
+commit-safe): M13 110-task run (run_id cd3d744045af170e) vs the M11/M12 25-task
+baseline (88e140ea5d129bc3). Escalation rate fell 0.28 → 0.164 at 4.4× scale;
+n_failed 0 both; telemetry_missing all (GGUF). Both have 1 auto_was_wrong but from
+DIFFERENT causes: baseline = the JSON verifier false-positive (fixed in M12); M13 =
+exact_answer_match strictness on an approximate/unit-converted numeric (model was
+right). M13 verifier_distribution now includes json_object_check (10) and JSON tasks
+escalated 0 times — the M12 fix validated at scale. auto_needed_checker 5→44 (more
+math tasks), auto_needed_retrieval 5→11. auto_outcome candidate; production gated.

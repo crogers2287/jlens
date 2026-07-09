@@ -1,0 +1,20 @@
+{
+ "run_id": "25ca35429474c407 (M15 run, replayed read-only)",
+ "n_records": 261,
+ "action_type_distribution": {
+  "checker_needed": 160,
+  "no_action": 70,
+  "review_needed": 19,
+  "retrieval_needed": 12
+ },
+ "status_distribution": {
+  "planned": 261
+ },
+ "retrieval_needed_count": 12,
+ "checker_needed_count": 160,
+ "checker_needed_planned_approved": 160,
+ "checker_needed_skipped_no_approved": 0,
+ "review_needed_count": 19,
+ "no_action_count": 70,
+ "note": "Aggregate-only, no task text. Read-only action routing over the M15 run (the router executes nothing). Each verifier signal maps to a PLANNED action: current-info -> retrieval_needed (base answer never treated as sufficient), checker-needed -> approved deterministic checker (else skipped), escalated -> review_needed, clean -> no_action. auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

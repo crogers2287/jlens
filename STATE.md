@@ -518,3 +518,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M16 Action routing — Iteration M16.5 (2026-07-09 02:41 EDT) — step 5 COMPLETE (before/after metadata)
 - Public agents_a1_m16_metadata_beforeafter_sample.json: 7 reused exact rows newly tagged exact→numeric; speed-of-light flips fail→pass, de-escalates. Honest count (excluded already-numeric pool). No text; commit-safe.
 - Next step 6: action-routing summary over the M15 run log.
+
+## M16 Action routing — Iteration M16.6 (2026-07-09 02:44 EDT) — step 6 COMPLETE (action summary)
+- Public agents_a1_m16_action_summary_sample.json over M15 run (read-only, all planned): checker_needed 160 (approved), no_action 70, review_needed 19, retrieval_needed 12 (current-info → retrieval record). No text; commit-safe; private unstaged.
+- Next step 7: docs/M16_ACTION_ROUTING.md.

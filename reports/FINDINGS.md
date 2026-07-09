@@ -1463,3 +1463,14 @@ to stay honest.) The speed-of-light row (m15_e_019) flips old exact_answer_match
 -> new numeric_tolerant_check PASS, auto_was_wrong False, no longer escalates — the
 M15 task-metadata gap is closed. First pass over-counted (27) by stripping metadata
 from the already-numeric pool; corrected to 7 newly-tagged.
+
+## 111. Action-routing summary (M16 step 6)
+Public-safe reports/outcomes/agents_a1_m16_action_summary_sample.json (aggregate-only,
+no task text, commit-safe): read-only action routing over the M15 run (261 records,
+router executes nothing — all status "planned"). action_type distribution:
+checker_needed 160 (all approved deterministic checkers, 0 skipped), no_action 70,
+review_needed 19, retrieval_needed 12. The 12 current-info tasks each yield a
+retrieval_needed record — the base model answer is never treated as sufficient. The
+160 math tasks route to an approved checker (math_checker); the 19 escalations →
+review_needed. Verifier signals are now turned into safe planned next-actions.
+auto_outcome candidate; production gated.

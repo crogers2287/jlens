@@ -1474,3 +1474,11 @@ retrieval_needed record — the base model answer is never treated as sufficient
 160 math tasks route to an approved checker (math_checker); the 19 escalations →
 review_needed. Verifier signals are now turned into safe planned next-actions.
 auto_outcome candidate; production gated.
+
+## 112. M16 action-routing doc (M16 step 7)
+docs/M16_ACTION_ROUTING.md: the metadata validator + generator normalization (numeric
+exact rows tagged, zero gaps, speed-of-light flip), the action_record_v1 schema + fields,
+the READ-ONLY action-router rules table (retrieval_needed always for current-info;
+checker_needed approved-only else skipped; review_needed; no_action) with the M15 action
+distribution, and gating (actions read-only/planned; current-info never faked; auto_outcome
+candidate; production gated). Commands match real CLI flags. Public fixtures/aggregates only.

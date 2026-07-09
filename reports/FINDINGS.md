@@ -1158,3 +1158,17 @@ exact_answer_match 20, json_object_check 10, regex_or_schema_check 8};
 auto_needed_checker 44, auto_needed_retrieval 11, auto_was_wrong 1; agreement null
 (pre-review). Escalation queue (gitignored) = 18/110 escalated rows, all escalated,
 human outcome/review_meta null. No leak; private unstaged.
+
+## 87. M13 representative escalated-subset review (M13 step 5)
+Reviewed a representative 6-row subset of the 18 escalated M13 rows against public
+benchmark ground truth (operator_review): the one auto_was_wrong=True row
+(m13_e_019, "speed of light in km/s") + 5 explain facts (prime, photosynthesis,
+water cycle, primary colors, gravity). All objectively correct → was_wrong=False.
+Public reviewed-subset summary reports/outcomes/agents_a1_m13_reviewed_subset_sample.json
+(no text, commit-safe): human_reviewed_count 6, auto_vs_human_agreement {n_compared 1,
+rate 0.0}. NEW finding: m13_e_019 is another VERIFIER false-positive — Agents-A1
+answered 299,792,458 m/s ≈ 299,792 km/s ≈ 300,000 (correct), but exact_answer_match
+required the literal "300000" substring and failed. So exact_answer_match is too
+strict for APPROXIMATE / unit-converted numeric answers (distinct from the fixed
+JSON issue). Candidate for a future milestone (numeric-tolerant exact match) — NOT
+applied here. Reviewed subset stays gitignored; auto_outcome candidate; production gated.

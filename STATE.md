@@ -419,3 +419,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.4 (2026-07-09 00:48 EDT) — step 4 COMPLETE (aggregate + escalation queue)
 - Public agents_a1_m13_summary_sample.json: 110 completed, ok81/wrong1/undecided28, escalation 18 (0.164), verifier dist (json_object_check 10, math 44, etc.), agreement null. Escalation queue gitignored (18/110, human-null). No text; commit-safe.
 - Next step 5: review a representative escalated subset (objective) → public reviewed-subset summary.
+
+## M13 Larger run — Iteration M13.5 (2026-07-09 00:52 EDT) — step 5 COMPLETE (reviewed subset)
+- Reviewed representative 6/18 escalated rows (objective) → gitignored subset + public agents_a1_m13_reviewed_subset_sample.json: human_reviewed_count 6, agreement n=1 rate 0.0. m13_e_019 = NEW exact_answer_match strictness finding (approx/unit-converted numerics; model was right ~300k km/s). No text; commit-safe.
+- Next step 6: M13-vs-baseline comparison report.

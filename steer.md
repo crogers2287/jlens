@@ -1,6 +1,6 @@
-# steer.md — post-M15 action-routing steering
+# steer.md — post-M16 calibration steering
 
-M1 through M15 are complete. Do not redo the previous harness, review, verifier, or larger-run work.
+M1 through M16 are complete. Do not redo the previous harness, review, verifier, larger-run, metadata-cleanup, or read-only action-routing work.
 
 ## Current state
 
@@ -21,23 +21,21 @@ Completed milestones:
 - M13 110-task live Agents-A1 run
 - M14 numeric-tolerant verifier and explain-rubric coverage
 - M15 261-task live Agents-A1 run after verifier fixes
+- M16 metadata cleanup and read-only action routing
 
-M15 result:
+M16 result:
 
-- Built a deterministic 261-task batch across 8 category types.
-- Ran live against agents-a1 on fred.
-- Completed 261/261 with 0 failures.
-- Escalation rate improved across live runs: 0.28 -> 0.164 -> 0.073.
-- JSON false-positive stayed fixed at scale.
-- Numeric-tagged false-positive stayed fixed at scale.
-- Full test suite is green at 49 tests.
-
-M15 findings:
-
-- The remaining auto-wrong is a task-metadata gap, not a verifier regression.
-- A reused speed-of-light exact-answer row lacked numeric metadata and routed to strict exact matching.
-- Rubric synonym handling is still basic; synonym mismatch should escalate, not mark wrong.
-- Current-info tasks are flagged as retrieval-needed, but the system does not yet run a retrieval/check action.
+- Added metadata validator for numeric-looking exact-answer rows missing numeric metadata.
+- Normalized generators so 7 reused exact rows moved exact -> numeric.
+- Validator reports zero numeric metadata gaps on the cleaned M15 batch.
+- Added action_record_v1 schema.
+- Added read-only action_router.
+- Current-info rows route to retrieval_needed action records.
+- Checker-needed rows route only to approved deterministic checkers, otherwise skipped.
+- Escalated rows route to review_needed.
+- Clean rows route to no_action.
+- Over M15: checker 160 / no_action 70 / review 19 / retrieval 12.
+- Full test suite is green at 54 tests.
 
 Current live model context:
 
@@ -49,70 +47,66 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M16 action routing + metadata cleanup
+## Next milestone: M17 reviewed calibration pass
 
-M16 should turn the current verifier signals into safe next actions. The system already knows when a task needs retrieval or checking; now it needs a controlled action layer that can run approved retrieval/checker steps and re-score the result. Also clean up task metadata so numeric rows route correctly.
+M17 should convert the accumulated reviewed records into a real calibration pass. We now have multiple live runs, reviewed escalated subsets, action records, and improved verifiers. Before another bigger run, summarize what reviewed data actually says.
 
 Suggested command:
 
-/jlens-m16-action-routing-and-metadata-loop
+/jlens-m17-reviewed-calibration-pass
 
-## M16 objectives
+## M17 objectives
 
-1. Fix public task metadata so numeric exact-answer rows carry numeric metadata.
-2. Add validation that detects numeric-looking exact-answer rows missing numeric metadata.
-3. Add an action-routing layer for auto_needed_retrieval and auto_needed_checker.
-4. Keep actions read-only and fixture-safe by default.
-5. For current-info tasks, create a retrieval-needed action record rather than pretending the base model answer is enough.
-6. For checker-needed tasks, route to approved deterministic checkers only.
-7. Re-run or replay the M15 batch after metadata cleanup and report before/after.
-8. Report how many tasks moved from strict exact-answer to numeric_tolerant_check.
-9. Report how many current-info tasks were routed to retrieval action records.
+1. Gather all public-safe reviewed aggregate summaries from M11 through M16.
+2. Keep private reviewed logs local; do not commit raw prompt/output text.
+3. Build a reviewed-record index or aggregate table using only safe fields.
+4. Compute auto-vs-human agreement across reviewed comparable rows.
+5. Report false-low-risk and false-high-risk where the reviewed data supports it.
+6. Separate calibration by task/verifier type: exact, numeric, JSON, math, regex, retrieval-needed, explain-rubric, open-ended explain.
+7. Include action-routing outcomes as planned-only counts, not executed success.
+8. Identify which categories are mature enough for larger live runs.
+9. Identify which categories still need human review, better metadata, or better verifiers.
 10. Keep auto_outcome as candidate, not gold.
 11. Keep production mode gated.
 
-## Recommended action record
+## Recommended calibration outputs
 
-Each action record should be aggregate-safe and local-safe:
+- reviewed_count by category
+- comparable_count by category
+- auto_vs_human_agreement by category where meaningful
+- false-positive verifier findings already fixed
+- remaining known gaps
+- retrieval_needed action count
+- checker_needed action count
+- review_needed action count
+- calibration_status per category: usable_shadow, needs_more_review, verifier_gap, metadata_gap, not_supported
 
-- task_id
-- action_type: retrieval_needed, checker_needed, no_action, review_needed
-- reason_code
-- source_verifier
-- confidence
-- status: planned, skipped, completed, failed
-- evidence_hash only, no raw task text
+## M17 deliverables
 
-## M16 deliverables
-
-- metadata validator for task rows
-- action routing module or extension to the supervisor
-- action record schema if useful
-- updated public batch rows or generator metadata fixes
-- public-safe before/after report for M15 metadata cleanup
-- public-safe action-routing summary
-- docs/M16_ACTION_ROUTING.md
-- tests for metadata validation, action routing, aggregate no-text reports, and replay/before-after comparison
+- src/reviewed_calibration_report.py or equivalent
+- reports/outcomes/agents_a1_reviewed_calibration_summary.json
+- docs/M17_REVIEWED_CALIBRATION.md
+- tests for reviewed aggregate loading, no-text report, category grouping, and agreement calculations
 - updated STATE.md and reports/FINDINGS.md
 
-## M16 stop condition
+## M17 stop condition
 
-- numeric metadata gap is detected and fixed in public batch generation
-- current-info tasks produce retrieval-needed action records
-- checker-needed tasks route only to approved deterministic checkers
-- before/after report shows metadata cleanup impact
-- action summaries contain no task text
-- public artifacts pass commit-safe checks
+- reviewed calibration summary exists
+- summary contains no raw prompt/output text
+- category-level reviewed counts are reported
+- auto-vs-human agreement is computed only where comparable
+- known verifier fixes and remaining gaps are listed
 - production mode remains gated
+- public artifacts pass commit-safe checks
 
-## After M16
+## After M17
 
 Choose one:
 
-- M17A: calibration from reviewed Agents-A1 records
-- M17B: larger 500-task live run with action routing enabled
-- M17C: missing-label dataset converters
-- M17D: broader model comparison against another local model
+- M18A: larger 500-task live run with action routing enabled
+- M18B: retrieval/checker execution for current-info tasks
+- M18C: missing-label dataset converters
+- M18D: broader model comparison against another local model
 
 ## Repository hygiene
 

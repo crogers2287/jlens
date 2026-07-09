@@ -440,3 +440,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M14 loop prompt installed (numeric-tolerant + explain rubric) via /prompt-master. steer.md synced post-M13 (db01298).
 - src/verifiers.py: numeric_tolerant_check (all-number extract + unit norm + abs/rel tolerance + accepted_values; hashed evidence). Fixes #87 exact-match numeric strictness. 7 cases verified incl speed-of-light PASS; exact_answer_match unchanged; registered.
 - Next step 2: explain_rubric_check (rubric-only, escalate on weak/absent coverage).
+
+## M14 Verifier coverage — Iteration M14.2 (2026-07-09 01:22 EDT) — step 2 COMPLETE (explain rubric)
+- src/verifiers.py: explain_rubric_check (rubric-only fact checklist; PASS at full coverage; escalate on weak/absent rubric; never gold without rubric). 5 cases verified; registered. Full suite green.
+- Next step 3: route numeric tasks → numeric_tolerant_check + explain-rubric tasks → explain_rubric_check; add both to CORRECTNESS.

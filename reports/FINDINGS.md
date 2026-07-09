@@ -1227,3 +1227,13 @@ UNCHANGED; registered in ADAPTERS. Verified 7 cases incl the M13 speed-of-light
 (299,792 km/s vs expected 300000 @ rel_tolerance 0.01 → PASS), approx value,
 unit-converted (100 C), clearly-wrong (FAIL), no-number (UNDECIDED), no-target
 (UNDECIDED), accepted_values exact (PASS); no evidence leak. Full suite green.
+
+## 92. Explain rubric verifier (M14 step 2)
+Added `explain_rubric_check(output, required_facts)` to src/verifiers.py: scores an
+open-ended explanation ONLY against a public fact checklist — counts required facts
+present (case-insensitive), PASS only at full coverage, UNDECIDED/escalate on weak
+coverage OR when the rubric is missing/empty. It NEVER claims a subjective
+explanation is gold without a rubric (verified: no PASS without required_facts).
+Hashed evidence; registered in ADAPTERS. Verified: full-coverage PASS, missing-fact
+→ undecided, weak coverage → undecided, no-rubric → undecided, empty-rubric →
+undecided; no evidence leak. Full suite green.

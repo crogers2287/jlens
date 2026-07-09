@@ -278,12 +278,36 @@ def numeric_tolerant_check(output: str, expected_value=None, tolerance=None,
                    *[f"{t:g}" for t in targets])
 
 
+def explain_rubric_check(output: str, required_facts=None, **_):
+    """Score an open-ended explanation ONLY against a public fact checklist.
+
+    Counts how many required facts appear in the output (case-insensitive). PASS
+    only when ALL required facts are present. UNDECIDED (escalate) when there is
+    no rubric, or coverage is weak (a fact is missing). This NEVER claims a
+    subjective explanation is gold — with no rubric it escalates rather than
+    guessing. Evidence is hashed — never raw text.
+    """
+    if not required_facts:
+        # no objective checklist -> cannot judge; escalate for a human
+        return _result("explain_rubric_check", 0.0, VERDICT_UNDECIDED, "no-rubric")
+    text = _norm(output)
+    present = [f for f in required_facts if _norm(f) in text]
+    coverage = len(present) / len(required_facts)
+    if coverage == 1.0:
+        return _result("explain_rubric_check", 0.8, VERDICT_PASS,
+                       f"cov=1.0/{len(required_facts)}")
+    # weak/partial coverage: escalate (not a wrongness claim), never gold
+    return _result("explain_rubric_check", round(0.4 + 0.3 * coverage, 4),
+                   VERDICT_UNDECIDED, f"cov={coverage:.2f}")
+
+
 # Registry keyed by config toggle name.
 ADAPTERS = {
     "exact_answer_match": exact_answer_match,
     "regex_or_schema_check": regex_or_schema_check,
     "json_object_check": json_object_check,
     "numeric_tolerant_check": numeric_tolerant_check,
+    "explain_rubric_check": explain_rubric_check,
     "math_checker": math_checker,
     "code_test_stub": code_test_stub,
     "retrieval_required_heuristic": retrieval_required_heuristic,

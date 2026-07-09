@@ -1440,3 +1440,15 @@ NO raw task-text field. Verified: schema self-checks; good record validates;
 unknown field, bad action_type/status enum, and confidence>1 rejected; minimal
 required-only record valid. status default "planned" (read-only); completed/failed
 only ever from an approved deterministic action, never fabricated.
+
+## 109. Read-only action router (M16 step 4)
+`src/action_router.py` derives a PLANNED action_record (action_record_v1) from an
+auto_outcome candidate — READ-ONLY, executes nothing by default. Rules:
+auto_needed_retrieval → retrieval_needed (planned, source retrieval_required_heuristic);
+else auto_needed_checker → checker_needed ONLY if an APPROVED deterministic checker
+(math_checker/json_object_check/numeric_tolerant_check) is present, else status
+"skipped"; else escalate_for_review → review_needed; else no_action. Evidence hashed;
+no raw task text. Verified 5 cases (current-info→retrieval_needed; math/numeric→
+checker_needed approved; checker-with-no-approved→skipped; escalated explain→
+review_needed; clean→no_action) — all schema-valid. Current-info always yields a
+retrieval_needed record (base answer never treated as sufficient).

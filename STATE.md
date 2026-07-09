@@ -407,3 +407,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M13 loop prompt installed (larger live run; call-endpoint-never-serve) via /prompt-master. steer.md synced post-M12 (56f6ab4).
 - src/gen_m13_batch.py → data/prompts/agents_a1_m13_batch.jsonl: 110 public tasks (math44/exact20/json10/regex8/current10/explain18), unique, deterministic, math self-consistent.
 - Next step 2: config/agents_a1_m13_run.json (agents-a1 endpoint, batch size 120 cap 250, self_consistency_samples 1).
+
+## M13 Larger run — Iteration M13.2 (2026-07-09 00:37 EDT) — step 2 COMPLETE (run config)
+- config/agents_a1_m13_run.json: agents-a1 endpoint, batch 120/cap 250, self_consistency_samples 1 (110 calls), private out paths. run_id 8f702be95736bbe5 stable; paths ignored.
+- Next step 3: LIVE run of the 110-task batch against agents-a1 on fred (capped model_fn) → gitignored private log.

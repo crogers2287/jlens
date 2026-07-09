@@ -1126,3 +1126,12 @@ Unique prompt_ids. Verified: count in [100,250], all 6 categories present, requi
 fields per category, regeneration byte-identical (deterministic), math tasks
 self-consistent (known_answer matches expression under math_checker). Public
 benchmark-style prompts only.
+
+## 84. M13 run config (M13 step 2)
+`config/agents_a1_m13_run.json` — points at the agents-a1 llama-swap endpoint
+(:9069, model "agents-a1", timeout 180) and the 110-task public M13 batch; batch
+{size 120, cap 250}; verifier toggles with self_consistency_samples=1 (one call
+per task → bounds the run at 110 calls; self-consistency skipped at n<2);
+escalation thresholds reused; resume enabled; deterministic; private out paths
+(run/meta/review) under the gitignored dir. Verified: loads, sha256 run_id stable
+(8f702be95736bbe5), private paths gitignored. No secrets.

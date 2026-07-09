@@ -1,0 +1,61 @@
+{
+  "_doc": "M13 run config for a larger bounded Agents-A1 shadow workload against the ALREADY-SERVED llama-swap endpoint on fred. PLACEHOLDER, no secrets. The agent CALLS this endpoint; it never serves models.",
+
+  "endpoint": {
+    "alias": "agents-a1-llamaswap",
+    "base_url": "http://localhost:9069/v1",
+    "model": "agents-a1",
+    "_model_doc": "llama-swap serves InternScience/Agents-A1-Q8_0-GGUF on fred's dual 3090s. A GGUF chat endpoint returns OUTPUT TEXT ONLY — no router logits — so records set telemetry_missing=true + policy=null; features are never fabricated.",
+    "api_key": "not-needed",
+    "timeout_s": 180
+  },
+
+  "task_sources": [
+    {
+      "_doc": "PUBLIC 110-task M13 batch (6 scorable categories).",
+      "path": "data/prompts/agents_a1_m13_batch.jsonl",
+      "kind": "public"
+    }
+  ],
+
+  "batch": {
+    "_doc": "Bounded larger run. size is this run's cap; cap is the hard maximum this config permits.",
+    "size": 120,
+    "cap": 250
+  },
+
+  "verifiers": {
+    "_doc": "Reuse the verifier toggles. self_consistency_samples=1 → one endpoint call per task (bounds the run); self-consistency is skipped at n<2.",
+    "exact_answer_match": true,
+    "regex_or_schema_check": true,
+    "json_object_check": true,
+    "math_checker": true,
+    "code_test_stub": true,
+    "retrieval_required_heuristic": true,
+    "self_consistency": true,
+    "self_consistency_samples": 1
+  },
+
+  "escalation": {
+    "_doc": "Reuse M10/M12 thresholds. Advisory only; never sets a human outcome.",
+    "low_confidence_below": 0.55,
+    "self_consistency_min_agreement": 0.67,
+    "high_impact_levels": ["high", "critical"],
+    "escalate_on_verifier_contradiction": true
+  },
+
+  "resume": {
+    "_doc": "Resume/retry-safe: on re-run, prompt_ids already in the run log are skipped; only missing tasks are appended.",
+    "enabled": true
+  },
+
+  "run": {
+    "_doc": "deterministic=true → placeholder timestamps for reproducible committed samples. mode dry-run needs no network; the M13 live run injects a capped live model_fn against the running agents-a1 endpoint.",
+    "deterministic": true,
+    "mode": "dry-run",
+    "run_log": "reports/shadow/private/agents_a1_m13_run_local.jsonl",
+    "run_meta": "reports/shadow/private/agents_a1_m13_run_meta_local.json",
+    "review_queue": "reports/shadow/private/agents_a1_m13_review_local.jsonl",
+    "_paths_doc": "All default outputs are under the gitignored private dir — raw task/output text stays local. Commit only aggregate-only artifacts."
+  }
+}

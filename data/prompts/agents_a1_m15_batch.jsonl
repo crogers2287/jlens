@@ -166,18 +166,18 @@
 {"prompt_id": "m15_e_005", "prompt": "What is the chemical symbol for gold?", "task_category": "exact_answer", "known_answer": "Au"}
 {"prompt_id": "m15_e_006", "prompt": "What is the chemical symbol for oxygen?", "task_category": "exact_answer", "known_answer": "O"}
 {"prompt_id": "m15_e_007", "prompt": "What is the chemical symbol for iron?", "task_category": "exact_answer", "known_answer": "Fe"}
-{"prompt_id": "m15_e_008", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7"}
-{"prompt_id": "m15_e_009", "prompt": "How many sides does a hexagon have?", "task_category": "exact_answer", "known_answer": "6"}
+{"prompt_id": "m15_e_008", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7", "numeric": true, "expected_value": 7, "tolerance": 0.5}
+{"prompt_id": "m15_e_009", "prompt": "How many sides does a hexagon have?", "task_category": "exact_answer", "known_answer": "6", "numeric": true, "expected_value": 6, "tolerance": 0.5}
 {"prompt_id": "m15_e_010", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
 {"prompt_id": "m15_e_011", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
 {"prompt_id": "m15_e_012", "prompt": "What is the largest planet in the solar system?", "task_category": "exact_answer", "known_answer": "Jupiter"}
 {"prompt_id": "m15_e_013", "prompt": "What gas do plants primarily absorb from the air?", "task_category": "exact_answer", "known_answer": "carbon dioxide"}
-{"prompt_id": "m15_e_014", "prompt": "What is the freezing point of water in Celsius?", "task_category": "exact_answer", "known_answer": "0"}
+{"prompt_id": "m15_e_014", "prompt": "What is the freezing point of water in Celsius?", "task_category": "exact_answer", "known_answer": "0", "numeric": true, "expected_value": 0, "tolerance": 0.5}
 {"prompt_id": "m15_e_015", "prompt": "Who wrote the play Romeo and Juliet?", "task_category": "exact_answer", "known_answer": "Shakespeare"}
-{"prompt_id": "m15_e_016", "prompt": "What is the square root of 81?", "task_category": "exact_answer", "known_answer": "9"}
-{"prompt_id": "m15_e_017", "prompt": "How many days are in a leap year?", "task_category": "exact_answer", "known_answer": "366"}
-{"prompt_id": "m15_e_018", "prompt": "What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2"}
-{"prompt_id": "m15_e_019", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "known_answer": "300000"}
+{"prompt_id": "m15_e_016", "prompt": "What is the square root of 81?", "task_category": "exact_answer", "known_answer": "9", "numeric": true, "expected_value": 9, "tolerance": 0.5}
+{"prompt_id": "m15_e_017", "prompt": "How many days are in a leap year?", "task_category": "exact_answer", "known_answer": "366", "numeric": true, "expected_value": 366, "tolerance": 0.5}
+{"prompt_id": "m15_e_018", "prompt": "What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2", "numeric": true, "expected_value": 2, "tolerance": 0.5}
+{"prompt_id": "m15_e_019", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "known_answer": "300000", "numeric": true, "expected_value": 300000, "rel_tolerance": 0.01}
 {"prompt_id": "m15_n_000", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "numeric": true, "expected_value": 300000, "known_answer": "300000", "rel_tolerance": 0.01, "expected_units": "km"}
 {"prompt_id": "m15_n_001", "prompt": "What is the boiling point of water at sea level, in Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": 100, "known_answer": "100", "tolerance": 0.5, "expected_units": "C"}
 {"prompt_id": "m15_n_002", "prompt": "Approximately how many km is Earth's circumference?", "task_category": "exact_answer", "numeric": true, "expected_value": 40075, "known_answer": "40075", "rel_tolerance": 0.02, "expected_units": "km"}

@@ -502,3 +502,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M16 loop prompt installed (action routing + metadata cleanup; read-only actions) via /prompt-master. steer.md synced post-M15 (afca8b9).
 - src/validate_task_metadata.py: flags numeric-looking exact rows missing numeric metadata (7 in M15 batch incl speed-of-light) + json/numeric sanity. Exits nonzero on issues.
 - Next step 2: generator metadata-normalization → tag numeric exact rows; regenerate M15 batch; validator zero gaps.
+
+## M16 Action routing — Iteration M16.2 (2026-07-09 02:34 EDT) — step 2 COMPLETE (generator normalization)
+- gen_m13_batch.normalize_numeric_metadata applied in both generators; regenerated M15+M13 batches. Validator zero gaps; 7 exact→numeric (exact 20→13, numeric 20→27); speed-of-light routes to numeric_tolerant_check; deterministic, 261. Suite green.
+- Next step 3: schema/action_record_v1.json.

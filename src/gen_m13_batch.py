@@ -140,6 +140,35 @@ def explain_tasks():
     return [{"prompt": p, "task_category": "explain"} for p in prompts]
 
 
+def normalize_numeric_metadata(rec):
+    """Tag a numeric-answer exact_answer row with numeric metadata (M16).
+
+    Deterministic: if an exact_answer row's known_answer is a single clean number
+    and it has no numeric metadata yet, add numeric=true + expected_value + a
+    sensible default tolerance (rel_tolerance 0.01 for |value|>=1000, else a small
+    absolute tolerance). Non-numeric answers (Paris, Au) are left untouched.
+    """
+    if rec.get("task_category") != "exact_answer" or rec.get("numeric") \
+            or rec.get("expected_value") is not None:
+        return rec
+    ans = str(rec.get("known_answer", "")).strip().replace(",", "")
+    try:
+        val = float(ans)
+    except ValueError:
+        return rec
+    # only if it's essentially just the number (avoid "7 continents" style text)
+    if not ans.lstrip("-").replace(".", "", 1).isdigit():
+        return rec
+    out = dict(rec)
+    out["numeric"] = True
+    out["expected_value"] = int(val) if val == int(val) else val
+    if abs(val) >= 1000:
+        out["rel_tolerance"] = 0.01
+    else:
+        out["tolerance"] = 0.5
+    return out
+
+
 def build():
     groups = [("m", math_tasks()), ("e", exact_tasks()), ("j", json_tasks()),
               ("r", regex_tasks()), ("c", current_info_tasks()),
@@ -147,7 +176,7 @@ def build():
     rows = []
     for prefix, specs in groups:
         for i, s in enumerate(specs):
-            rec = dict(s)
+            rec = normalize_numeric_metadata(dict(s))
             rec = {"prompt_id": f"m13_{prefix}_{i:03d}", **rec}
             rows.append(rec)
     return rows

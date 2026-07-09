@@ -1418,3 +1418,14 @@ FLAGS 7 numeric-looking exact rows including m15_e_019 (speed of light, "300000"
 plus continents/hexagon/freezing-point/sqrt-81/leap-year/smallest-prime. These are
 exactly the reused string-exact numeric rows behind the M15 finding; step 2 tags
 them so they route to numeric_tolerant_check.
+
+## 107. Generator metadata-normalization (M16 step 2)
+Added `normalize_numeric_metadata(rec)` to gen_m13_batch (imported + applied by
+gen_m15_batch): deterministically tags numeric-answer exact_answer rows with
+numeric=true + expected_value (parsed from known_answer) + default tolerance
+(rel_tolerance 0.01 when |value|>=1000, else absolute 0.5); non-numeric answers
+(Paris, Au) untouched. Regenerated data/prompts/agents_a1_m15_batch.jsonl (+ m13):
+validate_task_metadata now reports ZERO gaps. 7 exact rows moved to numeric routing
+(M15 category mix: exact_answer 20→13, numeric 20→27). m15_e_019 (speed of light) now
+{numeric, expected_value 300000, rel_tolerance 0.01} → routes to numeric_tolerant_check
+(exact_answer_match avoided). Batch still deterministic, count 261. Full suite green.

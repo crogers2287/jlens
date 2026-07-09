@@ -107,7 +107,8 @@ def build():
     rows = []
     for prefix, specs in groups:
         for i, s in enumerate(specs):
-            rows.append({"prompt_id": f"m15_{prefix}_{i:03d}", **dict(s)})
+            rec = M13.normalize_numeric_metadata(dict(s))  # M16: tag numeric exact rows
+            rows.append({"prompt_id": f"m15_{prefix}_{i:03d}", **rec})
     return rows
 
 

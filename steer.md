@@ -1,6 +1,6 @@
-# steer.md — post-M18 live full-output action-run steering
+# steer.md — post-M19 grounded regeneration steering
 
-M1 through M18 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, reviewed-calibration, or safe-action-executor work.
+M1 through M19 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, reviewed-calibration, safe-action-executor, or full-output action-run work.
 
 ## Current state
 
@@ -24,28 +24,26 @@ Completed milestones:
 - M16 metadata cleanup and read-only action routing
 - M17 reviewed calibration pass
 - M18 safe action execution
+- M19 500-task live run with transient full-output action execution
 
-M18 result:
+M19 result:
 
-- Added action_result_v1 schema.
-- Added explicit opt-in action executor.
-- Execution is disabled by default.
-- Retrieval is limited to fixture/public-fixture paths.
-- Checkers are limited to approved deterministic allowlist: math_checker, json_object_check, numeric_tolerant_check.
-- No shell, subprocess, dynamic import, arbitrary callable, or model-command surface was added.
-- Replayed the M15/M16 action distribution: 261 planned actions.
-- Completed 172 approved actions: 12 retrieval fixture actions and 160 checker actions.
-- Skipped 89 intentionally: 19 review-needed and 70 no-action.
-- Current-info retrieval executable path reached 12/12, but grounded regeneration is still required.
-- Historical checker replay is not a model-quality measurement because M15 only retained truncated output previews.
-- Full test suite is green at 64 tests.
-
-Important M18 limitation:
-
-- Checker replay from legacy M15 logs used truncated output_preview values.
-- The 70 pass / 90 fail checker split is explicitly invalid for correctness measurement.
-- Future live runs must pass full model output transiently into the executor before truncating/private logging.
-- Do not relabel preview-replay failures as model failures.
+- Built deterministic metadata-clean 500-task batch.
+- Ran live against agents-a1 on fred.
+- Completed 500/500 with 0 failures.
+- Escalation rate improved again: M11/M12 0.28 -> M13 0.164 -> M15 0.0728 -> M19 0.054.
+- Full model output reached approved checkers transiently before truncation.
+- Full output was not persisted in public artifacts.
+- 383/500 actions completed through approved paths.
+- Checker actions completed: 360 full-output math checks.
+- Retrieval actions completed: 23 fixture retrievals.
+- 117 actions were intentionally skipped: review-needed or no-action.
+- Checker results are now valid for execution input: 356 pass / 4 fail.
+- The 4 fail results are real arithmetic miss candidates requiring review.
+- Current-info fixture retrieval reached 20/20.
+- 3 retrieval-needed rows were non-current heuristic false positives: 2 explain weather rows and 1 numeric sale-price row.
+- All current-info retrieval completions still require grounded regeneration.
+- Production remains gated.
 
 Current live model context:
 
@@ -57,65 +55,79 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M19 live run with full-output transient action execution
+## Next milestone: M20 grounded regeneration after retrieval
 
-M19 should run a new larger live workload with safe action execution integrated into the live path. The key change from M18 is that checker actions must receive the full model output transiently during the run, before any truncation/redaction. Full output may be used locally for execution, but must not be committed.
+M20 should close the loop on current-info tasks. M19 proved retrieval actions can execute safely, but retrieval completion is not answer correctness. The next step is to use retrieved fixture/public-fixture context to regenerate or revise answers in a controlled way, then verify or review those grounded outputs.
 
 Suggested command:
 
-/jlens-m19-live-full-output-action-run
+/jlens-m20-grounded-regeneration-loop
 
-## M19 objectives
+## M20 objectives
 
-1. Build or select a 500-task mixed workload using the cleaned metadata and M18 action execution path.
-2. Run against the live agents-a1 endpoint on fred.
-3. Pass full model output transiently to approved checkers before truncation.
-4. Keep private detailed records local and gitignored.
-5. Store only preview/redacted output in persistent logs if needed.
-6. Execute safe action paths during the live run with explicit opt-in config.
-7. Execute retrieval only through fixture/public-fixture adapters unless a later milestone adds a real public retrieval adapter.
-8. Execute checkers only through the existing deterministic allowlist.
-9. Produce action_result records for executed/skipped actions.
-10. Produce a public-safe aggregate summary with no raw prompt/output/retrieved-context text.
-11. Compare M19 to M15 and M18: completion rate, escalation rate, action execution rate, checker verdicts from full-output execution, and retrieval followup counts.
-12. Report current-info separately: retrieval completed is not answer correctness; grounded regeneration remains separate unless implemented.
-13. Review a representative escalated/action-result subset and update calibration summary if useful.
-14. Keep auto_outcome and action_result as candidates, not gold.
+1. Add a grounded regeneration path for retrieval_needed tasks after retrieval completes.
+2. Keep regeneration disabled by default unless an explicit config or flag enables it.
+3. Restrict retrieved context to fixture/public-fixture sources unless a later milestone adds a real retrieval adapter.
+4. Pass retrieved context to the model only in the local live path.
+5. Do not commit raw retrieved context, raw prompts, or full regenerated outputs.
+6. Produce grounded_result records or equivalent aggregate-safe records.
+7. Track original answer vs grounded regenerated answer as candidate-only data.
+8. Run the current-info subset from M19 through grounded regeneration.
+9. Report how many current-info tasks produce a grounded answer.
+10. Report how many grounded answers can be checked deterministically, if any.
+11. Separate retrieval heuristic false positives from true current-info rows.
+12. Review the 4 M19 arithmetic miss candidates and the 3 retrieval heuristic false positives.
+13. Update the public calibration summary with reviewed results if useful.
+14. Keep auto_outcome, action_result, and grounded_result as candidates, not gold.
 15. Keep production mode gated.
 
-## M19 deliverables
+## Recommended grounded_result record
 
-- data/prompts/agents_a1_m19_batch.jsonl or documented local batch path
-- config/agents_a1_m19_run.json or updated run config
-- live runner support for transient full-output checker execution
-- reports/outcomes/agents_a1_m19_summary_sample.json
-- reports/outcomes/agents_a1_m19_action_execution_summary.json
-- reports/outcomes/agents_a1_m19_vs_baseline.json
-- docs/M19_LIVE_FULL_OUTPUT_ACTION_RUN.md
-- tests for transient full-output checker path, no raw text persistence, safe action execution, aggregate no-text report, resume behavior, and baseline comparison
+Each grounded result should be aggregate-safe:
+
+- task_id
+- source_action_id or action_evidence_hash
+- grounded_status: completed, skipped, failed
+- context_source_kind: fixture, public_fixture, none
+- regeneration_model
+- result_confidence
+- verifier_names
+- verifier_verdicts
+- evidence_hash only, no raw context or output
+- followup_needed
+- candidate_only: true
+
+## M20 deliverables
+
+- schema/grounded_result_v1.json if useful
+- src/grounded_regenerator.py or extension to the live runner
+- public-safe current-info grounded regeneration summary
+- public-safe review summary for 4 arithmetic miss candidates and 3 retrieval heuristic false positives
+- reports/outcomes/agents_a1_m20_grounded_summary.json
+- docs/M20_GROUNDED_REGENERATION.md
+- tests for default-off behavior, fixture context use, no raw text persistence, verifier/review routing, aggregate no-text report, and before/after comparison
 - updated STATE.md and reports/FINDINGS.md
 
-## M19 stop condition
+## M20 stop condition
 
-- 500-task live or dry-run path exists
-- full model output reaches approved checkers transiently before truncation
-- full output is not committed or stored in public artifacts
-- checker verdicts are now valid for full-output action execution, not legacy preview replay
-- retrieval actions execute only through allowed fixture/public-fixture paths
-- action_result records validate and remain candidate-only
-- aggregate reports contain no raw task/output/retrieved-context text
+- retrieval-completed current-info tasks can enter a safe grounded regeneration path
+- grounded_result records validate and contain no raw context/output text
+- public aggregate distinguishes retrieval completion from grounded answer quality
+- 4 arithmetic miss candidates have a review path or reviewed summary
+- 3 retrieval heuristic false positives have a review path or heuristic refinement note
 - public artifacts pass commit-safe checks
 - production mode remains gated
 
-## After M19
+## After M20
 
 Choose one:
 
-- M20A: grounded regeneration for current-info tasks after retrieval
-- M20B: broader model comparison against another local model using the same M19 harness
-- M20C: missing-label dataset converters
-- M20D: improve open-ended explain verifier coverage with rubric/reference strategy
+- M21A: larger live run with grounded regeneration enabled
+- M21B: HF/safetensors telemetry backend for internal logits/router-style research
+- M21C: broader model comparison against another local model using the M19/M20 harness
+- M21D: improve open-ended explain verifier coverage with rubric/reference strategy
+- M21E: missing-label dataset converters
 
 ## Repository hygiene
 
-Do not commit local detailed records, full model outputs, retrieved raw text, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit local detailed records, full model outputs, retrieved raw text, grounded raw outputs, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

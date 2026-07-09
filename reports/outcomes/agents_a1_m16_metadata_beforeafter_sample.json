@@ -1,0 +1,21 @@
+{
+ "cleanup": "M16 numeric-metadata normalization on reused exact_answer rows",
+ "rows_newly_tagged_exact_to_numeric": 7,
+ "newly_tagged_prompt_ids": [
+  "m15_e_008",
+  "m15_e_009",
+  "m15_e_014",
+  "m15_e_016",
+  "m15_e_017",
+  "m15_e_018",
+  "m15_e_019"
+ ],
+ "note_on_count": "Only counts rows M16 NEWLY tagged (the reused exact pool, prefix m15_e_). The 20 m15_n_ rows were the numeric pool and already carried numeric metadata pre-M16.",
+ "speed_of_light_flip": {
+  "old_exact_answer_match": "fail",
+  "new_numeric_tolerant_check": "pass",
+  "auto_was_wrong_after": false,
+  "escalate_after": false
+ },
+ "note": "Counts/verdicts only, no task text. M16 tagged numeric-answer exact rows that previously lacked numeric metadata so they now route to numeric_tolerant_check. The speed-of-light row flips old exact-match FAIL -> new numeric PASS, auto_was_wrong False, no longer escalates. auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

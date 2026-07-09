@@ -1452,3 +1452,14 @@ no raw task text. Verified 5 cases (current-info→retrieval_needed; math/numeri
 checker_needed approved; checker-with-no-approved→skipped; escalated explain→
 review_needed; clean→no_action) — all schema-valid. Current-info always yields a
 retrieval_needed record (base answer never treated as sufficient).
+
+## 110. Before/after metadata cleanup (M16 step 5)
+Public-safe reports/outcomes/agents_a1_m16_metadata_beforeafter_sample.json (counts/
+verdicts only, no task text, commit-safe): M16 normalization NEWLY tagged 7 reused
+exact_answer rows (m15_e_008/009/014/016/017/018/019) with numeric metadata so they
+route to numeric_tolerant_check instead of strict exact_answer_match. (The 20 m15_n_
+numeric-pool rows already carried numeric metadata pre-M16 — excluded from the count
+to stay honest.) The speed-of-light row (m15_e_019) flips old exact_answer_match FAIL
+-> new numeric_tolerant_check PASS, auto_was_wrong False, no longer escalates — the
+M15 task-metadata gap is closed. First pass over-counted (27) by stripping metadata
+from the already-numeric pool; corrected to 7 newly-tagged.

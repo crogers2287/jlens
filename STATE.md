@@ -514,3 +514,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M16 Action routing — Iteration M16.4 (2026-07-09 02:38 EDT) — step 4 COMPLETE (action router)
 - src/action_router.py: read-only; retrieval_needed/checker_needed(approved-only,else skipped)/review_needed/no_action; hashed evidence, no raw text. 5 cases verified + schema-valid.
 - Next step 5: before/after metadata-cleanup report (exact→numeric move + speed-of-light flip).
+
+## M16 Action routing — Iteration M16.5 (2026-07-09 02:41 EDT) — step 5 COMPLETE (before/after metadata)
+- Public agents_a1_m16_metadata_beforeafter_sample.json: 7 reused exact rows newly tagged exact→numeric; speed-of-light flips fail→pass, de-escalates. Honest count (excluded already-numeric pool). No text; commit-safe.
+- Next step 6: action-routing summary over the M15 run log.

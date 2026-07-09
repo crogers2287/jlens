@@ -1,8 +1,6 @@
-# steer.md — post-M11 steering
+# steer.md — post-M12 larger-run steering
 
-M1 through M11 are complete.
-
-The first live Agents-A1 run on fred completed successfully. The previous harness work is done and should not be repeated.
+M1 through M12 are complete. Do not redo the earlier harness, review, or verifier-hardening work.
 
 ## Current state
 
@@ -19,93 +17,82 @@ Completed milestones:
 - M9 local workflow and aggregate reporting
 - M10 autonomous supervisor
 - M11 first live Agents-A1 run
+- M12 verifier hardening and reviewed escalation calibration
 
-Live run summary:
+M12 result:
+
+- json_object_check was added and routed for JSON/object tasks.
+- Regex remains available for true regex tasks.
+- The M11 JSON false-positive was fixed.
+- The 7 escalated live rows were reviewed against public benchmark ground truth.
+- First auto-vs-human agreement was computed on the comparable row.
+- Before/after improved from escalation 7 to 6 and auto_was_wrong 1 to 0.
+- Full test suite is green at 36 tests.
+
+Current live model context:
 
 - model: agents-a1
+- source: InternScience/Agents-A1-Q8_0-GGUF
 - host: fred
 - endpoint: llama-swap on port 9069
-- run_id: 88e140ea5d129bc3
-- tasks: 25
-- completed: 25
-- failed: 0
-- telemetry_missing: 25
-- escalated: 7
-- escalation_rate: 0.28
-- public aggregate: reports/outcomes/agents_a1_run_summary_live.json
+- hardware: dual 3090s
 
-The GGUF endpoint did not expose internal telemetry. Keep representing that as telemetry_missing=true and policy=null. Do not invent telemetry.
+GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Main lesson
+## Next milestone: M13 larger Agents-A1 live run
 
-The one auto-wrong candidate from the live run appears to be a verifier issue, not a model issue.
-
-The JSON-style task returned a valid object, but the checker was too strict. This is exactly why auto_outcome is only a candidate and why escalated records need review.
-
-## Next milestone: M12 verifier hardening and reviewed escalation calibration
-
-M12 should improve checker quality and review the escalated live-run records before scaling up.
+M13 should scale from the 25-task live run to a larger bounded live run now that the JSON verifier issue is fixed.
 
 Suggested command:
 
-/jlens-m12-verifier-review-calibration-loop
+/jlens-m13-larger-agents-a1-live-run
 
-## M12 objectives
+## M13 objectives
 
-1. Review the 7 escalated records from the M11 live run.
-2. Produce a safe aggregate reviewed summary.
-3. Compute the first auto-vs-human agreement from reviewed live records.
-4. Add a JSON-aware verifier for JSON/object-output tasks.
-5. Keep the regex verifier for regex tasks only.
-6. Add tests showing valid JSON with harmless trailing whitespace passes.
-7. Add tests showing invalid JSON fails or escalates.
-8. Re-run the 25-task batch or replay the public fixture after the verifier change.
-9. Compare before and after escalation counts.
-10. Keep auto_outcome as candidate, not gold.
-11. Keep production mode gated.
+1. Build or select a 100-250 task mixed workload.
+2. Include task categories that verifiers can score: math, exact answer, JSON/object, regex, retrieval-needed, and explain/open-ended.
+3. Keep the run bounded and resumable.
+4. Run against the live agents-a1 endpoint on fred.
+5. Record local detailed run files only in the ignored local run directory.
+6. Produce a public-safe aggregate report with no task text.
+7. Produce an escalation queue for review.
+8. Review a representative escalated subset, not necessarily every row if the run is large.
+9. Report auto-vs-human agreement where review exists.
+10. Report escalation rate, verifier distribution, auto_was_wrong count, retrieval-needed count, checker-needed count, failures, and runtime.
+11. Compare M13 results to the M11/M12 25-task baseline.
+12. Keep auto_outcome as candidate, not gold.
+13. Keep production mode gated.
 
-## Recommended checker behavior
+## M13 deliverables
 
-For JSON/object tasks:
-
-- parse with json.loads
-- allow harmless whitespace around the JSON
-- optionally check expected type or required keys
-- pass when parsing and requirements match
-- fail or escalate when parsing or requirements fail
-
-For regex tasks:
-
-- use regex only when the task is truly regex-based
-- avoid full-output anchors unless that is specifically intended
-
-## M12 deliverables
-
-- updated src/verifiers.py
-- reviewed aggregate summary for M11 escalations
-- docs/M12_VERIFIER_REVIEW_CALIBRATION.md
-- tests for JSON verifier, regex behavior, reviewed aggregate, and before/after comparison
+- data/prompts/agents_a1_m13_batch.jsonl or documented local batch path
+- config/agents_a1_m13_run.json or update to existing run config
+- reports/outcomes/agents_a1_m13_summary_sample.json
+- public-safe reviewed subset summary if review is performed
+- docs/M13_LARGER_AGENTS_A1_RUN.md
+- tests for batch validation, aggregate report, resume behavior, and comparison report
 - updated STATE.md and reports/FINDINGS.md
 
-## M12 stop condition
+## M13 stop condition
 
-- escalated live rows have a review path
-- reviewed aggregate summary exists
-- auto-vs-human agreement is computed when reviews exist
-- JSON verifier handles the M11 checker issue
-- before/after report shows whether checker quality improved
-- local detailed records stay local
+- larger bounded batch exists
+- live or dry-run path works with the new batch
+- aggregate summary contains no task text
+- escalation queue is generated
+- at least a small escalated subset has a review path
+- before/after comparison against M11/M12 exists
 - public artifacts pass commit-safe checks
 - production mode remains gated
 
-## After M12
+## After M13
 
-Choose one:
+Choose the next path based on results:
 
-- M13A larger Agents-A1 live run, 100-250 tasks
-- M13B calibration from reviewed Agents-A1 workload records
-- M13C add missing-label dataset converters
+- M14A: calibration from reviewed Agents-A1 records
+- M14B: broaden benchmark scale and task diversity
+- M14C: add missing-label dataset converters
+- M14D: improve verifier coverage for open-ended explain tasks
 
 ## Repository hygiene
 
-Do not commit raw captures, local detailed records, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit local detailed records, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

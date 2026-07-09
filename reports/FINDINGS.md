@@ -1214,3 +1214,16 @@ private detailed/reviewed records stayed gitignored. auto_outcome candidate;
 production thresholds gated. NEXT per steer M14: A calibration from reviewed records
 / B broaden scale+diversity / C missing-label converters / D numeric-tolerant +
 open-ended verifier coverage (the M13 exact-match finding motivates D).
+
+## 91. Numeric-tolerant verifier (M14 step 1)
+Added `numeric_tolerant_check(output, expected_value, tolerance, rel_tolerance,
+expected_units, accepted_values)` to src/verifiers.py (fixes the #87/#88 exact-match
+numeric strictness). Extracts ALL numbers (thousands separators stripped), optional
+simple unit normalization (m/km family), and passes if any extracted/normalized
+value is within absolute `tolerance` OR `rel_tolerance` of any accepted target;
+FAIL when numbers present but all outside tolerance; UNDECIDED (escalate) when no
+number extractable or no target given. Hashed evidence; exact_answer_match left
+UNCHANGED; registered in ADAPTERS. Verified 7 cases incl the M13 speed-of-light
+(299,792 km/s vs expected 300000 @ rel_tolerance 0.01 → PASS), approx value,
+unit-converted (100 C), clearly-wrong (FAIL), no-number (UNDECIDED), no-target
+(UNDECIDED), accepted_values exact (PASS); no evidence leak. Full suite green.

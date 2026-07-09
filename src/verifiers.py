@@ -214,11 +214,76 @@ def json_object_check(output: str, required_keys=None, expected_type="object", *
                    expected_type, *(sorted(required_keys) if required_keys else []))
 
 
+def _all_numbers(text: str):
+    """Every numeric value in the text as floats (thousands separators stripped)."""
+    out = []
+    for tok in _NUM_RE.findall(text or ""):
+        try:
+            out.append(float(tok.replace(",", "")))
+        except ValueError:
+            continue
+    return out
+
+
+# simple unit scale factors -> base unit within a family (extend as needed)
+_UNIT_SCALE = {
+    "m": 1.0, "meter": 1.0, "meters": 1.0,
+    "km": 1000.0, "kilometer": 1000.0, "kilometers": 1000.0,
+}
+
+
+def numeric_tolerant_check(output: str, expected_value=None, tolerance=None,
+                           rel_tolerance=None, expected_units=None,
+                           accepted_values=None, **_):
+    """Numeric-tolerant answer check for approximate / unit-converted numbers.
+
+    Extracts numbers from the output and PASSES if any is within tolerance of an
+    accepted target (expected_value or accepted_values), using absolute
+    `tolerance` or `rel_tolerance` (relative). FAILS when numbers are present but
+    all outside tolerance; UNDECIDED (escalate) when no number can be extracted
+    or no target was given. Evidence is hashed — never raw text.
+    """
+    targets = []
+    if expected_value is not None:
+        targets.append(float(expected_value))
+    if accepted_values:
+        targets += [float(v) for v in accepted_values]
+    if not targets:
+        return _result("numeric_tolerant_check", 0.0, VERDICT_UNDECIDED, "no-target")
+
+    nums = _all_numbers(output)
+    if not nums:
+        return _result("numeric_tolerant_check", 0.3, VERDICT_UNDECIDED, "no-number")
+
+    # optional unit normalization: also consider each number scaled by a known unit
+    candidates = list(nums)
+    if expected_units and expected_units.lower() in _UNIT_SCALE:
+        base = _UNIT_SCALE[expected_units.lower()]
+        candidates += [n * s / base for n in nums for s in _UNIT_SCALE.values()]
+
+    def within(v, t):
+        if rel_tolerance is not None and t != 0:
+            if abs(v - t) <= abs(t) * float(rel_tolerance):
+                return True
+        if tolerance is not None:
+            if abs(v - t) <= float(tolerance):
+                return True
+        if rel_tolerance is None and tolerance is None:
+            return v == t
+        return False
+
+    hit = any(within(v, t) for v in candidates for t in targets)
+    return _result("numeric_tolerant_check", 0.9 if hit else 0.85,
+                   VERDICT_PASS if hit else VERDICT_FAIL,
+                   *[f"{t:g}" for t in targets])
+
+
 # Registry keyed by config toggle name.
 ADAPTERS = {
     "exact_answer_match": exact_answer_match,
     "regex_or_schema_check": regex_or_schema_check,
     "json_object_check": json_object_check,
+    "numeric_tolerant_check": numeric_tolerant_check,
     "math_checker": math_checker,
     "code_test_stub": code_test_stub,
     "retrieval_required_heuristic": retrieval_required_heuristic,

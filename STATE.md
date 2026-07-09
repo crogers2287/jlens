@@ -435,3 +435,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.8 (2026-07-09 01:00 EDT) — step 8 COMPLETE → M13 DONE
 - tests/test_m13_larger_run.py 4/4 pass; full suite green (40 tests). All M13 deliverables: generator+110-task batch, run config, LIVE 110-task run (escalation 0.164 vs 0.28 baseline, 0 failures, JSON fix validated), aggregate+escalation queue, reviewed subset (agreement n=1 rate 0.0), baseline comparison, doc, tests. Private never staged; auto candidate; production gated. M13 STOP CONDITION MET.
 - NEXT per steer M14: A calibration / B broaden / C label converters / D verifier coverage (numeric-tolerant exact-match + open-ended explain — motivated by the M13 exact-match finding).
+
+## M14 Verifier coverage — Iteration M14.1 (2026-07-09 01:16 EDT) — step 1 COMPLETE (numeric verifier)
+- New M14 loop prompt installed (numeric-tolerant + explain rubric) via /prompt-master. steer.md synced post-M13 (db01298).
+- src/verifiers.py: numeric_tolerant_check (all-number extract + unit norm + abs/rel tolerance + accepted_values; hashed evidence). Fixes #87 exact-match numeric strictness. 7 cases verified incl speed-of-light PASS; exact_answer_match unchanged; registered.
+- Next step 2: explain_rubric_check (rubric-only, escalate on weak/absent coverage).

@@ -1519,3 +1519,13 @@ are now FIXED (JSON M12, numeric M14+M16) — honest historical disagreements.
 open-explain has no objective verifier (verifier_gap). Folds in M16 action-routing
 PLANNED-only counts (retrieval 12/checker 160/review 19/no_action 70). Leak grep +
 no-text guard clean; commit-safe.
+
+## 115. Committed reviewed-calibration summary (M17 step 2)
+reports/outcomes/agents_a1_reviewed_calibration_summary.json committed (public-safe,
+aggregate-only): 44 scanned / 19 reviewed / 3 comparable; per-category exact
+(2/2, agreement 0.0, usable_shadow), regex (1/1, 0.0, usable_shadow), explain-rubric
+(1/0, needs_more_review), open-explain (15/0, verifier_gap); fixed_findings (JSON M12,
+numeric M14+M16), remaining_gaps (open-explain verifier_gap, rubric synonyms),
+action_routing_planned_only (retrieval 12/checker 160/review 19/no_action 70).
+Verified: recursive no-text guard PASS, leak grep clean, agreement only where
+comparable, check_commit_safe PASS, no private staged.

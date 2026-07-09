@@ -1,0 +1,65 @@
+{
+ "reviewed_sources": 3,
+ "total_records_scanned": 44,
+ "total_reviewed": 19,
+ "total_comparable": 3,
+ "per_category": {
+  "exact": {
+   "reviewed_count": 2,
+   "comparable_count": 2,
+   "auto_vs_human_agreement": {
+    "n_compared": 2,
+    "agreement_rate": 0.0
+   },
+   "false_low_risk": null,
+   "false_high_risk": 1.0,
+   "calibration_status": "usable_shadow",
+   "note": null
+  },
+  "explain-rubric": {
+   "reviewed_count": 1,
+   "comparable_count": 0,
+   "auto_vs_human_agreement": null,
+   "false_low_risk": null,
+   "false_high_risk": null,
+   "calibration_status": "needs_more_review",
+   "note": "insufficient reviewed comparable data"
+  },
+  "open-explain": {
+   "reviewed_count": 15,
+   "comparable_count": 0,
+   "auto_vs_human_agreement": null,
+   "false_low_risk": null,
+   "false_high_risk": null,
+   "calibration_status": "verifier_gap",
+   "note": "insufficient reviewed comparable data"
+  },
+  "regex": {
+   "reviewed_count": 1,
+   "comparable_count": 1,
+   "auto_vs_human_agreement": {
+    "n_compared": 1,
+    "agreement_rate": 0.0
+   },
+   "false_low_risk": null,
+   "false_high_risk": 1.0,
+   "calibration_status": "usable_shadow",
+   "note": null
+  }
+ },
+ "fixed_findings": [
+  "JSON false-positive (exact-anchor regex on valid JSON) found by review, fixed M12 json_object_check",
+  "numeric false-positive (approx/unit-converted answers) found by review, fixed M14 numeric_tolerant_check + M16 metadata normalization"
+ ],
+ "remaining_gaps": [
+  "open-ended explain has no objective verifier (escalates on low confidence; not comparable)",
+  "explain-rubric synonym matching is basic (synonym mismatch escalates, as designed)"
+ ],
+ "action_routing_planned_only": {
+  "retrieval_needed": 12,
+  "checker_needed": 160,
+  "review_needed": 19,
+  "no_action": 70
+ },
+ "note": "Aggregate-only; no prompt/output/notes text. Agreement is over comparable reviewed rows only (both auto and human was_wrong set); tiny-n \u2014 indicative, not production. Action-routing counts are PLANNED-only (nothing executed). auto_outcome is a CANDIDATE; production/final thresholds stay gold/audit gated."
+}

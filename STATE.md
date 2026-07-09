@@ -535,3 +535,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M17 loop prompt installed (reviewed calibration; reporting-only) via /prompt-master. steer.md synced post-M16 (6a5c513).
 - src/reviewed_calibration_report.py: category-level over M11-M16 reviewed logs (read locally). 44 scanned/19 reviewed/3 comparable. exact+regex agreement 0.0 (the fixed false-positives); open-explain verifier_gap; rubric needs_more_review. Action planned-only counts folded in. No-text guard + guard clean.
 - Next step 2: commit the summary artifact (verify no-text + commit-safe).
+
+## M17 Reviewed calibration — Iteration M17.2 (2026-07-09 03:10 EDT) — step 2 COMPLETE (committed summary)
+- Public agents_a1_reviewed_calibration_summary.json committed: category-level reviewed/comparable/agreement, fixed_findings, remaining_gaps, action planned-only. No-text guard + leak grep clean; commit-safe; private unstaged.
+- Next step 3: docs/M17_REVIEWED_CALIBRATION.md.

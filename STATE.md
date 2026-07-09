@@ -402,3 +402,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M12 Verifier calibration — Iteration M12.7 (2026-07-09 00:08 EDT) — step 7 COMPLETE → M12 DONE
 - tests/test_verifier_json.py 4/4 pass; full suite green (36 tests). All M12 deliverables: json_object_check + routing + CORRECTNESS wiring; objective review of 7 escalated (gitignored); public reviewed aggregate (agreement n=1 rate 0.0); before/after (7→6, 1→0); doc; tests. Private never staged; auto candidate; production gated. M12 STOP CONDITION MET.
 - NEXT per steer M13: A larger Agents-A1 run (100-250) / B calibration from reviewed records / C missing-label converters.
+
+## M13 Larger run — Iteration M13.1 (2026-07-09 00:32 EDT) — step 1 COMPLETE (batch generator)
+- New M13 loop prompt installed (larger live run; call-endpoint-never-serve) via /prompt-master. steer.md synced post-M12 (56f6ab4).
+- src/gen_m13_batch.py → data/prompts/agents_a1_m13_batch.jsonl: 110 public tasks (math44/exact20/json10/regex8/current10/explain18), unique, deterministic, math self-consistent.
+- Next step 2: config/agents_a1_m13_run.json (agents-a1 endpoint, batch size 120 cap 250, self_consistency_samples 1).

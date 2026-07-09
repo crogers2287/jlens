@@ -1,0 +1,110 @@
+{"prompt_id": "m13_m_000", "prompt": "What is 6 + 9?", "task_category": "math", "known_answer": "15", "expression": "6+9"}
+{"prompt_id": "m13_m_001", "prompt": "What is 7 - 3?", "task_category": "math", "known_answer": "4", "expression": "7-3"}
+{"prompt_id": "m13_m_002", "prompt": "What is 8 * 4?", "task_category": "math", "known_answer": "32", "expression": "8*4"}
+{"prompt_id": "m13_m_003", "prompt": "What is 9 + 5?", "task_category": "math", "known_answer": "14", "expression": "9+5"}
+{"prompt_id": "m13_m_004", "prompt": "What is 10 - 6?", "task_category": "math", "known_answer": "4", "expression": "10-6"}
+{"prompt_id": "m13_m_005", "prompt": "What is 11 * 7?", "task_category": "math", "known_answer": "77", "expression": "11*7"}
+{"prompt_id": "m13_m_006", "prompt": "What is 12 + 8?", "task_category": "math", "known_answer": "20", "expression": "12+8"}
+{"prompt_id": "m13_m_007", "prompt": "What is 13 - 9?", "task_category": "math", "known_answer": "4", "expression": "13-9"}
+{"prompt_id": "m13_m_008", "prompt": "What is 14 * 3?", "task_category": "math", "known_answer": "42", "expression": "14*3"}
+{"prompt_id": "m13_m_009", "prompt": "What is 15 + 4?", "task_category": "math", "known_answer": "19", "expression": "15+4"}
+{"prompt_id": "m13_m_010", "prompt": "What is 16 - 5?", "task_category": "math", "known_answer": "11", "expression": "16-5"}
+{"prompt_id": "m13_m_011", "prompt": "What is 17 * 6?", "task_category": "math", "known_answer": "102", "expression": "17*6"}
+{"prompt_id": "m13_m_012", "prompt": "What is 18 + 7?", "task_category": "math", "known_answer": "25", "expression": "18+7"}
+{"prompt_id": "m13_m_013", "prompt": "What is 19 - 8?", "task_category": "math", "known_answer": "11", "expression": "19-8"}
+{"prompt_id": "m13_m_014", "prompt": "What is 20 * 9?", "task_category": "math", "known_answer": "180", "expression": "20*9"}
+{"prompt_id": "m13_m_015", "prompt": "What is 21 + 3?", "task_category": "math", "known_answer": "24", "expression": "21+3"}
+{"prompt_id": "m13_m_016", "prompt": "What is 22 - 4?", "task_category": "math", "known_answer": "18", "expression": "22-4"}
+{"prompt_id": "m13_m_017", "prompt": "What is 23 * 5?", "task_category": "math", "known_answer": "115", "expression": "23*5"}
+{"prompt_id": "m13_m_018", "prompt": "What is 24 + 6?", "task_category": "math", "known_answer": "30", "expression": "24+6"}
+{"prompt_id": "m13_m_019", "prompt": "What is 25 - 7?", "task_category": "math", "known_answer": "18", "expression": "25-7"}
+{"prompt_id": "m13_m_020", "prompt": "What is 26 * 8?", "task_category": "math", "known_answer": "208", "expression": "26*8"}
+{"prompt_id": "m13_m_021", "prompt": "What is 27 + 9?", "task_category": "math", "known_answer": "36", "expression": "27+9"}
+{"prompt_id": "m13_m_022", "prompt": "What is 28 - 3?", "task_category": "math", "known_answer": "25", "expression": "28-3"}
+{"prompt_id": "m13_m_023", "prompt": "What is 29 * 4?", "task_category": "math", "known_answer": "116", "expression": "29*4"}
+{"prompt_id": "m13_m_024", "prompt": "What is 30 + 5?", "task_category": "math", "known_answer": "35", "expression": "30+5"}
+{"prompt_id": "m13_m_025", "prompt": "What is 31 - 6?", "task_category": "math", "known_answer": "25", "expression": "31-6"}
+{"prompt_id": "m13_m_026", "prompt": "What is 32 * 7?", "task_category": "math", "known_answer": "224", "expression": "32*7"}
+{"prompt_id": "m13_m_027", "prompt": "What is 33 + 8?", "task_category": "math", "known_answer": "41", "expression": "33+8"}
+{"prompt_id": "m13_m_028", "prompt": "What is 34 - 9?", "task_category": "math", "known_answer": "25", "expression": "34-9"}
+{"prompt_id": "m13_m_029", "prompt": "What is 35 * 3?", "task_category": "math", "known_answer": "105", "expression": "35*3"}
+{"prompt_id": "m13_m_030", "prompt": "What is 36 + 4?", "task_category": "math", "known_answer": "40", "expression": "36+4"}
+{"prompt_id": "m13_m_031", "prompt": "What is 37 - 5?", "task_category": "math", "known_answer": "32", "expression": "37-5"}
+{"prompt_id": "m13_m_032", "prompt": "What is 38 * 6?", "task_category": "math", "known_answer": "228", "expression": "38*6"}
+{"prompt_id": "m13_m_033", "prompt": "What is 39 + 7?", "task_category": "math", "known_answer": "46", "expression": "39+7"}
+{"prompt_id": "m13_m_034", "prompt": "What is 40 - 8?", "task_category": "math", "known_answer": "32", "expression": "40-8"}
+{"prompt_id": "m13_m_035", "prompt": "What is 41 * 9?", "task_category": "math", "known_answer": "369", "expression": "41*9"}
+{"prompt_id": "m13_m_036", "prompt": "What is 42 + 3?", "task_category": "math", "known_answer": "45", "expression": "42+3"}
+{"prompt_id": "m13_m_037", "prompt": "What is 43 - 4?", "task_category": "math", "known_answer": "39", "expression": "43-4"}
+{"prompt_id": "m13_m_038", "prompt": "What is 20% of 150?", "task_category": "math", "known_answer": "30", "expression": "150*20/100"}
+{"prompt_id": "m13_m_039", "prompt": "What is 15% of 300?", "task_category": "math", "known_answer": "45", "expression": "300*15/100"}
+{"prompt_id": "m13_m_040", "prompt": "What is 2 to the power of 8?", "task_category": "math", "known_answer": "256", "expression": "2**8"}
+{"prompt_id": "m13_m_041", "prompt": "What is 3 to the power of 4?", "task_category": "math", "known_answer": "81", "expression": "3**4"}
+{"prompt_id": "m13_m_042", "prompt": "What is 144 divided by 12?", "task_category": "math", "known_answer": "12", "expression": "144/12"}
+{"prompt_id": "m13_m_043", "prompt": "What is 1000 divided by 8?", "task_category": "math", "known_answer": "125", "expression": "1000/8"}
+{"prompt_id": "m13_e_000", "prompt": "What is the capital of France?", "task_category": "exact_answer", "known_answer": "Paris"}
+{"prompt_id": "m13_e_001", "prompt": "What is the capital of Japan?", "task_category": "exact_answer", "known_answer": "Tokyo"}
+{"prompt_id": "m13_e_002", "prompt": "What is the capital of Italy?", "task_category": "exact_answer", "known_answer": "Rome"}
+{"prompt_id": "m13_e_003", "prompt": "What is the capital of Canada?", "task_category": "exact_answer", "known_answer": "Ottawa"}
+{"prompt_id": "m13_e_004", "prompt": "What is the capital of Australia?", "task_category": "exact_answer", "known_answer": "Canberra"}
+{"prompt_id": "m13_e_005", "prompt": "What is the chemical symbol for gold?", "task_category": "exact_answer", "known_answer": "Au"}
+{"prompt_id": "m13_e_006", "prompt": "What is the chemical symbol for oxygen?", "task_category": "exact_answer", "known_answer": "O"}
+{"prompt_id": "m13_e_007", "prompt": "What is the chemical symbol for iron?", "task_category": "exact_answer", "known_answer": "Fe"}
+{"prompt_id": "m13_e_008", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7"}
+{"prompt_id": "m13_e_009", "prompt": "How many sides does a hexagon have?", "task_category": "exact_answer", "known_answer": "6"}
+{"prompt_id": "m13_e_010", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
+{"prompt_id": "m13_e_011", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
+{"prompt_id": "m13_e_012", "prompt": "What is the largest planet in the solar system?", "task_category": "exact_answer", "known_answer": "Jupiter"}
+{"prompt_id": "m13_e_013", "prompt": "What gas do plants primarily absorb from the air?", "task_category": "exact_answer", "known_answer": "carbon dioxide"}
+{"prompt_id": "m13_e_014", "prompt": "What is the freezing point of water in Celsius?", "task_category": "exact_answer", "known_answer": "0"}
+{"prompt_id": "m13_e_015", "prompt": "Who wrote the play Romeo and Juliet?", "task_category": "exact_answer", "known_answer": "Shakespeare"}
+{"prompt_id": "m13_e_016", "prompt": "What is the square root of 81?", "task_category": "exact_answer", "known_answer": "9"}
+{"prompt_id": "m13_e_017", "prompt": "How many days are in a leap year?", "task_category": "exact_answer", "known_answer": "366"}
+{"prompt_id": "m13_e_018", "prompt": "What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2"}
+{"prompt_id": "m13_e_019", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "known_answer": "300000"}
+{"prompt_id": "m13_j_000", "prompt": "Return a JSON object with a single key named \"result\".", "task_category": "json", "json_check": true, "json_required": ["result"]}
+{"prompt_id": "m13_j_001", "prompt": "Return a JSON object with keys \"name\" and \"age\".", "task_category": "json", "json_check": true, "json_required": ["name", "age"]}
+{"prompt_id": "m13_j_002", "prompt": "Return a JSON object with a key \"status\".", "task_category": "json", "json_check": true, "json_required": ["status"]}
+{"prompt_id": "m13_j_003", "prompt": "Return a JSON object with keys \"city\" and \"country\".", "task_category": "json", "json_check": true, "json_required": ["city", "country"]}
+{"prompt_id": "m13_j_004", "prompt": "Return a JSON object with a key \"ok\" set to true.", "task_category": "json", "json_check": true, "json_required": ["ok"]}
+{"prompt_id": "m13_j_005", "prompt": "Return a JSON object with keys \"id\" and \"value\".", "task_category": "json", "json_check": true, "json_required": ["id", "value"]}
+{"prompt_id": "m13_j_006", "prompt": "Return a JSON object with a key \"count\".", "task_category": "json", "json_check": true, "json_required": ["count"]}
+{"prompt_id": "m13_j_007", "prompt": "Return a JSON object with keys \"first\" and \"last\".", "task_category": "json", "json_check": true, "json_required": ["first", "last"]}
+{"prompt_id": "m13_j_008", "prompt": "Return a JSON object with a key \"message\".", "task_category": "json", "json_check": true, "json_required": ["message"]}
+{"prompt_id": "m13_j_009", "prompt": "Return a JSON object with keys \"x\", \"y\".", "task_category": "json", "json_check": true, "json_required": ["x", "y"]}
+{"prompt_id": "m13_r_000", "prompt": "Reply with a US ZIP code (5 digits).", "task_category": "regex", "pattern": "\\b\\d{5}\\b"}
+{"prompt_id": "m13_r_001", "prompt": "Give an ISO date in YYYY-MM-DD form.", "task_category": "regex", "pattern": "\\d{4}-\\d{2}-\\d{2}"}
+{"prompt_id": "m13_r_002", "prompt": "Return a hex color code.", "task_category": "regex", "pattern": "#[0-9a-fA-F]{6}"}
+{"prompt_id": "m13_r_003", "prompt": "Reply with a US phone number like 555-123-4567.", "task_category": "regex", "pattern": "\\d{3}-\\d{3}-\\d{4}"}
+{"prompt_id": "m13_r_004", "prompt": "Give a time in HH:MM 24-hour format.", "task_category": "regex", "pattern": "\\b\\d{2}:\\d{2}\\b"}
+{"prompt_id": "m13_r_005", "prompt": "Return an IPv4 address.", "task_category": "regex", "pattern": "\\b\\d{1,3}(\\.\\d{1,3}){3}\\b"}
+{"prompt_id": "m13_r_006", "prompt": "Reply with a single uppercase word.", "task_category": "regex", "pattern": "\\b[A-Z]{2,}\\b"}
+{"prompt_id": "m13_r_007", "prompt": "Give a percentage like 42%.", "task_category": "regex", "pattern": "\\b\\d{1,3}%"}
+{"prompt_id": "m13_c_000", "prompt": "What is the current price of gold today?", "task_category": "current_info"}
+{"prompt_id": "m13_c_001", "prompt": "Who is the current CEO of Twitter?", "task_category": "current_info"}
+{"prompt_id": "m13_c_002", "prompt": "What is the latest iPhone model released this year?", "task_category": "current_info"}
+{"prompt_id": "m13_c_003", "prompt": "What is today's weather in Tampa?", "task_category": "current_info"}
+{"prompt_id": "m13_c_004", "prompt": "What is the current population of Tokyo right now?", "task_category": "current_info"}
+{"prompt_id": "m13_c_005", "prompt": "What is the latest version of Python released this year?", "task_category": "current_info"}
+{"prompt_id": "m13_c_006", "prompt": "Who won the most recent Super Bowl?", "task_category": "current_info"}
+{"prompt_id": "m13_c_007", "prompt": "What is the current stock price of Apple?", "task_category": "current_info"}
+{"prompt_id": "m13_c_008", "prompt": "What are the current top news headlines?", "task_category": "current_info"}
+{"prompt_id": "m13_c_009", "prompt": "What is the exchange rate for USD to EUR right now?", "task_category": "current_info"}
+{"prompt_id": "m13_x_000", "prompt": "Explain what a prime number is.", "task_category": "explain"}
+{"prompt_id": "m13_x_001", "prompt": "Describe how photosynthesis works in one paragraph.", "task_category": "explain"}
+{"prompt_id": "m13_x_002", "prompt": "Summarize the water cycle briefly.", "task_category": "explain"}
+{"prompt_id": "m13_x_003", "prompt": "What are the primary colors?", "task_category": "explain"}
+{"prompt_id": "m13_x_004", "prompt": "Give a one-sentence definition of gravity.", "task_category": "explain"}
+{"prompt_id": "m13_x_005", "prompt": "Explain the difference between weather and climate.", "task_category": "explain"}
+{"prompt_id": "m13_x_006", "prompt": "What is the boiling point of water at sea level in Celsius?", "task_category": "explain"}
+{"prompt_id": "m13_x_007", "prompt": "Explain what an ecosystem is.", "task_category": "explain"}
+{"prompt_id": "m13_x_008", "prompt": "Describe what an integer is in mathematics.", "task_category": "explain"}
+{"prompt_id": "m13_x_009", "prompt": "Explain the concept of supply and demand briefly.", "task_category": "explain"}
+{"prompt_id": "m13_x_010", "prompt": "What is the function of the human heart?", "task_category": "explain"}
+{"prompt_id": "m13_x_011", "prompt": "Explain what renewable energy means.", "task_category": "explain"}
+{"prompt_id": "m13_x_012", "prompt": "Describe the role of DNA in living organisms.", "task_category": "explain"}
+{"prompt_id": "m13_x_013", "prompt": "Explain what inflation is in economics.", "task_category": "explain"}
+{"prompt_id": "m13_x_014", "prompt": "What is the difference between speed and velocity?", "task_category": "explain"}
+{"prompt_id": "m13_x_015", "prompt": "Explain what a noun is in grammar.", "task_category": "explain"}
+{"prompt_id": "m13_x_016", "prompt": "Describe how a rainbow forms.", "task_category": "explain"}
+{"prompt_id": "m13_x_017", "prompt": "Explain what evaporation is.", "task_category": "explain"}

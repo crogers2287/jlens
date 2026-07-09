@@ -1116,3 +1116,13 @@ is the auto-vs-human loop doing its job: auto flagged uncertainty, human review
 corrected it, and the checker was fixed. auto_outcome stays candidate; production
 thresholds gated. NEXT (steer M13): larger live run / calibration from reviewed
 records / missing-label converters.
+
+## 83. M13 larger batch generator (M13 step 1)
+`src/gen_m13_batch.py` (deterministic, no RNG) → data/prompts/agents_a1_m13_batch.jsonl:
+110 PUBLIC tasks across all 6 scorable categories — math 44 (known_answer +
+arithmetic expression), exact_answer 20 (facts + known_answer), json 10
+(json_check + json_required), regex 8 (pattern), current_info 10, explain 18.
+Unique prompt_ids. Verified: count in [100,250], all 6 categories present, required
+fields per category, regeneration byte-identical (deterministic), math tasks
+self-consistent (known_answer matches expression under math_checker). Public
+benchmark-style prompts only.

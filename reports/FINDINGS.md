@@ -1537,3 +1537,28 @@ verifier false-positives (JSON M12, numeric M14+M16), category maturity
 (usable_shadow: exact/numeric/json/math/regex; needs_more_review: explain-rubric
 synonyms; verifier_gap: open-ended explain), the M16 action-routing planned-only
 counts, and gating. Public fixtures/aggregates only. Commands match real flags.
+
+## 117. M17 reviewed-calibration tests (M17 step 4) — MILESTONE COMPLETE
+`tests/test_reviewed_calibration.py` (4 tests, CPU-only, no network): (a)+(d) per_category
+grouping + agreement only where comparable (synthetic exact fixture: 2 reviewed/2
+comparable/agreement 0.5; open-explain 1 reviewed/0 comparable/null/verifier_gap);
+(b) the committed summary passes the recursive no-text guard + agreement only where
+comparable; (c) category_of maps verifier_names→category correctly (numeric/json/exact/
+math/regex/explain-rubric) with task_category tiebreaker (current_info→retrieval,
+explain→open-explain); (e) action counts carried as planned-only ints, fixed_findings +
+remaining_gaps present. Full suite green: 58 tests.
+
+### M17 summary — reviewed calibration pass
+Consolidated the M11-M16 reviewed subsets into a public-safe category-level calibration
+summary (private logs read locally, never committed). Headline: of 44 records scanned,
+19 human-reviewed, only 3 objectively comparable — and those 3 (exact 2 + regex 1,
+agreement 0.0) are exactly the two verifier false-positives review FOUND and that are
+now FIXED (JSON M12 json_object_check; numeric M14 numeric_tolerant_check + M16 metadata
+normalization). Category maturity: usable_shadow (exact/numeric/json/math/regex — known
+false-positives fixed); needs_more_review (explain-rubric — synonym matching basic);
+verifier_gap (open-ended explain — no objective verifier, the biggest remaining gap).
+M16 action-routing PLANNED-only counts folded in (retrieval 12/checker 160/review 19/
+no_action 70). auto_outcome candidate; production/final thresholds gold/audit gated —
+this summary is the honest per-category scoreboard of how close to gating-unlock the
+reviewed data is. NEXT per steer M18: A 500-task run w/ action routing / B retrieval+checker
+execution / C label converters / D broader model comparison.

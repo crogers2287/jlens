@@ -543,3 +543,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M17 Reviewed calibration — Iteration M17.3 (2026-07-09 03:13 EDT) — step 3 COMPLETE (doc)
 - docs/M17_REVIEWED_CALIBRATION.md: category table + agreement, fixed false-positives, category maturity (usable_shadow/needs_more_review/verifier_gap), action planned-only, gating.
 - Next step 4 (FINAL): tests/test_reviewed_calibration.py, then M17 DONE.
+
+## M17 Reviewed calibration — Iteration M17.4 (2026-07-09 03:16 EDT) — step 4 COMPLETE → M17 DONE
+- tests/test_reviewed_calibration.py 4/4 pass; full suite green (58 tests). All M17 deliverables: reviewed_calibration_report, committed public summary (category-level, agreement-where-comparable, fixed findings + gaps, action planned-only), doc, tests. Private reviewed logs never staged; auto candidate; production gated. M17 STOP CONDITION MET.
+- NEXT per steer M18: A 500-task run w/ action routing / B retrieval+checker execution / C label converters / D broader model comparison.

@@ -1,6 +1,6 @@
-# steer.md — post-M16 calibration steering
+# steer.md — post-M17 execution steering
 
-M1 through M16 are complete. Do not redo the previous harness, review, verifier, larger-run, metadata-cleanup, or read-only action-routing work.
+M1 through M17 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, or reviewed-calibration work.
 
 ## Current state
 
@@ -22,20 +22,22 @@ Completed milestones:
 - M14 numeric-tolerant verifier and explain-rubric coverage
 - M15 261-task live Agents-A1 run after verifier fixes
 - M16 metadata cleanup and read-only action routing
+- M17 reviewed calibration pass
 
-M16 result:
+M17 result:
 
-- Added metadata validator for numeric-looking exact-answer rows missing numeric metadata.
-- Normalized generators so 7 reused exact rows moved exact -> numeric.
-- Validator reports zero numeric metadata gaps on the cleaned M15 batch.
-- Added action_record_v1 schema.
-- Added read-only action_router.
-- Current-info rows route to retrieval_needed action records.
-- Checker-needed rows route only to approved deterministic checkers, otherwise skipped.
-- Escalated rows route to review_needed.
-- Clean rows route to no_action.
-- Over M15: checker 160 / no_action 70 / review 19 / retrieval 12.
-- Full test suite is green at 54 tests.
+- Consolidated reviewed subsets from M11-M16.
+- Scanned 44 reviewed-log records.
+- Found 19 human-reviewed records.
+- Found only 3 objectively comparable records.
+- The comparable disagreements were the already-found verifier false-positives.
+- Those false-positives are already fixed: JSON in M12, numeric in M14/M16.
+- Category status:
+  - usable_shadow: exact, numeric, json, math, regex
+  - needs_more_review: explain-rubric
+  - verifier_gap: open-ended explain
+- Action-routing counts are planned-only: retrieval 12 / checker 160 / review 19 / no_action 70.
+- Full test suite is green at 58 tests after the post-completion CLI bugfix.
 
 Current live model context:
 
@@ -47,67 +49,74 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M17 reviewed calibration pass
+## Next milestone: M18 execute retrieval/checker actions safely
 
-M17 should convert the accumulated reviewed records into a real calibration pass. We now have multiple live runs, reviewed escalated subsets, action records, and improved verifiers. Before another bigger run, summarize what reviewed data actually says.
+M18 should move from planned action records to controlled execution for safe cases. The biggest near-term value is current-info and checker-needed tasks: the system already knows what should be retrieved or checked, but M16 only planned actions. M18 should execute approved actions in a bounded, auditable way and then re-score the result.
 
 Suggested command:
 
-/jlens-m17-reviewed-calibration-pass
+/jlens-m18-safe-action-execution-loop
 
-## M17 objectives
+## M18 objectives
 
-1. Gather all public-safe reviewed aggregate summaries from M11 through M16.
-2. Keep private reviewed logs local; do not commit raw prompt/output text.
-3. Build a reviewed-record index or aggregate table using only safe fields.
-4. Compute auto-vs-human agreement across reviewed comparable rows.
-5. Report false-low-risk and false-high-risk where the reviewed data supports it.
-6. Separate calibration by task/verifier type: exact, numeric, JSON, math, regex, retrieval-needed, explain-rubric, open-ended explain.
-7. Include action-routing outcomes as planned-only counts, not executed success.
-8. Identify which categories are mature enough for larger live runs.
-9. Identify which categories still need human review, better metadata, or better verifiers.
-10. Keep auto_outcome as candidate, not gold.
-11. Keep production mode gated.
+1. Add an action executor for read-only retrieval_needed actions.
+2. Add an action executor for approved deterministic checker_needed actions.
+3. Keep execution disabled by default unless an explicit flag/config enables it.
+4. Restrict retrieval to safe/public or fixture sources first.
+5. Restrict checkers to approved deterministic functions or fixture commands only.
+6. Never execute arbitrary shell commands from model output.
+7. Produce action_result records linked to action_record_v1.
+8. Re-score or summarize tasks after action execution.
+9. Compare planned-only vs executed-action outcomes.
+10. Report current-info improvement separately from verifier-only categories.
+11. Keep private raw task/output content local.
+12. Keep auto_outcome and action_result as candidates, not gold.
+13. Keep production mode gated.
 
-## Recommended calibration outputs
+## Recommended action_result record
 
-- reviewed_count by category
-- comparable_count by category
-- auto_vs_human_agreement by category where meaningful
-- false-positive verifier findings already fixed
-- remaining known gaps
-- retrieval_needed action count
-- checker_needed action count
-- review_needed action count
-- calibration_status per category: usable_shadow, needs_more_review, verifier_gap, metadata_gap, not_supported
+Each action result should be aggregate-safe:
 
-## M17 deliverables
+- task_id
+- action_type
+- action_status: completed, skipped, failed
+- executor_name
+- result_type: retrieved_context, checker_result, no_result
+- result_confidence
+- evidence_hash only, no raw retrieved text
+- followup_needed
+- error_code if failed
 
-- src/reviewed_calibration_report.py or equivalent
-- reports/outcomes/agents_a1_reviewed_calibration_summary.json
-- docs/M17_REVIEWED_CALIBRATION.md
-- tests for reviewed aggregate loading, no-text report, category grouping, and agreement calculations
+## M18 deliverables
+
+- schema/action_result_v1.json if useful
+- src/action_executor.py or equivalent
+- safe retrieval fixture/source adapter
+- deterministic checker execution adapter
+- reports/outcomes/agents_a1_m18_action_execution_summary.json
+- docs/M18_SAFE_ACTION_EXECUTION.md
+- tests for disabled-by-default behavior, retrieval execution, checker execution, no arbitrary command execution, aggregate no-text report, and before/after comparison
 - updated STATE.md and reports/FINDINGS.md
 
-## M17 stop condition
+## M18 stop condition
 
-- reviewed calibration summary exists
-- summary contains no raw prompt/output text
-- category-level reviewed counts are reported
-- auto-vs-human agreement is computed only where comparable
-- known verifier fixes and remaining gaps are listed
-- production mode remains gated
+- retrieval_needed actions can execute in a safe fixture/public mode
+- checker_needed actions can execute only through approved deterministic paths
+- action_result records validate and contain no raw text
+- before/after report shows what changed after action execution
+- current-info tasks are no longer merely flagged; they have executable follow-up path
 - public artifacts pass commit-safe checks
+- production mode remains gated
 
-## After M17
+## After M18
 
 Choose one:
 
-- M18A: larger 500-task live run with action routing enabled
-- M18B: retrieval/checker execution for current-info tasks
-- M18C: missing-label dataset converters
-- M18D: broader model comparison against another local model
+- M19A: larger 500-task live run with safe action execution enabled
+- M19B: broader model comparison against another local model
+- M19C: missing-label dataset converters
+- M19D: improve open-ended explain verifier coverage with rubric/reference strategy
 
 ## Repository hygiene
 
-Do not commit local detailed records, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit local detailed records, retrieved raw text, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

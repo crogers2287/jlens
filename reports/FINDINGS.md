@@ -1363,3 +1363,15 @@ milestone).
 interaction" where the rubric keyword was "force" (synonym not matched). explain_rubric_check
 correctly escalated for review rather than falsely marking wrong — working as designed;
 suggests rubric facts could allow synonyms later. auto_outcome candidate; production gated.
+
+## 103. M15-vs-both-baselines comparison (M15 step 6)
+Public-safe reports/outcomes/agents_a1_m15_vs_baseline.json (counts only, no text,
+commit-safe): M15 (261 tasks, run_id 25ca35429474c407) vs M13 (110,
+cd3d744045af170e) vs M11/M12 (25, 88e140ea5d129bc3). HEADLINE — escalation_rate_trend
+[0.28, 0.1636, 0.0728] fell monotonically across the three live runs as verifier
+coverage improved. n_failed 0 all; telemetry_missing all (GGUF). Both prior
+verifier false-positives stayed FIXED at scale: JSON auto_was_wrong=0 (M12 fix),
+numeric-TAGGED auto_was_wrong=0 (M14 fix). M15's single auto_was_wrong is a
+task-metadata gap (untagged string-exact numeric row), not a regression. M15
+verifier_distribution adds numeric_tolerant_check (20) + explain_rubric_check (15).
+auto_outcome candidate; production gated.

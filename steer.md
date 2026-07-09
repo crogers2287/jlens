@@ -1,6 +1,6 @@
-# steer.md — post-M17 execution steering
+# steer.md — post-M18 live full-output action-run steering
 
-M1 through M17 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, or reviewed-calibration work.
+M1 through M18 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, reviewed-calibration, or safe-action-executor work.
 
 ## Current state
 
@@ -23,21 +23,29 @@ Completed milestones:
 - M15 261-task live Agents-A1 run after verifier fixes
 - M16 metadata cleanup and read-only action routing
 - M17 reviewed calibration pass
+- M18 safe action execution
 
-M17 result:
+M18 result:
 
-- Consolidated reviewed subsets from M11-M16.
-- Scanned 44 reviewed-log records.
-- Found 19 human-reviewed records.
-- Found only 3 objectively comparable records.
-- The comparable disagreements were the already-found verifier false-positives.
-- Those false-positives are already fixed: JSON in M12, numeric in M14/M16.
-- Category status:
-  - usable_shadow: exact, numeric, json, math, regex
-  - needs_more_review: explain-rubric
-  - verifier_gap: open-ended explain
-- Action-routing counts are planned-only: retrieval 12 / checker 160 / review 19 / no_action 70.
-- Full test suite is green at 58 tests after the post-completion CLI bugfix.
+- Added action_result_v1 schema.
+- Added explicit opt-in action executor.
+- Execution is disabled by default.
+- Retrieval is limited to fixture/public-fixture paths.
+- Checkers are limited to approved deterministic allowlist: math_checker, json_object_check, numeric_tolerant_check.
+- No shell, subprocess, dynamic import, arbitrary callable, or model-command surface was added.
+- Replayed the M15/M16 action distribution: 261 planned actions.
+- Completed 172 approved actions: 12 retrieval fixture actions and 160 checker actions.
+- Skipped 89 intentionally: 19 review-needed and 70 no-action.
+- Current-info retrieval executable path reached 12/12, but grounded regeneration is still required.
+- Historical checker replay is not a model-quality measurement because M15 only retained truncated output previews.
+- Full test suite is green at 64 tests.
+
+Important M18 limitation:
+
+- Checker replay from legacy M15 logs used truncated output_preview values.
+- The 70 pass / 90 fail checker split is explicitly invalid for correctness measurement.
+- Future live runs must pass full model output transiently into the executor before truncating/private logging.
+- Do not relabel preview-replay failures as model failures.
 
 Current live model context:
 
@@ -49,74 +57,65 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M18 execute retrieval/checker actions safely
+## Next milestone: M19 live run with full-output transient action execution
 
-M18 should move from planned action records to controlled execution for safe cases. The biggest near-term value is current-info and checker-needed tasks: the system already knows what should be retrieved or checked, but M16 only planned actions. M18 should execute approved actions in a bounded, auditable way and then re-score the result.
+M19 should run a new larger live workload with safe action execution integrated into the live path. The key change from M18 is that checker actions must receive the full model output transiently during the run, before any truncation/redaction. Full output may be used locally for execution, but must not be committed.
 
 Suggested command:
 
-/jlens-m18-safe-action-execution-loop
+/jlens-m19-live-full-output-action-run
 
-## M18 objectives
+## M19 objectives
 
-1. Add an action executor for read-only retrieval_needed actions.
-2. Add an action executor for approved deterministic checker_needed actions.
-3. Keep execution disabled by default unless an explicit flag/config enables it.
-4. Restrict retrieval to safe/public or fixture sources first.
-5. Restrict checkers to approved deterministic functions or fixture commands only.
-6. Never execute arbitrary shell commands from model output.
-7. Produce action_result records linked to action_record_v1.
-8. Re-score or summarize tasks after action execution.
-9. Compare planned-only vs executed-action outcomes.
-10. Report current-info improvement separately from verifier-only categories.
-11. Keep private raw task/output content local.
-12. Keep auto_outcome and action_result as candidates, not gold.
-13. Keep production mode gated.
+1. Build or select a 500-task mixed workload using the cleaned metadata and M18 action execution path.
+2. Run against the live agents-a1 endpoint on fred.
+3. Pass full model output transiently to approved checkers before truncation.
+4. Keep private detailed records local and gitignored.
+5. Store only preview/redacted output in persistent logs if needed.
+6. Execute safe action paths during the live run with explicit opt-in config.
+7. Execute retrieval only through fixture/public-fixture adapters unless a later milestone adds a real public retrieval adapter.
+8. Execute checkers only through the existing deterministic allowlist.
+9. Produce action_result records for executed/skipped actions.
+10. Produce a public-safe aggregate summary with no raw prompt/output/retrieved-context text.
+11. Compare M19 to M15 and M18: completion rate, escalation rate, action execution rate, checker verdicts from full-output execution, and retrieval followup counts.
+12. Report current-info separately: retrieval completed is not answer correctness; grounded regeneration remains separate unless implemented.
+13. Review a representative escalated/action-result subset and update calibration summary if useful.
+14. Keep auto_outcome and action_result as candidates, not gold.
+15. Keep production mode gated.
 
-## Recommended action_result record
+## M19 deliverables
 
-Each action result should be aggregate-safe:
-
-- task_id
-- action_type
-- action_status: completed, skipped, failed
-- executor_name
-- result_type: retrieved_context, checker_result, no_result
-- result_confidence
-- evidence_hash only, no raw retrieved text
-- followup_needed
-- error_code if failed
-
-## M18 deliverables
-
-- schema/action_result_v1.json if useful
-- src/action_executor.py or equivalent
-- safe retrieval fixture/source adapter
-- deterministic checker execution adapter
-- reports/outcomes/agents_a1_m18_action_execution_summary.json
-- docs/M18_SAFE_ACTION_EXECUTION.md
-- tests for disabled-by-default behavior, retrieval execution, checker execution, no arbitrary command execution, aggregate no-text report, and before/after comparison
+- data/prompts/agents_a1_m19_batch.jsonl or documented local batch path
+- config/agents_a1_m19_run.json or updated run config
+- live runner support for transient full-output checker execution
+- reports/outcomes/agents_a1_m19_summary_sample.json
+- reports/outcomes/agents_a1_m19_action_execution_summary.json
+- reports/outcomes/agents_a1_m19_vs_baseline.json
+- docs/M19_LIVE_FULL_OUTPUT_ACTION_RUN.md
+- tests for transient full-output checker path, no raw text persistence, safe action execution, aggregate no-text report, resume behavior, and baseline comparison
 - updated STATE.md and reports/FINDINGS.md
 
-## M18 stop condition
+## M19 stop condition
 
-- retrieval_needed actions can execute in a safe fixture/public mode
-- checker_needed actions can execute only through approved deterministic paths
-- action_result records validate and contain no raw text
-- before/after report shows what changed after action execution
-- current-info tasks are no longer merely flagged; they have executable follow-up path
+- 500-task live or dry-run path exists
+- full model output reaches approved checkers transiently before truncation
+- full output is not committed or stored in public artifacts
+- checker verdicts are now valid for full-output action execution, not legacy preview replay
+- retrieval actions execute only through allowed fixture/public-fixture paths
+- action_result records validate and remain candidate-only
+- aggregate reports contain no raw task/output/retrieved-context text
 - public artifacts pass commit-safe checks
 - production mode remains gated
 
-## After M18
+## After M19
 
 Choose one:
 
-- M19A: larger 500-task live run with safe action execution enabled
-- M19B: broader model comparison against another local model
-- M19C: missing-label dataset converters
-- M19D: improve open-ended explain verifier coverage with rubric/reference strategy
+- M20A: grounded regeneration for current-info tasks after retrieval
+- M20B: broader model comparison against another local model using the same M19 harness
+- M20C: missing-label dataset converters
+- M20D: improve open-ended explain verifier coverage with rubric/reference strategy
 
 ## Repository hygiene
 
-Do not commit local detailed records, retrieved raw text, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit local detailed records, full model outputs, retrieved raw text, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.

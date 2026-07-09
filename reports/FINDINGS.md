@@ -1092,3 +1092,27 @@ null=unreviewed, private text never committed), the first auto-vs-human agreemen
 (n=1, 0.0 — the false-positive), and the before/after (escalation 7→6, wrong 1→0).
 Gating restated (auto_outcome candidate not gold; production/final gold/audit
 gated). Public aggregates only in examples.
+
+## 82. M12 verifier-json tests (M12 step 7) — MILESTONE COMPLETE
+`tests/test_verifier_json.py` (4 tests, CPU-only, no network): (a) json_object_check
+passes valid JSON incl trailing whitespace/prose + markdown fences + required-key,
+fails invalid/missing-key/wrong-type, evidence hashed no-leak; (b) routing — json_check
+tasks run json_object_check not regex, regex tasks still run regex_or_schema_check;
+(c) reviewed aggregate has NO text keys + agreement from a SYNTHETIC reviewed fixture
+(n_compared 2, rate 0.5); (d) before/after — the JSON row flips wrong→ok under
+json_object_check and no longer escalates. Full suite green: 36 tests (agents-a1 5,
+autonomous 5, decode-stub 4, shadow-wrapper 4, outcome-review 5, policy-engine 4,
+private-workflow 5, verifier-json 4).
+
+### M12 summary — verifier hardening + reviewed escalation calibration
+Closed the loop on the M11 live finding: added json_object_check (json.loads +
+balanced-brace extraction, type/required-keys), routed JSON tasks to it and kept
+regex for regex only, and wired it into CORRECTNESS so its verdict feeds
+auto_was_wrong. Reviewed the 7 escalated live records against public benchmark
+ground truth (all correct; honest operator_review; private text never committed),
+producing the FIRST auto-vs-human agreement (n=1, 0.0 — the verifier false-positive).
+Before/after: the JSON row flips wrong→ok, escalation 7→6, auto_was_wrong 1→0. This
+is the auto-vs-human loop doing its job: auto flagged uncertainty, human review
+corrected it, and the checker was fixed. auto_outcome stays candidate; production
+thresholds gated. NEXT (steer M13): larger live run / calibration from reviewed
+records / missing-label converters.

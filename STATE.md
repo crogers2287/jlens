@@ -398,3 +398,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M12 Verifier calibration — Iteration M12.6 (2026-07-09 00:06 EDT) — step 6 COMPLETE (doc)
 - docs/M12_VERIFIER_REVIEW_CALIBRATION.md: finding → JSON verifier + routing + CORRECTNESS → objective review → first agreement (n=1, 0.0) → before/after (7→6, 1→0) → gating. Public aggregates only.
 - Next step 7 (FINAL): tests (json verifier, routing, reviewed aggregate, before/after), then M12 DONE.
+
+## M12 Verifier calibration — Iteration M12.7 (2026-07-09 00:08 EDT) — step 7 COMPLETE → M12 DONE
+- tests/test_verifier_json.py 4/4 pass; full suite green (36 tests). All M12 deliverables: json_object_check + routing + CORRECTNESS wiring; objective review of 7 escalated (gitignored); public reviewed aggregate (agreement n=1 rate 0.0); before/after (7→6, 1→0); doc; tests. Private never staged; auto candidate; production gated. M12 STOP CONDITION MET.
+- NEXT per steer M13: A larger Agents-A1 run (100-250) / B calibration from reviewed records / C missing-label converters.

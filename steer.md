@@ -1,6 +1,6 @@
-# steer.md — post-M14 larger-run steering
+# steer.md — post-M15 action-routing steering
 
-M1 through M14 are complete. Do not redo the earlier harness, review, JSON verifier, numeric verifier, explain-rubric, or M13 larger-run work.
+M1 through M15 are complete. Do not redo the previous harness, review, verifier, or larger-run work.
 
 ## Current state
 
@@ -18,19 +18,26 @@ Completed milestones:
 - M10 autonomous supervisor
 - M11 first live Agents-A1 run
 - M12 JSON verifier hardening and reviewed escalation calibration
-- M13 larger Agents-A1 live run
-- M14 numeric-tolerant verifier + explain-rubric coverage
+- M13 110-task live Agents-A1 run
+- M14 numeric-tolerant verifier and explain-rubric coverage
+- M15 261-task live Agents-A1 run after verifier fixes
 
-M14 result:
+M15 result:
 
-- Added numeric_tolerant_check for approximate and unit-converted numeric answers.
-- Kept exact_answer_match strict for pure string answers.
-- Added explain_rubric_check for public fact-checkable explanation prompts.
-- Routed numeric tasks to numeric_tolerant_check.
-- Routed explain-rubric tasks to explain_rubric_check.
-- Both new verifiers are wired into correctness scoring.
-- The M13 speed-of-light false-positive now flips wrong to ok and de-escalates.
-- Full test suite is green at 45 tests.
+- Built a deterministic 261-task batch across 8 category types.
+- Ran live against agents-a1 on fred.
+- Completed 261/261 with 0 failures.
+- Escalation rate improved across live runs: 0.28 -> 0.164 -> 0.073.
+- JSON false-positive stayed fixed at scale.
+- Numeric-tagged false-positive stayed fixed at scale.
+- Full test suite is green at 49 tests.
+
+M15 findings:
+
+- The remaining auto-wrong is a task-metadata gap, not a verifier regression.
+- A reused speed-of-light exact-answer row lacked numeric metadata and routed to strict exact matching.
+- Rubric synonym handling is still basic; synonym mismatch should escalate, not mark wrong.
+- Current-info tasks are flagged as retrieval-needed, but the system does not yet run a retrieval/check action.
 
 Current live model context:
 
@@ -42,63 +49,70 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M15 larger Agents-A1 live run after verifier fixes
+## Next milestone: M16 action routing + metadata cleanup
 
-M15 should scale the live workload now that the two known verifier-strictness false positives are fixed: JSON/object output and approximate numeric answers.
+M16 should turn the current verifier signals into safe next actions. The system already knows when a task needs retrieval or checking; now it needs a controlled action layer that can run approved retrieval/checker steps and re-score the result. Also clean up task metadata so numeric rows route correctly.
 
 Suggested command:
 
-/jlens-m15-larger-agents-a1-live-run
+/jlens-m16-action-routing-and-metadata-loop
 
-## M15 objectives
+## M16 objectives
 
-1. Build or select a 250-500 task mixed workload.
-2. Include the existing categories: math, exact answer, numeric answer, JSON/object, regex, current-info, and explain/rubric.
-3. Add enough numeric and explain-rubric rows to test the new M14 verifier coverage.
-4. Keep the run bounded, resumable, and failure-tolerant.
-5. Run against the live agents-a1 endpoint on fred.
-6. Store detailed records only in ignored local paths.
-7. Produce a public-safe aggregate report with no task text.
-8. Produce an escalation queue for local review.
-9. Review a representative escalated subset and compute auto-vs-human agreement.
-10. Compare M15 against M13 and M11/M12 baselines.
-11. Report escalation rate, verifier distribution, auto_was_wrong count, retrieval-needed count, checker-needed count, failure count, and runtime.
-12. Track whether JSON and numeric false positives stay fixed at scale.
-13. Keep auto_outcome as candidate, not gold.
-14. Keep production mode gated.
+1. Fix public task metadata so numeric exact-answer rows carry numeric metadata.
+2. Add validation that detects numeric-looking exact-answer rows missing numeric metadata.
+3. Add an action-routing layer for auto_needed_retrieval and auto_needed_checker.
+4. Keep actions read-only and fixture-safe by default.
+5. For current-info tasks, create a retrieval-needed action record rather than pretending the base model answer is enough.
+6. For checker-needed tasks, route to approved deterministic checkers only.
+7. Re-run or replay the M15 batch after metadata cleanup and report before/after.
+8. Report how many tasks moved from strict exact-answer to numeric_tolerant_check.
+9. Report how many current-info tasks were routed to retrieval action records.
+10. Keep auto_outcome as candidate, not gold.
+11. Keep production mode gated.
 
-## M15 deliverables
+## Recommended action record
 
-- data/prompts/agents_a1_m15_batch.jsonl or documented local batch path
-- config/agents_a1_m15_run.json or updated run config
-- reports/outcomes/agents_a1_m15_summary_sample.json
-- reports/outcomes/agents_a1_m15_vs_baseline.json
-- public-safe reviewed subset summary if review is performed
-- docs/M15_LARGER_AGENTS_A1_RUN.md
-- tests for batch validation, aggregate report, resume behavior, verifier distribution, and baseline comparison
+Each action record should be aggregate-safe and local-safe:
+
+- task_id
+- action_type: retrieval_needed, checker_needed, no_action, review_needed
+- reason_code
+- source_verifier
+- confidence
+- status: planned, skipped, completed, failed
+- evidence_hash only, no raw task text
+
+## M16 deliverables
+
+- metadata validator for task rows
+- action routing module or extension to the supervisor
+- action record schema if useful
+- updated public batch rows or generator metadata fixes
+- public-safe before/after report for M15 metadata cleanup
+- public-safe action-routing summary
+- docs/M16_ACTION_ROUTING.md
+- tests for metadata validation, action routing, aggregate no-text reports, and replay/before-after comparison
 - updated STATE.md and reports/FINDINGS.md
 
-## M15 stop condition
+## M16 stop condition
 
-- 250-500 task batch exists
-- live or dry-run path works with the new batch
-- aggregate summary contains no task text
-- escalation queue is generated
-- representative escalated subset has a review path
-- comparison against M13 and M11/M12 baselines exists
-- JSON false-positive remains fixed
-- numeric false-positive remains fixed
+- numeric metadata gap is detected and fixed in public batch generation
+- current-info tasks produce retrieval-needed action records
+- checker-needed tasks route only to approved deterministic checkers
+- before/after report shows metadata cleanup impact
+- action summaries contain no task text
 - public artifacts pass commit-safe checks
 - production mode remains gated
 
-## After M15
+## After M16
 
-Choose the next path based on results:
+Choose one:
 
-- M16A: calibration from reviewed Agents-A1 records
-- M16B: integrate retrieval/checker actions for current-info tasks
-- M16C: add missing-label dataset converters
-- M16D: broader model comparison against another local model
+- M17A: calibration from reviewed Agents-A1 records
+- M17B: larger 500-task live run with action routing enabled
+- M17C: missing-label dataset converters
+- M17D: broader model comparison against another local model
 
 ## Repository hygiene
 

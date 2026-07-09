@@ -1,6 +1,6 @@
-# steer.md — post-M12 larger-run steering
+# steer.md — post-M13 verifier-coverage steering
 
-M1 through M12 are complete. Do not redo the earlier harness, review, or verifier-hardening work.
+M1 through M13 are complete. Do not redo the earlier harness, review, verifier-hardening, or larger-run work.
 
 ## Current state
 
@@ -18,16 +18,24 @@ Completed milestones:
 - M10 autonomous supervisor
 - M11 first live Agents-A1 run
 - M12 verifier hardening and reviewed escalation calibration
+- M13 larger Agents-A1 live run
 
-M12 result:
+M13 result:
 
-- json_object_check was added and routed for JSON/object tasks.
-- Regex remains available for true regex tasks.
-- The M11 JSON false-positive was fixed.
-- The 7 escalated live rows were reviewed against public benchmark ground truth.
-- First auto-vs-human agreement was computed on the comparable row.
-- Before/after improved from escalation 7 to 6 and auto_was_wrong 1 to 0.
-- Full test suite is green at 36 tests.
+- Built deterministic 110-task mixed batch across 6 categories.
+- Ran live against agents-a1 on fred.
+- Completed 110/110 with 0 failures.
+- Escalation rate improved from 0.28 in M11 to 0.164 in M13.
+- JSON verifier fix held at scale with 0 JSON escalations.
+- Public aggregate, reviewed-subset, and baseline comparison were committed.
+- Private detailed records stayed local.
+- Full test suite is green at 40 tests.
+
+New M13 finding:
+
+- The one auto-wrong in the reviewed subset was another verifier-strictness issue.
+- exact_answer_match rejected an approximate or unit-converted numeric answer.
+- The model was right about the speed of light, but the verifier was too literal.
 
 Current live model context:
 
@@ -39,59 +47,77 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M13 larger Agents-A1 live run
+## Next milestone: M14 numeric-tolerant verifier + explain coverage
 
-M13 should scale from the 25-task live run to a larger bounded live run now that the JSON verifier issue is fixed.
+M14 should improve verifier coverage before running larger batches again. The priority is to fix the exact-answer numeric strictness found in M13 and add better handling for open-ended explain tasks.
 
 Suggested command:
 
-/jlens-m13-larger-agents-a1-live-run
+/jlens-m14-verifier-coverage-loop
 
-## M13 objectives
+## M14 objectives
 
-1. Build or select a 100-250 task mixed workload.
-2. Include task categories that verifiers can score: math, exact answer, JSON/object, regex, retrieval-needed, and explain/open-ended.
-3. Keep the run bounded and resumable.
-4. Run against the live agents-a1 endpoint on fred.
-5. Record local detailed run files only in the ignored local run directory.
-6. Produce a public-safe aggregate report with no task text.
-7. Produce an escalation queue for review.
-8. Review a representative escalated subset, not necessarily every row if the run is large.
-9. Report auto-vs-human agreement where review exists.
-10. Report escalation rate, verifier distribution, auto_was_wrong count, retrieval-needed count, checker-needed count, failures, and runtime.
-11. Compare M13 results to the M11/M12 25-task baseline.
-12. Keep auto_outcome as candidate, not gold.
-13. Keep production mode gated.
+1. Add a numeric-tolerant answer verifier for approximate and unit-converted numeric answers.
+2. Keep strict exact-answer matching available for pure string answers.
+3. Route numeric exact-answer tasks to the numeric verifier when metadata indicates numeric/units.
+4. Add task metadata for numeric tolerance, expected units, aliases, or acceptable ranges.
+5. Add tests for speed-of-light style answers, unit conversions, approximate values, and wrong numeric values.
+6. Add an explain-task verifier strategy that can score public closed-ground-truth explanation prompts without pretending open-ended subjective answers are gold.
+7. For explain tasks, prefer rubric/keyword/fact checklist verifiers with explicit uncertainty and escalation when coverage is weak.
+8. Re-score or replay the M13 representative finding and show the numeric verifier flips the false-positive to ok.
+9. Produce a before/after aggregate showing change in auto_was_wrong and escalation counts.
+10. Keep auto_outcome as candidate, not gold.
+11. Keep production mode gated.
 
-## M13 deliverables
+## Recommended verifier behavior
 
-- data/prompts/agents_a1_m13_batch.jsonl or documented local batch path
-- config/agents_a1_m13_run.json or update to existing run config
-- reports/outcomes/agents_a1_m13_summary_sample.json
-- public-safe reviewed subset summary if review is performed
-- docs/M13_LARGER_AGENTS_A1_RUN.md
-- tests for batch validation, aggregate report, resume behavior, and comparison report
+Numeric verifier:
+
+- extract one or more numeric values from model output
+- normalize simple units where metadata provides expected units
+- compare against expected value using absolute or relative tolerance
+- support accepted aliases when the answer is numeric plus unit text
+- pass when value is within tolerance
+- fail when value is clearly outside tolerance
+- escalate when no reliable numeric value can be extracted
+
+Explain verifier:
+
+- use only public prompts with objective fact checklists
+- count required facts present or absent
+- never claim subjective explain answers are gold without a rubric
+- escalate when the rubric is incomplete or confidence is low
+
+## M14 deliverables
+
+- updated src/verifiers.py
+- updated verifier routing for numeric tasks
+- optional schema or metadata docs for numeric tolerance fields
+- updated or new public batch rows that exercise numeric tolerance
+- reports/outcomes/agents_a1_numeric_beforeafter_sample.json
+- docs/M14_VERIFIER_COVERAGE.md
+- tests for numeric verifier, routing, explain rubric behavior, before/after comparison, and aggregate no-text reports
 - updated STATE.md and reports/FINDINGS.md
 
-## M13 stop condition
+## M14 stop condition
 
-- larger bounded batch exists
-- live or dry-run path works with the new batch
-- aggregate summary contains no task text
-- escalation queue is generated
-- at least a small escalated subset has a review path
-- before/after comparison against M11/M12 exists
-- public artifacts pass commit-safe checks
+- numeric verifier handles the M13 speed-of-light false-positive pattern
+- strict exact matching still works for pure string answers
+- numeric routing is tested
+- explain verifier strategy exists without overclaiming
+- before/after report shows whether verifier quality improved
+- public artifacts contain no task text where prohibited
+- private detailed records stay local
 - production mode remains gated
 
-## After M13
+## After M14
 
-Choose the next path based on results:
+Choose one:
 
-- M14A: calibration from reviewed Agents-A1 records
-- M14B: broaden benchmark scale and task diversity
-- M14C: add missing-label dataset converters
-- M14D: improve verifier coverage for open-ended explain tasks
+- M15A: larger Agents-A1 live run, 250-500 tasks
+- M15B: calibration from reviewed Agents-A1 records
+- M15C: add missing-label dataset converters
+- M15D: integrate retrieval/checker actions for current-info tasks
 
 ## Repository hygiene
 

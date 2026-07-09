@@ -431,3 +431,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.7 (2026-07-09 00:57 EDT) — step 7 COMPLETE (run doc)
 - docs/M13_LARGER_AGENTS_A1_RUN.md: build + live run (call-endpoint-never-serve) + resume + aggregate/escalation/review + results + baseline comparison + gating. Commands verified.
 - Next step 8 (FINAL): tests/test_m13_larger_run.py, then M13 DONE.
+
+## M13 Larger run — Iteration M13.8 (2026-07-09 01:00 EDT) — step 8 COMPLETE → M13 DONE
+- tests/test_m13_larger_run.py 4/4 pass; full suite green (40 tests). All M13 deliverables: generator+110-task batch, run config, LIVE 110-task run (escalation 0.164 vs 0.28 baseline, 0 failures, JSON fix validated), aggregate+escalation queue, reviewed subset (agreement n=1 rate 0.0), baseline comparison, doc, tests. Private never staged; auto candidate; production gated. M13 STOP CONDITION MET.
+- NEXT per steer M14: A calibration / B broaden / C label converters / D verifier coverage (numeric-tolerant exact-match + open-ended explain — motivated by the M13 exact-match finding).

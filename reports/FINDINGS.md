@@ -1191,3 +1191,26 @@ CALLS it, never serves models), resume/failure handling, aggregate + escalation 
 representative-subset review, results (escalation 0.164, JSON 0 escalated, the
 exact-match numeric strictness case), baseline comparison, and gating. Commands
 match real CLI flags. Public fixtures/aggregates only.
+
+## 90. M13 larger-run tests (M13 step 8) — MILESTONE COMPLETE
+`tests/test_m13_larger_run.py` (4 tests, CPU-only, no network): (a) the m13 batch
+validates (100-250, unique ids, all 6 categories, per-category required fields,
+deterministic); (b) aggregate report over a SYNTHETIC m13-shaped fixture has NO
+text keys + correct counts (escalation/wrong/retrieval/checker); (c) resume — a
+second run over the same out-log adds zero (fake endpoint), bounded by batch.size;
+(d) the committed comparison report has the expected keys + no text. Full suite
+green: 40 tests (agents-a1 5, autonomous 5, decode-stub 4, shadow-wrapper 4,
+m13 4, outcome-review 5, policy-engine 4, private-workflow 5, verifier-json 4).
+
+### M13 summary — larger Agents-A1 live run
+Scaled the live run 25→110 tasks against agents-a1 on fred (deterministic 6-category
+batch). Escalation rate fell 0.28→0.164 at 4.4× scale; 0 failures. The M12 JSON
+verifier fix held at scale (JSON tasks escalated 0 times). Reviewed a representative
+6/18 escalated subset → first M13 auto-vs-human agreement (n=1, 0.0). The one
+auto-wrong was a NEW verifier-strictness finding: exact_answer_match rejects
+approximate/unit-converted numeric answers (model was right about the speed of
+light). Committed public aggregates only (summary, reviewed-subset, vs-baseline);
+private detailed/reviewed records stayed gitignored. auto_outcome candidate;
+production thresholds gated. NEXT per steer M14: A calibration from reviewed records
+/ B broaden scale+diversity / C missing-label converters / D numeric-tolerant +
+open-ended verifier coverage (the M13 exact-match finding motivates D).

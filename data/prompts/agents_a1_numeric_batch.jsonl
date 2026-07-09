@@ -1,0 +1,6 @@
+{"prompt_id": "num_light_kms", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "numeric": true, "expected_value": 300000, "rel_tolerance": 0.01, "expected_units": "km", "known_answer": "300000"}
+{"prompt_id": "num_water_boil_c", "prompt": "What is the boiling point of water at sea level, in Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": 100, "tolerance": 0.5, "expected_units": "C", "known_answer": "100"}
+{"prompt_id": "num_earth_circumference_km", "prompt": "Approximately how many kilometers is Earth's circumference?", "task_category": "exact_answer", "numeric": true, "expected_value": 40075, "rel_tolerance": 0.02, "expected_units": "km", "known_answer": "40075"}
+{"prompt_id": "num_absolute_zero_c", "prompt": "What is absolute zero in degrees Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": -273.15, "tolerance": 0.5, "expected_units": "C", "known_answer": "-273.15"}
+{"prompt_id": "explain_prime_rubric", "prompt": "Explain what a prime number is.", "task_category": "explain", "required_facts": ["greater than 1", "divisor"]}
+{"prompt_id": "explain_photosynthesis_rubric", "prompt": "Explain photosynthesis in one sentence.", "task_category": "explain", "required_facts": ["light", "energy"]}

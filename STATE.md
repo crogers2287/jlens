@@ -448,3 +448,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.3 (2026-07-09 01:26 EDT) — step 3 COMPLETE (routing + CORRECTNESS)
 - _run_verifiers routes numeric→numeric_tolerant_check, required_facts→explain_rubric_check; exact_answer_match skips numeric (kept for pure strings). Both new verifiers added to CORRECTNESS (escalation math unchanged). Routing verified 3 ways; suite green.
 - Next step 4: public numeric/rubric fixture rows + metadata; verify routing.
+
+## M14 Verifier coverage — Iteration M14.4 (2026-07-09 01:29 EDT) — step 4 COMPLETE (public numeric/rubric fixture)
+- data/prompts/agents_a1_numeric_batch.jsonl: 4 numeric (metadata numeric/expected_value/tolerance/rel_tolerance/expected_units) + 2 explain-rubric (required_facts). All route correctly (numeric→numeric_tolerant_check, rubric→explain_rubric_check). Public, tracked.
+- Next step 5: before/after showing the numeric verifier flips the M13 speed-of-light false-positive.

@@ -1248,3 +1248,13 @@ and explain_rubric_check to CORRECTNESS so their verdicts feed auto_was_wrong
 (completes wiring; escalation/confidence math UNCHANGED). Verified: numeric task →
 numeric_tolerant_check (exact avoided); string exact task → exact_answer_match;
 explain-rubric task → explain_rubric_check; CORRECTNESS contains both. Full suite green.
+
+## 94. Numeric/rubric public fixture (M14 step 4)
+`data/prompts/agents_a1_numeric_batch.jsonl` — 6 PUBLIC rows exercising the new
+verifiers: 4 numeric exact-answer tasks (speed of light km/s + rel_tolerance +
+expected_units; water boiling point C; Earth circumference km; absolute zero C)
+carrying the new optional metadata (numeric, expected_value, tolerance,
+rel_tolerance, expected_units, accepted_values), and 2 explain-rubric tasks with
+required_facts checklists. Verified: valid JSONL, every row has prompt_id+prompt,
+numeric rows route to numeric_tolerant_check (exact_answer_match avoided), rubric
+rows route to explain_rubric_check. Public — tracked, no private text.

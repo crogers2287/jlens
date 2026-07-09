@@ -1312,3 +1312,11 @@ exercise M14 explain coverage). Unique prompt_ids. Verified: count in [250,500],
 all category types present, required fields per category, numeric rows route to
 numeric_tolerant_check + rubric rows to explain_rubric_check, regeneration
 byte-identical (deterministic). Public prompts only.
+
+## 99. M15 run config (M15 step 2)
+`config/agents_a1_m15_run.json` — agents-a1 llama-swap endpoint (:9069, model
+"agents-a1", timeout 180) + the 261-task public M15 batch; batch {size 300, cap
+500}; all verifier toggles incl numeric_tolerant_check + explain_rubric_check,
+self_consistency_samples=1 (261 calls); escalation thresholds reused; resume
+enabled; deterministic; private out paths (run/meta/review) gitignored. Verified:
+loads, sha256 run_id stable, private paths gitignored. No secrets.

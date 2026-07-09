@@ -469,3 +469,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - New M15 loop prompt installed (250-500 live run; call-endpoint-never-serve; two-baseline comparison) via /prompt-master. steer.md synced post-M14 (6ca7663).
 - src/gen_m15_batch.py → data/prompts/agents_a1_m15_batch.jsonl: 261 tasks (math160/exact20/numeric20/json10/regex8/current10/explain18/rubric15), unique, deterministic, numeric+rubric route correctly.
 - Next step 2: config/agents_a1_m15_run.json (agents-a1 endpoint, batch 300/cap 500).
+
+## M15 Larger run — Iteration M15.2 (2026-07-09 02:02 EDT) — step 2 COMPLETE (run config)
+- config/agents_a1_m15_run.json: agents-a1 endpoint, batch 300/cap 500, numeric+rubric verifiers enabled, 1 call/task (261 calls). run_id stable; private paths gitignored.
+- Next step 3: LIVE 261-task run against agents-a1 on fred (background + poll).

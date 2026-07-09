@@ -1,0 +1,21 @@
+{
+ "m19_arithmetic_miss_candidates": {
+  "reviewed": 4,
+  "objective_metadata_comparable": 4,
+  "confirmed_wrong_candidates": 4,
+  "gold_promotions": 0,
+  "disposition": "candidate_only_pending_human_calibration"
+ },
+ "retrieval_heuristic_false_positives": {
+  "reviewed": 3,
+  "category_distribution": {
+   "explain": 2,
+   "numeric": 1
+  },
+  "refinement": "bare_weather_price_stock_news_terms_removed",
+  "gold_promotions": 0
+ },
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only: no prompt/output/context text"
+}

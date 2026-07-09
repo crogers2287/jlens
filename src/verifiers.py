@@ -117,13 +117,16 @@ def code_test_stub(output: str, fixture_test=None, **_):
 
 _FRESH_RE = re.compile(
     r"\b(today|current|currently|latest|now|this year|as of|2024|2025|2026|"
-    r"price|stock|weather|news|who is the (president|ceo)|when did .* (release|launch))\b",
+    r"who is the (president|ceo)|when did .* (release|launch))\b",
     re.I)
 
 
 def retrieval_required_heuristic(output: str, prompt: str = "",
                                  task_category: Optional[str] = None, **_):
     """Flag tasks that likely need fresh/grounded info (auto_needed_retrieval)."""
+    # Bare topic words such as weather/price/news are not freshness by
+    # themselves (M19 found three false positives). Explicit current-info task
+    # metadata remains authoritative; otherwise require a temporal expression.
     needs = (task_category in {"current_info", "retrieval", "news"} or
              bool(_FRESH_RE.search(prompt or "")))
     # confidence reflects how sure the heuristic is, not correctness of the answer

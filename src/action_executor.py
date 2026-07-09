@@ -79,7 +79,12 @@ class FixtureRetrievalAdapter:
         if not isinstance(context, str) or not context.strip():
             raise RetrievalError("retrieval_not_found")
         confidence = float(row.get("confidence", 0.8))
-        return {"context": context, "confidence": max(0.0, min(1.0, confidence))}
+        return {
+            "context": context,
+            "confidence": max(0.0, min(1.0, confidence)),
+            "source_kind": row.get("source_kind", "fixture"),
+            "expected_answer": row.get("expected_answer"),
+        }
 
 
 def _base(action, *, status, executor, result_type, confidence=None,

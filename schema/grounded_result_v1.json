@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/grounded_result_v1.json",
+  "title": "jlens grounded regeneration result v1",
+  "description": "Aggregate-safe candidate result for explicitly enabled fixture-grounded regeneration. Contains no raw prompt, context, original output, or regenerated output.",
+  "type": "object",
+  "required": [
+    "task_id", "action_evidence_hash", "grounded_status",
+    "context_source_kind", "regeneration_model", "result_confidence",
+    "verifier_names", "verifier_verdicts", "original_input_kind",
+    "answer_changed", "original_evidence_hash", "grounded_evidence_hash",
+    "evidence_hash", "followup_needed", "error_code", "candidate_only"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {"type": "string"},
+    "action_evidence_hash": {"type": ["string", "null"]},
+    "grounded_status": {
+      "type": "string", "enum": ["completed", "skipped", "failed"]
+    },
+    "context_source_kind": {
+      "type": "string", "enum": ["fixture", "public_fixture", "none"]
+    },
+    "regeneration_model": {"type": ["string", "null"]},
+    "result_confidence": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1
+    },
+    "verifier_names": {"type": "array", "items": {"type": "string"}},
+    "verifier_verdicts": {
+      "type": "array",
+      "items": {"type": "string", "enum": ["pass", "fail", "undecided"]}
+    },
+    "original_input_kind": {
+      "type": "string", "enum": ["output_preview", "none"]
+    },
+    "answer_changed": {"type": ["boolean", "null"]},
+    "original_evidence_hash": {"type": ["string", "null"]},
+    "grounded_evidence_hash": {"type": ["string", "null"]},
+    "evidence_hash": {"type": "string"},
+    "followup_needed": {"type": "boolean"},
+    "error_code": {
+      "type": ["string", "null"],
+      "enum": [
+        "execution_disabled", "not_current_info", "retrieval_not_completed",
+        "retrieval_adapter_unavailable", "retrieval_not_found",
+        "retrieval_source_not_allowed", "model_failed", null
+      ]
+    },
+    "candidate_only": {"const": true}
+  }
+}

@@ -1644,3 +1644,39 @@ baseline comparison. `tests/test_m19_live_full_output.py` covers deterministic
 paired resume, disabled actions, fixture-only wildcard retrieval, aggregate
 no-text/baseline interpretation, and current-info separation. Production remains
 gated; detailed records and retrieval payload stay gitignored.
+
+## 128. M20 aggregate-safe grounded-result contract
+`schema/grounded_result_v1.json` + `src/grounded_regenerator.py`: regeneration
+defaults OFF and accepts only completed retrieval actions for true current_info
+tasks through FixtureRetrievalAdapter. Context and grounded output stay transient;
+records contain action linkage, source/model enums, verifier verdicts, change flag,
+confidence, hashes, follow-up/error, candidate_only=true. No raw text schema fields.
+
+## 129. M20 controlled live grounded regeneration
+Local agents-a1 processed the M19 retrieval subset: 23 candidates -> 20 true
+current-info grounded calls completed + 3 non-current false positives skipped
+before model invocation. 20/20 current-info rows produced answers and all 20 changed
+from the stored original preview. Detailed results + fixture remain gitignored.
+
+## 130. Generic fixture context exposes grounding-quality limit
+All 20 completed grounded outputs were checked for the controlled fixture expected
+token: 4 pass / 16 fail (0.20). The generic fixture established a response token
+but did not provide question-specific real-world evidence; many outputs treated it
+as insufficient or omitted the token. This is execution-path quality, NOT real-
+world answer correctness. Follow-up needed: 16 fails + 3 skipped = 19.
+
+## 131. Reviewed M19 misses and retrieval false positives
+Public M20 review summary: four full-output arithmetic misses rechecked against
+deterministic task metadata -> 4 confirmed wrong candidates, 0 gold promotions.
+Three retrieval false positives confirmed (explain weather x2, numeric price x1).
+Freshness regex removes bare weather/price/stock/news triggers while preserving
+explicit current_info routing and temporal-expression detection.
+
+## 132. M20 summaries, tests, and milestone completion
+Public grounded + review summaries are aggregate-only and no-text; existing private
+results can rebuild them via `--summarize-existing` without model calls. Six M20
+tests cover default-off, transient fixture context/no text leak, non-current no-call,
+grounding-quality aggregation, 4+3 review summary, and heuristic refinement.
+All 23 private results validate grounded_result_v1; public artifacts pass
+check_commit_safe; full suite 76/76 green. auto/action/grounded results remain
+candidates; production gated.

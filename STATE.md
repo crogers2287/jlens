@@ -592,3 +592,22 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Added three aggregate reports, M19 doc, and 6 CPU/no-network tests for batch,
   transient/no-persistence, explicit opt-in, safe retrieval, aggregation,
   current-info separation, and resume. Candidate-only; production gated.
+
+## M20 Grounded regeneration after retrieval (2026-07-09) — MILESTONE COMPLETE
+- Added aggregate-safe `grounded_result_v1` + explicit-opt-in
+  `grounded_regenerator.py`. Only completed retrieval actions for true
+  current_info tasks may call the local model; fixture context + grounded output
+  remain transient and hashes/enums only persist.
+- Controlled live run processed 23 M19 retrieval candidates: 20/20 true
+  current-info tasks produced changed grounded answers; 3 reviewed non-current
+  false positives skipped before any model call.
+- All 20 grounded answers were deterministically checked against a controlled
+  fixture expected token: 4 pass / 16 fail (match rate 0.20). This proves the
+  second-pass path but exposes generic-context quality limits; it is not
+  real-world correctness. Follow-up remains on 19 rows (16 fail + 3 skip).
+- Public review summary confirms all 4 M19 arithmetic miss candidates against
+  deterministic metadata and all 3 retrieval heuristic false positives; zero
+  gold promotions. Freshness regex refined so bare weather/price/stock/news no
+  longer trigger non-current tasks; explicit current_info still routes.
+- Added public grounded + review summaries, M20 doc, summary-only rebuild mode,
+  and 6 safety/report tests. Full suite 76/76 green; production remains gated.

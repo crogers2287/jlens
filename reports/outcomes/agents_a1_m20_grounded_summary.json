@@ -1,0 +1,35 @@
+{
+ "run_id": "m20-grounded-current-info",
+ "n_retrieval_candidates": 23,
+ "grounded_status_distribution": {
+  "completed": 20,
+  "skipped": 3
+ },
+ "context_source_distribution": {
+  "none": 3,
+  "public_fixture": 20
+ },
+ "grounded_answer_produced": 20,
+ "grounded_answer_rate": 0.8696,
+ "true_current_info_candidates": 20,
+ "true_current_info_grounded_rate": 1.0,
+ "retrieval_false_positive_skipped": 3,
+ "deterministically_checked": 20,
+ "verifier_verdict_distribution": {
+  "fail": 16,
+  "pass": 4
+ },
+ "fixture_expected_match_rate": 0.2,
+ "answer_changed_count": 20,
+ "followup_needed_count": 19,
+ "error_code_distribution": {
+  "none": 20,
+  "not_current_info": 3
+ },
+ "retrieval_completion_is_answer_correctness": false,
+ "fixture_verification_is_real_world_truth": false,
+ "raw_context_or_grounded_output_persisted": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only: no prompt/context/output text"
+}

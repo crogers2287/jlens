@@ -427,3 +427,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M13 Larger run — Iteration M13.6 (2026-07-09 00:55 EDT) — step 6 COMPLETE (baseline comparison)
 - Public agents_a1_m13_vs_baseline.json: escalation 0.28→0.164 at 4.4× scale; JSON tasks 0 escalated (M12 fix validated); the 1 M13 auto-wrong is a new exact-match numeric-strictness case, not the fixed JSON one. No text; commit-safe.
 - Next step 7: docs/M13_LARGER_AGENTS_A1_RUN.md.
+
+## M13 Larger run — Iteration M13.7 (2026-07-09 00:57 EDT) — step 7 COMPLETE (run doc)
+- docs/M13_LARGER_AGENTS_A1_RUN.md: build + live run (call-endpoint-never-serve) + resume + aggregate/escalation/review + results + baseline comparison + gating. Commands verified.
+- Next step 8 (FINAL): tests/test_m13_larger_run.py, then M13 DONE.

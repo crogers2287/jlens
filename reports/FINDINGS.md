@@ -1183,3 +1183,11 @@ exact_answer_match strictness on an approximate/unit-converted numeric (model wa
 right). M13 verifier_distribution now includes json_object_check (10) and JSON tasks
 escalated 0 times — the M12 fix validated at scale. auto_needed_checker 5→44 (more
 math tasks), auto_needed_retrieval 5→11. auto_outcome candidate; production gated.
+
+## 89. M13 run doc (M13 step 7)
+docs/M13_LARGER_AGENTS_A1_RUN.md: deterministic 110-task batch build (6-category
+table), live run against the ALREADY-SERVED agents-a1 endpoint on fred (the agent
+CALLS it, never serves models), resume/failure handling, aggregate + escalation +
+representative-subset review, results (escalation 0.164, JSON 0 escalated, the
+exact-match numeric strictness case), baseline comparison, and gating. Commands
+match real CLI flags. Public fixtures/aggregates only.

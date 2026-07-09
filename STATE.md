@@ -464,3 +464,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.7 (2026-07-09 01:40 EDT) — step 7 COMPLETE → M14 DONE
 - tests/test_numeric_verifier.py 5/5 pass; full suite green (45 tests). All M14 deliverables: numeric_tolerant_check + explain_rubric_check, routing + CORRECTNESS wiring, public numeric/rubric fixture, before/after flip, doc, tests. exact_answer_match unchanged; escalation math unchanged; auto candidate; production gated. M14 STOP CONDITION MET.
 - NEXT per steer M15: A larger run 250-500 / B calibration / C label converters / D retrieval+checker actions.
+
+## M15 Larger run — Iteration M15.1 (2026-07-09 01:56 EDT) — step 1 COMPLETE (261-task batch)
+- New M15 loop prompt installed (250-500 live run; call-endpoint-never-serve; two-baseline comparison) via /prompt-master. steer.md synced post-M14 (6ca7663).
+- src/gen_m15_batch.py → data/prompts/agents_a1_m15_batch.jsonl: 261 tasks (math160/exact20/numeric20/json10/regex8/current10/explain18/rubric15), unique, deterministic, numeric+rubric route correctly.
+- Next step 2: config/agents_a1_m15_run.json (agents-a1 endpoint, batch 300/cap 500).

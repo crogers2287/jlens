@@ -1,0 +1,261 @@
+{"prompt_id": "m15_m_000", "prompt": "What is 6 + 8?", "task_category": "math", "known_answer": "14", "expression": "6+8"}
+{"prompt_id": "m15_m_001", "prompt": "What is 7 - 9?", "task_category": "math", "known_answer": "-2", "expression": "7-9"}
+{"prompt_id": "m15_m_002", "prompt": "What is 8 * 10?", "task_category": "math", "known_answer": "80", "expression": "8*10"}
+{"prompt_id": "m15_m_003", "prompt": "What is 9 + 2?", "task_category": "math", "known_answer": "11", "expression": "9+2"}
+{"prompt_id": "m15_m_004", "prompt": "What is 10 - 3?", "task_category": "math", "known_answer": "7", "expression": "10-3"}
+{"prompt_id": "m15_m_005", "prompt": "What is 11 * 4?", "task_category": "math", "known_answer": "44", "expression": "11*4"}
+{"prompt_id": "m15_m_006", "prompt": "What is 12 + 5?", "task_category": "math", "known_answer": "17", "expression": "12+5"}
+{"prompt_id": "m15_m_007", "prompt": "What is 13 - 6?", "task_category": "math", "known_answer": "7", "expression": "13-6"}
+{"prompt_id": "m15_m_008", "prompt": "What is 14 * 7?", "task_category": "math", "known_answer": "98", "expression": "14*7"}
+{"prompt_id": "m15_m_009", "prompt": "What is 15 + 8?", "task_category": "math", "known_answer": "23", "expression": "15+8"}
+{"prompt_id": "m15_m_010", "prompt": "What is 16 - 9?", "task_category": "math", "known_answer": "7", "expression": "16-9"}
+{"prompt_id": "m15_m_011", "prompt": "What is 17 * 10?", "task_category": "math", "known_answer": "170", "expression": "17*10"}
+{"prompt_id": "m15_m_012", "prompt": "What is 18 + 2?", "task_category": "math", "known_answer": "20", "expression": "18+2"}
+{"prompt_id": "m15_m_013", "prompt": "What is 19 - 3?", "task_category": "math", "known_answer": "16", "expression": "19-3"}
+{"prompt_id": "m15_m_014", "prompt": "What is 20 * 4?", "task_category": "math", "known_answer": "80", "expression": "20*4"}
+{"prompt_id": "m15_m_015", "prompt": "What is 21 + 5?", "task_category": "math", "known_answer": "26", "expression": "21+5"}
+{"prompt_id": "m15_m_016", "prompt": "What is 22 - 6?", "task_category": "math", "known_answer": "16", "expression": "22-6"}
+{"prompt_id": "m15_m_017", "prompt": "What is 23 * 7?", "task_category": "math", "known_answer": "161", "expression": "23*7"}
+{"prompt_id": "m15_m_018", "prompt": "What is 24 + 8?", "task_category": "math", "known_answer": "32", "expression": "24+8"}
+{"prompt_id": "m15_m_019", "prompt": "What is 25 - 9?", "task_category": "math", "known_answer": "16", "expression": "25-9"}
+{"prompt_id": "m15_m_020", "prompt": "What is 26 * 10?", "task_category": "math", "known_answer": "260", "expression": "26*10"}
+{"prompt_id": "m15_m_021", "prompt": "What is 27 + 2?", "task_category": "math", "known_answer": "29", "expression": "27+2"}
+{"prompt_id": "m15_m_022", "prompt": "What is 28 - 3?", "task_category": "math", "known_answer": "25", "expression": "28-3"}
+{"prompt_id": "m15_m_023", "prompt": "What is 29 * 4?", "task_category": "math", "known_answer": "116", "expression": "29*4"}
+{"prompt_id": "m15_m_024", "prompt": "What is 30 + 5?", "task_category": "math", "known_answer": "35", "expression": "30+5"}
+{"prompt_id": "m15_m_025", "prompt": "What is 31 - 6?", "task_category": "math", "known_answer": "25", "expression": "31-6"}
+{"prompt_id": "m15_m_026", "prompt": "What is 32 * 7?", "task_category": "math", "known_answer": "224", "expression": "32*7"}
+{"prompt_id": "m15_m_027", "prompt": "What is 33 + 8?", "task_category": "math", "known_answer": "41", "expression": "33+8"}
+{"prompt_id": "m15_m_028", "prompt": "What is 34 - 9?", "task_category": "math", "known_answer": "25", "expression": "34-9"}
+{"prompt_id": "m15_m_029", "prompt": "What is 35 * 10?", "task_category": "math", "known_answer": "350", "expression": "35*10"}
+{"prompt_id": "m15_m_030", "prompt": "What is 36 + 2?", "task_category": "math", "known_answer": "38", "expression": "36+2"}
+{"prompt_id": "m15_m_031", "prompt": "What is 37 - 3?", "task_category": "math", "known_answer": "34", "expression": "37-3"}
+{"prompt_id": "m15_m_032", "prompt": "What is 38 * 4?", "task_category": "math", "known_answer": "152", "expression": "38*4"}
+{"prompt_id": "m15_m_033", "prompt": "What is 39 + 5?", "task_category": "math", "known_answer": "44", "expression": "39+5"}
+{"prompt_id": "m15_m_034", "prompt": "What is 40 - 6?", "task_category": "math", "known_answer": "34", "expression": "40-6"}
+{"prompt_id": "m15_m_035", "prompt": "What is 41 * 7?", "task_category": "math", "known_answer": "287", "expression": "41*7"}
+{"prompt_id": "m15_m_036", "prompt": "What is 42 + 8?", "task_category": "math", "known_answer": "50", "expression": "42+8"}
+{"prompt_id": "m15_m_037", "prompt": "What is 43 - 9?", "task_category": "math", "known_answer": "34", "expression": "43-9"}
+{"prompt_id": "m15_m_038", "prompt": "What is 44 * 10?", "task_category": "math", "known_answer": "440", "expression": "44*10"}
+{"prompt_id": "m15_m_039", "prompt": "What is 45 + 2?", "task_category": "math", "known_answer": "47", "expression": "45+2"}
+{"prompt_id": "m15_m_040", "prompt": "What is 46 - 3?", "task_category": "math", "known_answer": "43", "expression": "46-3"}
+{"prompt_id": "m15_m_041", "prompt": "What is 47 * 4?", "task_category": "math", "known_answer": "188", "expression": "47*4"}
+{"prompt_id": "m15_m_042", "prompt": "What is 48 + 5?", "task_category": "math", "known_answer": "53", "expression": "48+5"}
+{"prompt_id": "m15_m_043", "prompt": "What is 49 - 6?", "task_category": "math", "known_answer": "43", "expression": "49-6"}
+{"prompt_id": "m15_m_044", "prompt": "What is 50 * 7?", "task_category": "math", "known_answer": "350", "expression": "50*7"}
+{"prompt_id": "m15_m_045", "prompt": "What is 51 + 8?", "task_category": "math", "known_answer": "59", "expression": "51+8"}
+{"prompt_id": "m15_m_046", "prompt": "What is 52 - 9?", "task_category": "math", "known_answer": "43", "expression": "52-9"}
+{"prompt_id": "m15_m_047", "prompt": "What is 53 * 10?", "task_category": "math", "known_answer": "530", "expression": "53*10"}
+{"prompt_id": "m15_m_048", "prompt": "What is 54 + 2?", "task_category": "math", "known_answer": "56", "expression": "54+2"}
+{"prompt_id": "m15_m_049", "prompt": "What is 55 - 3?", "task_category": "math", "known_answer": "52", "expression": "55-3"}
+{"prompt_id": "m15_m_050", "prompt": "What is 56 * 4?", "task_category": "math", "known_answer": "224", "expression": "56*4"}
+{"prompt_id": "m15_m_051", "prompt": "What is 57 + 5?", "task_category": "math", "known_answer": "62", "expression": "57+5"}
+{"prompt_id": "m15_m_052", "prompt": "What is 58 - 6?", "task_category": "math", "known_answer": "52", "expression": "58-6"}
+{"prompt_id": "m15_m_053", "prompt": "What is 59 * 7?", "task_category": "math", "known_answer": "413", "expression": "59*7"}
+{"prompt_id": "m15_m_054", "prompt": "What is 60 + 8?", "task_category": "math", "known_answer": "68", "expression": "60+8"}
+{"prompt_id": "m15_m_055", "prompt": "What is 61 - 9?", "task_category": "math", "known_answer": "52", "expression": "61-9"}
+{"prompt_id": "m15_m_056", "prompt": "What is 62 * 10?", "task_category": "math", "known_answer": "620", "expression": "62*10"}
+{"prompt_id": "m15_m_057", "prompt": "What is 63 + 2?", "task_category": "math", "known_answer": "65", "expression": "63+2"}
+{"prompt_id": "m15_m_058", "prompt": "What is 64 - 3?", "task_category": "math", "known_answer": "61", "expression": "64-3"}
+{"prompt_id": "m15_m_059", "prompt": "What is 65 * 4?", "task_category": "math", "known_answer": "260", "expression": "65*4"}
+{"prompt_id": "m15_m_060", "prompt": "What is 66 + 5?", "task_category": "math", "known_answer": "71", "expression": "66+5"}
+{"prompt_id": "m15_m_061", "prompt": "What is 67 - 6?", "task_category": "math", "known_answer": "61", "expression": "67-6"}
+{"prompt_id": "m15_m_062", "prompt": "What is 68 * 7?", "task_category": "math", "known_answer": "476", "expression": "68*7"}
+{"prompt_id": "m15_m_063", "prompt": "What is 69 + 8?", "task_category": "math", "known_answer": "77", "expression": "69+8"}
+{"prompt_id": "m15_m_064", "prompt": "What is 70 - 9?", "task_category": "math", "known_answer": "61", "expression": "70-9"}
+{"prompt_id": "m15_m_065", "prompt": "What is 71 * 10?", "task_category": "math", "known_answer": "710", "expression": "71*10"}
+{"prompt_id": "m15_m_066", "prompt": "What is 72 + 2?", "task_category": "math", "known_answer": "74", "expression": "72+2"}
+{"prompt_id": "m15_m_067", "prompt": "What is 73 - 3?", "task_category": "math", "known_answer": "70", "expression": "73-3"}
+{"prompt_id": "m15_m_068", "prompt": "What is 74 * 4?", "task_category": "math", "known_answer": "296", "expression": "74*4"}
+{"prompt_id": "m15_m_069", "prompt": "What is 75 + 5?", "task_category": "math", "known_answer": "80", "expression": "75+5"}
+{"prompt_id": "m15_m_070", "prompt": "What is 76 - 6?", "task_category": "math", "known_answer": "70", "expression": "76-6"}
+{"prompt_id": "m15_m_071", "prompt": "What is 77 * 7?", "task_category": "math", "known_answer": "539", "expression": "77*7"}
+{"prompt_id": "m15_m_072", "prompt": "What is 78 + 8?", "task_category": "math", "known_answer": "86", "expression": "78+8"}
+{"prompt_id": "m15_m_073", "prompt": "What is 79 - 9?", "task_category": "math", "known_answer": "70", "expression": "79-9"}
+{"prompt_id": "m15_m_074", "prompt": "What is 80 * 10?", "task_category": "math", "known_answer": "800", "expression": "80*10"}
+{"prompt_id": "m15_m_075", "prompt": "What is 81 + 2?", "task_category": "math", "known_answer": "83", "expression": "81+2"}
+{"prompt_id": "m15_m_076", "prompt": "What is 82 - 3?", "task_category": "math", "known_answer": "79", "expression": "82-3"}
+{"prompt_id": "m15_m_077", "prompt": "What is 83 * 4?", "task_category": "math", "known_answer": "332", "expression": "83*4"}
+{"prompt_id": "m15_m_078", "prompt": "What is 84 + 5?", "task_category": "math", "known_answer": "89", "expression": "84+5"}
+{"prompt_id": "m15_m_079", "prompt": "What is 85 - 6?", "task_category": "math", "known_answer": "79", "expression": "85-6"}
+{"prompt_id": "m15_m_080", "prompt": "What is 86 * 7?", "task_category": "math", "known_answer": "602", "expression": "86*7"}
+{"prompt_id": "m15_m_081", "prompt": "What is 87 + 8?", "task_category": "math", "known_answer": "95", "expression": "87+8"}
+{"prompt_id": "m15_m_082", "prompt": "What is 88 - 9?", "task_category": "math", "known_answer": "79", "expression": "88-9"}
+{"prompt_id": "m15_m_083", "prompt": "What is 89 * 10?", "task_category": "math", "known_answer": "890", "expression": "89*10"}
+{"prompt_id": "m15_m_084", "prompt": "What is 90 + 2?", "task_category": "math", "known_answer": "92", "expression": "90+2"}
+{"prompt_id": "m15_m_085", "prompt": "What is 91 - 3?", "task_category": "math", "known_answer": "88", "expression": "91-3"}
+{"prompt_id": "m15_m_086", "prompt": "What is 92 * 4?", "task_category": "math", "known_answer": "368", "expression": "92*4"}
+{"prompt_id": "m15_m_087", "prompt": "What is 93 + 5?", "task_category": "math", "known_answer": "98", "expression": "93+5"}
+{"prompt_id": "m15_m_088", "prompt": "What is 94 - 6?", "task_category": "math", "known_answer": "88", "expression": "94-6"}
+{"prompt_id": "m15_m_089", "prompt": "What is 95 * 7?", "task_category": "math", "known_answer": "665", "expression": "95*7"}
+{"prompt_id": "m15_m_090", "prompt": "What is 96 + 8?", "task_category": "math", "known_answer": "104", "expression": "96+8"}
+{"prompt_id": "m15_m_091", "prompt": "What is 97 - 9?", "task_category": "math", "known_answer": "88", "expression": "97-9"}
+{"prompt_id": "m15_m_092", "prompt": "What is 98 * 10?", "task_category": "math", "known_answer": "980", "expression": "98*10"}
+{"prompt_id": "m15_m_093", "prompt": "What is 99 + 2?", "task_category": "math", "known_answer": "101", "expression": "99+2"}
+{"prompt_id": "m15_m_094", "prompt": "What is 100 - 3?", "task_category": "math", "known_answer": "97", "expression": "100-3"}
+{"prompt_id": "m15_m_095", "prompt": "What is 101 * 4?", "task_category": "math", "known_answer": "404", "expression": "101*4"}
+{"prompt_id": "m15_m_096", "prompt": "What is 102 + 5?", "task_category": "math", "known_answer": "107", "expression": "102+5"}
+{"prompt_id": "m15_m_097", "prompt": "What is 103 - 6?", "task_category": "math", "known_answer": "97", "expression": "103-6"}
+{"prompt_id": "m15_m_098", "prompt": "What is 104 * 7?", "task_category": "math", "known_answer": "728", "expression": "104*7"}
+{"prompt_id": "m15_m_099", "prompt": "What is 105 + 8?", "task_category": "math", "known_answer": "113", "expression": "105+8"}
+{"prompt_id": "m15_m_100", "prompt": "What is 106 - 9?", "task_category": "math", "known_answer": "97", "expression": "106-9"}
+{"prompt_id": "m15_m_101", "prompt": "What is 107 * 10?", "task_category": "math", "known_answer": "1070", "expression": "107*10"}
+{"prompt_id": "m15_m_102", "prompt": "What is 108 + 2?", "task_category": "math", "known_answer": "110", "expression": "108+2"}
+{"prompt_id": "m15_m_103", "prompt": "What is 109 - 3?", "task_category": "math", "known_answer": "106", "expression": "109-3"}
+{"prompt_id": "m15_m_104", "prompt": "What is 110 * 4?", "task_category": "math", "known_answer": "440", "expression": "110*4"}
+{"prompt_id": "m15_m_105", "prompt": "What is 111 + 5?", "task_category": "math", "known_answer": "116", "expression": "111+5"}
+{"prompt_id": "m15_m_106", "prompt": "What is 112 - 6?", "task_category": "math", "known_answer": "106", "expression": "112-6"}
+{"prompt_id": "m15_m_107", "prompt": "What is 113 * 7?", "task_category": "math", "known_answer": "791", "expression": "113*7"}
+{"prompt_id": "m15_m_108", "prompt": "What is 114 + 8?", "task_category": "math", "known_answer": "122", "expression": "114+8"}
+{"prompt_id": "m15_m_109", "prompt": "What is 115 - 9?", "task_category": "math", "known_answer": "106", "expression": "115-9"}
+{"prompt_id": "m15_m_110", "prompt": "What is 116 * 10?", "task_category": "math", "known_answer": "1160", "expression": "116*10"}
+{"prompt_id": "m15_m_111", "prompt": "What is 117 + 2?", "task_category": "math", "known_answer": "119", "expression": "117+2"}
+{"prompt_id": "m15_m_112", "prompt": "What is 118 - 3?", "task_category": "math", "known_answer": "115", "expression": "118-3"}
+{"prompt_id": "m15_m_113", "prompt": "What is 119 * 4?", "task_category": "math", "known_answer": "476", "expression": "119*4"}
+{"prompt_id": "m15_m_114", "prompt": "What is 120 + 5?", "task_category": "math", "known_answer": "125", "expression": "120+5"}
+{"prompt_id": "m15_m_115", "prompt": "What is 121 - 6?", "task_category": "math", "known_answer": "115", "expression": "121-6"}
+{"prompt_id": "m15_m_116", "prompt": "What is 122 * 7?", "task_category": "math", "known_answer": "854", "expression": "122*7"}
+{"prompt_id": "m15_m_117", "prompt": "What is 123 + 8?", "task_category": "math", "known_answer": "131", "expression": "123+8"}
+{"prompt_id": "m15_m_118", "prompt": "What is 124 - 9?", "task_category": "math", "known_answer": "115", "expression": "124-9"}
+{"prompt_id": "m15_m_119", "prompt": "What is 125 * 10?", "task_category": "math", "known_answer": "1250", "expression": "125*10"}
+{"prompt_id": "m15_m_120", "prompt": "What is 126 + 2?", "task_category": "math", "known_answer": "128", "expression": "126+2"}
+{"prompt_id": "m15_m_121", "prompt": "What is 127 - 3?", "task_category": "math", "known_answer": "124", "expression": "127-3"}
+{"prompt_id": "m15_m_122", "prompt": "What is 128 * 4?", "task_category": "math", "known_answer": "512", "expression": "128*4"}
+{"prompt_id": "m15_m_123", "prompt": "What is 129 + 5?", "task_category": "math", "known_answer": "134", "expression": "129+5"}
+{"prompt_id": "m15_m_124", "prompt": "What is 130 - 6?", "task_category": "math", "known_answer": "124", "expression": "130-6"}
+{"prompt_id": "m15_m_125", "prompt": "What is 131 * 7?", "task_category": "math", "known_answer": "917", "expression": "131*7"}
+{"prompt_id": "m15_m_126", "prompt": "What is 132 + 8?", "task_category": "math", "known_answer": "140", "expression": "132+8"}
+{"prompt_id": "m15_m_127", "prompt": "What is 133 - 9?", "task_category": "math", "known_answer": "124", "expression": "133-9"}
+{"prompt_id": "m15_m_128", "prompt": "What is 134 * 10?", "task_category": "math", "known_answer": "1340", "expression": "134*10"}
+{"prompt_id": "m15_m_129", "prompt": "What is 135 + 2?", "task_category": "math", "known_answer": "137", "expression": "135+2"}
+{"prompt_id": "m15_m_130", "prompt": "What is 136 - 3?", "task_category": "math", "known_answer": "133", "expression": "136-3"}
+{"prompt_id": "m15_m_131", "prompt": "What is 137 * 4?", "task_category": "math", "known_answer": "548", "expression": "137*4"}
+{"prompt_id": "m15_m_132", "prompt": "What is 138 + 5?", "task_category": "math", "known_answer": "143", "expression": "138+5"}
+{"prompt_id": "m15_m_133", "prompt": "What is 139 - 6?", "task_category": "math", "known_answer": "133", "expression": "139-6"}
+{"prompt_id": "m15_m_134", "prompt": "What is 140 * 7?", "task_category": "math", "known_answer": "980", "expression": "140*7"}
+{"prompt_id": "m15_m_135", "prompt": "What is 141 + 8?", "task_category": "math", "known_answer": "149", "expression": "141+8"}
+{"prompt_id": "m15_m_136", "prompt": "What is 142 - 9?", "task_category": "math", "known_answer": "133", "expression": "142-9"}
+{"prompt_id": "m15_m_137", "prompt": "What is 143 * 10?", "task_category": "math", "known_answer": "1430", "expression": "143*10"}
+{"prompt_id": "m15_m_138", "prompt": "What is 144 + 2?", "task_category": "math", "known_answer": "146", "expression": "144+2"}
+{"prompt_id": "m15_m_139", "prompt": "What is 145 - 3?", "task_category": "math", "known_answer": "142", "expression": "145-3"}
+{"prompt_id": "m15_m_140", "prompt": "What is 146 * 4?", "task_category": "math", "known_answer": "584", "expression": "146*4"}
+{"prompt_id": "m15_m_141", "prompt": "What is 147 + 5?", "task_category": "math", "known_answer": "152", "expression": "147+5"}
+{"prompt_id": "m15_m_142", "prompt": "What is 148 - 6?", "task_category": "math", "known_answer": "142", "expression": "148-6"}
+{"prompt_id": "m15_m_143", "prompt": "What is 149 * 7?", "task_category": "math", "known_answer": "1043", "expression": "149*7"}
+{"prompt_id": "m15_m_144", "prompt": "What is 150 + 8?", "task_category": "math", "known_answer": "158", "expression": "150+8"}
+{"prompt_id": "m15_m_145", "prompt": "What is 151 - 9?", "task_category": "math", "known_answer": "142", "expression": "151-9"}
+{"prompt_id": "m15_m_146", "prompt": "What is 152 * 10?", "task_category": "math", "known_answer": "1520", "expression": "152*10"}
+{"prompt_id": "m15_m_147", "prompt": "What is 153 + 2?", "task_category": "math", "known_answer": "155", "expression": "153+2"}
+{"prompt_id": "m15_m_148", "prompt": "What is 154 - 3?", "task_category": "math", "known_answer": "151", "expression": "154-3"}
+{"prompt_id": "m15_m_149", "prompt": "What is 155 * 4?", "task_category": "math", "known_answer": "620", "expression": "155*4"}
+{"prompt_id": "m15_m_150", "prompt": "What is 156 + 5?", "task_category": "math", "known_answer": "161", "expression": "156+5"}
+{"prompt_id": "m15_m_151", "prompt": "What is 157 - 6?", "task_category": "math", "known_answer": "151", "expression": "157-6"}
+{"prompt_id": "m15_m_152", "prompt": "What is 158 * 7?", "task_category": "math", "known_answer": "1106", "expression": "158*7"}
+{"prompt_id": "m15_m_153", "prompt": "What is 159 + 8?", "task_category": "math", "known_answer": "167", "expression": "159+8"}
+{"prompt_id": "m15_m_154", "prompt": "What is 20% of 150?", "task_category": "math", "known_answer": "30", "expression": "150*20/100"}
+{"prompt_id": "m15_m_155", "prompt": "What is 15% of 300?", "task_category": "math", "known_answer": "45", "expression": "300*15/100"}
+{"prompt_id": "m15_m_156", "prompt": "What is 2 to the power of 8?", "task_category": "math", "known_answer": "256", "expression": "2**8"}
+{"prompt_id": "m15_m_157", "prompt": "What is 3 to the power of 4?", "task_category": "math", "known_answer": "81", "expression": "3**4"}
+{"prompt_id": "m15_m_158", "prompt": "What is 144 divided by 12?", "task_category": "math", "known_answer": "12", "expression": "144/12"}
+{"prompt_id": "m15_m_159", "prompt": "What is 1000 divided by 8?", "task_category": "math", "known_answer": "125", "expression": "1000/8"}
+{"prompt_id": "m15_e_000", "prompt": "What is the capital of France?", "task_category": "exact_answer", "known_answer": "Paris"}
+{"prompt_id": "m15_e_001", "prompt": "What is the capital of Japan?", "task_category": "exact_answer", "known_answer": "Tokyo"}
+{"prompt_id": "m15_e_002", "prompt": "What is the capital of Italy?", "task_category": "exact_answer", "known_answer": "Rome"}
+{"prompt_id": "m15_e_003", "prompt": "What is the capital of Canada?", "task_category": "exact_answer", "known_answer": "Ottawa"}
+{"prompt_id": "m15_e_004", "prompt": "What is the capital of Australia?", "task_category": "exact_answer", "known_answer": "Canberra"}
+{"prompt_id": "m15_e_005", "prompt": "What is the chemical symbol for gold?", "task_category": "exact_answer", "known_answer": "Au"}
+{"prompt_id": "m15_e_006", "prompt": "What is the chemical symbol for oxygen?", "task_category": "exact_answer", "known_answer": "O"}
+{"prompt_id": "m15_e_007", "prompt": "What is the chemical symbol for iron?", "task_category": "exact_answer", "known_answer": "Fe"}
+{"prompt_id": "m15_e_008", "prompt": "How many continents are there?", "task_category": "exact_answer", "known_answer": "7"}
+{"prompt_id": "m15_e_009", "prompt": "How many sides does a hexagon have?", "task_category": "exact_answer", "known_answer": "6"}
+{"prompt_id": "m15_e_010", "prompt": "What planet is known as the Red Planet?", "task_category": "exact_answer", "known_answer": "Mars"}
+{"prompt_id": "m15_e_011", "prompt": "What is the largest ocean on Earth?", "task_category": "exact_answer", "known_answer": "Pacific"}
+{"prompt_id": "m15_e_012", "prompt": "What is the largest planet in the solar system?", "task_category": "exact_answer", "known_answer": "Jupiter"}
+{"prompt_id": "m15_e_013", "prompt": "What gas do plants primarily absorb from the air?", "task_category": "exact_answer", "known_answer": "carbon dioxide"}
+{"prompt_id": "m15_e_014", "prompt": "What is the freezing point of water in Celsius?", "task_category": "exact_answer", "known_answer": "0"}
+{"prompt_id": "m15_e_015", "prompt": "Who wrote the play Romeo and Juliet?", "task_category": "exact_answer", "known_answer": "Shakespeare"}
+{"prompt_id": "m15_e_016", "prompt": "What is the square root of 81?", "task_category": "exact_answer", "known_answer": "9"}
+{"prompt_id": "m15_e_017", "prompt": "How many days are in a leap year?", "task_category": "exact_answer", "known_answer": "366"}
+{"prompt_id": "m15_e_018", "prompt": "What is the smallest prime number?", "task_category": "exact_answer", "known_answer": "2"}
+{"prompt_id": "m15_e_019", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "known_answer": "300000"}
+{"prompt_id": "m15_n_000", "prompt": "What is the speed of light approximately, in km per second?", "task_category": "exact_answer", "numeric": true, "expected_value": 300000, "known_answer": "300000", "rel_tolerance": 0.01, "expected_units": "km"}
+{"prompt_id": "m15_n_001", "prompt": "What is the boiling point of water at sea level, in Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": 100, "known_answer": "100", "tolerance": 0.5, "expected_units": "C"}
+{"prompt_id": "m15_n_002", "prompt": "Approximately how many km is Earth's circumference?", "task_category": "exact_answer", "numeric": true, "expected_value": 40075, "known_answer": "40075", "rel_tolerance": 0.02, "expected_units": "km"}
+{"prompt_id": "m15_n_003", "prompt": "What is absolute zero in degrees Celsius?", "task_category": "exact_answer", "numeric": true, "expected_value": -273.15, "known_answer": "-273.15", "tolerance": 0.5, "expected_units": "C"}
+{"prompt_id": "m15_n_004", "prompt": "What is the approximate value of pi?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14159, "known_answer": "3.14159", "tolerance": 0.01}
+{"prompt_id": "m15_n_005", "prompt": "Approximately how many meters are in a mile?", "task_category": "exact_answer", "numeric": true, "expected_value": 1609, "known_answer": "1609", "tolerance": 5.0, "expected_units": "m"}
+{"prompt_id": "m15_n_006", "prompt": "What is the freezing point of water in Fahrenheit?", "task_category": "exact_answer", "numeric": true, "expected_value": 32, "known_answer": "32", "tolerance": 0.5, "expected_units": "F"}
+{"prompt_id": "m15_n_007", "prompt": "Approximately how many seconds are in an hour?", "task_category": "exact_answer", "numeric": true, "expected_value": 3600, "known_answer": "3600", "tolerance": 1.0}
+{"prompt_id": "m15_n_008", "prompt": "What is the approximate acceleration due to gravity, in m/s^2?", "task_category": "exact_answer", "numeric": true, "expected_value": 9.81, "known_answer": "9.81", "tolerance": 0.05}
+{"prompt_id": "m15_n_009", "prompt": "Approximately how many days are in a year?", "task_category": "exact_answer", "numeric": true, "expected_value": 365, "known_answer": "365", "tolerance": 1.0}
+{"prompt_id": "m15_n_010", "prompt": "Approximately what is 1000 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 333.33, "tolerance": 0.5, "known_answer": "333.33"}
+{"prompt_id": "m15_n_011", "prompt": "Approximately what is 100 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 14.29, "tolerance": 0.5, "known_answer": "14.29"}
+{"prompt_id": "m15_n_012", "prompt": "Approximately what is 22 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14, "tolerance": 0.5, "known_answer": "3.14"}
+{"prompt_id": "m15_n_013", "prompt": "Approximately what is 500 divided by 9?", "task_category": "exact_answer", "numeric": true, "expected_value": 55.56, "tolerance": 0.5, "known_answer": "55.56"}
+{"prompt_id": "m15_n_014", "prompt": "Approximately what is 250 divided by 6?", "task_category": "exact_answer", "numeric": true, "expected_value": 41.67, "tolerance": 0.5, "known_answer": "41.67"}
+{"prompt_id": "m15_n_015", "prompt": "Approximately what is 1000 divided by 6?", "task_category": "exact_answer", "numeric": true, "expected_value": 166.67, "tolerance": 0.5, "known_answer": "166.67"}
+{"prompt_id": "m15_n_016", "prompt": "Approximately what is 2000 divided by 7?", "task_category": "exact_answer", "numeric": true, "expected_value": 285.71, "tolerance": 0.5, "known_answer": "285.71"}
+{"prompt_id": "m15_n_017", "prompt": "Approximately what is 355 divided by 113?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.14, "tolerance": 0.5, "known_answer": "3.14"}
+{"prompt_id": "m15_n_018", "prompt": "Approximately what is 10 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 3.33, "tolerance": 0.5, "known_answer": "3.33"}
+{"prompt_id": "m15_n_019", "prompt": "Approximately what is 50 divided by 3?", "task_category": "exact_answer", "numeric": true, "expected_value": 16.67, "tolerance": 0.5, "known_answer": "16.67"}
+{"prompt_id": "m15_j_000", "prompt": "Return a JSON object with a single key named \"result\".", "task_category": "json", "json_check": true, "json_required": ["result"]}
+{"prompt_id": "m15_j_001", "prompt": "Return a JSON object with keys \"name\" and \"age\".", "task_category": "json", "json_check": true, "json_required": ["name", "age"]}
+{"prompt_id": "m15_j_002", "prompt": "Return a JSON object with a key \"status\".", "task_category": "json", "json_check": true, "json_required": ["status"]}
+{"prompt_id": "m15_j_003", "prompt": "Return a JSON object with keys \"city\" and \"country\".", "task_category": "json", "json_check": true, "json_required": ["city", "country"]}
+{"prompt_id": "m15_j_004", "prompt": "Return a JSON object with a key \"ok\" set to true.", "task_category": "json", "json_check": true, "json_required": ["ok"]}
+{"prompt_id": "m15_j_005", "prompt": "Return a JSON object with keys \"id\" and \"value\".", "task_category": "json", "json_check": true, "json_required": ["id", "value"]}
+{"prompt_id": "m15_j_006", "prompt": "Return a JSON object with a key \"count\".", "task_category": "json", "json_check": true, "json_required": ["count"]}
+{"prompt_id": "m15_j_007", "prompt": "Return a JSON object with keys \"first\" and \"last\".", "task_category": "json", "json_check": true, "json_required": ["first", "last"]}
+{"prompt_id": "m15_j_008", "prompt": "Return a JSON object with a key \"message\".", "task_category": "json", "json_check": true, "json_required": ["message"]}
+{"prompt_id": "m15_j_009", "prompt": "Return a JSON object with keys \"x\", \"y\".", "task_category": "json", "json_check": true, "json_required": ["x", "y"]}
+{"prompt_id": "m15_r_000", "prompt": "Reply with a US ZIP code (5 digits).", "task_category": "regex", "pattern": "\\b\\d{5}\\b"}
+{"prompt_id": "m15_r_001", "prompt": "Give an ISO date in YYYY-MM-DD form.", "task_category": "regex", "pattern": "\\d{4}-\\d{2}-\\d{2}"}
+{"prompt_id": "m15_r_002", "prompt": "Return a hex color code.", "task_category": "regex", "pattern": "#[0-9a-fA-F]{6}"}
+{"prompt_id": "m15_r_003", "prompt": "Reply with a US phone number like 555-123-4567.", "task_category": "regex", "pattern": "\\d{3}-\\d{3}-\\d{4}"}
+{"prompt_id": "m15_r_004", "prompt": "Give a time in HH:MM 24-hour format.", "task_category": "regex", "pattern": "\\b\\d{2}:\\d{2}\\b"}
+{"prompt_id": "m15_r_005", "prompt": "Return an IPv4 address.", "task_category": "regex", "pattern": "\\b\\d{1,3}(\\.\\d{1,3}){3}\\b"}
+{"prompt_id": "m15_r_006", "prompt": "Reply with a single uppercase word.", "task_category": "regex", "pattern": "\\b[A-Z]{2,}\\b"}
+{"prompt_id": "m15_r_007", "prompt": "Give a percentage like 42%.", "task_category": "regex", "pattern": "\\b\\d{1,3}%"}
+{"prompt_id": "m15_c_000", "prompt": "What is the current price of gold today?", "task_category": "current_info"}
+{"prompt_id": "m15_c_001", "prompt": "Who is the current CEO of Twitter?", "task_category": "current_info"}
+{"prompt_id": "m15_c_002", "prompt": "What is the latest iPhone model released this year?", "task_category": "current_info"}
+{"prompt_id": "m15_c_003", "prompt": "What is today's weather in Tampa?", "task_category": "current_info"}
+{"prompt_id": "m15_c_004", "prompt": "What is the current population of Tokyo right now?", "task_category": "current_info"}
+{"prompt_id": "m15_c_005", "prompt": "What is the latest version of Python released this year?", "task_category": "current_info"}
+{"prompt_id": "m15_c_006", "prompt": "Who won the most recent Super Bowl?", "task_category": "current_info"}
+{"prompt_id": "m15_c_007", "prompt": "What is the current stock price of Apple?", "task_category": "current_info"}
+{"prompt_id": "m15_c_008", "prompt": "What are the current top news headlines?", "task_category": "current_info"}
+{"prompt_id": "m15_c_009", "prompt": "What is the exchange rate for USD to EUR right now?", "task_category": "current_info"}
+{"prompt_id": "m15_x_000", "prompt": "Explain what a prime number is.", "task_category": "explain"}
+{"prompt_id": "m15_x_001", "prompt": "Describe how photosynthesis works in one paragraph.", "task_category": "explain"}
+{"prompt_id": "m15_x_002", "prompt": "Summarize the water cycle briefly.", "task_category": "explain"}
+{"prompt_id": "m15_x_003", "prompt": "What are the primary colors?", "task_category": "explain"}
+{"prompt_id": "m15_x_004", "prompt": "Give a one-sentence definition of gravity.", "task_category": "explain"}
+{"prompt_id": "m15_x_005", "prompt": "Explain the difference between weather and climate.", "task_category": "explain"}
+{"prompt_id": "m15_x_006", "prompt": "What is the boiling point of water at sea level in Celsius?", "task_category": "explain"}
+{"prompt_id": "m15_x_007", "prompt": "Explain what an ecosystem is.", "task_category": "explain"}
+{"prompt_id": "m15_x_008", "prompt": "Describe what an integer is in mathematics.", "task_category": "explain"}
+{"prompt_id": "m15_x_009", "prompt": "Explain the concept of supply and demand briefly.", "task_category": "explain"}
+{"prompt_id": "m15_x_010", "prompt": "What is the function of the human heart?", "task_category": "explain"}
+{"prompt_id": "m15_x_011", "prompt": "Explain what renewable energy means.", "task_category": "explain"}
+{"prompt_id": "m15_x_012", "prompt": "Describe the role of DNA in living organisms.", "task_category": "explain"}
+{"prompt_id": "m15_x_013", "prompt": "Explain what inflation is in economics.", "task_category": "explain"}
+{"prompt_id": "m15_x_014", "prompt": "What is the difference between speed and velocity?", "task_category": "explain"}
+{"prompt_id": "m15_x_015", "prompt": "Explain what a noun is in grammar.", "task_category": "explain"}
+{"prompt_id": "m15_x_016", "prompt": "Describe how a rainbow forms.", "task_category": "explain"}
+{"prompt_id": "m15_x_017", "prompt": "Explain what evaporation is.", "task_category": "explain"}
+{"prompt_id": "m15_k_000", "prompt": "Explain what a prime number is.", "task_category": "explain", "required_facts": ["greater than 1", "divisor"]}
+{"prompt_id": "m15_k_001", "prompt": "Explain photosynthesis in one sentence.", "task_category": "explain", "required_facts": ["light", "energy"]}
+{"prompt_id": "m15_k_002", "prompt": "Explain what an integer is.", "task_category": "explain", "required_facts": ["whole number"]}
+{"prompt_id": "m15_k_003", "prompt": "Explain what gravity is in one sentence.", "task_category": "explain", "required_facts": ["force", "mass"]}
+{"prompt_id": "m15_k_004", "prompt": "Explain what evaporation is.", "task_category": "explain", "required_facts": ["liquid", "gas"]}
+{"prompt_id": "m15_k_005", "prompt": "Explain what an ecosystem is.", "task_category": "explain", "required_facts": ["organisms", "environment"]}
+{"prompt_id": "m15_k_006", "prompt": "Explain the difference between speed and velocity.", "task_category": "explain", "required_facts": ["direction"]}
+{"prompt_id": "m15_k_007", "prompt": "Explain what renewable energy is.", "task_category": "explain", "required_facts": ["replenish"]}
+{"prompt_id": "m15_k_008", "prompt": "Explain what the water cycle is.", "task_category": "explain", "required_facts": ["evaporation", "precipitation"]}
+{"prompt_id": "m15_k_009", "prompt": "Explain what inflation means in economics.", "task_category": "explain", "required_facts": ["prices", "rise"]}
+{"prompt_id": "m15_k_010", "prompt": "Explain what DNA does.", "task_category": "explain", "required_facts": ["genetic"]}
+{"prompt_id": "m15_k_011", "prompt": "Explain what a noun is.", "task_category": "explain", "required_facts": ["person", "place", "thing"]}
+{"prompt_id": "m15_k_012", "prompt": "Explain what a verb is.", "task_category": "explain", "required_facts": ["action"]}
+{"prompt_id": "m15_k_013", "prompt": "Explain the difference between weather and climate.", "task_category": "explain", "required_facts": ["long-term", "short-term"]}
+{"prompt_id": "m15_k_014", "prompt": "Explain what a molecule is.", "task_category": "explain", "required_facts": ["atoms"]}

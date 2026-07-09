@@ -1301,3 +1301,14 @@ numeric here) are now both fixed — the auto-vs-human loop found them, humans
 confirmed, and the checkers improved. auto_outcome candidate; production gated.
 NEXT per steer M15: A larger run (250-500) / B calibration / C label converters /
 D retrieval+checker actions for current-info.
+
+## 98. M15 larger batch generator (M15 step 1)
+`src/gen_m15_batch.py` (deterministic, reuses M13 pools) → data/prompts/agents_a1_m15_batch.jsonl:
+261 PUBLIC tasks across ALL 8 category types — math 160, exact_answer(string) 20,
+numeric 20 (numeric+expected_value+tolerance/rel_tolerance+expected_units,
+approximate/unit-converted to exercise M14 numeric coverage), json 10, regex 8,
+current_info 10, explain 18, explain-rubric 15 (required_facts checklists to
+exercise M14 explain coverage). Unique prompt_ids. Verified: count in [250,500],
+all category types present, required fields per category, numeric rows route to
+numeric_tolerant_check + rubric rows to explain_rubric_check, regeneration
+byte-identical (deterministic). Public prompts only.

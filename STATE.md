@@ -460,3 +460,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M14 Verifier coverage — Iteration M14.6 (2026-07-09 01:37 EDT) — step 6 COMPLETE (doc)
 - docs/M14_VERIFIER_COVERAGE.md: numeric verifier + explain rubric + routing + metadata-field table + before/after + gating.
 - Next step 7 (FINAL): tests (numeric/exact/routing/rubric/before-after), then M14 DONE.
+
+## M14 Verifier coverage — Iteration M14.7 (2026-07-09 01:40 EDT) — step 7 COMPLETE → M14 DONE
+- tests/test_numeric_verifier.py 5/5 pass; full suite green (45 tests). All M14 deliverables: numeric_tolerant_check + explain_rubric_check, routing + CORRECTNESS wiring, public numeric/rubric fixture, before/after flip, doc, tests. exact_answer_match unchanged; escalation math unchanged; auto candidate; production gated. M14 STOP CONDITION MET.
+- NEXT per steer M15: A larger run 250-500 / B calibration / C label converters / D retrieval+checker actions.

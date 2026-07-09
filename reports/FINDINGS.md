@@ -1275,3 +1275,29 @@ optional task-metadata fields (numeric/expected_value/tolerance/rel_tolerance/
 expected_units/accepted_values/required_facts) with a table, the before/after
 numeric flip (exact_answer_match fail → numeric_tolerant_check pass), and gating.
 Public fixtures/aggregates only.
+
+## 97. M14 numeric-verifier tests (M14 step 7) — MILESTONE COMPLETE
+`tests/test_numeric_verifier.py` (5 tests, CPU-only, no network): (a) numeric_tolerant_check
+speed-of-light/approx/unit-conversion PASS, clearly-wrong FAIL, no-number/no-target
+UNDECIDED, no evidence leak; (b) exact_answer_match still strict for pure strings;
+(c) routing — numeric→numeric_tolerant_check (exact avoided), string→exact_answer_match,
+explain-rubric→explain_rubric_check, both in CORRECTNESS; (d) explain_rubric_check
+full-coverage PASS, missing-fact/no-rubric UNDECIDED, never gold without rubric;
+(e) before/after — numeric row flips wrong→ok + de-escalates. Full suite green:
+45 tests (agents-a1 5, autonomous 5, decode-stub 4, shadow-wrapper 4, m13 4,
+numeric-verifier 5, outcome-review 5, policy-engine 4, private-workflow 5,
+verifier-json 4).
+
+### M14 summary — numeric-tolerant verifier + explain coverage
+Fixed the M13 exact-match numeric-strictness false-positive with numeric_tolerant_check
+(all-number extraction + unit normalization + absolute/relative tolerance +
+accepted_values) and added explain_rubric_check (rubric-only fact checklist that
+NEVER claims subjective answers gold — escalates on weak/absent coverage). Routed
+numeric tasks to the numeric verifier (exact_answer_match kept for pure strings) and
+explain-rubric tasks to the rubric verifier, wiring both into CORRECTNESS. Public
+numeric/rubric fixture added; before/after shows the speed-of-light row flips
+wrong→ok + de-escalates. Two verifier-strictness false-positives (JSON in M12,
+numeric here) are now both fixed — the auto-vs-human loop found them, humans
+confirmed, and the checkers improved. auto_outcome candidate; production gated.
+NEXT per steer M15: A larger run (250-500) / B calibration / C label converters /
+D retrieval+checker actions for current-info.

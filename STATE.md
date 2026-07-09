@@ -493,3 +493,7 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 ## M15 Larger run — Iteration M15.7 (2026-07-09 02:20 EDT) — step 7 COMPLETE (run doc)
 - docs/M15_LARGER_AGENTS_A1_RUN.md: build + live run + resume + aggregate/escalation/review + two-baseline comparison + results + gating. Commands verified.
 - Next step 8 (FINAL): tests/test_m15_larger_run.py, then M15 DONE.
+
+## M15 Larger run — Iteration M15.8 (2026-07-09 02:24 EDT) — step 8 COMPLETE → M15 DONE
+- tests/test_m15_larger_run.py 4/4 pass; full suite green (49 tests). All M15 deliverables: generator + 261-task batch, run config, LIVE 261-task run (escalation 0.073, 0 failed, both fixes hold), aggregate + escalation queue, reviewed subset (agreement n=1), two-baseline comparison (trend 0.28→0.164→0.073), doc, tests. Private never staged; auto candidate; production gated. M15 STOP CONDITION MET.
+- NEXT per steer M16: A calibration / B retrieval+checker actions / C label converters / D broader model comparison. MOTIVATED FIXTURE FIX: tag numeric-answer exact rows with numeric metadata (M15 task-metadata gap).

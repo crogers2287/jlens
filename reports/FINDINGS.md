@@ -1383,3 +1383,26 @@ fred (call-endpoint-never-serve), resume/failure handling, aggregate + escalatio
 + representative-subset review, two-baseline comparison, results (escalation trend
 0.28→0.164→0.073; both fixes held; task-metadata-gap + rubric-synonym findings),
 and gating. Commands match real CLI flags. Public fixtures/aggregates only.
+
+## 105. M15 larger-run tests (M15 step 8) — MILESTONE COMPLETE
+`tests/test_m15_larger_run.py` (4 tests, CPU-only, no network): (a) the m15 batch
+validates (250-500, unique ids, all 8 category types incl numeric + explain-rubric,
+per-category required fields, deterministic); (b) aggregate report over a SYNTHETIC
+m15-shaped fixture has NO text keys + correct counts incl verifier_distribution with
+the M14 verifiers; (c) resume — a second run over the same out-log adds zero (fake
+endpoint), bounded by batch.size; (d) the committed comparison report has the M15/M13/
+baseline keys + escalation_rate_trend + no text. Full suite green: 49 tests.
+
+### M15 summary — larger Agents-A1 live run after verifier fixes
+Scaled the live run to 261 tasks (8 categories incl the M14 numeric + explain-rubric)
+against agents-a1 on fred: 261/261 completed, 0 failed. The decisive result — BOTH
+prior verifier false-positives stayed fixed at scale (JSON auto_was_wrong=0, numeric-
+tagged auto_was_wrong=0), and the escalation rate fell monotonically across three live
+runs (0.28 → 0.164 → 0.073) as verifier coverage improved. Reviewed a representative
+6/19 escalated subset → agreement n=1 rate 0.0, driven by a TASK-METADATA gap (a reused
+string-exact numeric row lacking numeric metadata) rather than a regression; a rubric
+row escalated correctly on a synonym. Committed public aggregates only (summary,
+reviewed-subset, two-baseline comparison); private records stayed gitignored.
+auto_outcome candidate; production gated. NEXT per steer M16: A calibration / B
+retrieval+checker actions / C label converters / D broader model comparison — plus a
+small fixture fix (tag numeric-answer exact rows with numeric metadata) is now motivated.

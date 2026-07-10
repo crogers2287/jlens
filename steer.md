@@ -1,151 +1,139 @@
-# steer.md — post-M23 frozen telemetry holdout
+# steer.md — post-M24 identical-input router falsification
 
-M1 through M23 are complete. Do not redo the practical supervisor track, fixture
-telemetry, M22 real probe, or M23 same-run training batch.
-
-`CODEX_AUTOSTEER.md` remains part of the operating contract.
+M1 through M24 are complete. Do not redo prior supervisor, telemetry, same-run,
+or frozen-holdout work. `CODEX_AUTOSTEER.md` remains the operating contract.
 
 ## Autosteer mode
 
-Default mode completes one milestone, commits implementation, updates this file
-separately, and stops. Loop mode requires `CODEX_AUTOSTEER_LOOP=true` or explicit
-operator instruction.
+Default mode completes one milestone and stops after separate implementation and
+steer commits. Loop mode requires explicit operator instruction or
+`CODEX_AUTOSTEER_LOOP=true` and remains bounded by the contract's three-milestone/
+four-hour maximum.
 
-The current approval covers the existing Qwen MoE checkpoint on Thor, local-only
-loading, dual-3090 BF16 use, hidden capture disabled, and temporary llama-swap
-unload/restore. Stop for another model/download/license, a changed hardware plan,
-new dependency, live retrieval, or materially larger resource footprint.
+The existing approval covers the same local Qwen MoE checkpoint, Thor storage,
+local-only dual-3090 BF16 execution, hidden capture disabled, and temporary
+llama-swap unload/restore. Stop for any new model, dependency, live retrieval,
+hardware plan, or material resource change.
 
 ## Current state
 
-- M1–M20: practical local supervisor track through grounded regeneration
-- M21: fixture-first HF/safetensors telemetry backend
-- M22: real eight-task HF MoE telemetry validation
-- M23: 32-task within-model telemetry/outcome validation
+- M1–M23: practical track plus real/same-run telemetry through M23 training
+- M24: frozen M23-trained telemetry holdout
 
-M23 result:
+M24 result:
 
-- Predeclared 8 checker / 8 retrieval / 8 review / 8 no-action tasks before run.
-- Qwen chat-template output and internal telemetry came from the same decode.
-- 32/32 completed; logits and 24-layer × 60-expert router telemetry available.
-- Actual routes exactly matched the balanced predeclared groups.
-- Deterministic checker: 7 pass / 1 fail; fail/pass effects withheld at n=1/7.
-- Nine prose tasks hit 64 tokens; every checker and control reached EOS first.
-- Router entropy/concentration showed descriptive group separation, with fixed-
-  seed bootstrap intervals excluding zero for checker/retrieval/review contrasts.
-- Task category, prompt form, verifier applicability, and output length remain
-  confounds. No threshold/policy/predictive claim was made.
-- All detailed records/captures remain private; public artifacts are aggregate.
-- Full suite green at 95 tests. Production remains gated.
-- agents-a1 serving was restored and verified.
+- Initial invalid 48-ID manifest is preserved; source validation transparently
+  corrected it to 40 valid/disjoint IDs before any capture.
+- Frozen classifiers used only M23 scaling/centroids; no holdout tuning.
+- Real M24 completed 40/40 with logits/router telemetry available.
+- Actual actions: checker10/retrieval10/review11/no-action9.
+- Router-only: accuracy .700, bootstrap [.550,.850], balanced accuracy .693,
+  macro-F1 .700 versus majority baseline .275.
+- Full features: .600 [.450,.750]; logits-only: .225 [.100,.350].
+- Router-only errors concentrate in no-action→review and review→retrieval.
+- Unseen IDs still share action-specific prompt templates and verifier rules with
+  M23. The result may reflect category/template association, not intrinsic need.
+- Checker outcomes were 1 pass/9 fail, all EOS-complete; no error model was fit.
+- 100/100 tests green; agents-a1 restored; production gated.
 
-## Next milestone: M24 frozen holdout evaluation
+## Next milestone: M25 identical-input metadata counterfactual
 
-M24 tests whether an M23-only telemetry classifier generalizes to unseen task IDs.
-The holdout manifest, features, model family, and metrics must be frozen before any
-M24 telemetry is inspected. Do not tune on holdout results.
+M25 is a falsification test for the frozen M23 router-only classifier. Construct
+16 deterministic pairs where both members receive exactly the same prompt text and
+therefore should produce the same greedy Qwen output/router telemetry, while trusted
+task metadata changes verifier applicability and the intended action label.
 
-### Frozen holdout selection
+### Predeclared pair design
 
-Use exactly 40 unseen existing public task IDs, 10 per predeclared class. The
-initial 48-ID preregistration referenced unavailable source IDs; this was caught
-and corrected before any M24 capture. Model/features/metrics are unchanged:
+Use exactly 32 synthetic public-safe task IDs in an ID/pair/group-only manifest:
 
-- checker: `m19_m_008` through `m19_m_017`
-- retrieval: `m15_c_008`–`m15_c_009` plus `m19_c_000`–`m19_c_007`
-- review: `m15_x_008` through `m15_x_017`
-- no-action controls:
-  - `m15_e_004` through `m15_e_008`
-  - `m15_j_002` through `m15_j_004`
-  - `m15_r_002` through `m15_r_003`
+1. Eight `checker_vs_no_action` pairs:
+   - identical simple arithmetic prompt per pair
+   - member A: `task_category=math`, safe expression + known answer
+   - member B: `task_category=exact_answer`, same known answer, no expression
+   - expected actions: checker_needed vs no_action when the trivial exact answer
+     passes; any drift is reported, never repaired after run
+2. Eight `retrieval_vs_review` pairs:
+   - identical neutral topic prompt per pair, with no temporal wording
+   - member A: `task_category=current_info`
+   - member B: `task_category=explain`, no rubric
+   - expected actions: retrieval_needed vs review_needed
 
-No M22/M23 task ID may appear in the holdout.
+Prompts are deterministic synthetic fixtures written only to an ignored private
+task file. The public manifest contains IDs, pair IDs/types, and intended classes,
+not prompt text.
 
-### Frozen features and classifiers
+### Frozen model and metrics
 
-Use only these M23 aggregate features:
+- Apply the existing M23-trained router-only nearest-centroid classifier without
+  refitting, scaling updates, threshold changes, or feature additions.
+- Features remain only mean router entropy and mean expert concentration.
+- Report aggregate:
+  - actual class distribution
+  - frozen accuracy/balanced accuracy/macro-F1/confusion/per-class metrics
+  - majority baseline and fixed 2,000-bootstrap accuracy interval
+  - pairs with discordant actual labels
+  - pairs with identical captured output
+  - pairs with identical predicted labels
+  - mean/max within-pair absolute difference for both router features
+  - within-pair prediction divergence rate
+- Do not publish per-pair predictions, IDs, hashes, text, or tensors.
 
-1. decode-window mean entropy
-2. final selected-token probability
-3. final top-k margin
-4. mean router entropy
-5. mean expert concentration
+### M25 objectives
 
-Train on the 32 private M23 detailed records and M23 actual action labels only.
-Freeze three nearest-centroid classifiers before reading M24 captures:
+1. Commit the public-safe 16-pair manifest before real capture.
+2. Generate private tasks deterministically and verify exact prompt equality within
+   every pair before model load.
+3. Use the same local-only chat-template/router-only 64-token capture plan.
+4. Derive same-run Qwen verifier/action records and validate existing schemas.
+5. Verify output equality and telemetry equality within pairs; report deviations
+   honestly without rerun or prompt edits.
+6. Apply only the already-frozen M23 router classifier.
+7. Restore agents-a1 after the capture window.
+8. Keep all detailed data private, candidate-only, and production gated.
 
-- full: all five features
-- logits-only: features 1–3
-- router-only: features 4–5
+### M25 interpretation gate
 
-For each classifier:
+- If pair telemetry/predictions are identical while actual actions differ, conclude
+  telemetry alone cannot infer metadata-only action requirements; the M24 result is
+  at least partly template/category association.
+- If identical prompts produce material telemetry divergence, investigate capture
+  determinism before interpreting classifier behavior.
+- Do not respond by adding task metadata to a telemetry-only policy in this
+  milestone; that would answer a different question.
 
-- standardize with M23 training mean and sample standard deviation
-- use one centroid per actual M23 action class
-- predict minimum squared Euclidean distance
-- break exact ties lexicographically
-- do not tune weights, thresholds, features, or class priors
+### M25 deliverables
 
-### Frozen metrics
-
-Report on M24 only:
-
-- accuracy
-- balanced accuracy
-- macro F1
-- aggregate confusion matrix
-- per-class precision/recall/F1/support
-- fixed-seed 2,000-bootstrap 95% interval for accuracy
-- majority-class baseline accuracy (expected 0.25 on the balanced holdout)
-- full versus logits-only versus router-only comparison
-
-Do not perform significance tests, threshold fitting, model selection, or retry a
-different manifest after seeing results.
-
-### M24 runtime objectives
-
-1. Commit the corrected ID/group-only 40-task manifest before the real run.
-2. Use the same approved model/hardware/local-only/chat-template/router-only plan.
-3. Capture up to 64 tokens and record cap reach honestly.
-4. Derive Qwen-specific verifier/action outcomes from the same private capture.
-5. Validate all telemetry/runtime/action/result rows against existing schemas.
-6. Apply the frozen M23 classifiers to M24 features without updating centroids.
-7. Public artifacts may contain aggregate metrics/confusion only, never per-task
-   predictions, IDs, text, paths, raw tensors, or model weights.
-8. Restore agents-a1 after the capture window.
-9. Keep all labels candidate-only and production gated.
-
-### M24 deliverables
-
-- `data/prompts/m24_holdout_manifest.json` with public IDs/groups only
-- frozen classifier/evaluation code with CPU fixture tests
-- private 40 raw captures and detailed telemetry/outcome/action/result records
-- public aggregate holdout run summary
-- public aggregate frozen-evaluation report
-- `docs/M24_FROZEN_HOLDOUT_EVALUATION.md`
+- `data/prompts/m25_pair_manifest.json` (IDs/pairs/groups only)
+- deterministic private task generator + frozen router evaluation code
+- private 32 captures and detailed telemetry/outcome/action/result records
+- public aggregate run/pair-falsification report
+- `docs/M25_IDENTICAL_INPUT_FALSIFICATION.md`
+- tests for pair equality, actual-label discordance, frozen-classifier reuse,
+  aggregate-only reporting, schema/degraded/resume behavior
 - updated `STATE.md` and `reports/FINDINGS.md`
 
-### M24 stop condition
+### M25 stop condition
 
-- manifest is frozen and disjoint from M22/M23 before the real run
-- exactly 40 holdout tasks complete or an honest fixed-manifest blocker is reported
-- same-run Qwen telemetry/outcome linkage validates
-- classifiers use only M23 training aggregates and remain unchanged after holdout
-- all frozen metrics are reported without per-task leakage or tuning
-- private rows validate; public artifacts pass privacy/commit-safety checks
-- full test suite passes; production remains gated
+- manifest is committed before capture and 16 private prompt pairs validate equal
+- exactly 32 captures complete or fixed-manifest blocker is reported
+- same-run private rows validate and pair equality/deviation is measured
+- M23 router classifier remains frozen
+- public artifacts pass privacy/commit-safety checks; full suite passes
+- agents-a1 is restored; production remains gated
 
-## After M24
+## After M25
 
-- If the full classifier materially exceeds 0.25 and is stable across classes,
-  proceed to M25 confound-controlled paired prompts; do not deploy a policy.
-- If only router/logits ablations work, focus M25 on that frozen feature family.
-- If performance is near baseline or collapses by class, stop the telemetry-policy
-  branch and return to practical verifier/retrieval quality work.
-- If same-run or privacy integrity fails, repair it before any further model run.
+Stop the current autoloop at its three-milestone limit. The next operator-facing
+steer must choose between:
+
+- combining explicit trusted task metadata with telemetry for routing (a different
+  supervised problem),
+- collecting balanced objective error outcomes to study error prediction, or
+- ending the telemetry-policy branch and returning to practical verifier quality.
 
 ## Repository hygiene
 
-Do not commit private prompts, outputs, per-task predictions, token IDs/text, raw
-tensors, paths, weights, caches, or detailed records. Public reports stay aggregate;
-candidate-only and production gates remain until audited unlock criteria exist.
+Do not commit private prompts/outputs, per-task/pair predictions, token IDs/text,
+raw tensors, paths, weights, caches, or detailed records. Public reports remain
+aggregate; no candidate label becomes gold and production remains gated.

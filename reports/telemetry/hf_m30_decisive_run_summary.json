@@ -1,0 +1,120 @@
+{
+ "schema_version": 1,
+ "run_kind": "m30_decisive_dataset",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_family_constant": true,
+ "n_records": 768,
+ "capture_status_distribution": {
+  "completed": 768
+ },
+ "logits_status_distribution": {
+  "available": 768
+ },
+ "router_status_distribution": {
+  "available": 768
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 768
+ },
+ "action_applicability_constant": true,
+ "deterministic_verifier_labeler": "math_checker",
+ "label_distribution_by_split": {
+  "train": {
+   "fail": 210,
+   "pass": 174
+  },
+  "validation": {
+   "fail": 105,
+   "pass": 87
+  },
+  "holdout": {
+   "fail": 103,
+   "pass": 89
+  }
+ },
+ "label_distribution_by_split_band": {
+  "holdout:band_1": {
+   "pass": 32
+  },
+  "holdout:band_2": {
+   "fail": 5,
+   "pass": 27
+  },
+  "holdout:band_3": {
+   "fail": 20,
+   "pass": 12
+  },
+  "holdout:band_4": {
+   "fail": 30,
+   "pass": 2
+  },
+  "holdout:band_5": {
+   "fail": 17,
+   "pass": 15
+  },
+  "holdout:band_6": {
+   "fail": 31,
+   "pass": 1
+  },
+  "train:band_1": {
+   "fail": 1,
+   "pass": 63
+  },
+  "train:band_2": {
+   "fail": 14,
+   "pass": 50
+  },
+  "train:band_3": {
+   "fail": 34,
+   "pass": 30
+  },
+  "train:band_4": {
+   "fail": 60,
+   "pass": 4
+  },
+  "train:band_5": {
+   "fail": 41,
+   "pass": 23
+  },
+  "train:band_6": {
+   "fail": 60,
+   "pass": 4
+  },
+  "validation:band_1": {
+   "pass": 32
+  },
+  "validation:band_2": {
+   "fail": 5,
+   "pass": 27
+  },
+  "validation:band_3": {
+   "fail": 17,
+   "pass": 15
+  },
+  "validation:band_4": {
+   "fail": 28,
+   "pass": 4
+  },
+  "validation:band_5": {
+   "fail": 24,
+   "pass": 8
+  },
+  "validation:band_6": {
+   "fail": 31,
+   "pass": 1
+  }
+ },
+ "decode_cap_tokens": 64,
+ "decode_cap_reached_count": 0,
+ "operands_disjoint_from_m29": true,
+ "no_posthoc_selection": true,
+ "all_generated_tasks_retained": true,
+ "same_capture_supplied_telemetry_and_output": true,
+ "hidden_capture": "disabled",
+ "architecture_family": "qwen2_moe",
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only decisive dataset summary"
+}

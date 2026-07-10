@@ -802,3 +802,26 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   thresholds candidate-only. Decisive test needs holdout n≈200.
 - Public artifacts aggregate-only; commit-safe passed; full suite green: 130
   tests. Production gated.
+
+## M30 decisive telemetry increment test (2026-07-10) — MILESTONE COMPLETE
+- Executed the operator-preregistered decisive protocol (steer 2a4699e):
+  768 fresh tasks (six bands × 128, sealed 384/192/192 split), operand tuples
+  deterministically disjoint from M29, same M29 centroid family, primary
+  confirmatory comparison full_telemetry vs metadata_only with the
+  established/not-established/negative rule fixed before generation.
+- One GPU window captured 768/768 (~1 s/task); agents-a1 restored/verified.
+  All 768 actions checker_needed; 0 undecided; 0 capped. Labels: train 210
+  fail/174 pass, validation 105/87, holdout 103/89 — every power minimum met.
+- Once-read n=192 holdout: majority .536; metadata_only .818; logits_only
+  .854; router_only .833; window_entropy .849; full_telemetry .917
+  [.875,.953]; metadata_plus_telemetry .922.
+- PRIMARY RESULT: full−metadata Δacc +.099, 95% CI [+.042,+.156]; Δbacc CI
+  [+.050,+.165]; 27 metadata errors corrected vs 8 introduced. Verdict under
+  the preregistered rule: ESTABLISHED. Secondary: meta+tel +.104 [+.057,
+  +.156]; window_entropy alone +.031 [−.042,+.104] (not sufficient alone).
+- Calibration: ECE .032 (full, thr .50) / .043 (meta+tel, thr .75), holdout
+  bacc at threshold .916/.938 — all candidate-only; no production threshold.
+- Scope: one category, one model, one decode protocol; no transfer/causal/
+  production claim. Public artifacts aggregate-only; commit-safe passed; full
+  suite green: 136 tests. Next per operator Branch 1: M31 telemetry-triggered
+  intervention study.

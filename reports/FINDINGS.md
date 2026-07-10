@@ -2082,3 +2082,51 @@ cases), seven-baseline evaluation with a synthetic established increment, an
 uninformative-telemetry fixture that must report no established increment,
 and public no-ID/text/path output with candidate-only labels. Full repository
 suite: 130 tests green.
+
+## 188. M30 preregisters the decisive confirmatory protocol
+The operator-directed M30 manifest was committed before generation: 768 fresh
+tasks in six boundary bands with a sealed 384/192/192 split, operand tuples
+deterministically rejected against the committed M29 manifest's tuples, the
+identical M29 centroid family, a single primary comparison (full_telemetry vs
+metadata_only), an explicit three-way classification rule, per-split power
+minimums, and validation-only threshold fitting. The holdout was read once.
+
+## 189. The telemetry increment over difficulty metadata is ESTABLISHED
+On the adequately powered n=192 holdout (103 fail/89 pass): metadata_only
+.818, full_telemetry .917 [.875,.953]. The preregistered paired bootstrap
+gives Δaccuracy +.099 with 95% CI [+.042,+.156] and Δbalanced-accuracy CI
+[+.050,+.165] — both exclude zero — while telemetry corrects 27 of metadata's
+holdout errors and introduces 8. Under the rule fixed before generation, the
+telemetry-vs-metadata increment is classified established. This resolves the
+question M29 left open, in the direction its point estimates suggested.
+
+## 190. The established increment belongs to the full feature set
+window_entropy alone gains only +.031 [−.042,+.104] over metadata — mid-decode
+entropy remains a high-precision (.987) but low-recall (.728) partial flag.
+router_only improved to .833 at this scale, and metadata_plus_telemetry
+(.922, +.104 [+.057,+.156]) now edges out telemetry alone, reversing the M29
+n=96 ordering. Error information is distributed across logits-window, router,
+and length signals; no two-feature shortcut carries it.
+
+## 191. Candidate calibration is usable for the intervention study
+Validation-derived thresholds transfer to the holdout without degradation:
+full_telemetry ECE .032 with balanced accuracy .916 at threshold .50;
+metadata_plus_telemetry ECE .043 with .938 at threshold .75. These remain
+candidate-only and production-gated, but they are adequate as the frozen
+gating score for the operator-authorized M31 telemetry-triggered intervention
+study (Branch 1).
+
+## 192. M30 scope and boundaries
+Established: a ~+10-point accuracy increment from internal telemetry over the
+difficulty shortcut, within single-expression integer arithmetic, one model,
+one greedy decode protocol, on a fresh sealed holdout read once. Not
+established: transfer to other categories or models, causal mechanism, or any
+production-readiness claim. Candidate-only and production gates remain.
+
+## 193. M30 tests and milestone completion
+Six CPU/no-network M30 tests cover deterministic generation with the sealed
+split and M29-disjoint operands, three-split loading with honest power flags,
+the three-way classification rule (established/not_established/negative), a
+synthetic established verdict, an uninformative-telemetry fixture that must
+not report established, and public no-ID/text/path candidate-only output.
+Full repository suite: 136 tests green.

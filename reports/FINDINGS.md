@@ -2023,3 +2023,62 @@ full-coverage single-feature and leave-one-out ablations, equal-count
 calibration bins with bounded ECE, complete aggregate FP/FN accounting, and a
 public report that carries the candidate-only label with no IDs/text/paths.
 Full repository suite: 123 tests green. The M26–M28 autoloop limit is reached.
+
+## 181. M29 preregisters a powered increment test on fresh data
+The M29 manifest was committed before generation: six multiplication bands
+concentrated near the pass/fail boundary (384 tasks), a sealed per-ID
+train/validation/holdout split (192/96/96), seven frozen baselines, a paired-
+bootstrap incremental-value rule with an explicit claim threshold, validation-
+only threshold/calibration fitting, and per-split power minimums. The spent
+M27 holdout was not reused as a decision target, and the M28-motivated
+window_entropy set was declared as such and tested on new data.
+
+## 182. The scaled run meets every predeclared power requirement
+384/384 captures completed with full logits/router telemetry in one window;
+all actions checker_needed; zero undecided labels; zero capped rows. Split
+labels: train 106 fail/86 pass, validation 54/42, holdout 51/45. Boundary
+bands behaved as designed (band_2 ~12% fail, band_3 ~53%, band_5 ~66%,
+band_4/6 ≥88%), giving the increment test its predeclared power without any
+post-hoc selection.
+
+## 183. Telemetry beats metadata point-wise but the increment is not established
+On the once-read n=96 holdout: metadata_only .823, full_telemetry .885
+[.823,.948], metadata_plus_telemetry .865. Paired bootstrap deltas over
+metadata: full +.063 [−.021,+.146] (corrects 12 metadata errors, introduces
+6), meta+tel +.042 [−.031,+.115], window_entropy +.010. Every 95% interval
+includes zero, so under the predeclared rule telemetry's increment over the
+difficulty shortcut is NOT established. The balanced-accuracy interval for
+full telemetry ([−.006,+.153]) misses significance narrowly; honesty requires
+calling that unproven, not "nearly proven".
+
+## 184. M28's perfect single-feature score was a separability artifact
+window_entropy (decode_window_entropy + high_entropy_count), which scored
+1.000 on the easy/hard M27 holdout, scores .833 at boundary difficulty with
+fail recall .706 and precision .973. Mid-window entropy is a high-precision,
+moderate-recall failure flag — not a universal error detector. The scaled
+boundary design did exactly the artifact-exposure it was built for.
+
+## 185. Telemetry and metadata fail differently; their union does not help here
+Metadata-only over-flags (fail recall .961, precision .766); logits-only
+under-flags with high precision (.784/.930); full telemetry balances both
+(.863/.917). Concatenating band one-hots onto telemetry (.865) is worse than
+telemetry alone (.885) under the frozen centroid family: telemetry already
+carries the difficulty signal, and the added indicators dilute the
+standardized distance geometry rather than informing it.
+
+## 186. Calibration degrades off the easy/hard split exactly as predicted
+With mid-range reliability bins now populated, full-telemetry ECE is .059
+(was .004 in M28) and metadata+telemetry .117; mid bins under-predict failure
+(e.g. predicted .18 vs observed .33/.58). Validation-derived thresholds (.70
+and .75 p(fail)) reach holdout balanced accuracy .859/.825 and remain
+candidate-only. At the observed effect size a decisive increment test needs a
+holdout near n≈200 — one more scaling step.
+
+## 187. M29 tests and milestone completion
+Seven CPU/no-network M29 tests cover deterministic in-band generation with
+the sealed three-way split, three-split loading with undecided exclusion,
+honest power flags, paired-delta bootstrap behavior (zero and positive
+cases), seven-baseline evaluation with a synthetic established increment, an
+uninformative-telemetry fixture that must report no established increment,
+and public no-ID/text/path output with candidate-only labels. Full repository
+suite: 130 tests green.

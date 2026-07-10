@@ -776,3 +776,29 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   candidate-only/not-for-production throughout; no production threshold set.
 - Public report aggregate-only; commit-safe passed; full suite green: 123
   tests. Production gated. Autoloop limit (M26–M28) reached — stopping.
+
+## M29 scaled objective error prediction power test (2026-07-10) — MILESTONE COMPLETE
+- Operator selected option A. Preregistered data/prompts/m29_power_manifest.json
+  before generation: 384 tasks across six boundary-spanning multiplication
+  bands, sealed 192/96/96 train/validation/holdout split, seven frozen
+  baselines (incl. metadata+telemetry and the M28-motivated window_entropy
+  set), paired-bootstrap incremental-value rule, validation-only thresholds,
+  power minimums. M27 holdout not reused.
+- One GPU window captured 384/384 (~1 s/task); agents-a1 restored/verified.
+  All 384 actions checker_needed; 0 undecided; 0 capped. Labels: train 106
+  fail/86 pass, validation 54/42, holdout 51/45 — every power minimum met.
+- Holdout (n=96, read once): majority .531; metadata_only .823; logits_only
+  .854; router_only .750; window_entropy .833; full_telemetry .885
+  [.823,.948]; metadata_plus_telemetry .865.
+- Predeclared increment test: full−metadata +.063 [−.021,+.146] (12 wins/6
+  losses), meta+tel−metadata +.042 [−.031,+.115], window−metadata +.010 —
+  all intervals include zero → telemetry increment NOT established at n=96,
+  reported honestly per the claim rule.
+- Established instead: M28's perfect single-feature score was a band-
+  separability artifact (window_entropy .833 here); telemetry and metadata
+  err differently (metadata over-flags .961 recall/.766 precision; logits
+  under-flag .784/.930); band metadata adds nothing once telemetry is present
+  (.865 < .885); calibration degrades off easy/hard splits (ECE .059/.117),
+  thresholds candidate-only. Decisive test needs holdout n≈200.
+- Public artifacts aggregate-only; commit-safe passed; full suite green: 130
+  tests. Production gated.

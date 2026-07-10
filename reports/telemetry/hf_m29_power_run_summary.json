@@ -1,0 +1,116 @@
+{
+ "schema_version": 1,
+ "run_kind": "m29_scaled_error_dataset",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_family_constant": true,
+ "n_records": 384,
+ "capture_status_distribution": {
+  "completed": 384
+ },
+ "logits_status_distribution": {
+  "available": 384
+ },
+ "router_status_distribution": {
+  "available": 384
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 384
+ },
+ "action_applicability_constant": true,
+ "deterministic_verifier_labeler": "math_checker",
+ "label_distribution_by_split": {
+  "train": {
+   "fail": 106,
+   "pass": 86
+  },
+  "validation": {
+   "fail": 54,
+   "pass": 42
+  },
+  "holdout": {
+   "fail": 51,
+   "pass": 45
+  }
+ },
+ "label_distribution_by_split_band": {
+  "holdout:band_1": {
+   "pass": 16
+  },
+  "holdout:band_2": {
+   "fail": 2,
+   "pass": 14
+  },
+  "holdout:band_3": {
+   "fail": 11,
+   "pass": 5
+  },
+  "holdout:band_4": {
+   "fail": 14,
+   "pass": 2
+  },
+  "holdout:band_5": {
+   "fail": 10,
+   "pass": 6
+  },
+  "holdout:band_6": {
+   "fail": 14,
+   "pass": 2
+  },
+  "train:band_1": {
+   "pass": 32
+  },
+  "train:band_2": {
+   "fail": 4,
+   "pass": 28
+  },
+  "train:band_3": {
+   "fail": 17,
+   "pass": 15
+  },
+  "train:band_4": {
+   "fail": 30,
+   "pass": 2
+  },
+  "train:band_5": {
+   "fail": 23,
+   "pass": 9
+  },
+  "train:band_6": {
+   "fail": 32
+  },
+  "validation:band_1": {
+   "pass": 16
+  },
+  "validation:band_2": {
+   "fail": 2,
+   "pass": 14
+  },
+  "validation:band_3": {
+   "fail": 8,
+   "pass": 8
+  },
+  "validation:band_4": {
+   "fail": 15,
+   "pass": 1
+  },
+  "validation:band_5": {
+   "fail": 13,
+   "pass": 3
+  },
+  "validation:band_6": {
+   "fail": 16
+  }
+ },
+ "decode_cap_tokens": 64,
+ "decode_cap_reached_count": 0,
+ "no_posthoc_selection": true,
+ "all_generated_tasks_retained": true,
+ "same_capture_supplied_telemetry_and_output": true,
+ "hidden_capture": "disabled",
+ "architecture_family": "qwen2_moe",
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only scaled dataset summary"
+}

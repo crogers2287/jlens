@@ -1,0 +1,553 @@
+{
+ "schema_version": 1,
+ "run_kind": "m29_scaled_error_power_evaluation",
+ "task_category": "integer_arithmetic_single_expression",
+ "label_classes": [
+  "fail",
+  "pass"
+ ],
+ "n_train_used": 192,
+ "n_validation_used": 96,
+ "n_holdout_used": 96,
+ "power": {
+  "requirements": {
+   "train_pass_min": 24,
+   "train_fail_min": 24,
+   "validation_pass_min": 10,
+   "validation_fail_min": 10,
+   "holdout_pass_min": 20,
+   "holdout_fail_min": 20,
+   "on_shortfall": "report the shortfall and mark the increment test underpowered; do not regenerate or reselect tasks"
+  },
+  "label_counts_by_split": {
+   "train": {
+    "fail": 106,
+    "pass": 86
+   },
+   "validation": {
+    "fail": 54,
+    "pass": 42
+   },
+   "holdout": {
+    "fail": 51,
+    "pass": 45
+   }
+  },
+  "undecided_excluded_counts": {},
+  "met_by_split": {
+   "train": true,
+   "validation": true,
+   "holdout": true
+  },
+  "increment_test_adequately_powered": true
+ },
+ "holdout_label_distribution": {
+  "fail": 51,
+  "pass": 45
+ },
+ "majority_class_baseline_accuracy": 0.53125,
+ "classifier_family": "train-standardized nearest centroid",
+ "distance": "squared_euclidean",
+ "tie_break": "lexicographic (fail before pass)",
+ "baseline_order": [
+  "majority_class",
+  "metadata_only",
+  "logits_only",
+  "router_only",
+  "window_entropy",
+  "full_telemetry",
+  "metadata_plus_telemetry"
+ ],
+ "evaluations": {
+  "majority_class": {
+   "n": 96,
+   "accuracy": 0.53125,
+   "balanced_accuracy": 0.5,
+   "macro_f1": 0.3469387755102041,
+   "accuracy_bootstrap_95pct": [
+    0.4270833333333333,
+    0.6354166666666666
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 51,
+     "pass": 0
+    },
+    "pass": {
+     "fail": 45,
+     "pass": 0
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.53125,
+     "recall": 1.0,
+     "f1": 0.6938775510204082,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "support": 45
+    }
+   },
+   "features": [],
+   "feature_count": 0
+  },
+  "metadata_only": {
+   "n": 96,
+   "accuracy": 0.8229166666666666,
+   "balanced_accuracy": 0.8137254901960784,
+   "macro_f1": 0.8156973461321287,
+   "accuracy_bootstrap_95pct": [
+    0.7395833333333334,
+    0.8958333333333334
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 49,
+     "pass": 2
+    },
+    "pass": {
+     "fail": 15,
+     "pass": 30
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.765625,
+     "recall": 0.9607843137254902,
+     "f1": 0.8521739130434782,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.9375,
+     "recall": 0.6666666666666666,
+     "f1": 0.7792207792207793,
+     "support": 45
+    }
+   },
+   "features": [
+    "band_1",
+    "band_2",
+    "band_3",
+    "band_4",
+    "band_5",
+    "band_6"
+   ],
+   "feature_count": 6
+  },
+  "logits_only": {
+   "n": 96,
+   "accuracy": 0.8541666666666666,
+   "balanced_accuracy": 0.8588235294117648,
+   "macro_f1": 0.8541033434650456,
+   "accuracy_bootstrap_95pct": [
+    0.78125,
+    0.9166666666666666
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 40,
+     "pass": 11
+    },
+    "pass": {
+     "fail": 3,
+     "pass": 42
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.9302325581395349,
+     "recall": 0.7843137254901961,
+     "f1": 0.851063829787234,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.7924528301886793,
+     "recall": 0.9333333333333333,
+     "f1": 0.8571428571428572,
+     "support": 45
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin"
+   ],
+   "feature_count": 3
+  },
+  "router_only": {
+   "n": 96,
+   "accuracy": 0.75,
+   "balanced_accuracy": 0.7398692810457517,
+   "macro_f1": 0.7386569872958257,
+   "accuracy_bootstrap_95pct": [
+    0.65625,
+    0.8333333333333334
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 46,
+     "pass": 5
+    },
+    "pass": {
+     "fail": 19,
+     "pass": 26
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.7076923076923077,
+     "recall": 0.9019607843137255,
+     "f1": 0.7931034482758621,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.8387096774193549,
+     "recall": 0.5777777777777777,
+     "f1": 0.6842105263157895,
+     "support": 45
+    }
+   },
+   "features": [
+    "router_entropy",
+    "expert_concentration"
+   ],
+   "feature_count": 2
+  },
+  "window_entropy": {
+   "n": 96,
+   "accuracy": 0.8333333333333334,
+   "balanced_accuracy": 0.8418300653594771,
+   "macro_f1": 0.8321678321678323,
+   "accuracy_bootstrap_95pct": [
+    0.7604166666666666,
+    0.90625
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 36,
+     "pass": 15
+    },
+    "pass": {
+     "fail": 1,
+     "pass": 44
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.972972972972973,
+     "recall": 0.7058823529411765,
+     "f1": 0.8181818181818183,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.7457627118644068,
+     "recall": 0.9777777777777777,
+     "f1": 0.8461538461538463,
+     "support": 45
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "high_entropy_count"
+   ],
+   "feature_count": 2
+  },
+  "full_telemetry": {
+   "n": 96,
+   "accuracy": 0.8854166666666666,
+   "balanced_accuracy": 0.8869281045751634,
+   "macro_f1": 0.8853046594982079,
+   "accuracy_bootstrap_95pct": [
+    0.8229166666666666,
+    0.9479166666666666
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 44,
+     "pass": 7
+    },
+    "pass": {
+     "fail": 4,
+     "pass": 41
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.9166666666666666,
+     "recall": 0.8627450980392157,
+     "f1": 0.888888888888889,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.8541666666666666,
+     "recall": 0.9111111111111111,
+     "f1": 0.8817204301075269,
+     "support": 45
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration",
+    "decode_step_count",
+    "windowed_expert_shift",
+    "high_entropy_count",
+    "low_confidence_count",
+    "top_k_margin_trend"
+   ],
+   "feature_count": 10
+  },
+  "metadata_plus_telemetry": {
+   "n": 96,
+   "accuracy": 0.8645833333333334,
+   "balanced_accuracy": 0.8647058823529412,
+   "macro_f1": 0.8642149929278642,
+   "accuracy_bootstrap_95pct": [
+    0.7916666666666666,
+    0.9270833333333334
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 44,
+     "pass": 7
+    },
+    "pass": {
+     "fail": 6,
+     "pass": 39
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.88,
+     "recall": 0.8627450980392157,
+     "f1": 0.8712871287128714,
+     "support": 51
+    },
+    "pass": {
+     "precision": 0.8478260869565217,
+     "recall": 0.8666666666666667,
+     "f1": 0.8571428571428571,
+     "support": 45
+    }
+   },
+   "features": [
+    "band_1",
+    "band_2",
+    "band_3",
+    "band_4",
+    "band_5",
+    "band_6",
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration",
+    "decode_step_count",
+    "windowed_expert_shift",
+    "high_entropy_count",
+    "low_confidence_count",
+    "top_k_margin_trend"
+   ],
+   "feature_count": 16
+  }
+ },
+ "incremental_value_over_metadata": {
+  "metadata_plus_telemetry_vs_metadata_only": {
+   "delta_accuracy": 0.041666666666666664,
+   "delta_accuracy_bootstrap_95pct": [
+    -0.03125,
+    0.11458333333333337
+   ],
+   "delta_balanced_accuracy_bootstrap_95pct": [
+    -0.020104895104894993,
+    0.12698412698412698
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true,
+   "prediction_agreement_counts": {
+    "a_right_b_wrong": 9,
+    "a_wrong_b_right": 5,
+    "both_right": 74,
+    "both_wrong": 8
+   },
+   "comparison": "metadata_plus_telemetry minus metadata_only",
+   "interval_excludes_zero": false,
+   "meaningful_increment_established": false
+  },
+  "full_telemetry_vs_metadata_only": {
+   "delta_accuracy": 0.0625,
+   "delta_accuracy_bootstrap_95pct": [
+    -0.02083333333333337,
+    0.14583333333333337
+   ],
+   "delta_balanced_accuracy_bootstrap_95pct": [
+    -0.006072874493927016,
+    0.1534391534391535
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true,
+   "prediction_agreement_counts": {
+    "a_right_b_wrong": 12,
+    "a_wrong_b_right": 6,
+    "both_right": 73,
+    "both_wrong": 5
+   },
+   "comparison": "full_telemetry minus metadata_only",
+   "interval_excludes_zero": false,
+   "meaningful_increment_established": false
+  },
+  "window_entropy_vs_metadata_only": {
+   "delta_accuracy": 0.010416666666666666,
+   "delta_accuracy_bootstrap_95pct": [
+    -0.09375,
+    0.11458333333333337
+   ],
+   "delta_balanced_accuracy_bootstrap_95pct": [
+    -0.06293706293706292,
+    0.12068965517241381
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true,
+   "prediction_agreement_counts": {
+    "a_right_b_wrong": 14,
+    "a_wrong_b_right": 13,
+    "both_right": 66,
+    "both_wrong": 3
+   },
+   "comparison": "window_entropy minus metadata_only",
+   "interval_excludes_zero": false,
+   "meaningful_increment_established": false
+  }
+ },
+ "calibration": {
+  "full_telemetry": {
+   "score_definition": "softmax over negative squared centroid distances; probability mass on the fail class",
+   "reliability_bins_equal_count": [
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 8.89407311198233e-10,
+     "observed_fail_rate": 0.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.00030430186830654747,
+     "observed_fail_rate": 0.16666666666666666
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.01019255131654366,
+     "observed_fail_rate": 0.08333333333333333
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.18338696508771543,
+     "observed_fail_rate": 0.3333333333333333
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.7385076754338485,
+     "observed_fail_rate": 0.6666666666666666
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.992430550660855,
+     "observed_fail_rate": 1.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.9999670726257239,
+     "observed_fail_rate": 1.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.9999995203986761,
+     "observed_fail_rate": 1.0
+    }
+   ],
+   "expected_calibration_error": 0.058611672629012734,
+   "candidate_threshold": {
+    "status": "candidate-only",
+    "not_for_production": true,
+    "derived_from": "validation split balanced-accuracy grid only",
+    "threshold_fail_probability": 0.7,
+    "validation_balanced_accuracy_at_threshold": 0.914021164021164,
+    "holdout_balanced_accuracy_at_threshold_descriptive": 0.8588235294117648
+   }
+  },
+  "metadata_plus_telemetry": {
+   "score_definition": "softmax over negative squared centroid distances; probability mass on the fail class",
+   "reliability_bins_equal_count": [
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 7.687488075322335e-12,
+     "observed_fail_rate": 0.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 1.9924397356540003e-05,
+     "observed_fail_rate": 0.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.0036183154319864535,
+     "observed_fail_rate": 0.16666666666666666
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.1790696599406847,
+     "observed_fail_rate": 0.5833333333333334
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.871735181219937,
+     "observed_fail_rate": 0.5833333333333334
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.9994140071533283,
+     "observed_fail_rate": 0.9166666666666666
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.9999989634053738,
+     "observed_fail_rate": 1.0
+    },
+    {
+     "n": 12,
+     "mean_predicted_fail_probability": 0.9999999938229758,
+     "observed_fail_rate": 1.0
+    }
+   ],
+   "expected_calibration_error": 0.11731027252216109,
+   "candidate_threshold": {
+    "status": "candidate-only",
+    "not_for_production": true,
+    "derived_from": "validation split balanced-accuracy grid only",
+    "threshold_fail_probability": 0.75,
+    "validation_balanced_accuracy_at_threshold": 0.9325396825396826,
+    "holdout_balanced_accuracy_at_threshold_descriptive": 0.8254901960784313
+   }
+  }
+ },
+ "holdout_evaluated_once": true,
+ "refit_or_threshold_tuning_after_holdout": false,
+ "threshold_status": "candidate-only",
+ "production_threshold_set": false,
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/intervals only; no ids/text/paths"
+}

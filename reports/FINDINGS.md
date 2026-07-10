@@ -2179,3 +2179,22 @@ perfect-trigger fixture, uninformative and harmful fixtures mapping to their
 verdicts, and aggregate-only policy reports. The capture-script sampling
 addition leaves all greedy decode tests passing. Full repository suite: 143
 tests green.
+
+## 200. M32 structured repair was superseded before execution
+The preregistered M32 structured-repair bakeoff (manifest 5f0edfe, module and
+tests written, capture just started) was superseded by operator steer 9aaded9
+before any result was inspected. The in-flight capture was killed and partial
+private captures deleted; the manifest, module, and CPU tests are preserved
+as never-executed historical artifacts. No M32 claim exists.
+
+## 201. M32R phase-0 feasibility gate fails for both approved Agents-A1 paths
+A meta-device audit from the official config (no weights downloaded) shows
+InternScience/Agents-A1 (qwen3_5_moe, 40 layers, 256 experts, top-8) carries
+32.21B of its 34.66B parameters in fused 3D expert tensors that bitsandbytes
+cannot quantize, so the preferred NF4 research load is ~61.9 GiB and BF16 is
+~64.6 GiB against a hard 44 GiB dual-3090 ceiling. The FP8 variant requires
+compressed-tensors, which is not in the approved stack, and Ampere has no
+FP8 kernel path. Per the protocol's Branch 4, M32R stopped before
+preregistration or capture, with unblock options reported instead of a
+silent model substitution. This reproduces and extends finding-era evidence
+from the iteration-8 Qwen3.6-35B-A3B NF4 audit.

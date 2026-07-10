@@ -852,3 +852,31 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   tests. Production gated. Autoloop: M30+M31 = 2 of 3 authorized milestones;
   the branch-appropriate third milestone depends on an operator decision, so
   stopping at the post-M31 gate.
+
+## M32 structured repair — SUPERSEDED BEFORE EXECUTION (2026-07-10)
+- The M32 structured-repair bakeoff was preregistered (5f0edfe) and its
+  implementation/tests written; the staged capture driver had produced only
+  partial private originals when operator steer 9aaded9 superseded the
+  milestone before any result inspection. The in-flight capture was killed
+  and all partial private captures deleted; nothing was processed, labeled,
+  or evaluated. Per the supersession notice the manifest, module, and tests
+  are preserved as historical artifacts and must not be run or reported as
+  evidence. agents-a1 serving is unaffected.
+
+## M32R counterfactual expert routing — PHASE-0 GATE FAILED, STOPPED (2026-07-10)
+- Operator protocol docs/M32R_AGENTS_A1_COUNTERFACTUAL_ROUTING_AUTOLOOP.md
+  (e68bef0/9aaded9): Agents-A1 HF safetensors research load under a hard
+  44 GiB dual-3090 ceiling, route-override hooks, counterfactual expert
+  screen. Phase 0 (loader feasibility) precedes preregistration.
+- Config-only audit (no weights downloaded): InternScience/Agents-A1 is
+  qwen3_5_moe, 40 layers/256 experts/top-8, 34.66B params with 32.21B (93%)
+  in fused 3D expert tensors that bitsandbytes cannot quantize → NF4-mixed
+  estimate 61.9 GiB and BF16 64.6 GiB, both far over the 44 GiB gate. This
+  reproduces the iteration-8 Qwen3.6-35B-A3B audit exactly.
+- InternScience/Agents-A1-FP8 is compressed-tensors; the package is not in
+  the approved stack (new-dependency gate) and Ampere sm86 has no FP8 kernel
+  path, so the installed loader cannot run it within the ceiling.
+- Verdict: BRANCH 4 (resource/loader failure) — stopped before any
+  preregistration, generation, or capture, per protocol. Public feasibility
+  report: reports/telemetry/hf_m32r_feasibility_gate.json (aggregate only).
+  Unblock options recorded for the operator. Full suite green: 151 tests.

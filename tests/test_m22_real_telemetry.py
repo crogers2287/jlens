@@ -117,9 +117,11 @@ def test_public_reports_have_groups_but_no_ids_text_paths_or_tensors():
         meta[task_id] = {"task_category": "fixture_category"}
     summary, comparison = M22.build_public_reports(records, meta, labels)
     assert summary["weights_loaded"] == 1
+    assert summary["cross_model_alignment"] is True
     assert summary["router_status_distribution"] == {"available": 4}
     assert comparison["need_comparisons"]["checker"]["needed"]["n"] == 1
     assert comparison["predictive_value_claimed"] is False
+    assert comparison["within_model_error_prediction_tested"] is False
     public = json.dumps([summary, comparison])
     assert not any(task_id in public for task_id in meta)
     assert "/secret" not in public

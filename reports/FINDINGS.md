@@ -1737,8 +1737,10 @@ Alignment coverage is auto8/action8/grounded1/reviewed1. Checker-needed rows (n=
 show lower mean decode entropy than not-needed rows (0.6767 vs 1.3162) and lower
 final selected probability (0.6943 vs 0.8056), but router entropy is effectively
 unchanged (3.4300 vs 3.4277). Retrieval and review positives are each n=1. These
-are selected-sample observations only: no predictive value, threshold, calibration,
-or production usefulness is claimed.
+labels came from agents-a1 outcomes on the shared IDs while telemetry came from
+Qwen, so the result measures cross-model task-demand association, not whether
+Qwen telemetry predicts Qwen errors. These are selected-sample observations only:
+no predictive value, threshold, calibration, or production usefulness is claimed.
 
 ## 141. Public M22 artifacts remain aggregate-only
 `hf_m22_real_summary.json` records completion/capability distributions, aggregate

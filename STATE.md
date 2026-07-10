@@ -646,6 +646,8 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   records remain private. Public artifacts contain aggregate groups only.
 - Alignment coverage: auto8/action8/grounded1/reviewed1. Checker-needed mean decode
   entropy 0.6767 vs 1.3162 not-needed, while router entropy was 3.4300 vs 3.4277.
-  Retrieval/review have n=1 positives; no predictive-value claim. Production gated.
+  These labels came from agents-a1 on shared IDs, so this is cross-model task-demand
+  alignment, not Qwen error prediction. Retrieval/review have n=1 positives; no
+  predictive-value claim. Production gated.
 - Added M22 adapter/reporting, docs, and CPU fixture tests. Full suite green:
   89/89 tests.

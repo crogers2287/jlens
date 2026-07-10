@@ -2,6 +2,9 @@
  "schema_version": 1,
  "run_kind": "real_local_hf_telemetry_alignment",
  "n_records": 8,
+ "telemetry_model_scope": "qwen2_moe_internal_signals",
+ "outcome_label_source": "agents_a1_shared_task_ids",
+ "cross_model_alignment": true,
  "task_category_distribution": {
   "current_info": 1,
   "exact_answer": 1,
@@ -102,6 +105,7 @@
  },
  "observable_separation_only": true,
  "predictive_value_claimed": false,
+ "within_model_error_prediction_tested": false,
  "tiny_n_warning": "Eight selected tasks cannot establish predictive value.",
  "candidate_only": true,
  "production_gated": true,

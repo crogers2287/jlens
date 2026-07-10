@@ -71,6 +71,11 @@ window only.
 The batch intentionally contains two checker-needed tasks, one retrieval-needed
 task, one review-needed task, and four no-action tasks.
 
+The internal telemetry is from Qwen, but the aligned auto/action/grounded/review
+records were produced by `agents-a1` on the shared task IDs. This is therefore a
+cross-model comparison of telemetry with task-demand labels. It does not test
+whether Qwen telemetry predicts errors made by Qwen itself.
+
 - Checker-needed versus not-needed showed mean decode entropy 0.6767 versus
   1.3162 and final selected-token probability 0.6943 versus 0.8056.
 - Router entropy for checker-needed versus not-needed was almost unchanged:
@@ -82,8 +87,9 @@ task, one review-needed task, and four no-action tasks.
 
 This is observable separation only. It does not establish predictive value,
 thresholds, calibration, causality, or production usefulness. A larger,
-predeclared batch with enough positive retrieval/checker/review outcomes is
-required before fitting or evaluating a telemetry policy.
+predeclared within-model run with Qwen outputs, Qwen-specific verifier/action
+outcomes, and enough positive retrieval/checker/review rows is required before
+fitting or evaluating a telemetry policy.
 
 ## Privacy and safety
 

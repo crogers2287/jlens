@@ -1,97 +1,96 @@
-# steer.md — M31 telemetry-triggered intervention study
+# steer.md — post-M31 decision gate
 
-M1 through M30 are complete. The M30 decisive test classified the
-telemetry-vs-metadata increment as **ESTABLISHED** under the preregistered
-rule (+.099 accuracy, 95% CI [+.042, +.156], n=192 once-read holdout).
-Per the operator's result-driven branching (steer 2a4699e, Branch 1), the
-next milestone is the telemetry-triggered intervention study.
+M1 through M31 are complete. Do not redo the M30 decisive test (increment
+ESTABLISHED) or the M31 intervention study. The M27/M29/M30 holdouts and the
+M31 task set are spent as decision targets.
 
-`CODEX_AUTOSTEER.md` remains the operating contract. The operator authorized
-a telemetry-focused autoloop of up to three milestones starting with M30;
-M30 was the first, M31 is the second.
+`CODEX_AUTOSTEER.md` remains the operating contract.
 
-## Current evidence after M30
+## Autosteer status
 
-- Full telemetry .917 vs metadata .818 on the powered n=192 holdout;
-  27 metadata errors corrected vs 8 introduced; both accuracy and
-  balanced-accuracy paired CIs exclude zero.
-- metadata_plus_telemetry .922 (+.104 [+.057,+.156]); window_entropy alone is
-  insufficient (+.031, CI spans zero) — the increment needs all ten features.
-- Candidate calibration transfers: full_telemetry ECE .032, threshold .50
-  p(fail), holdout balanced accuracy .916. Candidate-only, production gated.
-- Suite green at 136 tests. Scope remains one category/model/decode protocol.
+The operator's telemetry autoloop (up to three milestones from M30) completed
+two: M30 (decisive increment, ESTABLISHED) and M31 (intervention study, NOT
+ESTABLISHED). The natural third milestone changes the intervention design in
+a way the operator's Branch-1 plan did not preregister (it assumed a useful
+verdict and trace scaling), so this run stops here for an operator decision.
 
-## M31 — telemetry-triggered intervention study (current milestone)
+## Current evidence
 
-Goal: measure whether the frozen M30 telemetry score, used as a retry
-trigger, improves verified task success at reasonable compute cost — against
-no-retry, matched-compute random retry, and always-retry controls.
+### M30 — decisive increment (ESTABLISHED)
 
-Preregister in `data/prompts/m31_intervention_manifest.json` before any
-generation or capture:
+- Powered n=192 once-read holdout: full_telemetry .917 vs metadata .818;
+  paired Δaccuracy +.099 [+.042,+.156], Δbalanced-accuracy [+.050,+.165];
+  27 metadata errors corrected vs 8 introduced.
+- window_entropy alone insufficient (+.031, CI spans zero); calibration ECE
+  .032 at the .50 threshold (candidate-only).
 
-1. A fresh 192-task set: the same six bands × 32, operand tuples
-   deterministically disjoint from both the M29 and M30 manifests. No
-   train/validation split — the classifier and threshold are frozen from M30.
-2. Frozen score: the M30 full_telemetry nearest-centroid model,
-   deterministically re-instantiated from the private M30 train records with
-   no refitting, plus the frozen validation threshold p(fail) ≥ .50.
-   Verification hash of the M30 training protocol must match.
-3. Original decode: the standard greedy protocol (chat template, 64-token
-   cap, router-only capture).
-4. Retry decode: one seeded sampled decode per task (temperature 0.7,
-   deterministic per-task generator seed derived from the manifest seed and
-   task id), same template and cap. The greedy capture path stays untouched;
-   sampling is an opt-in flag addition to the capture script.
-5. Policies compared on identical tasks and the identical single retry
-   capture (replace-on-trigger semantics; no policy may consult the label):
-   - no_retry — original outputs
-   - always_retry — retry outputs for all tasks
-   - random_retry — fixed-seed random subset, size matched to the telemetry
-     trigger count
-   - telemetry_triggered — retry iff frozen p(fail) ≥ .50 on the original
-     decode's telemetry
-6. Deterministic labels: math_checker on original and retry outputs;
-   undecided excluded and reported.
-7. Metrics per policy: verified success rate, retries used (compute), false
-   alarms (retries on originally-correct tasks), errors rescued
-   (wrong→right), errors introduced (right→wrong), paired bootstrap CIs for
-   success-rate deltas (fixed seeds, 2000 iterations).
-8. Preregistered classification of the telemetry policy:
-   - useful: success delta over no_retry has a positive CI excluding zero
-     AND success delta over matched-compute random_retry has a positive CI
-     excluding zero
-   - harmful: success delta over no_retry has a negative CI excluding zero
-   - not_established: otherwise
-9. Recovery traces: for verified wrong→right rescues only, write private
-   gitignored trace records; public artifacts report aggregate counts and a
-   trace schema description only.
-10. Honest reporting: class balance, undecided, decode-cap counts, trigger
-    rate, and every shortfall. No production policy or threshold unlock.
+### M31 — intervention study (NOT ESTABLISHED, decomposed)
 
-Deliverables:
+- 192 fresh tasks; frozen M30 score (refit verified against the published
+  confusion matrix); seeded temperature-0.7 single retry; four
+  replace-on-retry policies, none consulting labels.
+- Success rates: no_retry .469; always_retry .464; random_retry .458;
+  telemetry_triggered .474. Primary deltas span zero → not established.
+- Decomposition: the trigger replicated (~89% of 99 triggered retries hit
+  real failures — 11 false alarms vs random's 43) but the repair operator is
+  the bottleneck: a resample rescues only ~4.5% of triggered failures because
+  these arithmetic errors are systematic, not stochastic (retry pass rate
+  46.4% ≈ greedy 46.9%).
+- Telemetry gating was the only non-losing policy (fewest false alarms and
+  introduced errors at matched compute). 4 verified recovery traces (private)
+  — far too few to scale trace generation as Branch 1 assumed.
 
-- `data/prompts/m31_intervention_manifest.json` (predeclare commit first)
-- sampling support in the capture script (greedy path unchanged) + tests
-- `src/m31_intervention_study.py` + tests
-- `reports/telemetry/hf_m31_intervention_run_summary.json`
-- `reports/telemetry/hf_m31_intervention_evaluation.json`
-- `docs/M31_TELEMETRY_INTERVENTION_STUDY.md`
-- private recovery-trace JSONL (gitignored)
-- updated `STATE.md` and `reports/FINDINGS.md`; full suite green
+Across M26–M31: every protocol preregistered before generation; every
+holdout/decision set read once; no private text/labels/predictions/paths/
+tensors committed; agents-a1 restored after every GPU window; full suite
+green at 143 tests; candidate-only and production gates unchanged.
 
-Stop condition: all four policies evaluated on identical fresh tasks with
-deterministic labels; the telemetry policy classified useful, not
-established, or harmful under the preregistered rule; recovery traces
-private; public artifacts aggregate-only; commit-safe passes; tests green;
-production gated.
+## Research position
 
-## After M31
+Detection is validated within the controlled category: internal telemetry
+identifies model errors with an established increment over difficulty
+metadata and ~89% trigger precision across three consecutive fresh task
+sets. Intervention is not: naive resampling cannot repair systematic errors,
+so the trigger currently has nothing effective to trigger. The next
+substantive question is the repair operator, not the detector.
 
-Report the intervention verdict and stop for operator review unless the
-autoloop budget (three milestones from M30) and time limits still allow the
-operator's Branch-1 continuation (scaling recovery-trace generation) — a
-third milestone requires the M31 verdict first.
+## Required operator decision before M32
+
+Choose exactly one direction:
+
+### A. Stronger repair operator behind the frozen trigger (recommended)
+
+Preregister an M32 that keeps the frozen M30 trigger and replaces the
+resample with a stronger repair operator, evaluated under the same four-
+policy design on fresh tasks. Candidate operators, in increasing power:
+(1) decomposition reprompt (ask the model to compute digit-by-digit /
+step-by-step on retry); (2) checker-guided regeneration reusing the M20
+grounded-regeneration machinery; (3) deterministic tool computation as an
+upper-bound reference arm (establishes the ceiling any model-side repair
+must be judged against). A useful verdict would also restart recovery-trace
+generation at meaningful volume.
+
+### B. Transfer test of the detector
+
+Second deterministic category (e.g. string transformation or date
+arithmetic) with its own preregistered design, testing whether the
+established detector increment transfers beyond arithmetic before investing
+further in repair.
+
+### C. Reviewed calibration toward practical advisory use
+
+Wire the frozen candidate p(fail) score into the existing shadow/review
+workflow (advisory-only, no actions) and re-measure calibration and trigger
+precision on real mixed workloads with human-reviewed outcomes.
+
+### D. End telemetry research
+
+Return to practical supervisor quality work with the detector documented as
+a candidate-only research result.
+
+Do not begin M32 until the operator selects A–D. Any new real model run must
+remain under the existing approval or stop for a new model/hardware/resource
+gate.
 
 ## Repository hygiene
 

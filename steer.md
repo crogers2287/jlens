@@ -1,101 +1,134 @@
-# steer.md — post-M31 decision gate
+# steer.md — M32 research-cluster structured repair autoloop
 
-M1 through M31 are complete. Do not redo the M30 decisive test (increment
-ESTABLISHED) or the M31 intervention study. The M27/M29/M30 holdouts and the
-M31 task set are spent as decision targets.
+M1 through M31 are complete. Do not redo the M30 decisive detector test or the
+M31 naive-resample intervention study. The M27/M29/M30 holdouts and M31 task
+set are spent as decision targets.
 
-`CODEX_AUTOSTEER.md` remains the operating contract.
+`CODEX_AUTOSTEER.md` remains the operating contract. The detailed operator
+protocol for this loop is `docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`; read it in
+full before implementation.
 
-## Autosteer status
+## Operator decision
 
-The operator's telemetry autoloop (up to three milestones from M30) completed
-two: M30 (decisive increment, ESTABLISHED) and M31 (intervention study, NOT
-ESTABLISHED). The natural third milestone changes the intervention design in
-a way the operator's Branch-1 plan did not preregister (it assumed a useful
-verdict and trace scaling), so this run stops here for an operator decision.
+The operator selected post-M31 option A: keep the validated frozen telemetry
+trigger and replace the failed resample intervention with stronger,
+literature-informed repair operators.
+
+The operator authorizes a new bounded autoloop of up to three milestone
+completions beginning with M32, subject to the normal 4-hour and blocker limits.
+Use separate implementation and steer commits for every milestone.
 
 ## Current evidence
 
-### M30 — decisive increment (ESTABLISHED)
+### M30 — detector increment ESTABLISHED
 
-- Powered n=192 once-read holdout: full_telemetry .917 vs metadata .818;
-  paired Δaccuracy +.099 [+.042,+.156], Δbalanced-accuracy [+.050,+.165];
-  27 metadata errors corrected vs 8 introduced.
-- window_entropy alone insufficient (+.031, CI spans zero); calibration ECE
-  .032 at the .50 threshold (candidate-only).
+- Powered n=192 once-read holdout: full_telemetry .917 vs metadata .818.
+- Paired delta accuracy +.099 with 95% CI [+.042,+.156]; both accuracy and
+  balanced-accuracy intervals exclude zero.
+- 27 metadata errors corrected vs 8 introduced.
+- The increment requires the distributed full feature set; window entropy
+  alone is insufficient.
 
-### M31 — intervention study (NOT ESTABLISHED, decomposed)
+### M31 — trigger works; naive repair does not
 
-- 192 fresh tasks; frozen M30 score (refit verified against the published
-  confusion matrix); seeded temperature-0.7 single retry; four
-  replace-on-retry policies, none consulting labels.
-- Success rates: no_retry .469; always_retry .464; random_retry .458;
-  telemetry_triggered .474. Primary deltas span zero → not established.
-- Decomposition: the trigger replicated (~89% of 99 triggered retries hit
-  real failures — 11 false alarms vs random's 43) but the repair operator is
-  the bottleneck: a resample rescues only ~4.5% of triggered failures because
-  these arithmetic errors are systematic, not stochastic (retry pass rate
-  46.4% ≈ greedy 46.9%).
-- Telemetry gating was the only non-losing policy (fewest false alarms and
-  introduced errors at matched compute). 4 verified recovery traces (private)
-  — far too few to scale trace generation as Branch 1 assumed.
-
-Across M26–M31: every protocol preregistered before generation; every
-holdout/decision set read once; no private text/labels/predictions/paths/
-tensors committed; agents-a1 restored after every GPU window; full suite
-green at 143 tests; candidate-only and production gates unchanged.
+- 192 fresh tasks; frozen M30 detector reproduced exactly; p(fail) >= .50.
+- Of 99 telemetry triggers, 88 hit real original failures (~89% precision),
+  replicating the detector on a third fresh set.
+- A seeded temperature-0.7 retry rescued only 4 of those failures (~4.5%).
+- telemetry-triggered success .474 vs no-retry .469 and matched-random .458;
+  primary confidence intervals crossed zero, so usefulness was not established.
+- always-retry and random-retry were net negative; telemetry gating was the
+  only non-losing policy.
+- Four private verified recovery traces exist, far too few for training use.
 
 ## Research position
 
-Detection is validated within the controlled category: internal telemetry
-identifies model errors with an established increment over difficulty
-metadata and ~89% trigger precision across three consecutive fresh task
-sets. Intervention is not: naive resampling cannot repair systematic errors,
-so the trigger currently has nothing effective to trigger. The next
-substantive question is the repair operator, not the detector.
+Failure detection is validated within the controlled arithmetic/model/decode
+scope. The open blocker is recovery: systematic arithmetic errors are not fixed
+by drawing again from the same distribution.
 
-## Required operator decision before M32
+M32 must isolate the repair question by keeping the M30 detector frozen while
+comparing structured repair methods, matched controls, and an explicit trusted-
+tool upper bound. It must not tune the detector on M32 data.
 
-Choose exactly one direction:
+The M32 design intentionally incorporates method-level lessons from:
 
-### A. Stronger repair operator behind the frozen trigger (recommended)
+- Reinforcement Inference (arXiv:2602.08520): selective deliberate second pass;
+- Gnosis (arXiv:2512.20578): trajectory-level internal descriptors;
+- CLUE (arXiv:2510.01591): experience-centroid candidate verification;
+- What Am I Missing? (arXiv:2605.31561): diagnosis/recovery gap;
+- SCoRe (arXiv:2409.12917): on-policy trace collection and offline-SFT risks;
+- Inference-Time Intervention (arXiv:2306.03341): future control direction;
+- Doomed from the Start (arXiv:2607.06503): later partial-trajectory gating;
+- Code Correctness Signals (arXiv:2606.14530): confound controls.
 
-Preregister an M32 that keeps the frozen M30 trigger and replaces the
-resample with a stronger repair operator, evaluated under the same four-
-policy design on fresh tasks. Candidate operators, in increasing power:
-(1) decomposition reprompt (ask the model to compute digit-by-digit /
-step-by-step on retry); (2) checker-guided regeneration reusing the M20
-grounded-regeneration machinery; (3) deterministic tool computation as an
-upper-bound reference arm (establishes the ceiling any model-side repair
-must be judged against). A useful verdict would also restart recovery-trace
-generation at meaningful volume.
+Borrow ideas, not unreviewed source code. Do not import a paper repository
+without license/dependency review.
 
-### B. Transfer test of the detector
+## M32 — current milestone
 
-Second deterministic category (e.g. string transformation or date
-arithmetic) with its own preregistered design, testing whether the
-established detector increment transfers beyond arithmetic before investing
-further in repair.
+Execute `docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md` section:
+**M32 — telemetry-gated structured repair bakeoff**.
 
-### C. Reviewed calibration toward practical advisory use
+Core requirements:
 
-Wire the frozen candidate p(fail) score into the existing shadow/review
-workflow (advisory-only, no actions) and re-measure calibration and trigger
-precision on real mixed workloads with human-reviewed outcomes.
+1. Preregister before generation:
+   - 384 fresh tasks, six existing boundary bands x 64;
+   - deterministic disjointness from M29, M30, and M31;
+   - frozen prompts, seeds, candidate order, budgets, controls, metrics, and
+     claim rules.
+2. Recreate and verify the frozen M30 full-telemetry score and .50 threshold.
+3. Capture the original greedy decode for every task.
+4. Compare the preregistered repair candidates:
+   - exact M31 temperature-0.7 resample baseline;
+   - independent deliberate/decomposition re-solve;
+   - checker-guided repair that reveals failure but never the correct answer;
+   - diagnose-then-repair two-stage intervention;
+   - deterministic tool computation as an upper-bound reference only.
+5. Evaluate shared-candidate policies with equal compute and verifier access:
+   - no repair;
+   - always structured repair;
+   - matched-random structured repair;
+   - telemetry-triggered structured repair;
+   - telemetry-triggered resample-only;
+   - telemetry-triggered tool upper bound.
+6. Primary structured bundle: verifier-first-passing candidate, otherwise keep
+   the original. A known-correct original must never be replaced by a failing
+   candidate.
+7. Secondary selectors:
+   - frozen-telemetry candidate reranking, CLUE-inspired;
+   - numeric majority/consensus.
+8. Primary preregistered verdicts:
+   - H1 repair improvement vs the same-task resample baseline;
+   - H2 end-to-end telemetry policy usefulness vs both no-repair and matched-
+     random structured repair.
+9. Store all detailed recovery traces privately and gitignored. Public output
+   stays aggregate-only. No fine-tuning or production unlock.
 
-### D. End telemetry research
+Required deliverables and stop conditions are defined in the detailed M32
+protocol file and are mandatory.
 
-Return to practical supervisor quality work with the detector documented as
-a candidate-only research result.
+## Result-driven continuation
 
-Do not begin M32 until the operator selects A–D. Any new real model run must
-remain under the existing approval or stop for a new model/hardware/resource
-gate.
+After M32, follow only the branch rules in
+`docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`:
+
+- H1 improved + H2 useful: M33 trajectory-aware candidate verification and
+  reranking, then eligible M34 partial-gating/recovery-dataset work.
+- H1 improved but H2 not established: M33 threshold/selection/compute study;
+  do not simply scale M32.
+- model repair not improved but tool ceiling large: M33 tool-grounded runtime
+  repair, then M34 second-category detector transfer.
+- negative/harmful result or detector reproduction failure: stop immediately.
+
+A recovery-dataset milestone requires at least 50 verifier-confirmed,
+model-generated wrong-to-right traces and all provenance/diversity/privacy gates
+listed in the autoloop document. No weight training is authorized in this loop.
 
 ## Repository hygiene
 
-Do not commit private prompts/outputs, operands, per-task predictions/labels,
-token IDs/text, raw tensors, file-system paths, model weights, caches, or
-detailed records. Public reports remain aggregate-only. No candidate becomes
-gold and production remains gated until explicit audited unlock criteria are
-defined.
+Do not commit private prompts/outputs, operands, diagnoses, per-task labels or
+predictions, token IDs/text, raw tensors, file-system paths, model weights,
+caches, or detailed recovery records. Public reports remain aggregate-only.
+No candidate becomes gold and production remains gated until explicit audited
+unlock criteria are defined.

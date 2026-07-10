@@ -1,7 +1,7 @@
-# steer.md — post-M21 real HF telemetry validation gate
+# steer.md — post-M22 within-model telemetry expansion
 
-M1 through M21 are complete. Do not redo the GGUF supervisor, verifier, action,
-grounded-regeneration, or fixture HF telemetry work.
+M1 through M22 are complete. Do not redo the GGUF supervisor, verifier, action,
+grounded-regeneration, fixture telemetry, or eight-task real HF validation work.
 
 `CODEX_AUTOSTEER.md` remains part of the operating contract.
 
@@ -15,8 +15,10 @@ Default mode:
 - Stop.
 
 Loop mode requires `CODEX_AUTOSTEER_LOOP=true` or an explicit operator request.
-Even in loop mode, stop for model downloads, licenses, local-path selection,
-disk-space, or hardware/VRAM decisions.
+The current operator approval covers the existing public Qwen MoE checkpoint on
+the Thor mount, GPU-first dual-3090 use, and temporary llama-swap unload/restore.
+Stop for a different model, new download/license, new hardware plan, storage move,
+or materially larger resource footprint.
 
 ## Current state
 
@@ -24,113 +26,115 @@ Completed milestones:
 
 - M1–M20: practical local supervisor track through fixture-grounded regeneration
 - M21: fixture-first HF/safetensors telemetry backend
+- M22: bounded real HF MoE telemetry validation
 
-M21 result:
+M22 result:
 
-- Added `hf_telemetry_record_v1` with aggregate numeric fields only.
-- Added explicit backend separation:
-  - GGUF runtime -> `auto_outcome_v1`, internal telemetry honestly missing
-  - HF/safetensors -> `hf_telemetry_record_v1`
-- Added no-download loader contract:
-  - existing local safetensors directory, or
-  - explicitly approved cached model ID
-  - always `local_files_only=true`
-  - always `trust_remote_code=false`
-- Added logits-derived features:
-  - selected token id/probability
-  - entropy
-  - top-k mass and margin
-  - decode-window entropy/confidence counts and margin trend
-- Added optional hidden-state aggregate summaries.
-- Added honest router states: `available`, `not_moe`, `missing`, `unsupported`.
-- Added router entropy, expert concentration, top expert IDs, and windowed expert
-  shift when fixture telemetry actually exposes them.
-- Fixture batch: 3 schema-valid records, zero weights loaded:
-  - logits available 2 / missing 1
-  - hidden available 1 / disabled 1 / missing 1
-  - router available 1 / not_moe 1 / missing 1
-- Outcome alignment flags: auto 2 / action 2 / grounded 1 / reviewed 0.
-- Repository tracks no model weights/caches.
-- Full suite green at 84 tests.
-- Production remains gated.
+- Real public Qwen1.5-MoE-A2.7B-Chat checkpoint resolved locally with
+  `local_files_only=true` and `trust_remote_code=false`.
+- BF16 fit across dual 24 GiB 3090s without CPU/disk offload; hidden capture was
+  disabled. The approximately 27 GiB checkpoint remains on Thor outside the repo.
+- Eight shared M19 tasks × four decode steps completed.
+- Real telemetry available on all eight:
+  - logits-derived features 8/8
+  - router features 8/8
+  - 24 layers × 60 experts
+  - hidden status disabled 8/8
+- Alignment coverage: auto 8 / action 8 / grounded 1 / reviewed 1.
+- Checker-needed selected rows had lower decode entropy than not-needed rows, but
+  router entropy was effectively unchanged.
+- Critical scope: Qwen supplied telemetry while agents-a1 supplied existing
+  outcome/action labels on shared IDs. This is cross-model task-demand alignment,
+  not within-Qwen error prediction.
+- Retrieval and review positive groups each had n=1. No predictive value,
+  calibration, threshold, or production usefulness was claimed.
+- Raw captures and detailed schema records remain ignored/private. Public reports
+  contain only counts/distributions/group means.
+- Full suite green at 89 tests. Production remains gated.
+- `agents-a1` serving was restored and verified after the capture window.
 
-## Required operator decision before M22
+## Next milestone: M23 within-model telemetry/outcome validation
 
-Do not start a real HF model run until the operator provides all of:
+M23 should remove the M22 cross-model confound. Use the already-approved local
+Qwen MoE to produce both internal telemetry and its own bounded outputs on a
+predeclared shared batch, then run the existing deterministic verifiers/action
+router against those transient Qwen outputs.
 
-1. **Model kind:** dense or MoE.
-2. **Model reference:**
-   - an existing local directory containing safetensors, or
-   - an explicitly approved model ID already available in the HF cache.
-3. **Hardware plan:** CPU, one GPU, multiple GPUs, or approved offload strategy.
-4. **Resource approval:** expected disk/RAM/VRAM footprint and permission to use it.
+### M23 objectives
 
-Do not download weights, accept a license, move caches, unload serving models, or
-guess a model choice. If the reference is not already local/cached, stop.
+1. Predeclare a balanced 32-task batch before inspecting telemetry:
+   - 8 deterministic checker candidates
+   - 8 current-info/retrieval candidates
+   - 8 review/open-explain candidates
+   - 8 no-action controls
+2. Use only existing public task IDs and metadata. Keep prompt text in the existing
+   public dataset or ignored private run files; do not add it to reports.
+3. Load the same approved local Qwen checkpoint with the existing dual-GPU BF16
+   plan, local-only resolution, remote code disabled, hidden capture disabled,
+   and a bounded decode length sufficient to verify outputs.
+4. Capture Qwen logits/router telemetry and its output in the same forward/decode
+   run so the signals and outcomes refer to the same model execution.
+5. Pass the full Qwen output transiently to the existing approved deterministic
+   verifiers and action router before truncation. Never persist full output in a
+   public artifact.
+6. Do not introduce shell execution, dynamic commands, live web retrieval, or a
+   new checker. Retrieval remains fixture/read-only and action execution remains
+   explicitly gated.
+7. Align telemetry with Qwen-specific auto/action outcomes by task ID. Grounded
+   and reviewed coverage may remain missing unless produced through the existing
+   safe workflows; report missing coverage honestly.
+8. Predeclare comparisons and report aggregate separation for:
+   - checker-needed vs not-needed
+   - retrieval-needed vs not-needed
+   - review-needed vs not-needed
+   - deterministic checker pass vs fail, only if both groups occur
+9. Report group counts, mean/median logits features, mean/median router features,
+   and simple effect sizes with bootstrap intervals only when group sizes permit.
+   Do not fit a policy or choose thresholds after seeing the batch.
+10. Keep all raw tensors, token IDs/text, full outputs, paths, and detailed records
+    private/ignored. Keep production gated.
 
-Current live GGUF context remains unchanged:
+### M23 deliverables
 
-- model: agents-a1
-- endpoint: llama-swap port 9069 on fred
-- hardware: dual 3090s
-- GGUF telemetry: missing; `policy=null` when no feature row exists
-
-## Next milestone: M22 real local HF telemetry validation
-
-M22 should run the M21 backend against one operator-approved local/cached
-safetensors model on a small shared task batch and test whether real internal
-telemetry aligns with verifier/action outcomes.
-
-### M22 objectives
-
-1. Resolve the approved reference through `HFSafetensorsLoader` without network
-   access.
-2. Record the exact local model kind and hardware plan without committing paths,
-   weights, cache locations, or secrets.
-3. Run a bounded 8–32 task batch shared with existing public task IDs.
-4. Capture real logits-derived telemetry and decode-window aggregates.
-5. Capture hidden summaries only if explicitly enabled and affordable.
-6. For a dense model, record router status `not_moe`.
-7. For an MoE model, attempt router capture only through actual exposed outputs or
-   documented hooks; otherwise record `missing` or `unsupported`.
-8. Align telemetry with available auto/action/grounded/review outcomes by task ID.
-9. Produce aggregate-only public summaries; keep prompts, outputs, raw tensors,
-   paths, and detailed records private/ignored.
-10. Report whether telemetry adds any observable separation for
-    retrieval/checker/review needs. Do not claim predictive value from tiny-n.
-11. Keep production gated.
-
-### M22 deliverables
-
-- local/private run config or documented environment contract
-- real-model adapter additions, if required
-- private schema-valid telemetry records
-- public aggregate telemetry summary
-- public alignment/comparison summary
-- `docs/M22_REAL_HF_TELEMETRY_VALIDATION.md`
-- tests for the selected architecture path and failure/degraded states
+- deterministic predeclared 32-task selection manifest with IDs/categories only
+- same-run Qwen telemetry + transient-output adapter additions
+- private raw captures and Qwen-specific outcome/action records
+- private schema-valid detailed telemetry records
+- public aggregate run summary
+- public within-model alignment/comparison report
+- `docs/M23_WITHIN_MODEL_TELEMETRY_VALIDATION.md`
+- tests for same-run association, transient-output handling, predeclared groups,
+  degraded/missing states, no-text reporting, and resume behavior
 - updated `STATE.md` and `reports/FINDINGS.md`
 
-### M22 stop condition
+### M23 stop condition
 
-- approved model resolves without download
-- bounded real telemetry run completes or reports an honest degraded blocker
-- logits telemetry validates
-- router state is honest for the architecture
-- no model weights/cache/path/raw text/raw tensors are committed
-- public artifacts pass commit-safety checks
+- exactly 32 predeclared tasks are processed or an honest degraded blocker is
+  reported without redefining the batch
+- Qwen telemetry and Qwen-specific outcomes are linked to the same execution
+- logits and router capability states are honest
+- comparisons remain descriptive and predeclared; no tiny-n predictive claim
+- no weights/cache/path/raw prompt/output/token/tensor data are committed
+- public artifacts pass schema, privacy, and commit-safety checks
+- full test suite passes
 - production remains gated
 
-## Alternatives if the operator does not approve a real HF model
+## After M23
 
-- M22C: broader GGUF model comparison using the M19/M20 harness
-- M22D: improve open-ended explain verification with reference/rubric strategy
-- M22E: larger grounded-regeneration run with question-specific public fixtures
-- M22F: missing-label dataset converters
+Choose based on evidence, not preference:
+
+- If within-model groups have enough support and stable separation: M24 frozen
+  holdout evaluation with predeclared features/metrics and no threshold tuning.
+- If positive groups are too small: M24 balanced batch expansion using the same
+  model/hardware/privacy contract.
+- If telemetry shows no useful separation: stop the telemetry-policy branch and
+  return to practical verifier/retrieval quality work.
+- If output capture cannot stay transient or same-run association is unreliable:
+  stop and repair the adapter before any larger run.
 
 ## Repository hygiene
 
-Do not commit local detailed records, prompts, full outputs, raw tensors, model
-paths, model IDs that reveal private infrastructure, model weights, tokenizer or
-model caches, environments, or large generated artifacts unless explicitly
-intended and public-safe.
+Do not commit local detailed records, prompts, full outputs, raw retrieved context,
+token text/IDs, raw tensors, model paths, model weights, tokenizer/model caches,
+environments, or large generated artifacts. Outcome labels remain candidates and
+production remains gated until a future steer defines audited unlock criteria.

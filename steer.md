@@ -1,132 +1,102 @@
-# steer.md — M30 telemetry-focused decisive increment track
+# steer.md — M31 telemetry-triggered intervention study
 
-M1 through M29 are complete. Do not reuse the spent M27 or M29 holdouts as decision targets. `CODEX_AUTOSTEER.md` remains the operating contract.
+M1 through M30 are complete. The M30 decisive test classified the
+telemetry-vs-metadata increment as **ESTABLISHED** under the preregistered
+rule (+.099 accuracy, 95% CI [+.042, +.156], n=192 once-read holdout).
+Per the operator's result-driven branching (steer 2a4699e, Branch 1), the
+next milestone is the telemetry-triggered intervention study.
 
-## Operator decision
+`CODEX_AUTOSTEER.md` remains the operating contract. The operator authorized
+a telemetry-focused autoloop of up to three milestones starting with M30;
+M30 was the first, M31 is the second.
 
-The operator selects the telemetry research track and authorizes continued work to get the telemetry signal properly characterized and usable.
+## Current evidence after M30
 
-Start with option A from the post-M29 gate:
+- Full telemetry .917 vs metadata .818 on the powered n=192 holdout;
+  27 metadata errors corrected vs 8 introduced; both accuracy and
+  balanced-accuracy paired CIs exclude zero.
+- metadata_plus_telemetry .922 (+.104 [+.057,+.156]); window_entropy alone is
+  insufficient (+.031, CI spans zero) — the increment needs all ten features.
+- Candidate calibration transfers: full_telemetry ECE .032, threshold .50
+  p(fail), holdout balanced accuracy .916. Candidate-only, production gated.
+- Suite green at 136 tests. Scope remains one category/model/decode protocol.
 
-**M30 — decisive telemetry-vs-metadata increment test**
+## M31 — telemetry-triggered intervention study (current milestone)
 
-This milestone must establish or refute whether telemetry adds statistically meaningful predictive value beyond difficulty metadata in the controlled arithmetic category.
+Goal: measure whether the frozen M30 telemetry score, used as a retry
+trigger, improves verified task success at reasonable compute cost — against
+no-retry, matched-compute random retry, and always-retry controls.
 
-## Current evidence
+Preregister in `data/prompts/m31_intervention_manifest.json` before any
+generation or capture:
 
-- M29 used 384 fresh tasks with a sealed 192/96/96 split.
-- Holdout: metadata_only .823; logits_only .854; router_only .750; window_entropy .833; full_telemetry .885; metadata_plus_telemetry .865.
-- Full telemetry beat metadata by +.063, correcting 12 metadata errors while introducing 6.
-- Paired 95% CI was [-.021,+.146], so the increment was not established at n=96.
-- Telemetry is the best point-estimate system tested, but the decisive question is still statistical increment over metadata.
-- M29 power analysis estimated a holdout near n≈200 at the observed discordance/effect size.
-- Full suite was green at 130 tests; candidate-only and production gates remain.
+1. A fresh 192-task set: the same six bands × 32, operand tuples
+   deterministically disjoint from both the M29 and M30 manifests. No
+   train/validation split — the classifier and threshold are frozen from M30.
+2. Frozen score: the M30 full_telemetry nearest-centroid model,
+   deterministically re-instantiated from the private M30 train records with
+   no refitting, plus the frozen validation threshold p(fail) ≥ .50.
+   Verification hash of the M30 training protocol must match.
+3. Original decode: the standard greedy protocol (chat template, 64-token
+   cap, router-only capture).
+4. Retry decode: one seeded sampled decode per task (temperature 0.7,
+   deterministic per-task generator seed derived from the manifest seed and
+   task id), same template and cap. The greedy capture path stays untouched;
+   sampling is an opt-in flag addition to the capture script.
+5. Policies compared on identical tasks and the identical single retry
+   capture (replace-on-trigger semantics; no policy may consult the label):
+   - no_retry — original outputs
+   - always_retry — retry outputs for all tasks
+   - random_retry — fixed-seed random subset, size matched to the telemetry
+     trigger count
+   - telemetry_triggered — retry iff frozen p(fail) ≥ .50 on the original
+     decode's telemetry
+6. Deterministic labels: math_checker on original and retry outputs;
+   undecided excluded and reported.
+7. Metrics per policy: verified success rate, retries used (compute), false
+   alarms (retries on originally-correct tasks), errors rescued
+   (wrong→right), errors introduced (right→wrong), paired bootstrap CIs for
+   success-rate deltas (fixed seeds, 2000 iterations).
+8. Preregistered classification of the telemetry policy:
+   - useful: success delta over no_retry has a positive CI excluding zero
+     AND success delta over matched-compute random_retry has a positive CI
+     excluding zero
+   - harmful: success delta over no_retry has a negative CI excluding zero
+   - not_established: otherwise
+9. Recovery traces: for verified wrong→right rescues only, write private
+   gitignored trace records; public artifacts report aggregate counts and a
+   trace schema description only.
+10. Honest reporting: class balance, undecided, decode-cap counts, trigger
+    rate, and every shortfall. No production policy or threshold unlock.
 
-## M30 preregistered design
+Deliverables:
 
-Before any generation or capture, commit a public-safe manifest that freezes:
+- `data/prompts/m31_intervention_manifest.json` (predeclare commit first)
+- sampling support in the capture script (greedy path unchanged) + tests
+- `src/m31_intervention_study.py` + tests
+- `reports/telemetry/hf_m31_intervention_run_summary.json`
+- `reports/telemetry/hf_m31_intervention_evaluation.json`
+- `docs/M31_TELEMETRY_INTERVENTION_STUDY.md`
+- private recovery-trace JSONL (gitignored)
+- updated `STATE.md` and `reports/FINDINGS.md`; full suite green
 
-1. A fresh 768-task arithmetic dataset using the same controlled single-expression category and constant checker applicability.
-2. Six boundary-focused difficulty bands, 128 tasks per band.
-3. Per-band split fixed before generation:
-   - 64 train
-   - 32 validation
-   - 32 holdout
-4. Total split:
-   - 384 train
-   - 192 validation
-   - 192 sealed holdout
-5. Seeded unique operand generation with every generated task retained.
-6. Deterministic `math_checker` pass/fail labels from same-run outputs.
-7. Zero post-hoc selection or regeneration based on labels.
-8. The exact M29 frozen nearest-centroid classifier family and feature definitions for the primary confirmatory test.
-9. Primary comparison:
-   - metadata_only
-   - full_telemetry
-10. Secondary descriptive baselines:
-   - majority
-   - logits_only
-   - router_only
-   - window_entropy
-   - metadata_plus_telemetry
-11. Paired-bootstrap 95% CI over holdout prediction differences.
-12. Claim rule:
-   - telemetry increment is established only if the paired full_telemetry − metadata_only accuracy CI excludes zero in the positive direction and all power/class minimums are met.
-13. Validation-only threshold and calibration fitting.
-14. The holdout may be read exactly once after protocol, features, classifier, and thresholds are frozen.
+Stop condition: all four policies evaluated on identical fresh tasks with
+deterministic labels; the telemetry policy classified useful, not
+established, or harmful under the preregistered rule; recovery traces
+private; public artifacts aggregate-only; commit-safe passes; tests green;
+production gated.
 
-## M30 requirements
+## After M31
 
-- Run on fresh tasks; do not reuse M27/M29 rows as confirmatory data.
-- Keep prompt family and action applicability constant.
-- Capture real logits and router telemetry from the HF/safetensors backend.
-- Keep hidden-state capture disabled unless separately preregistered and justified before capture.
-- Report class balance, undecided count, decode-cap count, and all power shortfalls honestly.
-- Report paired wins/losses and both accuracy and balanced-accuracy deltas.
-- Report calibration/ECE, but keep thresholds candidate-only.
-- Public reports must remain aggregate-only.
-- Restore and verify `agents-a1` after the GPU window.
-- Run full repository tests and commit-safety checks.
-- No production policy or threshold unlock.
-
-## M30 deliverables
-
-- `data/prompts/m30_decisive_manifest.json`
-- deterministic private task generator/output path
-- M30 capture/evaluation scripts or extensions
-- `reports/telemetry/hf_m30_decisive_run_summary.json`
-- `reports/telemetry/hf_m30_decisive_increment_evaluation.json`
-- `docs/M30_DECISIVE_TELEMETRY_INCREMENT.md`
-- tests covering preregistration, split sealing, one-read holdout behavior, paired increment logic, no-selection invariants, public no-text/no-ID output, and commit safety
-- updated `STATE.md` and `reports/FINDINGS.md`
-
-## M30 stop condition
-
-- 768 fresh tasks are captured or any preregistered shortfall is reported without replacement.
-- The sealed 192-task holdout is evaluated exactly once.
-- The telemetry-vs-metadata increment is classified as established, not established, or negative under the preregistered rule.
-- Public artifacts contain no task text, operands, outputs, per-task labels/predictions, paths, token text/IDs, tensors, weights, or caches.
-- Full suite and commit-safe checks pass.
-- Candidate-only and production gates remain.
-
-## Telemetry-focused continuation after M30
-
-After committing M30, update `steer.md` as a separate commit using the result-driven branch below.
-
-### Branch 1 — increment established
-
-Proceed to **M31 telemetry-triggered intervention study**:
-
-- freeze the M30 score without refitting
-- compare no retry, random retry, always retry, and telemetry-triggered retry/checking
-- use deterministic correctness labels
-- measure verified success improvement, additional compute, false alarms, and errors rescued
-- begin creating verifier-grounded recovery traces only from objectively verified outcomes
-
-### Branch 2 — positive point estimate but increment still not established
-
-Proceed to **M31 stronger frozen classifier family** on fresh preregistered data:
-
-- regularized logistic regression and one small nonlinear baseline
-- metadata-only, telemetry-only, and metadata+telemetry ablations
-- train fit, validation tuning, sealed fresh holdout once
-- no architecture search after holdout capture
-
-### Branch 3 — telemetry ties or loses to metadata materially
-
-Proceed to **M31 transfer/falsification study** in a second deterministic category before any runtime-control claim. Do not keep scaling arithmetic indefinitely.
-
-## Autosteer authorization
-
-A telemetry-focused autoloop is authorized for up to three milestones total starting with M30, subject to `CODEX_AUTOSTEER.md` limits.
-
-Stop immediately for:
-
-- test or privacy failure that cannot be safely repaired
-- model download, hardware, or resource decision outside the existing approved Qwen/HF plan
-- any need to change the preregistered confirmatory protocol after seeing holdout outcomes
-- any proposal to promote candidate telemetry scores into production policy
+Report the intervention verdict and stop for operator review unless the
+autoloop budget (three milestones from M30) and time limits still allow the
+operator's Branch-1 continuation (scaling recovery-trace generation) — a
+third milestone requires the M31 verdict first.
 
 ## Repository hygiene
 
-Do not commit private prompts/outputs, operands, per-task predictions/labels, token IDs/text, raw tensors, file-system paths, model weights, caches, or detailed records. Public reports remain aggregate-only. No candidate becomes gold and production remains gated until explicit audited unlock criteria are defined.
+Do not commit private prompts/outputs, operands, per-task predictions/labels,
+token IDs/text, raw tensors, file-system paths, model weights, caches, or
+detailed records. Public reports remain aggregate-only. No candidate becomes
+gold and production remains gated until explicit audited unlock criteria are
+defined.

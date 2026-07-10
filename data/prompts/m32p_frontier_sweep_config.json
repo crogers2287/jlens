@@ -1,0 +1,161 @@
+{
+ "milestone": "M32P",
+ "schema_version": 1,
+ "phase": "0B_capability_frontier_sweep",
+ "selection_status": "predeclared_before_frontier_sweep",
+ "purpose": "calibration-only sweep of the frozen proxy's multiplication capability frontier; rows are private, disjoint, never decision data, and support no routing claim",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "decode": {
+  "decode": "greedy",
+  "decode_cap_tokens": 64,
+  "chat_template": true,
+  "router_only_capture": true,
+  "dtype": "bf16"
+ },
+ "sweep_seed": "m32p-frontier-sweep-v1",
+ "samples_per_cell": 24,
+ "cells": [
+  {
+   "cell_id": "c_2x1",
+   "digits_a": 2,
+   "digits_b": 1,
+   "structure": "plain"
+  },
+  {
+   "cell_id": "c_2x2_low",
+   "digits_a": 2,
+   "digits_b": 2,
+   "structure": "low_carry"
+  },
+  {
+   "cell_id": "c_2x2_heavy",
+   "digits_a": 2,
+   "digits_b": 2,
+   "structure": "carry_heavy"
+  },
+  {
+   "cell_id": "c_3x1",
+   "digits_a": 3,
+   "digits_b": 1,
+   "structure": "plain"
+  },
+  {
+   "cell_id": "c_3x2_low",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "low_carry"
+  },
+  {
+   "cell_id": "c_3x2_heavy",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "carry_heavy"
+  },
+  {
+   "cell_id": "c_4x1",
+   "digits_a": 4,
+   "digits_b": 1,
+   "structure": "plain"
+  },
+  {
+   "cell_id": "c_4x2_low",
+   "digits_a": 4,
+   "digits_b": 2,
+   "structure": "low_carry"
+  },
+  {
+   "cell_id": "c_4x2_heavy",
+   "digits_a": 4,
+   "digits_b": 2,
+   "structure": "carry_heavy"
+  },
+  {
+   "cell_id": "c_3x3",
+   "digits_a": 3,
+   "digits_b": 3,
+   "structure": "plain"
+  },
+  {
+   "cell_id": "c_zero_3x2",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "middle_zero"
+  },
+  {
+   "cell_id": "c_pow10_3x2",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "near_power_of_ten"
+  }
+ ],
+ "structure_definitions": {
+  "plain": "digits drawn uniformly; leading digit nonzero",
+  "low_carry": "every digit of a and b drawn from {0,1,2,3} with leading digits from {1,2,3}; constructively minimizes multiplication and addition carries",
+  "carry_heavy": "every digit of a and b drawn from {6,7,8,9}; constructively maximizes carries",
+  "middle_zero": "a is three digits with its middle digit forced to 0; b drawn plain",
+  "near_power_of_ten": "a drawn uniformly from {101, 102, 998, 999}; b drawn plain two-digit",
+  "x1_cells": "b is a single digit drawn from {2,...,9}",
+  "max_draw_attempts_per_cell": 20000,
+  "on_unfillable_cell": "mark infeasible in the sweep report; never widen"
+ },
+ "tuple_rejection": "reject any (a,b) present in the deterministic tuple sets of the M29, M30, M31, and abandoned M32 manifests, and duplicates within the sweep",
+ "frontier_selection_rules": {
+  "inputs": "original greedy pass rates and structural diversity only",
+  "forbidden_inputs": "trigger quality, route performance, expert identities, verifier-selected counterfactuals",
+  "cell_classes": {
+   "boundary": [
+    0.2,
+    0.8
+   ],
+   "easy_min": 0.85,
+   "hard_max": 0.15
+  },
+  "composition": {
+   "boundary_fraction": 0.75,
+   "easy_fraction": 0.125,
+   "hard_fraction": 0.125,
+   "max_single_cell_fraction": 0.35,
+   "min_boundary_cells": 3,
+   "max_easy_cells": 2,
+   "max_hard_cells": 2,
+   "easy_pick_rule": "highest pass rate first, then cell order",
+   "hard_pick_rule": "lowest pass rate first, then cell order",
+   "per_cell_counts_multiple_of": 4,
+   "rounding": "floor to multiple of 4; distribute the remainder in cell order"
+  },
+  "task_count_power_table": {
+   "options": [
+    192,
+    240,
+    288
+   ],
+   "rule": "choose the smallest N whose expected original failures (sum over cells of allocated count x (1 - sweep pass rate)) is at least 88; if none, choose 288 and record the expected shortfall",
+   "expected_failure_minimum": 88
+  },
+  "splits": {
+   "discovery": 0.5,
+   "validation": 0.25,
+   "holdout": 0.25,
+   "assignment": "per cell by task index: first half discovery, next quarter validation, final quarter sealed holdout"
+  },
+  "minimum_expected_failures": {
+   "discovery": 40,
+   "validation": 20,
+   "holdout": 20
+  },
+  "minimum_realized_failures": {
+   "discovery": 30,
+   "validation": 15,
+   "holdout": 15,
+   "on_shortfall": "classify underpowered; never regenerate"
+  },
+  "on_no_frontier": "stop with benchmark_frontier_not_found"
+ },
+ "privacy": {
+  "public": "aggregate cell counts and pass rates only",
+  "private": "sweep operands/prompts/outputs stay gitignored"
+ },
+ "candidate_only": true,
+ "production_gated": true
+}

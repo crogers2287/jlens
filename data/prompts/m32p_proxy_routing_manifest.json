@@ -1,0 +1,1116 @@
+{
+ "milestone": "M32P",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m32p_task_generation",
+ "protocol_source": "docs/M32P_QWEN_PROXY_COUNTERFACTUAL_ROUTING_AUTOLOOP.md",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "benchmark_source": "model-calibrated capability frontier; cells and counts chosen from sweep pass rates and frozen structural rules only",
+ "task_category": "integer_multiplication_model_calibrated",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "generation": {
+  "seed": "m32p-decision-v1",
+  "algorithm": "per manifest cell, draw unique tuples with the frozen cell generators, rejecting every M29/M30/M31/abandoned-M32 tuple and every calibration-sweep tuple",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true
+ },
+ "cells": [
+  {
+   "cell_id": "c_2x1",
+   "digits_a": 2,
+   "digits_b": 1,
+   "structure": "plain",
+   "n_tasks": 12,
+   "sweep_pass_rate": 1.0,
+   "cell_class": "easy"
+  },
+  {
+   "cell_id": "c_2x2_heavy",
+   "digits_a": 2,
+   "digits_b": 2,
+   "structure": "carry_heavy",
+   "n_tasks": 36,
+   "sweep_pass_rate": 0.4167,
+   "cell_class": "boundary"
+  },
+  {
+   "cell_id": "c_2x2_low",
+   "digits_a": 2,
+   "digits_b": 2,
+   "structure": "low_carry",
+   "n_tasks": 12,
+   "sweep_pass_rate": 0.9583,
+   "cell_class": "easy"
+  },
+  {
+   "cell_id": "c_3x2_heavy",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "carry_heavy",
+   "n_tasks": 12,
+   "sweep_pass_rate": 0.0417,
+   "cell_class": "hard"
+  },
+  {
+   "cell_id": "c_4x2_heavy",
+   "digits_a": 4,
+   "digits_b": 2,
+   "structure": "carry_heavy",
+   "n_tasks": 12,
+   "sweep_pass_rate": 0.0,
+   "cell_class": "hard"
+  },
+  {
+   "cell_id": "c_4x2_low",
+   "digits_a": 4,
+   "digits_b": 2,
+   "structure": "low_carry",
+   "n_tasks": 36,
+   "sweep_pass_rate": 0.7083,
+   "cell_class": "boundary"
+  },
+  {
+   "cell_id": "c_pow10_3x2",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "near_power_of_ten",
+   "n_tasks": 36,
+   "sweep_pass_rate": 0.6667,
+   "cell_class": "boundary"
+  },
+  {
+   "cell_id": "c_zero_3x2",
+   "digits_a": 3,
+   "digits_b": 2,
+   "structure": "middle_zero",
+   "n_tasks": 36,
+   "sweep_pass_rate": 0.375,
+   "cell_class": "boundary"
+  }
+ ],
+ "n_tasks": 192,
+ "split_rule": "per cell by index: first half discovery, next quarter validation, final quarter sealed holdout",
+ "tasks": [
+  {
+   "task_id": "m32p_2x1_000",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_001",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_002",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_003",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_004",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_005",
+   "cell": "c_2x1",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x1_006",
+   "cell": "c_2x1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x1_007",
+   "cell": "c_2x1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x1_008",
+   "cell": "c_2x1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x1_009",
+   "cell": "c_2x1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x1_010",
+   "cell": "c_2x1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x1_011",
+   "cell": "c_2x1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_000",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_001",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_002",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_003",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_004",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_005",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_006",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_007",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_008",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_009",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_010",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_011",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_012",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_013",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_014",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_015",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_016",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_017",
+   "cell": "c_2x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_018",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_019",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_020",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_021",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_022",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_023",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_024",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_025",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_026",
+   "cell": "c_2x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_027",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_028",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_029",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_030",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_031",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_032",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_033",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_034",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_heavy_035",
+   "cell": "c_2x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_low_000",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_001",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_002",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_003",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_004",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_005",
+   "cell": "c_2x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_2x2_low_006",
+   "cell": "c_2x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_low_007",
+   "cell": "c_2x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_low_008",
+   "cell": "c_2x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_2x2_low_009",
+   "cell": "c_2x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_low_010",
+   "cell": "c_2x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_2x2_low_011",
+   "cell": "c_2x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_000",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_001",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_002",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_003",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_004",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_005",
+   "cell": "c_3x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_006",
+   "cell": "c_3x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_007",
+   "cell": "c_3x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_008",
+   "cell": "c_3x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_009",
+   "cell": "c_3x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_010",
+   "cell": "c_3x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_3x2_heavy_011",
+   "cell": "c_3x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_000",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_001",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_002",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_003",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_004",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_005",
+   "cell": "c_4x2_heavy",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_006",
+   "cell": "c_4x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_007",
+   "cell": "c_4x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_008",
+   "cell": "c_4x2_heavy",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_009",
+   "cell": "c_4x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_010",
+   "cell": "c_4x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_heavy_011",
+   "cell": "c_4x2_heavy",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_000",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_001",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_002",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_003",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_004",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_005",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_006",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_007",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_008",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_009",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_010",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_011",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_012",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_013",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_014",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_015",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_016",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_017",
+   "cell": "c_4x2_low",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_4x2_low_018",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_019",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_020",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_021",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_022",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_023",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_024",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_025",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_026",
+   "cell": "c_4x2_low",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_4x2_low_027",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_028",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_029",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_030",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_031",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_032",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_033",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_034",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_4x2_low_035",
+   "cell": "c_4x2_low",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_000",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_001",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_002",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_003",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_004",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_005",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_006",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_007",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_008",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_009",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_010",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_011",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_012",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_013",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_014",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_015",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_016",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_017",
+   "cell": "c_pow10_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_018",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_019",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_020",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_021",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_022",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_023",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_024",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_025",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_026",
+   "cell": "c_pow10_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_027",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_028",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_029",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_030",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_031",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_032",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_033",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_034",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_pow10_3x2_035",
+   "cell": "c_pow10_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_000",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_001",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_002",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_003",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_004",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_005",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_006",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_007",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_008",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_009",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_010",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_011",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_012",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_013",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_014",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_015",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_016",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_017",
+   "cell": "c_zero_3x2",
+   "split": "discovery"
+  },
+  {
+   "task_id": "m32p_zero_3x2_018",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_019",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_020",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_021",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_022",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_023",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_024",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_025",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_026",
+   "cell": "c_zero_3x2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m32p_zero_3x2_027",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_028",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_029",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_030",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_031",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_032",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_033",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_034",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m32p_zero_3x2_035",
+   "cell": "c_zero_3x2",
+   "split": "holdout"
+  }
+ ],
+ "frozen_trigger": {
+  "source": "M30 full_telemetry nearest centroid",
+  "reinstantiation": "deterministic refit from private M30 train records; must reproduce the published M30 holdout confusion matrix exactly",
+  "threshold_fail_probability": 0.5,
+  "scored_input": "original greedy decode telemetry only"
+ },
+ "decode_protocol": {
+  "decode": "greedy",
+  "decode_cap_tokens": 64,
+  "chat_template": true,
+  "router_only_capture": true,
+  "dtype": "bf16"
+ },
+ "causal_screen": {
+  "fragile_steps_per_task": 2,
+  "fragile_step_rule": "top generated steps by selection entropy of the step's predictive distribution; ties break to the earlier step",
+  "layers_per_step": 4,
+  "layer_rule": "frozen combined score: router entropy minus the top4/rank5 probability margin plus the trajectory deviation of the current top-4 from earlier steps' selections at the same layer",
+  "route_families": [
+   "each_selected_to_rank5 (4 swaps, includes lowest_weight_to_rank5)",
+   "selected_to_rank6 (1 swap)",
+   "diversity_swap (1 swap, discovery-only co-selection table)",
+   "matched_random_swap (6 swaps, fixed seeds)",
+   "soft_penalty_route (validation-frozen)",
+   "oracle_best_tested (ceiling only)"
+  ],
+  "one_step_screen": "rank branches by (next-token changed, probability-margin gain), identical for heuristic and random arms",
+  "full_continuations_per_arm": 4,
+  "random_seed_rule": "m32p:random:<task>:<step>:<layer>:<i>"
+ },
+ "policy_candidates": [
+  "p1_top_screen",
+  "p2_each_selected_only",
+  "p3_margin_only"
+ ],
+ "policy_freeze_rule": "choose among frozen candidates by validation success only; freeze before holdout",
+ "soft_penalty_rule": {
+  "discovery_min_support": 5,
+  "discovery_min_net_rescues": 2,
+  "validation_min_support": 2,
+  "penalty_delta": 2.0,
+  "alpha": 0.05,
+  "correction": "Bonferroni over frozen candidates"
+ },
+ "hypotheses": {
+  "h1": "oracle heuristic-family rescue rate vs matched-random on sealed holdout; paired bootstrap seed m32p:h1",
+  "h2": "validation-frozen non-oracle policy vs normal and matched-random on sealed holdout; seeds m32p:h2:*",
+  "h3": "soft penalties must generalize discovery->validation->holdout under Bonferroni",
+  "bootstrap_iterations": 2000
+ },
+ "minimum_realized_failures": {
+  "discovery": 30,
+  "validation": 15,
+  "holdout": 15,
+  "on_shortfall": "classify underpowered; never regenerate"
+ },
+ "privacy": {
+  "public": "aggregate metrics/intervals only",
+  "private": "operands/prompts/outputs/routes/expert tables stay gitignored"
+ },
+ "candidate_only": true,
+ "production_gated": true
+}

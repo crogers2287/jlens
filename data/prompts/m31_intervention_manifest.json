@@ -1,0 +1,1153 @@
+{
+ "milestone": "M31",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m31_task_generation",
+ "research_question": "Does the frozen M30 telemetry score, used as a retry trigger, improve verified task success over no-retry and matched-compute random-retry controls at acceptable cost?",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "prompt_family_constant": true,
+ "action_applicability": {
+  "expected_action_type": "checker_needed",
+  "constant_across_all_tasks": true,
+  "violation_handling": "stop milestone and report; do not relabel"
+ },
+ "generation": {
+  "seed": "m31-intervention-v1",
+  "algorithm": "per band, seed the seen-set with the tuples the committed M29 and M30 manifests deterministically generate for the same band, then draw unique (a, b) tuples from random.Random(seed + ':' + band_id), rejecting duplicates, until n_tasks exist",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true,
+  "operand_uniqueness_scope": "within band, disjoint from M29 and M30"
+ },
+ "bands": [
+  {
+   "band_id": "band_1",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    2,
+    9
+   ],
+   "n_tasks": 32
+  },
+  {
+   "band_id": "band_2",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 32
+  },
+  {
+   "band_id": "band_3",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 32
+  },
+  {
+   "band_id": "band_4",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "n_tasks": 32
+  },
+  {
+   "band_id": "band_5",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 32
+  },
+  {
+   "band_id": "band_6",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "n_tasks": 32
+  }
+ ],
+ "n_tasks": 192,
+ "split_rule": "single intervention split; no fitting on M31 data",
+ "tasks": [
+  {
+   "task_id": "m31_b1_000",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_001",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_002",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_003",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_004",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_005",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_006",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_007",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_008",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_009",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_010",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_011",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_012",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_013",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_014",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_015",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_016",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_017",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_018",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_019",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_020",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_021",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_022",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_023",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_024",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_025",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_026",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_027",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_028",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_029",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_030",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b1_031",
+   "band": "band_1",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_000",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_001",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_002",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_003",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_004",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_005",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_006",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_007",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_008",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_009",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_010",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_011",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_012",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_013",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_014",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_015",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_016",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_017",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_018",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_019",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_020",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_021",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_022",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_023",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_024",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_025",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_026",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_027",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_028",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_029",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_030",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b2_031",
+   "band": "band_2",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_000",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_001",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_002",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_003",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_004",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_005",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_006",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_007",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_008",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_009",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_010",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_011",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_012",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_013",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_014",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_015",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_016",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_017",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_018",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_019",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_020",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_021",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_022",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_023",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_024",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_025",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_026",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_027",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_028",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_029",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_030",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b3_031",
+   "band": "band_3",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_000",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_001",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_002",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_003",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_004",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_005",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_006",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_007",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_008",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_009",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_010",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_011",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_012",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_013",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_014",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_015",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_016",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_017",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_018",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_019",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_020",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_021",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_022",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_023",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_024",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_025",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_026",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_027",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_028",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_029",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_030",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b4_031",
+   "band": "band_4",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_000",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_001",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_002",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_003",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_004",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_005",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_006",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_007",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_008",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_009",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_010",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_011",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_012",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_013",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_014",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_015",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_016",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_017",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_018",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_019",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_020",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_021",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_022",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_023",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_024",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_025",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_026",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_027",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_028",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_029",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_030",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b5_031",
+   "band": "band_5",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_000",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_001",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_002",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_003",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_004",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_005",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_006",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_007",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_008",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_009",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_010",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_011",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_012",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_013",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_014",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_015",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_016",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_017",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_018",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_019",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_020",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_021",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_022",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_023",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_024",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_025",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_026",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_027",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_028",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_029",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_030",
+   "band": "band_6",
+   "split": "intervention"
+  },
+  {
+   "task_id": "m31_b6_031",
+   "band": "band_6",
+   "split": "intervention"
+  }
+ ],
+ "frozen_score": {
+  "source": "M30 full_telemetry nearest centroid",
+  "reinstantiation": "deterministically refit from the private M30 train records with the M30 manifest feature definitions; no M31 fitting",
+  "verification": "the refit model's predictions on the private M30 holdout must exactly reproduce the confusion matrix published in hf_m30_decisive_increment_evaluation",
+  "threshold_fail_probability": 0.5,
+  "threshold_source": "M30 validation grid (frozen; candidate-only)",
+  "no_refit_or_threshold_change": true
+ },
+ "decode_protocols": {
+  "original": {
+   "decode": "greedy",
+   "decode_cap_tokens": 64,
+   "chat_template": true,
+   "router_only_capture": true,
+   "dtype": "bf16"
+  },
+  "retry": {
+   "decode": "temperature_sampled",
+   "temperature": 0.7,
+   "decode_cap_tokens": 64,
+   "chat_template": true,
+   "router_only_capture": true,
+   "dtype": "bf16",
+   "per_task_seed_rule": "64-bit evidence-hash integer of 'm31-retry:' + task_id seeds a dedicated torch generator",
+   "samples_per_task": 1
+  },
+  "greedy_path_unchanged": true
+ },
+ "label_rule": {
+  "labeler": "math_checker deterministic verifier",
+  "applies_to": "original and retry outputs independently",
+  "classes": [
+   "pass",
+   "fail"
+  ],
+  "undecided_handling": "tasks with an undecided original or retry verdict are excluded from all policies and reported as aggregate counts"
+ },
+ "policies": {
+  "semantics": "replace-on-retry: the final output is the retry output for retried tasks, else the original; no policy may consult any verifier label",
+  "no_retry": "original outputs for all tasks",
+  "always_retry": "retry outputs for all tasks",
+  "random_retry": "fixed-seed random.Random('m31:random-retry') subset of task ids, size matched to the telemetry trigger count",
+  "telemetry_triggered": "retry iff frozen p(fail) >= 0.5 on the original decode's telemetry"
+ },
+ "metrics_protocol": {
+  "per_policy": [
+   "verified_success_rate",
+   "retries_used",
+   "false_alarm_count",
+   "errors_rescued",
+   "errors_introduced"
+  ],
+  "paired_deltas": [
+   [
+    "telemetry_triggered",
+    "no_retry"
+   ],
+   [
+    "telemetry_triggered",
+    "random_retry"
+   ],
+   [
+    "always_retry",
+    "no_retry"
+   ],
+   [
+    "random_retry",
+    "no_retry"
+   ]
+  ],
+  "method": "paired bootstrap over task rows, 2000 iterations, fixed seed m31:delta:<a>-vs-<b>, 95% intervals for the success-rate difference",
+  "classification_rule": {
+   "useful": "telemetry_triggered minus no_retry success CI lower bound > 0 AND telemetry_triggered minus random_retry success CI lower bound > 0",
+   "harmful": "telemetry_triggered minus no_retry success CI upper bound < 0",
+   "not_established": "otherwise"
+  }
+ },
+ "recovery_traces": {
+  "criterion": "verified wrong-to-right rescues under the telemetry_triggered policy only",
+  "storage": "private gitignored JSONL",
+  "public_reporting": "aggregate counts and schema description only"
+ },
+ "privacy": {
+  "public_artifacts": "aggregate counts, metrics, intervals only",
+  "private_artifacts": "operand tuples/prompts, captures, outputs, per-task labels/predictions/triggers, and recovery traces stay gitignored"
+ },
+ "candidate_only": true,
+ "production_gated": true
+}

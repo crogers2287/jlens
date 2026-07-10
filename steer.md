@@ -1,4 +1,4 @@
-# steer.md — M32P Qwen proxy counterfactual routing
+# steer.md — M32P model-calibrated Qwen proxy routing
 
 M1 through M31 are complete. M32 structured repair was superseded before
 execution and remains a never-executed historical artifact. M32R Agents-A1
@@ -8,79 +8,113 @@ ceiling with the installed loader stack.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-The current protocol is:
+The current amended protocol is:
 
 `docs/M32P_QWEN_PROXY_COUNTERFACTUAL_ROUTING_AUTOLOOP.md`
 
-Read it in full before implementation.
+Read it in full before implementation. This amendment was made before M32P
+preregistration or decision capture.
 
 ## Operator decision
 
-The operator selects former option C: use the already-local
-`Qwen1.5-MoE-A2.7B-Chat` as an explicit research proxy to answer the causal
-expert-routing question now.
+Use the already-local `Qwen1.5-MoE-A2.7B-Chat` as an explicit research proxy to
+answer the causal expert-routing question. All claims remain proxy-scoped and
+must not be presented as Agents-A1 results.
 
-All claims must be scoped to the proxy. Do not imply that an effect transfers
-to Agents-A1. The goal is to build and validate the complete route-override,
-counterfactual-screen, and non-oracle selection methodology so it can later be
-reused unchanged on Agents-A1 when a viable checkpoint or hardware path exists.
+Because the proxy is much smaller than Agents-A1, do not reuse an
+Agents-A1-oriented benchmark frontier. M32P must first calibrate the proxy's own
+capability boundary and then preregister fresh decision tasks around that
+boundary.
 
 The operator authorizes a bounded autoloop of up to three milestone completions
-beginning with M32P, subject to the normal four-hour and blocker limits. Use
-separate implementation, preregistration, result, and steer commits where the
+beginning with M32P, subject to normal time and blocker limits. Use separate
+hook, benchmark-calibration, preregistration, result, and steer commits where the
 protocol requires them.
 
-## Why this is the selected path
+## Why the benchmark must change
 
-- M30 established that full internal telemetry predicts objective arithmetic
-  failure better than task-difficulty metadata.
+A useful routing benchmark needs recoverable mistakes:
+
+- tasks that are too easy provide no failures;
+- tasks that are too hard test missing capacity rather than routing;
+- an all-fail or all-pass benchmark cannot show whether alternate experts help.
+
+The benchmark must therefore concentrate on the proxy's mixed pass/fail
+frontier while retaining small easy and hard anchor sets to measure regressions
+and the maximum possible recovery ceiling.
+
+## Standing evidence
+
+- M30 established that full telemetry predicts this proxy's multiplication
+  failures better than task-difficulty metadata: +.099 accuracy with 95% CI
+  [+.042,+.156] on a fresh n=192 holdout.
 - M31 reproduced about 89% precision for the frozen trigger, but a generic
   temperature resample repaired only about 4.5% of correctly triggered errors.
 - Agents-A1 route intervention is blocked by checkpoint memory geometry, not by
-  a failed routing hypothesis.
-- The local Qwen proxy is the same model family used for the existing telemetry
-  evidence, fits the current hardware, and exposes controllable router logits.
-- This is the fastest path to learning whether wrong answers are sometimes
-  caused by poor layer-expert-token choices rather than missing model capacity.
+  a negative routing result.
+- The proxy fits current hardware and exposes router logits and expert dispatch.
 
 ## Current milestone — M32P
 
-Execute the M32P phase of the proxy-routing protocol.
+### Phase 0A: route-override hook and smoke gate
 
-### Phase 0: route-override hook and smoke gate
+1. Verify `qwen2_moe`, 24 routed layers, 60 experts per layer, top-4.
+2. Implement an opt-in route override after router scoring and before dispatch.
+3. Preserve exactly four experts and renormalized finite weights.
+4. `override=None` must reproduce the normal greedy path.
+5. Counterfactual continuations must use the modified forward result and cache.
+6. Add fake-MoE, parity, invalid-route, cache, telemetry, and privacy tests.
+7. Stop on hook, architecture, parity, cache, telemetry, or memory failure.
 
-1. Verify the loaded proxy architecture from config:
-   - `qwen2_moe`;
-   - 24 routed layers;
-   - 60 experts per routed layer;
-   - top-4 active experts per token.
-2. Implement an opt-in route override after router scoring and before expert
-   dispatch.
-3. Preserve exactly four active experts and renormalize routing weights.
-4. Ensure `override=None` follows the original path and reproduces greedy smoke
-   outputs within the preregistered numerical tolerance.
-5. Ensure a changed route produces a genuinely changed forward result and that
-   continuation uses the modified KV cache rather than splicing into the
-   original trajectory.
-6. Add fake-MoE, no-op parity, invalid-route, cache, telemetry, and privacy
-   tests before decision capture.
-7. Stop rather than improvising if hook placement, no-op parity, cache
-   correctness, architecture, telemetry, or memory cannot be verified.
+### Phase 0B: rewrite the benchmark around the proxy
 
-### Preregister before causal decision capture
+Before preregistration, run a private deterministic capability-frontier sweep
+across multiplication cells including:
 
-Commit `data/prompts/m32p_proxy_routing_manifest.json` before generating or
-capturing decision data. It must freeze:
+- 2-digit x 1-digit;
+- 2-digit x 2-digit low-carry and carry-heavy;
+- 3-digit x 1-digit;
+- 3-digit x 2-digit low-carry and carry-heavy;
+- 4-digit x 1-digit;
+- 4-digit x 2-digit low-carry and carry-heavy;
+- 3-digit x 3-digit hard anchor;
+- structured zero/repeated-digit/near-power-of-ten cases.
 
-- 192 fresh multiplication tasks over the existing six bands;
-- deterministic disjointness from M29, M30, M31, and abandoned M32;
-- 96 discovery / 48 validation / 48 sealed holdout;
+Freeze cell definitions and sweep seeds before running it. Calibration rows are
+private, disjoint, never decision data, and support no routing claim.
+
+Choose the final benchmark from original greedy pass rates and structural
+diversity only—not from trigger quality, route performance, expert identities,
+or verifier-selected counterfactuals.
+
+Target composition:
+
+- 70-80% boundary cells with 20-80% calibration pass rates;
+- 10-15% easy anchors above 85% pass;
+- 10-15% hard anchors below 15% pass;
+- at least three distinct boundary cells;
+- no one digit/carry cell above 35% of tasks.
+
+Choose 192, 240, or 288 total decision tasks using the protocol's predeclared
+power table, with 1/2 discovery, 1/4 validation, 1/4 sealed holdout. Freeze the
+choice before generating decision rows. Stop with
+`benchmark_frontier_not_found` if no mixed frontier exists.
+
+### Preregister before causal capture
+
+Commit `data/prompts/m32p_proxy_routing_manifest.json` freezing:
+
+- selected model-calibrated cells and exact task count;
+- disjoint task generators and split ids;
 - the frozen M30 trigger and reconstruction check;
-- fragile-step and implicated-layer selection rules;
+- fragile-step and implicated-layer rules;
 - equal-compute route families and branch budgets;
-- random seeds, tie breaks, bootstrap seeds, and multiplicity correction;
-- H1/H2/H3 claim rules;
-- no post-hoc task, layer, expert, feature, or operator selection.
+- seeds, tie breaks, bootstrap seeds, and multiplicity correction;
+- minimum realized original failures and H1/H2/H3 rules;
+- no post-hoc task, cell, layer, expert, feature, or operator selection.
+
+Do not regenerate if realized class counts miss the frozen minimums; report the
+causal study as underpowered.
 
 ### Causal screen
 
@@ -90,64 +124,49 @@ At telemetry-fragile steps and implicated layers only, compare:
 - lowest-weight selected expert replaced by rank-5;
 - each selected top-4 expert replaced one at a time by rank-5;
 - bounded rank-6 alternatives;
-- discovery-only diversity swap;
+- discovery-only diversity swaps;
 - matched-random equal-compute swaps;
 - validation-frozen soft layer-expert penalties;
-- oracle best tested branch as a ceiling only.
+- oracle best tested route as a ceiling only.
 
 Do not globally test or disable every expert. The causal unit is a
-layer-expert-token choice. An expert can help one token and hurt another. No
-hard expert shutdown or global blacklist is authorized.
+layer-expert-token choice. No hard blacklist or permanent shutdown is
+authorized.
 
-### Primary verdicts
+## Primary verdicts
 
 H1 — route recoverability:
 
 A tested equal-compute route family must recover more frozen-trigger failures
 than matched-random route search with a paired 95% bootstrap interval strictly
-above zero on the sealed holdout.
+above zero on sealed holdout.
 
 H2 — deployable rerouting:
 
-A validation-frozen non-oracle policy using only telemetry/router information
-must beat both normal routing and matched-random routing on sealed holdout, with
-both paired success-rate intervals strictly above zero.
+A validation-frozen non-oracle policy using only telemetry/router/task-cell
+information must beat both normal and matched-random routing on sealed holdout,
+with both paired success-rate intervals strictly above zero.
 
 H3 — generalized soft penalties:
 
-Any proposed layer-expert penalty must originate on discovery, repeat on
-validation, be frozen before holdout, survive the preregistered multiplicity
-correction, and avoid a significant increase in right-to-wrong regressions.
-Otherwise it remains exploratory.
+Any layer-expert penalty must originate on discovery, repeat on validation,
+freeze before holdout, survive multiplicity correction, and avoid a significant
+increase in right-to-wrong regressions. Otherwise it remains exploratory.
 
 ## Result-driven continuation
 
-Follow only the branches in the M32P protocol:
+- H1 + H2 established: M33P router-bias/router-only-adapter comparison on fresh,
+  model-calibrated data; then eligible M34P early rerouting and transfer.
+- H1 established but H2 not: M33P non-oracle route-selection research.
+- H1 not established: stop expert routing and return to structured repair or
+  telemetry-gated tools.
+- hook/resource/benchmark-frontier/protocol failure: stop with the exact blocker.
 
-- H1 + H2 established: M33P frozen router-bias/router-only-adapter comparison,
-  then eligible M34P partial-generation rerouting and transfer testing.
-- H1 established but H2 not established: M33P route-selection research using
-  trajectory summaries and validation-frozen non-oracle policies.
-- H1 not established: stop expert-routing work and return to structured repair
-  or telemetry-gated tools.
-- hook/resource/protocol failure: stop immediately with the exact blocker.
-
-## Standing evidence and boundaries
-
-- M30 detector increment remains established only for the proxy model,
-  controlled arithmetic category, and fixed decode protocol.
-- M31 trigger precision remains candidate-only and production-gated.
-- The Agents-A1 Phase-0 feasibility result remains valid and must not be
-  overwritten or reframed as a causal-routing result.
-- No proxy result may be reported as an Agents-A1 result.
-- No production policy, weight training, global expert shutdown, or model
-  substitution is authorized in M32P.
-
-## Repository hygiene
+## Boundaries and hygiene
 
 Do not commit model weights, caches, local model paths, prompts, outputs,
-operands, diagnoses, per-task routes, layer/expert identities tied to private
-tasks, token ids/text, raw router tensors, predictions, labels, or detailed
-counterfactual records. Public artifacts remain aggregate-only. No candidate
-becomes gold and production remains gated until explicit audited unlock
-criteria are defined.
+operands, calibration rows, per-task routes, layer/expert identities tied to
+private tasks, token ids/text, raw router tensors, predictions, labels, or
+detailed counterfactual records. Public artifacts remain aggregate-only. No
+candidate becomes gold, no proxy result becomes an Agents-A1 claim, and
+production remains gated.

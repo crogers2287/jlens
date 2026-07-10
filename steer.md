@@ -1,168 +1,87 @@
-# steer.md — M32R Agents-A1 counterfactual expert routing
+# steer.md — post-M32R-Phase-0 resource gate
 
-M1 through M31 are complete. Do not redo the M30 decisive detector test or the
-M31 naive-resample intervention study. The M27/M29/M30 holdouts and M31 task
-set are spent as decision targets.
+M1 through M31 are complete. M32 (structured repair) was superseded before
+execution and is preserved as a never-executed historical artifact. M32R
+(Agents-A1 counterfactual expert routing) stopped at its Phase-0 feasibility
+gate under the protocol's Branch 4 before any preregistration, generation, or
+capture.
 
-`CODEX_AUTOSTEER.md` remains the operating contract. The detailed operator
-protocol for the current loop is:
+`CODEX_AUTOSTEER.md` remains the operating contract. The M32R protocol
+remains `docs/M32R_AGENTS_A1_COUNTERFACTUAL_ROUTING_AUTOLOOP.md`.
 
-`docs/M32R_AGENTS_A1_COUNTERFACTUAL_ROUTING_AUTOLOOP.md`
+## Why M32R stopped (Branch 4 — resource/loader failure)
 
-Read it in full before implementation.
+Measured with a config-only meta-device audit; no weights were downloaded:
 
-## Supersession notice
+- `InternScience/Agents-A1` is `qwen3_5_moe` with 40 text layers, 256 experts,
+  top-8 — 34.66B parameters, of which 32.21B (93%) sit in fused 3D expert
+  tensors (`mlp.experts.gate_up_proj/down_proj`).
+- bitsandbytes quantizes `nn.Linear` only, so the preferred NF4 research load
+  leaves the experts in BF16: ~61.9 GiB estimated versus the hard 44 GiB
+  dual-3090 ceiling. Plain BF16 is ~64.6 GiB. Both fail the gate. This
+  reproduces the repository's earlier Qwen3.6-35B-A3B NF4 audit exactly.
+- `InternScience/Agents-A1-FP8` uses compressed-tensors, which is not in the
+  approved stack (adding it is a new-dependency gate), and RTX 3090/Ampere
+  (sm86) has no FP8 kernel path, so the installed loader cannot run it within
+  the ceiling without decompressing toward BF16.
+- BF16 with bounded CPU offload loads this geometry but ran at ~5.3 minutes
+  per prompt on this hardware in earlier milestones — infeasible for a
+  branched counterfactual screen and excluded from causal timing by the
+  protocol anyway.
 
-The previously committed M32 structured-repair preregistration
-`data/prompts/m32_repair_manifest.json` was never executed. It is preserved as
-a historical artifact but is superseded **before any generation or capture**.
-Do not delete it, edit its claim rules, run it, or report it as completed.
+Public record: `reports/telemetry/hf_m32r_feasibility_gate.json`.
+No model substitution was made; no decision data exist; nothing was captured.
 
-The current milestone is **M32R**, not the abandoned structured-repair bakeoff.
+## Required operator decision before resuming
 
-## Operator decision
+Choose exactly one:
 
-The operator directs jlens hard toward causal expert-routing research:
+### A. FP8 preflight attempt
 
-- keep Agents-A1 as the base model;
-- use an official Hugging Face safetensors checkpoint that fits the 48 GiB dual
-  RTX 3090 pool under the protocol resource gate;
-- determine whether telemetry-triggered failures are caused partly by poor
-  token/layer expert choices;
-- test equal-compute counterfactual routes;
-- prefer dynamic, local rerouting or soft penalties over permanent expert
-  shutdown;
-- continue in a bounded autoloop only when preregistered results justify it.
+Approve installing `compressed-tensors` into the research venv and a bounded
+preflight: load `InternScience/Agents-A1-FP8`, measure real memory and
+router-hook availability, and stop again with data if Ampere forces
+decompression past the gate. Honest prognosis: low odds, small cost
+(~37 GiB download to Thor, one dependency).
 
-The operator authorizes up to three milestone completions beginning with M32R,
-subject to the normal four-hour and blocker limits. Use separate implementation
-and steer commits for every milestone.
+### B. Offload-scoped M32R
 
-## Approved Agents-A1 model sources
+Explicitly amend the protocol to allow BF16 + bounded CPU offload as the
+research mode, with branch budgets cut to what ~5 min/prompt permits (a
+screen over a handful of failures, not 192 tasks). Changes the preregistered
+scope materially; slow but runs today.
 
-Approved official identities:
+### C. Proxy-model routing methodology (fastest to causal evidence)
 
-1. `InternScience/Agents-A1`
-   - official BF16 safetensors;
-   - preferred research plan: runtime NF4 through the existing
-     `qwen3_5_moe`/bitsandbytes path, router-only capture, short text contexts.
-2. `InternScience/Agents-A1-FP8`
-   - official compressed-tensors FP8 safetensors;
-   - feasibility candidate only on RTX 3090/Ampere;
-   - use only if the installed stack loads it without dequantizing past the
-     memory ceiling and preserves router intervention hooks.
+Approve the already-local `Qwen1.5-MoE-A2.7B-Chat` (24 layers × 60 experts,
+top-4) as an explicit research proxy: build the route-override hook, fake-MoE
+tests, and the full M32R causal-screen methodology on the proxy, with every
+claim scoped to the proxy model. Agents-A1 conclusions would wait for
+hardware or checkpoint availability, but the machinery and the
+route-recoverability question get real answers now.
 
-Hard memory ceiling: combined allocated/reserved GPU memory <= 44 GiB, leaving
-at least 4 GiB headroom. No weights, caches, or local model paths may be
-committed. If neither path passes the memory/hook gate, stop and report rather
-than changing model families.
+### D. Wait for a viable Agents-A1 checkpoint
 
-The current Q8 GGUF remains the practical Agents-A1 runtime, but it cannot be
-the research backend for this milestone because it does not expose
-controllable per-layer expert routes.
+Park expert-routing work until an official pre-quantized (GPTQ/AWQ-class or
+unfused) Agents-A1 checkpoint exists or hardware changes; return to the
+superseded structured-repair/tool-routing track in the meantime.
 
-## Current evidence
+Do not resume M32R until the operator selects A–D. Any download or new
+dependency stays gated on that choice.
 
-### M30 — detector increment established
+## Standing evidence (unchanged)
 
-- Powered n=192 once-read holdout: full telemetry .917 vs metadata .818.
-- Paired delta accuracy +.099 with 95% CI [+.042,+.156].
-- The signal is distributed; window entropy alone is insufficient.
-
-### M31 — trigger works; naive repair does not
-
-- Frozen trigger found genuine failures with about 89% precision on fresh data.
-- A temperature-0.7 resample rescued only about 4.5% of correctly triggered
-  failures.
-- Telemetry gating was the only non-losing policy.
-
-### New routing hypothesis
-
-A systematic failure may not mean every expert lacks the capability. The router
-may choose a poor top-8 combination at one or more fragile tokens/layers. M32R
-must distinguish:
-
-- model-capacity failure: tested equal-compute alternatives also fail;
-- router-reachable failure: another expert route inside the frozen model
-  succeeds;
-- deployable rerouting: telemetry/router-only features can choose that better
-  route without seeing the answer.
-
-## Important interpretation boundary
-
-Do not claim that an individual expert has its own entropy or globally
-“wobbles.” Router entropy is uncertainty over a route. Agents-A1 has layer-local
-experts, and the same expert can help one token while hurting another.
-
-The causal unit is a layer-expert-token choice. No global expert blacklist or
-hard shutdown is permitted from observational failure rates.
-
-## M32R — current milestone
-
-Execute the M32R section of the detailed protocol.
-
-Core requirements:
-
-1. **Feasibility first**
-   - load an approved Agents-A1 safetensors path under the 44 GiB ceiling;
-   - verify `qwen3_5_moe`, 40 text layers, 256 experts, top-8 routing;
-   - verify real decode router logits;
-   - implement an opt-in route override whose disabled path is unchanged;
-   - preserve exactly eight active experts and renormalize weights.
-2. **Preregister before decision capture**
-   - 192 fresh tasks across the six existing bands;
-   - deterministic disjointness from M29/M30/M31 and the abandoned M32 set;
-   - 96 discovery / 48 validation / 48 sealed holdout;
-   - frozen trigger, fragile-window rule, layer rule, route families, branch
-     budgets, seeds, metrics, and claim rules.
-3. **Run a hierarchical fast expert screen**
-   - identify telemetry-fragile decode steps;
-   - identify implicated layers;
-   - mask each selected top-8 expert one at a time and insert the next-ranked
-     unselected expert;
-   - use cheap one-step counterfactual statistics to rank swaps;
-   - fully continue only the preregistered top branch variants.
-4. **Separate oracle and deployable evidence**
-   - oracle: did any tested equal-compute route repair the failure?
-   - non-oracle: can telemetry/router signals choose a better route without
-     verifier or answer access?
-5. **Compare matched controls**
-   - normal route;
-   - selected-expert/rank-9 swaps;
-   - lowest-weight swap;
-   - diversity-boost swap;
-   - discovery-fit soft expert penalty;
-   - matched-random swap;
-   - oracle best tested route, ceiling only.
-6. **Primary verdicts**
-   - H1: route-recoverable failures beat matched-random search with paired CI
-     strictly above zero;
-   - H2: a frozen non-oracle policy beats normal and matched-random routing on
-     sealed holdout with paired CIs strictly above zero;
-   - H3: any layer-expert soft penalty must generalize through discovery,
-     validation, and corrected holdout gates.
-7. **Privacy and safety**
-   - detailed routes, token data, prompts, outputs, labels, and expert tables
-     private and gitignored;
-   - public reports aggregate-only;
-   - no hard expert shutdown, full-model training, or production unlock.
-
-## Result-driven continuation
-
-Follow only the branch rules in the M32R protocol:
-
-- H1 + H2 established: M33R frozen lightweight router-bias/router-only adapter,
-  then eligible M34R partial-trajectory routing and transfer.
-- H1 established but H2 not established: M33R route-selection research; do not
-  pretend oracle search is deployable.
-- H1 not established: stop expert-routing work and return to structured
-  repair/tool routing.
-- resource, architecture, or hook failure: stop and report the exact blocker.
+- M30: telemetry error-detection increment over difficulty metadata
+  ESTABLISHED (+.099 [+.042,+.156], n=192 once-read holdout).
+- M31: frozen trigger ~89% precision on fresh tasks; naive resample repair
+  rescues only ~4.5% — repair operator, not detection, is the open problem.
+- Full suite green at 151 tests; candidate-only and production gates active;
+  agents-a1 GGUF serving unaffected throughout.
 
 ## Repository hygiene
 
 Do not commit model weights, caches, local model paths, prompts, outputs,
-operands, per-task routes, expert identities tied to private tasks, token
-ids/text, raw router tensors, or detailed counterfactual records. Public
-artifacts remain aggregate-only. No candidate becomes gold and production
-remains gated until explicit audited unlock criteria are defined.
+operands, per-task routes, token ids/text, raw router tensors, or detailed
+records. Public artifacts remain aggregate-only. No candidate becomes gold
+and production remains gated until explicit audited unlock criteria are
+defined.

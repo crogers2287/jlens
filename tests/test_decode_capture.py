@@ -26,6 +26,10 @@ class StubTok:
     def decode(self, ids):
         return f"<{ids[0]}>"
 
+    def apply_chat_template(self, messages, tokenize, add_generation_prompt):
+        assert tokenize is False and add_generation_prompt is True
+        return f"USER: {messages[0]['content']} ASSISTANT:"
+
 
 class _Out:
     pass
@@ -91,6 +95,13 @@ def test_router_only_skips_hidden_states():
     assert hidden_ro is None
     assert len(router) == N_LAYERS  # router logits still captured
     assert len(steps) == 3          # decode still works router-only
+
+
+def test_chat_template_is_supported():
+    ids, router, _, steps = capture_one(
+        StubTok(), StubModel(), "hello", 128, max_new_tokens=2,
+        router_only=True, chat_template=True)
+    assert ids.shape[0] == 4 and len(router) == N_LAYERS and len(steps) == 2
 
 
 def test_valid_capture_resume_skip(tmp_path=None):

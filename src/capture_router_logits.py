@@ -55,6 +55,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help="do not request or store hidden states (router logits "
                         "only) — smaller payload; DecodeGuard needs no hidden "
                         "states")
+    p.add_argument("--chat-template", action="store_true",
+                   help="render each prompt through the tokenizer chat template "
+                        "with an assistant generation marker")
     p.add_argument("--overwrite", action="store_true",
                    help="re-capture prompts whose output .pt already exists "
                         "(default: skip existing valid captures / resume)")
@@ -140,7 +143,8 @@ def _final_logit_stats(logits, tok_id, top_k=5):
 
 
 def capture_one(tok, model, text: str, max_prompt_tokens: int,
-                max_new_tokens: int = 0, router_only: bool = False):
+                max_new_tokens: int = 0, router_only: bool = False,
+                chat_template: bool = False):
     """Prefill capture; when max_new_tokens>0 ALSO greedily decodes that many
     tokens, capturing per-generated-token router logits, final-logit entropy,
     and the selected-token probability.
@@ -157,6 +161,10 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
     """
     import torch
 
+    if chat_template:
+        text = tok.apply_chat_template(
+            [{"role": "user", "content": text}], tokenize=False,
+            add_generation_prompt=True)
     ids = tok(text, return_tensors="pt", truncation=True,
               max_length=max_prompt_tokens)
     ids = {k: v.to(model.device) for k, v in ids.items()}
@@ -241,7 +249,8 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             input_ids, router, hidden, decode_steps = capture_one(
                 tok, model, prompt_text, args.max_prompt_tokens,
-                max_new_tokens=args.max_new_tokens, router_only=args.router_only)
+                max_new_tokens=args.max_new_tokens, router_only=args.router_only,
+                chat_template=args.chat_template)
             payload = {
                 "prompt_id": prompt_id,
                 "input_ids": input_ids,
@@ -252,6 +261,9 @@ def main(argv: list[str] | None = None) -> int:
             }
             if decode_steps is not None:
                 payload["decode_steps"] = decode_steps
+                payload["generated_output"] = tok.decode(
+                    [step["generated_token_id"] for step in decode_steps],
+                    skip_special_tokens=True)
             torch.save(payload, dest)
             n += 1
             gen = f", {len(decode_steps)} gen tokens" if decode_steps else ""

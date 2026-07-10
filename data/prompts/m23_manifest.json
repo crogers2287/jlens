@@ -1,0 +1,38 @@
+{
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m23_telemetry_run",
+ "source": "data/prompts/agents_a1_m19_batch.jsonl",
+ "n_tasks": 32,
+ "groups": [
+  {
+   "group": "checker_candidate",
+   "task_ids": [
+    "m19_m_000", "m19_m_001", "m19_m_002", "m19_m_003",
+    "m19_m_004", "m19_m_005", "m19_m_006", "m19_m_007"
+   ]
+  },
+  {
+   "group": "retrieval_candidate",
+   "task_ids": [
+    "m15_c_000", "m15_c_001", "m15_c_002", "m15_c_003",
+    "m15_c_004", "m15_c_005", "m15_c_006", "m15_c_007"
+   ]
+  },
+  {
+   "group": "review_candidate",
+   "task_ids": [
+    "m15_x_000", "m15_x_001", "m15_x_002", "m15_x_003",
+    "m15_x_004", "m15_x_005", "m15_x_006", "m15_x_007"
+   ]
+  },
+  {
+   "group": "no_action_control",
+   "task_ids": [
+    "m15_e_000", "m15_e_001", "m15_e_002", "m15_e_003",
+    "m15_j_000", "m15_j_001", "m15_r_000", "m15_r_001"
+   ]
+  }
+ ],
+ "candidate_only": true,
+ "production_gated": true
+}

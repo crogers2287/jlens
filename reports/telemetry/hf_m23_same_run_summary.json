@@ -1,0 +1,84 @@
+{
+ "schema_version": 1,
+ "run_kind": "m23_same_run_qwen_telemetry_outcomes",
+ "within_model_alignment": true,
+ "cross_model_alignment": false,
+ "telemetry_model_scope": "qwen2_moe_internal_signals",
+ "outcome_model_scope": "qwen2_moe_same_decode_output",
+ "weights_loaded": 1,
+ "model_kind": "moe",
+ "architecture_family": "qwen2_moe",
+ "hardware_plan": "two_24gib_nvidia_gpus_bf16",
+ "hidden_capture": "disabled",
+ "n_records": 32,
+ "predeclared_group_distribution": {
+  "checker_candidate": 8,
+  "no_action_control": 8,
+  "retrieval_candidate": 8,
+  "review_candidate": 8
+ },
+ "capture_status_distribution": {
+  "completed": 32
+ },
+ "logits_status_distribution": {
+  "available": 32
+ },
+ "router_status_distribution": {
+  "available": 32
+ },
+ "decode_step_count_distribution": {
+  "10": 3,
+  "11": 1,
+  "15": 5,
+  "17": 1,
+  "19": 1,
+  "2": 1,
+  "20": 1,
+  "26": 1,
+  "3": 1,
+  "4": 1,
+  "40": 1,
+  "42": 1,
+  "46": 1,
+  "5": 1,
+  "57": 1,
+  "6": 1,
+  "64": 9,
+  "8": 1
+ },
+ "decode_cap_tokens": 64,
+ "decode_cap_reached_count": 9,
+ "decode_cap_reached_group_distribution": {
+  "retrieval_candidate": 3,
+  "review_candidate": 6
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 8,
+  "no_action": 8,
+  "retrieval_needed": 8,
+  "review_needed": 8
+ },
+ "action_status_distribution": {
+  "completed": 16,
+  "skipped": 16
+ },
+ "checker_verdict_distribution": {
+  "fail": 1,
+  "pass": 7
+ },
+ "auto_wrong_distribution": {
+  "false": 15,
+  "true": 1,
+  "unknown": 16
+ },
+ "same_capture_supplied_telemetry_and_output": true,
+ "captured_output_passed_transiently_to_verifiers": true,
+ "full_output_available_for_all_tasks": false,
+ "checker_outputs_reached_eos_before_cap": true,
+ "full_output_persisted_publicly": false,
+ "raw_prompt_token_or_tensor_persisted_publicly": false,
+ "model_path_or_weights_committed": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only; detailed same-run artifacts ignored"
+}

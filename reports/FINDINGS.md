@@ -1754,3 +1754,53 @@ Five new CPU/no-network tests cover precomputed scalar conversion, real-router
 aggregation, honest missing/unsupported states, the fixed shared eight-task batch,
 candidate alignment, aggregate grouping, and no-text/path/tensor public reports.
 Decode-capture tests now require top-k mass/margin fields. Full suite: 89/89 green.
+
+## 143. M23 removes the cross-model outcome confound
+The predeclared manifest fixes 32 existing public IDs into checker/retrieval/review/
+control groups of eight before telemetry inspection. Capture now applies the Qwen
+chat template and stores its bounded decoded output only in ignored `.pt` files.
+That same output is passed to the existing verifier/action path while telemetry is
+derived from the same decode. Qwen signals are no longer aligned to agents-a1 output.
+
+## 144. Same-run Qwen batch completes with balanced actual actions
+All 32 BF16 dual-GPU captures completed with real logits and 24×60 router telemetry;
+hidden states remained disabled. Actual routes exactly matched checker8/retrieval8/
+review8/no-action8. The safe executor completed all 8 checker and all 8 fixture-
+retrieval actions; review/no-action stayed unautomated. Arithmetic verdicts: 7 pass,
+1 fail. agents-a1 was restored and verified after the capture window.
+
+## 145. Decode cap is isolated from objective checker results
+Nine tasks reached 64 generated tokens: 3 retrieval and 6 review. All 8 checker
+tasks reached EOS in 10–15 tokens and all controls ended before the cap. Therefore
+the 7/1 checker split uses complete captured checker outputs. Retrieval labels come
+from current-info metadata and review labels from the existing no-rubric/low-
+confidence path; capped prose is not represented as a complete answer.
+
+## 146. Router features separate selected task-demand groups descriptively
+Against their n=24 complements, checker-needed router entropy is higher (g=+1.896)
+and expert concentration lower (g=-1.932); retrieval-needed router entropy is lower
+(g=-1.370) and concentration higher (g=+1.276); review-needed router entropy is
+lower (g=-1.017) and concentration higher (g=+0.892). Fixed-seed bootstrap mean-
+difference intervals exclude zero for these effects. Checker decode entropy is
+also lower (g=-1.064); retrieval/review logits intervals span zero.
+
+## 147. Separation is not yet predictive value
+Task category, prompt form, output length, and action-rule applicability remain
+confounds. The labels are intentionally driven by trusted metadata/verifier scope,
+so M23 proves same-run linkage and descriptive association, not generalization or
+causality. Checker failure analysis is withheld because fail/pass is n=1/7, below
+the frozen minimum of four per group. No policy or threshold was fit.
+
+## 148. M23 public/private boundary
+The public manifest contains public IDs and group names only. Public summary and
+alignment reports contain aggregate counts, means/medians, effect sizes, and
+bootstrap intervals only. Selected prompts, decoded outputs, token IDs/text, raw
+tensors, paths, and all 32 detailed runtime/action/result/telemetry rows stay in
+ignored locations. Candidate-only and production gates remain unchanged.
+
+## 149. M23 tests and milestone completion
+Six M23-related CPU/no-network tests cover the fixed balanced manifest, same-capture
+telemetry/output association, full-output checker handoff before private preview
+truncation, four-schema validation, resume/invalid capture detection, honest missing
+telemetry, predeclared effect gating, and public no-ID/text/path/tensor reporting.
+Chat-template capture also has a stub test. Full suite: 95/95 green.

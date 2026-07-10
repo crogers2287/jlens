@@ -651,3 +651,25 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   predictive-value claim. Production gated.
 - Added M22 adapter/reporting, docs, and CPU fixture tests. Full suite green:
   89/89 tests.
+
+## M23 within-model telemetry/outcome validation (2026-07-10) — MILESTONE COMPLETE
+- Predeclared a fixed 32-task public-ID manifest before inspecting M23 telemetry:
+  checker8/retrieval8/review8/no-action8. Features/comparisons were frozen in code.
+- Added chat-template capture and private decoded-output retention. The same Qwen
+  capture now supplies real logits/router telemetry and the output passed to the
+  existing supervisor, verifiers, router, and allowlisted executor; no cross-model
+  label source remains. Detailed text/tensors stay ignored.
+- Real dual-3090 BF16 run completed 32/32 with logits and 24-layer × 60-expert
+  router telemetry available for every row; hidden disabled. Actual action split
+  exactly matched 8/8/8/8. Checkers: 7 pass/1 fail; retrieval fixture paths 8/8.
+- Nine prose rows hit the 64-token cap (retrieval3/review6); every checker reached
+  EOS first. Capped rows are not claimed as complete answers, and their metadata-
+  driven retrieval/review labels remain valid for routing analysis.
+- Descriptive separation: checker router entropy g=+1.896 and concentration
+  g=-1.932; retrieval router entropy g=-1.370/concentration g=+1.276; review router
+  entropy g=-1.017/concentration g=+0.892. Fixed-seed bootstrap intervals exclude
+  zero for those selected effects, but task category/output length remain confounds.
+- Checker fail/pass effects withheld honestly (n=1/7, minimum 4/group). No policy,
+  threshold, causal, or predictive-value claim. agents-a1 serving restored/verified.
+- Added public aggregate summary/alignment report, M23 doc, and CPU/no-network tests.
+  Full suite green: 95/95 tests. Production gated.

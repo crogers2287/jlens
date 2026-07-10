@@ -1940,3 +1940,48 @@ predeclared split, operand uniqueness, the checker-verdict label rule, holdout
 sealing with honest shortfall reporting, train-only descriptive effects, and
 public no-ID/text/expression/path output. Full repository suite: 123 tests
 green (including pre-added M27/M28 protocol tests).
+
+## 170. M27 evaluates the sealed holdout exactly once under a frozen protocol
+The 32-task holdout was fixed per-ID before generation, sealed through M26,
+and first read by the M27 evaluator. Classifiers were fit on the 64 train rows
+only, with the classifier family, feature sets, tie break, bootstrap seeds,
+and all six baselines predeclared in the M26 manifest. No refit, feature
+change, or threshold tuning occurred after holdout rows were read.
+
+## 171. Telemetry predicts within-category errors on the frozen holdout
+Against 9 fail/23 pass holdout labels: majority .719; metadata-only band
+shortcut .969; logits_only .969 (balanced .978); router_only .812;
+router_plus_logits .906; full_telemetry 1.000. Logits-only telemetry recalls
+all nine fails with one false positive and no metadata input, including a
+within-band fail the band shortcut misses by construction. Unlike M24/M25,
+action applicability and prompt family are constant, so this association
+cannot come from the falsified metadata-observability channel.
+
+## 172. The telemetry increment over the difficulty shortcut is not yet proven
+The band shortcut alone reaches .969, so telemetry's headline advantage is one
+task at n=32 with heavily overlapping bootstrap intervals. full_telemetry's
+perfect score includes decode length/cap features that correlate with operand
+size and hence with band difficulty, and a perfect prediction vector makes its
+bootstrap interval degenerate [1.0, 1.0]. The claim licensed by M27 is
+"telemetry recovers and slightly extends the difficulty signal within one
+category", not "telemetry beats metadata".
+
+## 173. Router-only over-flags errors within category
+Router entropy/concentration alone recalls every fail but with .60 precision
+(six false alarms among 23 passes), and adding logits to router features is
+worse (.906) than logits alone (.969) under the frozen centroid family. The
+within-category router signal is a blunt instrument for error detection here,
+in contrast to its (falsified) apparent strength on the M24 action-routing
+task.
+
+## 174. M27 public/private boundary
+Public output contains frozen synthetic holdout IDs, aggregate counts,
+metrics/confusion matrices, and protocol flags only. Per-task predictions,
+labels, operands, prompts, outputs, paths, tokens, and tensors remain
+private/ignored. Candidate-only and production gates remain.
+
+## 175. M27 tests and milestone completion
+Six CPU/no-network M27 tests cover split/undecided handling, all-six-baseline
+evaluation with frozen feature counts, majority tie-breaking, the predeclared
+train-minimum stop, the frozen aggregate-only holdout manifest, and public
+no-ID/text/prediction output. Full repository suite: 123 tests green.

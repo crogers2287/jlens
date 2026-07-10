@@ -739,3 +739,21 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Public artifacts aggregate-only (manifest, run summary, telemetry summary);
   commit-safe check passed; private tasks/captures/records/labels gitignored.
   Full suite green: 123 tests. Production gated. Next: frozen M27 evaluation.
+
+## M27 frozen holdout error prediction (2026-07-10) — MILESTONE COMPLETE
+- Evaluated the sealed 32-task holdout (9 fail/23 pass, 0 undecided) exactly
+  once under the protocol frozen in the M26 manifest: train-standardized
+  nearest centroid fit on 64 train rows, six predeclared baselines, fixed-seed
+  bootstrap CIs, no refit/tuning after reading holdout rows.
+- Results: majority .719; metadata_only (band shortcut) .969; logits_only .969
+  (balanced .978, fail recall 1.0); router_only .812 (fail recall 1.0,
+  precision .60); router_plus_logits .906; full_telemetry 1.000.
+- Honest read: within-category telemetry predicts objective errors on a frozen
+  holdout — logits-only matches the strong band shortcut with no metadata and
+  catches a within-band fail the shortcut cannot see — but the increment over
+  metadata is one task at n=32 with overlapping CIs; full_telemetry includes
+  length/cap features correlated with band difficulty, and its [1.0,1.0]
+  bootstrap is degenerate. No predictive-increment or production claim.
+- Public artifacts aggregate-only (frozen holdout manifest + six-baseline
+  evaluation); commit-safe passed; per-task predictions stay private/ignored.
+  Full suite green: 123 tests. Production gated. Next: M28 ablation/calibration.

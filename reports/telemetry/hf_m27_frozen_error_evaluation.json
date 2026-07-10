@@ -1,0 +1,292 @@
+{
+ "schema_version": 1,
+ "run_kind": "m27_frozen_error_holdout_evaluation",
+ "task_category": "integer_arithmetic_single_expression",
+ "label_classes": [
+  "fail",
+  "pass"
+ ],
+ "n_train_used": 64,
+ "n_holdout_used": 32,
+ "undecided_excluded_counts": {},
+ "train_label_distribution": {
+  "fail": 18,
+  "pass": 46
+ },
+ "holdout_label_distribution": {
+  "fail": 9,
+  "pass": 23
+ },
+ "majority_class_baseline_accuracy": 0.71875,
+ "classifier_family": "train-standardized nearest centroid",
+ "distance": "squared_euclidean",
+ "tie_break": "lexicographic (fail before pass)",
+ "baseline_order": [
+  "majority_class",
+  "metadata_only",
+  "logits_only",
+  "router_only",
+  "router_plus_logits",
+  "full_telemetry"
+ ],
+ "evaluations": {
+  "majority_class": {
+   "n": 32,
+   "accuracy": 0.71875,
+   "balanced_accuracy": 0.5,
+   "macro_f1": 0.41818181818181815,
+   "accuracy_bootstrap_95pct": [
+    0.5625,
+    0.875
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 0,
+     "pass": 9
+    },
+    "pass": {
+     "fail": 0,
+     "pass": 23
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "support": 9
+    },
+    "pass": {
+     "precision": 0.71875,
+     "recall": 1.0,
+     "f1": 0.8363636363636363,
+     "support": 23
+    }
+   },
+   "features": [],
+   "feature_count": 0
+  },
+  "metadata_only": {
+   "n": 32,
+   "accuracy": 0.96875,
+   "balanced_accuracy": 0.9444444444444444,
+   "macro_f1": 0.9599499374217773,
+   "accuracy_bootstrap_95pct": [
+    0.90625,
+    1.0
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 8,
+     "pass": 1
+    },
+    "pass": {
+     "fail": 0,
+     "pass": 23
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 1.0,
+     "recall": 0.8888888888888888,
+     "f1": 0.9411764705882353,
+     "support": 9
+    },
+    "pass": {
+     "precision": 0.9583333333333334,
+     "recall": 1.0,
+     "f1": 0.9787234042553191,
+     "support": 23
+    }
+   },
+   "features": [
+    "band_a",
+    "band_b",
+    "band_c",
+    "band_d"
+   ],
+   "feature_count": 4
+  },
+  "logits_only": {
+   "n": 32,
+   "accuracy": 0.96875,
+   "balanced_accuracy": 0.9782608695652174,
+   "macro_f1": 0.9625730994152046,
+   "accuracy_bootstrap_95pct": [
+    0.90625,
+    1.0
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 9,
+     "pass": 0
+    },
+    "pass": {
+     "fail": 1,
+     "pass": 22
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.9,
+     "recall": 1.0,
+     "f1": 0.9473684210526316,
+     "support": 9
+    },
+    "pass": {
+     "precision": 1.0,
+     "recall": 0.9565217391304348,
+     "f1": 0.9777777777777777,
+     "support": 23
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin"
+   ],
+   "feature_count": 3
+  },
+  "router_only": {
+   "n": 32,
+   "accuracy": 0.8125,
+   "balanced_accuracy": 0.8695652173913043,
+   "macro_f1": 0.7999999999999999,
+   "accuracy_bootstrap_95pct": [
+    0.6875,
+    0.9375
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 9,
+     "pass": 0
+    },
+    "pass": {
+     "fail": 6,
+     "pass": 17
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.6,
+     "recall": 1.0,
+     "f1": 0.7499999999999999,
+     "support": 9
+    },
+    "pass": {
+     "precision": 1.0,
+     "recall": 0.7391304347826086,
+     "f1": 0.85,
+     "support": 23
+    }
+   },
+   "features": [
+    "router_entropy",
+    "expert_concentration"
+   ],
+   "feature_count": 2
+  },
+  "router_plus_logits": {
+   "n": 32,
+   "accuracy": 0.90625,
+   "balanced_accuracy": 0.9347826086956521,
+   "macro_f1": 0.893687707641196,
+   "accuracy_bootstrap_95pct": [
+    0.8125,
+    1.0
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 9,
+     "pass": 0
+    },
+    "pass": {
+     "fail": 3,
+     "pass": 20
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 0.75,
+     "recall": 1.0,
+     "f1": 0.8571428571428571,
+     "support": 9
+    },
+    "pass": {
+     "precision": 1.0,
+     "recall": 0.8695652173913043,
+     "f1": 0.9302325581395349,
+     "support": 23
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration"
+   ],
+   "feature_count": 5
+  },
+  "full_telemetry": {
+   "n": 32,
+   "accuracy": 1.0,
+   "balanced_accuracy": 1.0,
+   "macro_f1": 1.0,
+   "accuracy_bootstrap_95pct": [
+    1.0,
+    1.0
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "fail": {
+     "fail": 9,
+     "pass": 0
+    },
+    "pass": {
+     "fail": 0,
+     "pass": 23
+    }
+   },
+   "per_class": {
+    "fail": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 9
+    },
+    "pass": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 23
+    }
+   },
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration",
+    "decode_step_count",
+    "windowed_expert_shift",
+    "high_entropy_count",
+    "low_confidence_count",
+    "top_k_margin_trend"
+   ],
+   "feature_count": 10
+  }
+ },
+ "holdout_evaluated_once": true,
+ "refit_or_threshold_tuning_after_holdout": false,
+ "prompt_family_shortcut_control": "single shared template; metadata_only baseline reports the difficulty-band shortcut explicitly",
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/confusion only; no ids/text/paths"
+}

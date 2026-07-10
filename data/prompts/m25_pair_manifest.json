@@ -1,0 +1,64 @@
+{
+ "schema_version": 1,
+ "selection_status": "frozen_before_m25_pair_capture",
+ "n_pairs": 16,
+ "n_tasks": 32,
+ "pair_types": {
+  "checker_vs_no_action": 8,
+  "retrieval_vs_review": 8
+ },
+ "pairs": [
+  {"pair_id": "math_00", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_00_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_00_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_01", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_01_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_01_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_02", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_02_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_02_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_03", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_03_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_03_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_04", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_04_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_04_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_05", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_05_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_05_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_06", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_06_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_06_control", "intended_action": "no_action"}]},
+  {"pair_id": "math_07", "pair_type": "checker_vs_no_action", "members": [
+   {"task_id": "m25_math_07_checker", "intended_action": "checker_needed"},
+   {"task_id": "m25_math_07_control", "intended_action": "no_action"}]},
+  {"pair_id": "topic_00", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_00_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_00_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_01", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_01_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_01_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_02", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_02_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_02_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_03", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_03_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_03_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_04", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_04_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_04_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_05", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_05_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_05_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_06", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_06_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_06_review", "intended_action": "review_needed"}]},
+  {"pair_id": "topic_07", "pair_type": "retrieval_vs_review", "members": [
+   {"task_id": "m25_topic_07_retrieval", "intended_action": "retrieval_needed"},
+   {"task_id": "m25_topic_07_review", "intended_action": "review_needed"}]}
+ ],
+ "frozen_classifier": "M23_router_only_standardized_nearest_centroid",
+ "frozen_features": ["router_entropy", "expert_concentration"],
+ "candidate_only": true,
+ "production_gated": true
+}

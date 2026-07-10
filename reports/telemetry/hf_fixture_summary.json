@@ -1,0 +1,38 @@
+{
+ "schema_version": 1,
+ "backend": "hf_safetensors",
+ "fixture_only": true,
+ "weights_loaded": 0,
+ "n_records": 3,
+ "capture_status_distribution": {
+  "completed": 2,
+  "failed": 1
+ },
+ "logits_status_distribution": {
+  "available": 2,
+  "missing": 1
+ },
+ "hidden_status_distribution": {
+  "available": 1,
+  "disabled": 1,
+  "missing": 1
+ },
+ "router_status_distribution": {
+  "available": 1,
+  "missing": 1,
+  "not_moe": 1
+ },
+ "mean_final_entropy_available": 0.7151129366034498,
+ "mean_selected_probability_available": 0.736163226846551,
+ "alignment_coverage": {
+  "auto_outcome": 2,
+  "action_result": 2,
+  "grounded_result": 1,
+  "reviewed_outcome": 0
+ },
+ "raw_prompt_output_or_tensor_persisted": false,
+ "model_weights_or_cache_committed": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only fixture telemetry; no raw text/tensors"
+}

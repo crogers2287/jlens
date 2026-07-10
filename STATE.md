@@ -611,3 +611,21 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   longer trigger non-current tasks; explicit current_info still routes.
 - Added public grounded + review summaries, M20 doc, summary-only rebuild mode,
   and 6 safety/report tests. Full suite 76/76 green; production remains gated.
+
+## M21 HF/safetensors telemetry backend (2026-07-10) — MILESTONE COMPLETE
+- Added versioned aggregate-safe `hf_telemetry_record_v1` and backend descriptors
+  separating GGUF runtime (`telemetry_access=missing`) from HF/safetensors
+  telemetry. Existing GGUF supervisor remains unchanged.
+- Added no-download loader contract: existing local safetensors directory or
+  explicitly approved cached model ID only; Transformers always receives
+  local_files_only=true + trust_remote_code=false. No model selected/downloaded,
+  no weights loaded.
+- Added aggregate logits/decode telemetry (entropy, selected probability/token,
+  top-k mass/margin, window counts/trend), optional hidden summaries, and honest
+  router states/features (available/not_moe/missing/unsupported; never inferred).
+- Tiny fake batch: 3 schema-valid records; logits available2/missing1;
+  hidden available1/disabled1/missing1; router available1/not_moe1/missing1;
+  weights_loaded=0. Outcome-id alignment flags cover auto/action/grounded.
+- Added public fixture aggregate, M21 doc, and 8 tests including no-download
+  flags, missing/not-MoE handling, no raw text/tensors, schema validation, and
+  no tracked model weights. Production remains gated.

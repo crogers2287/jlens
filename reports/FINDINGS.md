@@ -1680,3 +1680,39 @@ grounding-quality aggregation, 4+3 review summary, and heuristic refinement.
 All 23 private results validate grounded_result_v1; public artifacts pass
 check_commit_safe; full suite 76/76 green. auto/action/grounded results remain
 candidates; production gated.
+
+## 133. M21 backend separation + no-download loader contract
+New `hf_telemetry_record_v1` / `hf_telemetry_backend.py` keeps HF internal
+telemetry separate from GGUF auto_outcome runtime records. GGUF descriptor stays
+telemetry_access=missing. HF loader accepts only an existing safetensors directory
+or explicitly approved cached ID and always passes local_files_only=true +
+trust_remote_code=false. Unapproved IDs fail before Transformers; zero downloads,
+weights, licenses, or hardware choices in M21.
+
+## 134. Logits/decode telemetry is numeric and aggregate-only
+Backend captures final entropy, selected-token probability/id, top-k mass/margin,
+and decode-window mean entropy/high-entropy/low-confidence counts/margin trend.
+Record schema excludes prompt, token text, full output, model path, raw logits,
+hidden vectors, router vectors, and weights. Model/evidence references are hashed;
+candidate-only and production-gated.
+
+## 135. Router/hidden telemetry is capability-honest
+Hidden summaries are captured only when enabled + present; otherwise disabled or
+missing. Dense fixture reports router=not_moe. Fake MoE reports real fixture-derived
+router entropy, expert concentration, top expert IDs, and first-to-last expert
+shift. MoE hook refusal reports unsupported; absent unknown data reports missing.
+No router/expert data is inferred from dense or unavailable sources.
+
+## 136. M21 fixture batch + summary
+Three in-memory records validate v1: dense (logits available/hidden disabled/
+router not_moe), MoE (all available), unknown (logits+hidden+router missing).
+Public hf_fixture_summary: weights_loaded=0; logits 2/1; hidden 1 available/1
+disabled/1 missing; router 1 available/1 not_moe/1 missing; alignments auto2/
+action2/grounded1/reviewed0. No raw text/tensors persisted.
+
+## 137. M21 tests + real-model stop gate
+Eight tests cover telemetry math/window aggregates, missing/disabled states,
+dense/MoE/unsupported router handling, unapproved/no-safetensors refusal,
+no-download loader flags, schema/no-text/backend separation, and no tracked model
+weights/caches. A real dense/MoE run now requires operator-selected local path or
+approved cached model ID plus hardware/VRAM approval; autosteer must stop there.

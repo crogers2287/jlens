@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/crogers2287/jlens/schema/hf_telemetry_record_v1.json",
+  "title": "jlens HF safetensors telemetry record v1",
+  "description": "Aggregate-safe internal telemetry from an HF/safetensors backend. Contains no prompt, token text, full output, hidden vectors, raw logits, router vectors, model path, or model weights.",
+  "type": "object",
+  "required": [
+    "schema_version", "record_kind", "backend", "task_id", "model_ref_hash",
+    "source_kind", "model_kind", "capture_status", "input_token_count",
+    "decode_step_count", "logits", "hidden", "router", "outcome_alignment",
+    "evidence_hash", "candidate_only", "production_gated"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_kind": {"const": "hf_telemetry"},
+    "backend": {"const": "hf_safetensors"},
+    "task_id": {"type": "string"},
+    "model_ref_hash": {"type": "string"},
+    "source_kind": {
+      "type": "string", "enum": ["fake_fixture", "local_path", "approved_model_id"]
+    },
+    "model_kind": {"type": "string", "enum": ["dense", "moe", "unknown"]},
+    "capture_status": {"type": "string", "enum": ["completed", "partial", "failed"]},
+    "input_token_count": {"type": "integer", "minimum": 0},
+    "decode_step_count": {"type": "integer", "minimum": 0},
+    "logits": {
+      "type": "object",
+      "required": [
+        "status", "selected_token_id", "entropy", "selected_token_probability",
+        "top_k", "top_k_mass", "top_k_margin", "window"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["available", "missing", "unsupported"]},
+        "selected_token_id": {"type": ["integer", "null"]},
+        "entropy": {"type": ["number", "null"], "minimum": 0},
+        "selected_token_probability": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "top_k": {"type": ["integer", "null"], "minimum": 1},
+        "top_k_mass": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "top_k_margin": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "window": {
+          "type": "object",
+          "required": ["step_count", "mean_entropy", "high_entropy_count", "low_confidence_count", "top_k_margin_trend"],
+          "additionalProperties": false,
+          "properties": {
+            "step_count": {"type": "integer", "minimum": 0},
+            "mean_entropy": {"type": ["number", "null"], "minimum": 0},
+            "high_entropy_count": {"type": "integer", "minimum": 0},
+            "low_confidence_count": {"type": "integer", "minimum": 0},
+            "top_k_margin_trend": {"type": ["number", "null"], "minimum": -1, "maximum": 1}
+          }
+        }
+      }
+    },
+    "hidden": {
+      "type": "object",
+      "required": ["status", "layer_count", "vector_norm_mean"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["available", "disabled", "missing", "unsupported"]},
+        "layer_count": {"type": ["integer", "null"], "minimum": 0},
+        "vector_norm_mean": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "router": {
+      "type": "object",
+      "required": [
+        "status", "layer_count", "top_expert_ids", "router_entropy_mean",
+        "expert_concentration_mean", "windowed_expert_shift"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["available", "not_moe", "missing", "unsupported"]},
+        "layer_count": {"type": ["integer", "null"], "minimum": 0},
+        "top_expert_ids": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+        "router_entropy_mean": {"type": ["number", "null"], "minimum": 0},
+        "expert_concentration_mean": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "windowed_expert_shift": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+      }
+    },
+    "outcome_alignment": {
+      "type": "object",
+      "required": ["auto_outcome", "action_result", "grounded_result", "reviewed_outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "auto_outcome": {"type": "boolean"},
+        "action_result": {"type": "boolean"},
+        "grounded_result": {"type": "boolean"},
+        "reviewed_outcome": {"type": "boolean"}
+      }
+    },
+    "evidence_hash": {"type": "string"},
+    "candidate_only": {"const": true},
+    "production_gated": {"const": true}
+  }
+}

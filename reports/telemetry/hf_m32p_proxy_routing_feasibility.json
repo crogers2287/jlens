@@ -1,0 +1,22 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32p_phase0_feasibility",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "architecture_verified": {
+  "model_type": "qwen2_moe",
+  "layers": 24,
+  "experts": 60,
+  "top_k": 4,
+  "norm_topk_prob": false
+ },
+ "disabled_override_greedy_parity": true,
+ "forced_swap_routing_changed": true,
+ "forced_swap_output_can_differ": true,
+ "controller_applications": 1,
+ "peak_gpu_memory_gib": 27.95,
+ "memory_gate_44gib": true,
+ "hidden_capture": "disabled",
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate smoke facts only; no paths/prompts"
+}

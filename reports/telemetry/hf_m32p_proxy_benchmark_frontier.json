@@ -1,0 +1,52 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32p_proxy_benchmark_frontier",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "sweep_samples_per_cell": 24,
+ "cell_pass_rates": {
+  "c_2x1": 1.0,
+  "c_2x2_low": 0.9583,
+  "c_2x2_heavy": 0.4167,
+  "c_3x1": 0.9167,
+  "c_3x2_low": 0.8333,
+  "c_3x2_heavy": 0.0417,
+  "c_4x1": 0.9583,
+  "c_4x2_low": 0.7083,
+  "c_4x2_heavy": 0.0,
+  "c_3x3": 0.0833,
+  "c_zero_3x2": 0.375,
+  "c_pow10_3x2": 0.6667
+ },
+ "cell_classes": {
+  "c_2x1": "easy",
+  "c_2x2_low": "easy",
+  "c_2x2_heavy": "boundary",
+  "c_3x1": "easy",
+  "c_3x2_low": "unused_gap",
+  "c_3x2_heavy": "hard",
+  "c_4x1": "easy",
+  "c_4x2_low": "boundary",
+  "c_4x2_heavy": "hard",
+  "c_3x3": "hard",
+  "c_zero_3x2": "boundary",
+  "c_pow10_3x2": "boundary"
+ },
+ "frontier_found": true,
+ "chosen_task_count": 192,
+ "chosen_composition": {
+  "c_2x2_heavy": 36,
+  "c_4x2_low": 36,
+  "c_zero_3x2": 36,
+  "c_pow10_3x2": 36,
+  "c_2x1": 12,
+  "c_2x2_low": 12,
+  "c_4x2_heavy": 12,
+  "c_3x2_heavy": 12
+ },
+ "expected_original_failures": 90.0,
+ "selection_inputs": "original greedy pass rates and frozen structural diversity rules only",
+ "calibration_rows_are_decision_data": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate cell counts/pass rates only"
+}

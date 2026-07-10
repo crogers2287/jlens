@@ -673,3 +673,24 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   threshold, causal, or predictive-value claim. agents-a1 serving restored/verified.
 - Added public aggregate summary/alignment report, M23 doc, and CPU/no-network tests.
   Full suite green: 95/95 tests. Production gated.
+
+## M24 frozen telemetry holdout (2026-07-10) — MILESTONE COMPLETE
+- Preregistered a 48-ID manifest, caught 12 unavailable source IDs before capture,
+  preserved the invalid commit, and transparently corrected to 40 valid/disjoint
+  IDs (10/class) before model load. Frozen features/classifiers/metrics unchanged.
+- Fit full/logits/router nearest-centroid models only on 32 private M23 rows:
+  M23 mean/sample-SD scaling, balanced class centroids, squared Euclidean distance,
+  lexical ties. Classifiers instantiated before any M24 capture was loaded.
+- Real same-model holdout completed 40/40; logits/router available 40/40, hidden
+  disabled. Actual routes checker10/retrieval10/review11/no-action9. Eighteen rows
+  hit 64 tokens (retrieval7/review10/control1); no checker was capped.
+- Frozen holdout: router-only accuracy 0.700 [0.550,0.850], balanced accuracy
+  0.693, macro-F1 0.700; full 0.600 [0.450,0.750]; logits-only 0.225
+  [0.100,0.350]; actual majority baseline 0.275. No holdout tuning occurred.
+- Router-only recall: checker .80/no-action .44/retrieval .80/review .73. Main
+  confusions are no-action→review (5) and review→retrieval (3). Category/template
+  confounds remain; result supports investigation, not a policy.
+- Qwen checker outcomes shifted to 1 pass/9 fail, all EOS-complete. No error
+  predictor was fit. agents-a1 serving restored and verified. Production gated.
+- Added public aggregate summary/evaluation, M24 doc, and CPU tests. Full suite
+  green: 100/100 tests.

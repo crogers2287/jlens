@@ -1,0 +1,51 @@
+{
+ "schema_version": 1,
+ "run_kind": "m24_frozen_holdout_same_run",
+ "within_model_alignment": true,
+ "training_milestone": "M23",
+ "holdout_milestone": "M24",
+ "training_records": 32,
+ "holdout_records": 40,
+ "architecture_family": "qwen2_moe",
+ "hardware_plan": "two_24gib_nvidia_gpus_bf16",
+ "hidden_capture": "disabled",
+ "predeclared_group_distribution": {
+  "checker_candidate": 10,
+  "no_action_control": 10,
+  "retrieval_candidate": 10,
+  "review_candidate": 10
+ },
+ "capture_status_distribution": {
+  "completed": 40
+ },
+ "logits_status_distribution": {
+  "available": 40
+ },
+ "router_status_distribution": {
+  "available": 40
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 10,
+  "no_action": 9,
+  "retrieval_needed": 10,
+  "review_needed": 11
+ },
+ "checker_verdict_distribution": {
+  "fail": 9,
+  "pass": 1
+ },
+ "decode_cap_tokens": 64,
+ "decode_cap_reached_count": 18,
+ "decode_cap_reached_group_distribution": {
+  "no_action_control": 1,
+  "retrieval_candidate": 7,
+  "review_candidate": 10
+ },
+ "same_capture_supplied_telemetry_and_output": true,
+ "captured_output_passed_transiently_to_verifiers": true,
+ "per_task_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only frozen holdout summary"
+}

@@ -1804,3 +1804,50 @@ telemetry/output association, full-output checker handoff before private preview
 truncation, four-schema validation, resume/invalid capture detection, honest missing
 telemetry, predeclared effect gating, and public no-ID/text/path/tensor reporting.
 Chat-template capture also has a stub test. Full suite: 95/95 green.
+
+## 150. M24 preregistration correction is preserved before holdout
+The first 48-ID manifest referenced unavailable source IDs. Validation caught this
+before any M24 model load or telemetry inspection. Git history preserves that
+manifest and a transparent pre-run correction to 40 source-resolved, M23-disjoint
+IDs (10/class). Model, feature sets, nearest-centroid recipe, and metrics did not
+change. This is a preregistration correction, not post-result task selection.
+
+## 151. Frozen M23 classifier protocol
+Three classifiers use M23 mean/sample-SD standardization and balanced action-class
+centroids: full five features, logits-only three, and router-only two. Squared
+Euclidean prediction with lexical ties is fixed. Code fits all models from the 32
+M23 private records before reading any M24 capture; holdout cannot update centroids,
+scales, features, thresholds, or class priors.
+
+## 152. M24 real holdout completes with honest cap/action drift
+All 40 same-run Qwen captures expose logits and 24×60 router telemetry. Actual
+actions are checker10/retrieval10/review11/no-action9 because one control fails its
+correctness check and escalates. Eighteen rows reach 64 tokens (retrieval7/review10/
+control1); every checker reaches EOS. Checker verdicts shift to 1 pass/9 fail, a
+real candidate distribution shift not explained by truncation.
+
+## 153. Router-only generalizes; logits-only collapses
+On the untouched holdout, router-only accuracy is .700 (bootstrap [.550,.850]),
+balanced accuracy .693, macro-F1 .700 versus majority baseline .275. Full features
+reach .600 [.450,.750]/.602/.599. Logits-only reaches .225 [.100,.350]/.236/.199,
+below majority. The added logits features hurt the frozen full model relative to
+router-only. No alternative classifier or threshold was tried.
+
+## 154. Remaining errors expose category/template confounds
+Router-only recalls checker .80, retrieval .80, review .73, but no-action only .44.
+Five no-action rows map to review; three review rows map to retrieval. The holdout
+uses unseen IDs but shares category-specific prompt templates and verifier rules
+with M23. Thus .70 supports a confound-controlled router study, not causal risk
+prediction, user-level trust scoring, or production gating.
+
+## 155. M24 public/private boundary
+Public output contains run aggregates, class confusion/metrics, hashes, and frozen
+protocol declarations only. Per-task predictions, decoded output, prompt/token
+text, raw tensors, paths, centroids, and 40 detailed rows per schema stay private/
+ignored. No tuning occurred; candidate-only and production gates remain.
+
+## 156. M24 tests and milestone completion
+Five CPU/no-network tests cover corrected balanced/disjoint manifest resolution,
+frozen balanced-M23 fitting, full/logits/router predictions, lexical tie breaking,
+deterministic bootstrap/confusion/per-class metrics, and public no-ID/centroid/text/
+path reporting. Full repository suite: 100/100 green.

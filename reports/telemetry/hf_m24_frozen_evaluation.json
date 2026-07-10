@@ -1,0 +1,242 @@
+{
+ "schema_version": 1,
+ "run_kind": "m24_frozen_telemetry_holdout_evaluation",
+ "training_records": 32,
+ "holdout_records": 40,
+ "class_order": [
+  "checker_needed",
+  "no_action",
+  "retrieval_needed",
+  "review_needed"
+ ],
+ "holdout_class_distribution": {
+  "checker_needed": 10,
+  "no_action": 9,
+  "retrieval_needed": 10,
+  "review_needed": 11
+ },
+ "majority_class_baseline_accuracy": 0.275,
+ "classifier_family": "m23_standardized_nearest_centroid",
+ "distance": "squared_euclidean",
+ "tie_break": "lexicographic",
+ "training_protocol_hash": "[h:19c14134854c8742]",
+ "holdout_manifest_hash": "[h:119edb6eccc3f5d8]",
+ "evaluations": {
+  "full": {
+   "n": 40,
+   "accuracy": 0.6,
+   "balanced_accuracy": 0.602020202020202,
+   "macro_f1": 0.5990977443609022,
+   "accuracy_bootstrap_95pct": [
+    0.45,
+    0.75
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "checker_needed": {
+     "checker_needed": 8,
+     "no_action": 2,
+     "retrieval_needed": 0,
+     "review_needed": 0
+    },
+    "no_action": {
+     "checker_needed": 1,
+     "no_action": 4,
+     "retrieval_needed": 0,
+     "review_needed": 4
+    },
+    "retrieval_needed": {
+     "checker_needed": 0,
+     "no_action": 0,
+     "retrieval_needed": 8,
+     "review_needed": 2
+    },
+    "review_needed": {
+     "checker_needed": 0,
+     "no_action": 0,
+     "retrieval_needed": 7,
+     "review_needed": 4
+    }
+   },
+   "per_class": {
+    "checker_needed": {
+     "precision": 0.8888888888888888,
+     "recall": 0.8,
+     "f1": 0.8421052631578948,
+     "support": 10
+    },
+    "no_action": {
+     "precision": 0.6666666666666666,
+     "recall": 0.4444444444444444,
+     "f1": 0.5333333333333333,
+     "support": 9
+    },
+    "retrieval_needed": {
+     "precision": 0.5333333333333333,
+     "recall": 0.8,
+     "f1": 0.64,
+     "support": 10
+    },
+    "review_needed": {
+     "precision": 0.4,
+     "recall": 0.36363636363636365,
+     "f1": 0.380952380952381,
+     "support": 11
+    }
+   },
+   "feature_count": 5,
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration"
+   ]
+  },
+  "logits_only": {
+   "n": 40,
+   "accuracy": 0.225,
+   "balanced_accuracy": 0.2361111111111111,
+   "macro_f1": 0.19901905300886624,
+   "accuracy_bootstrap_95pct": [
+    0.1,
+    0.35
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "checker_needed": {
+     "checker_needed": 3,
+     "no_action": 6,
+     "retrieval_needed": 0,
+     "review_needed": 1
+    },
+    "no_action": {
+     "checker_needed": 4,
+     "no_action": 4,
+     "retrieval_needed": 1,
+     "review_needed": 0
+    },
+    "retrieval_needed": {
+     "checker_needed": 2,
+     "no_action": 6,
+     "retrieval_needed": 2,
+     "review_needed": 0
+    },
+    "review_needed": {
+     "checker_needed": 0,
+     "no_action": 6,
+     "retrieval_needed": 5,
+     "review_needed": 0
+    }
+   },
+   "per_class": {
+    "checker_needed": {
+     "precision": 0.3333333333333333,
+     "recall": 0.3,
+     "f1": 0.3157894736842105,
+     "support": 10
+    },
+    "no_action": {
+     "precision": 0.18181818181818182,
+     "recall": 0.4444444444444444,
+     "f1": 0.2580645161290322,
+     "support": 9
+    },
+    "retrieval_needed": {
+     "precision": 0.25,
+     "recall": 0.2,
+     "f1": 0.22222222222222224,
+     "support": 10
+    },
+    "review_needed": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "support": 11
+    }
+   },
+   "feature_count": 3,
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin"
+   ]
+  },
+  "router_only": {
+   "n": 40,
+   "accuracy": 0.7,
+   "balanced_accuracy": 0.692929292929293,
+   "macro_f1": 0.6998778998778998,
+   "accuracy_bootstrap_95pct": [
+    0.55,
+    0.85
+   ],
+   "bootstrap_iterations": 2000,
+   "confusion_matrix": {
+    "checker_needed": {
+     "checker_needed": 8,
+     "no_action": 2,
+     "retrieval_needed": 0,
+     "review_needed": 0
+    },
+    "no_action": {
+     "checker_needed": 0,
+     "no_action": 4,
+     "retrieval_needed": 0,
+     "review_needed": 5
+    },
+    "retrieval_needed": {
+     "checker_needed": 0,
+     "no_action": 0,
+     "retrieval_needed": 8,
+     "review_needed": 2
+    },
+    "review_needed": {
+     "checker_needed": 0,
+     "no_action": 0,
+     "retrieval_needed": 3,
+     "review_needed": 8
+    }
+   },
+   "per_class": {
+    "checker_needed": {
+     "precision": 1.0,
+     "recall": 0.8,
+     "f1": 0.888888888888889,
+     "support": 10
+    },
+    "no_action": {
+     "precision": 0.6666666666666666,
+     "recall": 0.4444444444444444,
+     "f1": 0.5333333333333333,
+     "support": 9
+    },
+    "retrieval_needed": {
+     "precision": 0.7272727272727273,
+     "recall": 0.8,
+     "f1": 0.761904761904762,
+     "support": 10
+    },
+    "review_needed": {
+     "precision": 0.5333333333333333,
+     "recall": 0.7272727272727273,
+     "f1": 0.6153846153846153,
+     "support": 11
+    }
+   },
+   "feature_count": 2,
+   "features": [
+    "router_entropy",
+    "expert_concentration"
+   ]
+  }
+ },
+ "centroids_updated_from_holdout": false,
+ "features_or_thresholds_tuned_on_holdout": false,
+ "per_task_predictions_persisted_publicly": false,
+ "predictive_value_interpretation": "frozen holdout task-demand classification only",
+ "causal_or_production_claim": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/confusion only; no ids/text/paths/tensors"
+}

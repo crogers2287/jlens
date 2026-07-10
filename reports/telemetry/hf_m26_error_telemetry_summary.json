@@ -1,0 +1,208 @@
+{
+ "schema_version": 1,
+ "run_kind": "m26_train_pass_fail_telemetry_summary",
+ "split_scope": "train_only",
+ "holdout_excluded": true,
+ "n_train_records": 64,
+ "train_label_distribution": {
+  "fail": 18,
+  "pass": 46
+ },
+ "train_fail_vs_pass": {
+  "orientation": "positive=fail; negative=pass",
+  "fail": {
+   "n": 18,
+   "decode_window_entropy": {
+    "mean": 0.32006055196983546,
+    "median": 0.31411426046584034
+   },
+   "final_selected_probability": {
+    "mean": 0.999945878982544,
+    "median": 0.9999540448188782
+   },
+   "final_top_k_margin": {
+    "mean": 0.9999332692888048,
+    "median": 0.9999454617500305
+   },
+   "router_entropy": {
+    "mean": 3.6137737029203763,
+    "median": 3.613210114083026
+   },
+   "expert_concentration": {
+    "mean": 0.13271038997379925,
+    "median": 0.13478703347850376
+   },
+   "decode_step_count": {
+    "mean": 15.166666666666666,
+    "median": 14.0
+   },
+   "windowed_expert_shift": {
+    "mean": 1.0,
+    "median": 1.0
+   },
+   "high_entropy_count": {
+    "mean": 1.7777777777777777,
+    "median": 2.0
+   },
+   "low_confidence_count": {
+    "mean": 0.8333333333333334,
+    "median": 1.0
+   },
+   "top_k_margin_trend": {
+    "mean": 0.29081468284130096,
+    "median": 0.2509484589099884
+   }
+  },
+  "pass": {
+   "n": 46,
+   "decode_window_entropy": {
+    "mean": 0.10956559727221521,
+    "median": 0.10114214189095073
+   },
+   "final_selected_probability": {
+    "mean": 0.9736045326875604,
+    "median": 0.9999189972877502
+   },
+   "final_top_k_margin": {
+    "mean": 0.9473447527574457,
+    "median": 0.9999032914638519
+   },
+   "router_entropy": {
+    "mean": 3.7324102890807573,
+    "median": 3.7047877549336814
+   },
+   "expert_concentration": {
+    "mean": 0.09982473833878534,
+    "median": 0.10637064147754346
+   },
+   "decode_step_count": {
+    "mean": 11.869565217391305,
+    "median": 11.0
+   },
+   "windowed_expert_shift": {
+    "mean": 0.9990942028985508,
+    "median": 1.0
+   },
+   "high_entropy_count": {
+    "mean": 0.08695652173913043,
+    "median": 0.0
+   },
+   "low_confidence_count": {
+    "mean": 0.13043478260869565,
+    "median": 0.0
+   },
+   "top_k_margin_trend": {
+    "mean": 0.5687215963135595,
+    "median": 0.5479726493358612
+   }
+  },
+  "effects": {
+   "decode_window_entropy": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.21049495469762025,
+    "hedges_g": 3.0055274748478906,
+    "bootstrap_mean_difference_95pct": [
+     0.1570890290065317,
+     0.26099560068701105
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "final_selected_probability": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.026341346294983525,
+    "hedges_g": 0.4408549952113117,
+    "bootstrap_mean_difference_95pct": [
+     0.00934006972013457,
+     0.04836925115562285
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "final_top_k_margin": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.0525885165313591,
+    "hedges_g": 0.4403013032370025,
+    "bootstrap_mean_difference_95pct": [
+     0.018929854107363808,
+     0.09548054289990582
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "router_entropy": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": -0.11863658616038109,
+    "hedges_g": -1.9097453950166594,
+    "bootstrap_mean_difference_95pct": [
+     -0.14162553272935385,
+     -0.09574659378630779
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "expert_concentration": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.032885651635013904,
+    "hedges_g": 1.9293606879108554,
+    "bootstrap_mean_difference_95pct": [
+     0.026109212476132196,
+     0.03904827439377598
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "decode_step_count": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 3.2971014492753614,
+    "hedges_g": 1.01239297613115,
+    "bootstrap_mean_difference_95pct": [
+     1.2753623188405783,
+     5.60144927536232
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "windowed_expert_shift": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.0009057971014492239,
+    "hedges_g": 0.1709635570357647,
+    "bootstrap_mean_difference_95pct": [
+     0.0,
+     0.0027173913043477826
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "high_entropy_count": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 1.6908212560386473,
+    "hedges_g": 2.3712102416067338,
+    "bootstrap_mean_difference_95pct": [
+     1.1014492753623188,
+     2.246376811594203
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "low_confidence_count": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": 0.7028985507246377,
+    "hedges_g": 1.5972242634364753,
+    "bootstrap_mean_difference_95pct": [
+     0.41304347826086957,
+     0.9903381642512078
+    ],
+    "bootstrap_iterations": 2000
+   },
+   "top_k_margin_trend": {
+    "status": "descriptive_only",
+    "mean_difference_fail_minus_pass": -0.2779069134722585,
+    "hedges_g": -1.181319659377097,
+    "bootstrap_mean_difference_95pct": [
+     -0.371531226352793,
+     -0.1809247926525448
+    ],
+    "bootstrap_iterations": 2000
+   }
+  }
+ },
+ "effect_size_interpretation": "descriptive Hedges g and fixed-seed bootstrap mean-difference intervals on the train split only; no classifier, threshold, or predictive-value claim before the frozen M27 evaluation",
+ "predictive_value_claimed": false,
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate train groups only; no ids/text/paths/tensors"
+}

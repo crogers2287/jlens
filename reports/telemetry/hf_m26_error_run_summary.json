@@ -1,0 +1,79 @@
+{
+ "schema_version": 1,
+ "run_kind": "m26_objective_error_dataset",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_family_constant": true,
+ "n_records": 96,
+ "band_split_task_counts": {
+  "band_a": {
+   "train": 16,
+   "holdout": 8
+  },
+  "band_b": {
+   "train": 16,
+   "holdout": 8
+  },
+  "band_c": {
+   "train": 16,
+   "holdout": 8
+  },
+  "band_d": {
+   "train": 16,
+   "holdout": 8
+  }
+ },
+ "capture_status_distribution": {
+  "completed": 96
+ },
+ "logits_status_distribution": {
+  "available": 96
+ },
+ "router_status_distribution": {
+  "available": 96
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 96
+ },
+ "action_applicability_constant": true,
+ "deterministic_verifier_labeler": "math_checker",
+ "train_label_distribution": {
+  "fail": 18,
+  "pass": 46
+ },
+ "train_band_label_distribution": {
+  "band_a": {
+   "pass": 16
+  },
+  "band_b": {
+   "pass": 16
+  },
+  "band_c": {
+   "fail": 3,
+   "pass": 13
+  },
+  "band_d": {
+   "fail": 15,
+   "pass": 1
+  }
+ },
+ "holdout_label_distribution": "sealed_until_m27",
+ "holdout_telemetry_aggregates": "sealed_until_m27",
+ "decode_cap_tokens": 64,
+ "train_decode_cap_reached_count": 0,
+ "minimum_modeling_requirement": {
+  "train_pass_min": 8,
+  "train_fail_min": 8,
+  "on_shortfall": "stop and report; do not regenerate or reselect tasks"
+ },
+ "minimum_modeling_requirement_met": true,
+ "no_posthoc_selection": true,
+ "all_generated_tasks_retained": true,
+ "same_capture_supplied_telemetry_and_output": true,
+ "hidden_capture": "disabled",
+ "architecture_family": "qwen2_moe",
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only dataset summary; holdout sealed"
+}

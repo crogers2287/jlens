@@ -715,3 +715,27 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   objective errors. No policy/threshold; production gated. agents-a1 restored.
 - Added public aggregate pair/run reports, M25 doc, and CPU tests. Full suite green:
   105/105 tests.
+
+## M26 objective error dataset (2026-07-10) — MILESTONE COMPLETE
+- Operator selected steer option B (objective error prediction) via the loop
+  contract. Preregistered data/prompts/m26_error_manifest.json before any task
+  generation: one arithmetic category/template, four difficulty bands (24 each),
+  per-ID 16/8 train/holdout split, deterministic seeded generation with no
+  post-hoc selection, math_checker label rule, constant checker applicability,
+  holdout seal, and frozen M27/M28 protocols.
+- Deterministic generator produced 96 unique private tasks; one GPU window
+  captured 96/96 with logits + 24-layer × 60-expert router telemetry (BF16,
+  chat template, greedy, 64-token cap, router-only, ~1 s/task). agents-a1
+  restored and verified after the window.
+- Action applicability held constant: 96/96 actual actions checker_needed. No
+  train row hit the decode cap; 0 undecided verdicts.
+- Train labels (holdout sealed until M27): band_a 16 pass, band_b 16 pass,
+  band_c 13 pass/3 fail, band_d 1 pass/15 fail → 46 pass/18 fail, meeting the
+  predeclared ≥8/≥8 modeling minimum without reselection.
+- Train fail-vs-pass descriptive separation: decode entropy g≈+3.0,
+  high-entropy count g≈+2.4, expert concentration g≈+1.9, router entropy
+  g≈-1.9, low-confidence count g≈+1.6, margin trend g≈-1.2 (band confound
+  explicit; no classifier/threshold fitted).
+- Public artifacts aggregate-only (manifest, run summary, telemetry summary);
+  commit-safe check passed; private tasks/captures/records/labels gitignored.
+  Full suite green: 123 tests. Production gated. Next: frozen M27 evaluation.

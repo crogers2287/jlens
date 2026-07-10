@@ -1894,3 +1894,49 @@ Five CPU/no-network tests cover manifest/private generator pair equality, metada
 discordance, frozen router prediction identity and 50% pair ceiling, exact-zero
 feature differences, honest output-mismatch reporting, and public no-ID/text/
 prediction/path output. Full repository suite: 105/105 green.
+
+## 164. M26 preregisters the objective-error design before generation
+The M26 manifest was committed before any task generation or capture. It fixes
+one arithmetic category and prompt template, four difficulty bands, a per-ID
+16/8 train/holdout split per band, seeded unique operand generation with all
+tasks retained, the deterministic math_checker label rule, constant checker
+applicability with drift as a stop condition, a holdout seal on M26 public
+reporting, and the frozen M27 baseline and M28 ablation/calibration protocols.
+
+## 165. Same-run capture holds action applicability constant at n=96
+All 96 private tasks captured in one window with real logits and 24×60 router
+telemetry; hidden stayed disabled. Every task carried task_category=math plus a
+safe expression, and all 96 actual routed actions were checker_needed. The
+metadata-observability failure mode falsified in M25 is therefore excluded by
+construction: nothing about the label can hide in action applicability.
+
+## 166. Difficulty bands produce objective errors without post-hoc selection
+Train-split verdicts from the deterministic checker: band_a 16/0, band_b 16/0,
+band_c 13/3, band_d 1/15 (pass/fail), totaling 46 pass/18 fail/0 undecided.
+Every train answer reached EOS before the 64-token cap. The predeclared ≥8
+per-class modeling minimum is met purely by ex-ante band design; no task was
+regenerated, reselected, or relabeled after seeing outcomes.
+
+## 167. Within-category train telemetry separates fails descriptively
+On train rows, fails show higher decode-window entropy (g≈+3.0), more
+high-entropy steps (g≈+2.4), higher expert concentration (g≈+1.9), lower
+router entropy (g≈-1.9), more low-confidence steps (g≈+1.6), and a more
+negative top-k margin trend (g≈-1.2); fixed-seed bootstrap mean-difference
+intervals exclude zero for these. Difficulty band correlates with the label by
+design, so this is association, not predictive value; M27's metadata-only
+baseline exists precisely to price that shortcut.
+
+## 168. M26 public/private boundary and holdout seal
+Public artifacts contain band definitions, aggregate counts, and group
+statistics only; no operands, prompts, outputs, per-task labels, predictions,
+paths, tokens, or tensors. Holdout verdict counts and holdout telemetry
+aggregates are sealed until the frozen M27 evaluation. Private tasks,
+captures, telemetry/runtime/action/result records, and labels stay ignored.
+Candidate-only and production gates remain.
+
+## 169. M26 tests and milestone completion
+Seven CPU/no-network M26 tests cover deterministic in-band generation with the
+predeclared split, operand uniqueness, the checker-verdict label rule, holdout
+sealing with honest shortfall reporting, train-only descriptive effects, and
+public no-ID/text/expression/path output. Full repository suite: 123 tests
+green (including pre-added M27/M28 protocol tests).

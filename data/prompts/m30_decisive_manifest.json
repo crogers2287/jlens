@@ -1,0 +1,4155 @@
+{
+ "milestone": "M30",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m30_task_generation",
+ "research_question": "Decisive test: does full telemetry add statistically meaningful predictive value over difficulty-band metadata for within-category objective error prediction, at a holdout size (192) powered for the effect observed in M29?",
+ "relation_to_prior_milestones": {
+  "m27_or_m29_rows_reused_as_confirmatory_data": false,
+  "operand_freshness_rule": "before drawing, each band's seen-set is seeded with the operand tuples that the committed M29 manifest generation deterministically produces for the same band, so no M29 task instance can recur",
+  "protocol_source": "operator steer 2a4699e (post-M29 option A, scaled)"
+ },
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "prompt_family_constant": true,
+ "action_applicability": {
+  "rule": "every task carries task_category=math plus a safe arithmetic expression, so the supervisor/router must plan checker_needed for all 768 tasks",
+  "expected_action_type": "checker_needed",
+  "constant_across_all_tasks": true,
+  "violation_handling": "stop milestone and report; do not relabel"
+ },
+ "generation": {
+  "seed": "m30-decisive-increment-v1",
+  "algorithm": "per band, seed the seen-set with the M29-manifest tuples for that band, then draw unique (a, b) tuples from random.Random(seed + ':' + band_id) uniform in the declared inclusive ranges, rejecting duplicates, until n_tasks tuples exist; assign tuples to the predeclared task_ids in draw order",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true,
+  "operand_uniqueness_scope": "within band, and disjoint from M29 tuples"
+ },
+ "label_rule": {
+  "labeler": "math_checker deterministic verifier",
+  "input": "same-run captured greedy decode output only",
+  "truth_source": "safe evaluation of the task expression",
+  "classes": [
+   "pass",
+   "fail"
+  ],
+  "undecided_handling": "undecided verdicts are excluded from modeling and reported as aggregate counts",
+  "human_selection": "none"
+ },
+ "decode_protocol": {
+  "decode": "greedy",
+  "decode_cap_tokens": 64,
+  "chat_template": true,
+  "router_only_capture": true,
+  "hidden_capture": "disabled",
+  "backend_top_k": 5,
+  "dtype": "bf16",
+  "architecture_family": "qwen2_moe",
+  "hardware_plan": "two_24gib_nvidia_gpus_bf16"
+ },
+ "bands": [
+  {
+   "band_id": "band_1",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    2,
+    9
+   ],
+   "expected_fail_rate": "very_low",
+   "rationale": "2-digit by 1-digit anchor; M29 observed 0% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  },
+  {
+   "band_id": "band_2",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "expected_fail_rate": "low_moderate",
+   "rationale": "2x2-digit; M29 observed ~12% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  },
+  {
+   "band_id": "band_3",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "expected_fail_rate": "moderate",
+   "rationale": "3x2-digit; M29 observed ~53% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  },
+  {
+   "band_id": "band_4",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "expected_fail_rate": "high",
+   "rationale": "3x3-digit; M29 observed ~91% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  },
+  {
+   "band_id": "band_5",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "expected_fail_rate": "moderate_high",
+   "rationale": "4x2-digit; M29 observed ~66% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  },
+  {
+   "band_id": "band_6",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "expected_fail_rate": "very_high",
+   "rationale": "4x3-digit anchor; M29 observed ~97% fail",
+   "n_tasks": 128,
+   "n_train": 64,
+   "n_validation": 32,
+   "n_holdout": 32
+  }
+ ],
+ "n_tasks": 768,
+ "n_train": 384,
+ "n_validation": 192,
+ "n_holdout": 192,
+ "split_rule": "per band, task indices 000-063 are train, 064-095 are validation, 096-127 are holdout; assigned in this manifest before any generation",
+ "tasks": [
+  {
+   "task_id": "m30_b1_000",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_001",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_002",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_003",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_004",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_005",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_006",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_007",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_008",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_009",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_010",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_011",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_012",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_013",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_014",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_015",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_016",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_017",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_018",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_019",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_020",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_021",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_022",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_023",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_024",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_025",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_026",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_027",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_028",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_029",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_030",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_031",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_032",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_033",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_034",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_035",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_036",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_037",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_038",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_039",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_040",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_041",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_042",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_043",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_044",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_045",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_046",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_047",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_048",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_049",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_050",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_051",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_052",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_053",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_054",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_055",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_056",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_057",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_058",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_059",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_060",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_061",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_062",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_063",
+   "band": "band_1",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b1_064",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_065",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_066",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_067",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_068",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_069",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_070",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_071",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_072",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_073",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_074",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_075",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_076",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_077",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_078",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_079",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_080",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_081",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_082",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_083",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_084",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_085",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_086",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_087",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_088",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_089",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_090",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_091",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_092",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_093",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_094",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_095",
+   "band": "band_1",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b1_096",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_097",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_098",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_099",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_100",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_101",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_102",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_103",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_104",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_105",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_106",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_107",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_108",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_109",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_110",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_111",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_112",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_113",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_114",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_115",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_116",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_117",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_118",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_119",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_120",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_121",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_122",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_123",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_124",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_125",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_126",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b1_127",
+   "band": "band_1",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_000",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_001",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_002",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_003",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_004",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_005",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_006",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_007",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_008",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_009",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_010",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_011",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_012",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_013",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_014",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_015",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_016",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_017",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_018",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_019",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_020",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_021",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_022",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_023",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_024",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_025",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_026",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_027",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_028",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_029",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_030",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_031",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_032",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_033",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_034",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_035",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_036",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_037",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_038",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_039",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_040",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_041",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_042",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_043",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_044",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_045",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_046",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_047",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_048",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_049",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_050",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_051",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_052",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_053",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_054",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_055",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_056",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_057",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_058",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_059",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_060",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_061",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_062",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_063",
+   "band": "band_2",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b2_064",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_065",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_066",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_067",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_068",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_069",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_070",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_071",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_072",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_073",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_074",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_075",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_076",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_077",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_078",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_079",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_080",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_081",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_082",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_083",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_084",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_085",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_086",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_087",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_088",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_089",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_090",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_091",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_092",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_093",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_094",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_095",
+   "band": "band_2",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b2_096",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_097",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_098",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_099",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_100",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_101",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_102",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_103",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_104",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_105",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_106",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_107",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_108",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_109",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_110",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_111",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_112",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_113",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_114",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_115",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_116",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_117",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_118",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_119",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_120",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_121",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_122",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_123",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_124",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_125",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_126",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b2_127",
+   "band": "band_2",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_000",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_001",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_002",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_003",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_004",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_005",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_006",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_007",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_008",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_009",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_010",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_011",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_012",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_013",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_014",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_015",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_016",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_017",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_018",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_019",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_020",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_021",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_022",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_023",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_024",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_025",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_026",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_027",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_028",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_029",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_030",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_031",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_032",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_033",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_034",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_035",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_036",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_037",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_038",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_039",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_040",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_041",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_042",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_043",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_044",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_045",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_046",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_047",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_048",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_049",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_050",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_051",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_052",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_053",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_054",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_055",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_056",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_057",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_058",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_059",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_060",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_061",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_062",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_063",
+   "band": "band_3",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b3_064",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_065",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_066",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_067",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_068",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_069",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_070",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_071",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_072",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_073",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_074",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_075",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_076",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_077",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_078",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_079",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_080",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_081",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_082",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_083",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_084",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_085",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_086",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_087",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_088",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_089",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_090",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_091",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_092",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_093",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_094",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_095",
+   "band": "band_3",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b3_096",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_097",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_098",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_099",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_100",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_101",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_102",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_103",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_104",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_105",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_106",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_107",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_108",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_109",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_110",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_111",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_112",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_113",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_114",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_115",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_116",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_117",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_118",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_119",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_120",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_121",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_122",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_123",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_124",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_125",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_126",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b3_127",
+   "band": "band_3",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_000",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_001",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_002",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_003",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_004",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_005",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_006",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_007",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_008",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_009",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_010",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_011",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_012",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_013",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_014",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_015",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_016",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_017",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_018",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_019",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_020",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_021",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_022",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_023",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_024",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_025",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_026",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_027",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_028",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_029",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_030",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_031",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_032",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_033",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_034",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_035",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_036",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_037",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_038",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_039",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_040",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_041",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_042",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_043",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_044",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_045",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_046",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_047",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_048",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_049",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_050",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_051",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_052",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_053",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_054",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_055",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_056",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_057",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_058",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_059",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_060",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_061",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_062",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_063",
+   "band": "band_4",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b4_064",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_065",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_066",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_067",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_068",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_069",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_070",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_071",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_072",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_073",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_074",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_075",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_076",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_077",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_078",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_079",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_080",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_081",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_082",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_083",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_084",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_085",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_086",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_087",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_088",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_089",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_090",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_091",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_092",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_093",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_094",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_095",
+   "band": "band_4",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b4_096",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_097",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_098",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_099",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_100",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_101",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_102",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_103",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_104",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_105",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_106",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_107",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_108",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_109",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_110",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_111",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_112",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_113",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_114",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_115",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_116",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_117",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_118",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_119",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_120",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_121",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_122",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_123",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_124",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_125",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_126",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b4_127",
+   "band": "band_4",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_000",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_001",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_002",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_003",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_004",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_005",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_006",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_007",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_008",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_009",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_010",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_011",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_012",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_013",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_014",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_015",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_016",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_017",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_018",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_019",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_020",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_021",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_022",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_023",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_024",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_025",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_026",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_027",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_028",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_029",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_030",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_031",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_032",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_033",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_034",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_035",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_036",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_037",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_038",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_039",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_040",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_041",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_042",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_043",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_044",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_045",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_046",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_047",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_048",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_049",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_050",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_051",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_052",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_053",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_054",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_055",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_056",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_057",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_058",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_059",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_060",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_061",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_062",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_063",
+   "band": "band_5",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b5_064",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_065",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_066",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_067",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_068",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_069",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_070",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_071",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_072",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_073",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_074",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_075",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_076",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_077",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_078",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_079",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_080",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_081",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_082",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_083",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_084",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_085",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_086",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_087",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_088",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_089",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_090",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_091",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_092",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_093",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_094",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_095",
+   "band": "band_5",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b5_096",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_097",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_098",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_099",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_100",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_101",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_102",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_103",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_104",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_105",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_106",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_107",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_108",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_109",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_110",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_111",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_112",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_113",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_114",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_115",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_116",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_117",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_118",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_119",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_120",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_121",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_122",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_123",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_124",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_125",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_126",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b5_127",
+   "band": "band_5",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_000",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_001",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_002",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_003",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_004",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_005",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_006",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_007",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_008",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_009",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_010",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_011",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_012",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_013",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_014",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_015",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_016",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_017",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_018",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_019",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_020",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_021",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_022",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_023",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_024",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_025",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_026",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_027",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_028",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_029",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_030",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_031",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_032",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_033",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_034",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_035",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_036",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_037",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_038",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_039",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_040",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_041",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_042",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_043",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_044",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_045",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_046",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_047",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_048",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_049",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_050",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_051",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_052",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_053",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_054",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_055",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_056",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_057",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_058",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_059",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_060",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_061",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_062",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_063",
+   "band": "band_6",
+   "split": "train"
+  },
+  {
+   "task_id": "m30_b6_064",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_065",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_066",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_067",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_068",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_069",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_070",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_071",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_072",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_073",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_074",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_075",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_076",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_077",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_078",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_079",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_080",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_081",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_082",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_083",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_084",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_085",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_086",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_087",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_088",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_089",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_090",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_091",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_092",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_093",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_094",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_095",
+   "band": "band_6",
+   "split": "validation"
+  },
+  {
+   "task_id": "m30_b6_096",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_097",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_098",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_099",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_100",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_101",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_102",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_103",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_104",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_105",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_106",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_107",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_108",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_109",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_110",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_111",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_112",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_113",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_114",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_115",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_116",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_117",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_118",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_119",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_120",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_121",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_122",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_123",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_124",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_125",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_126",
+   "band": "band_6",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m30_b6_127",
+   "band": "band_6",
+   "split": "holdout"
+  }
+ ],
+ "split_seal": {
+  "train_use": "classifier fitting only",
+  "validation_use": "candidate threshold selection and calibration mapping only; never feature or classifier-family changes",
+  "holdout_use": "evaluated exactly once after all classifiers and the validation-derived thresholds are frozen; no refit, feature change, or tuning after any holdout row is read",
+  "no_refit_after_holdout_capture": true
+ },
+ "power_requirements": {
+  "train_pass_min": 48,
+  "train_fail_min": 48,
+  "validation_pass_min": 24,
+  "validation_fail_min": 24,
+  "holdout_pass_min": 40,
+  "holdout_fail_min": 40,
+  "on_shortfall": "report the shortfall and mark the increment test underpowered; do not regenerate or reselect tasks"
+ },
+ "frozen_feature_sets": {
+  "majority_class": [],
+  "metadata_only": [
+   "band_1",
+   "band_2",
+   "band_3",
+   "band_4",
+   "band_5",
+   "band_6"
+  ],
+  "logits_only": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin"
+  ],
+  "router_only": [
+   "router_entropy",
+   "expert_concentration"
+  ],
+  "window_entropy": [
+   "decode_window_entropy",
+   "high_entropy_count"
+  ],
+  "full_telemetry": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin",
+   "router_entropy",
+   "expert_concentration",
+   "decode_step_count",
+   "windowed_expert_shift",
+   "high_entropy_count",
+   "low_confidence_count",
+   "top_k_margin_trend"
+  ],
+  "metadata_plus_telemetry": [
+   "band_1",
+   "band_2",
+   "band_3",
+   "band_4",
+   "band_5",
+   "band_6",
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin",
+   "router_entropy",
+   "expert_concentration",
+   "decode_step_count",
+   "windowed_expert_shift",
+   "high_entropy_count",
+   "low_confidence_count",
+   "top_k_margin_trend"
+  ]
+ },
+ "baseline_order": [
+  "majority_class",
+  "metadata_only",
+  "logits_only",
+  "router_only",
+  "window_entropy",
+  "full_telemetry",
+  "metadata_plus_telemetry"
+ ],
+ "primary_comparison": [
+  "full_telemetry",
+  "metadata_only"
+ ],
+ "secondary_baselines": [
+  "majority_class",
+  "logits_only",
+  "router_only",
+  "window_entropy",
+  "metadata_plus_telemetry"
+ ],
+ "metadata_feature_rule": "metadata_only features are one-hot difficulty band indicators taken from this manifest, never from telemetry",
+ "classifier_protocol": {
+  "classifier_family": "train-standardized nearest centroid",
+  "standardization": "train mean and sample standard deviation only",
+  "distance": "squared_euclidean",
+  "tie_break": "lexicographic (fail before pass)",
+  "identical_to_m29_family": true,
+  "metrics": [
+   "accuracy",
+   "balanced_accuracy",
+   "macro_f1",
+   "per_class_precision_recall_f1",
+   "accuracy_bootstrap_95pct"
+  ],
+  "bootstrap_iterations": 2000,
+  "bootstrap_seed_prefix": "m30:frozen"
+ },
+ "incremental_value_protocol": {
+  "primary": [
+   "full_telemetry",
+   "metadata_only"
+  ],
+  "comparisons": [
+   [
+    "full_telemetry",
+    "metadata_only"
+   ],
+   [
+    "metadata_plus_telemetry",
+    "metadata_only"
+   ],
+   [
+    "window_entropy",
+    "metadata_only"
+   ]
+  ],
+  "method": "paired bootstrap over holdout rows: resample indices 2000 times with fixed seed m30:delta:<a>-vs-<b>; report the 95% interval of the accuracy and balanced-accuracy differences, plus aggregate discordant-prediction counts",
+  "classification_rule": {
+   "established": "primary paired accuracy 95% interval lower bound > 0 AND all power requirements met",
+   "negative": "primary paired accuracy 95% interval upper bound < 0",
+   "not_established": "otherwise"
+  }
+ },
+ "calibration_protocol": {
+  "score": "softmax over negative squared centroid distances; probability mass on the fail class",
+  "calibrated_models": [
+   "full_telemetry",
+   "metadata_plus_telemetry"
+  ],
+  "threshold_source": "validation split balanced-accuracy grid only",
+  "holdout_reporting": "reliability bins (8 equal-count) and ECE on the holdout, descriptive threshold metrics",
+  "threshold_status": "candidate-only; never production"
+ },
+ "privacy": {
+  "public_artifacts": "aggregate counts, band definitions, metrics only",
+  "private_artifacts": "generated operand tuples/prompts, captures, outputs, per-task labels and predictions stay in gitignored locations",
+  "per_task_labels_public": false
+ },
+ "candidate_only": true,
+ "production_gated": true
+}

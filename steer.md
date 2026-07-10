@@ -1,140 +1,149 @@
-# steer.md — post-M22 within-model telemetry expansion
+# steer.md — post-M23 frozen telemetry holdout
 
-M1 through M22 are complete. Do not redo the GGUF supervisor, verifier, action,
-grounded-regeneration, fixture telemetry, or eight-task real HF validation work.
+M1 through M23 are complete. Do not redo the practical supervisor track, fixture
+telemetry, M22 real probe, or M23 same-run training batch.
 
 `CODEX_AUTOSTEER.md` remains part of the operating contract.
 
 ## Autosteer mode
 
-Default mode:
+Default mode completes one milestone, commits implementation, updates this file
+separately, and stops. Loop mode requires `CODEX_AUTOSTEER_LOOP=true` or explicit
+operator instruction.
 
-- Complete one milestone.
-- Commit implementation.
-- Update `steer.md` separately.
-- Stop.
-
-Loop mode requires `CODEX_AUTOSTEER_LOOP=true` or an explicit operator request.
-The current operator approval covers the existing public Qwen MoE checkpoint on
-the Thor mount, GPU-first dual-3090 use, and temporary llama-swap unload/restore.
-Stop for a different model, new download/license, new hardware plan, storage move,
-or materially larger resource footprint.
+The current approval covers the existing Qwen MoE checkpoint on Thor, local-only
+loading, dual-3090 BF16 use, hidden capture disabled, and temporary llama-swap
+unload/restore. Stop for another model/download/license, a changed hardware plan,
+new dependency, live retrieval, or materially larger resource footprint.
 
 ## Current state
 
-Completed milestones:
-
-- M1–M20: practical local supervisor track through fixture-grounded regeneration
+- M1–M20: practical local supervisor track through grounded regeneration
 - M21: fixture-first HF/safetensors telemetry backend
-- M22: bounded real HF MoE telemetry validation
+- M22: real eight-task HF MoE telemetry validation
+- M23: 32-task within-model telemetry/outcome validation
 
-M22 result:
+M23 result:
 
-- Real public Qwen1.5-MoE-A2.7B-Chat checkpoint resolved locally with
-  `local_files_only=true` and `trust_remote_code=false`.
-- BF16 fit across dual 24 GiB 3090s without CPU/disk offload; hidden capture was
-  disabled. The approximately 27 GiB checkpoint remains on Thor outside the repo.
-- Eight shared M19 tasks × four decode steps completed.
-- Real telemetry available on all eight:
-  - logits-derived features 8/8
-  - router features 8/8
-  - 24 layers × 60 experts
-  - hidden status disabled 8/8
-- Alignment coverage: auto 8 / action 8 / grounded 1 / reviewed 1.
-- Checker-needed selected rows had lower decode entropy than not-needed rows, but
-  router entropy was effectively unchanged.
-- Critical scope: Qwen supplied telemetry while agents-a1 supplied existing
-  outcome/action labels on shared IDs. This is cross-model task-demand alignment,
-  not within-Qwen error prediction.
-- Retrieval and review positive groups each had n=1. No predictive value,
-  calibration, threshold, or production usefulness was claimed.
-- Raw captures and detailed schema records remain ignored/private. Public reports
-  contain only counts/distributions/group means.
-- Full suite green at 89 tests. Production remains gated.
-- `agents-a1` serving was restored and verified after the capture window.
+- Predeclared 8 checker / 8 retrieval / 8 review / 8 no-action tasks before run.
+- Qwen chat-template output and internal telemetry came from the same decode.
+- 32/32 completed; logits and 24-layer × 60-expert router telemetry available.
+- Actual routes exactly matched the balanced predeclared groups.
+- Deterministic checker: 7 pass / 1 fail; fail/pass effects withheld at n=1/7.
+- Nine prose tasks hit 64 tokens; every checker and control reached EOS first.
+- Router entropy/concentration showed descriptive group separation, with fixed-
+  seed bootstrap intervals excluding zero for checker/retrieval/review contrasts.
+- Task category, prompt form, verifier applicability, and output length remain
+  confounds. No threshold/policy/predictive claim was made.
+- All detailed records/captures remain private; public artifacts are aggregate.
+- Full suite green at 95 tests. Production remains gated.
+- agents-a1 serving was restored and verified.
 
-## Next milestone: M23 within-model telemetry/outcome validation
+## Next milestone: M24 frozen holdout evaluation
 
-M23 should remove the M22 cross-model confound. Use the already-approved local
-Qwen MoE to produce both internal telemetry and its own bounded outputs on a
-predeclared shared batch, then run the existing deterministic verifiers/action
-router against those transient Qwen outputs.
+M24 tests whether an M23-only telemetry classifier generalizes to unseen task IDs.
+The holdout manifest, features, model family, and metrics must be frozen before any
+M24 telemetry is inspected. Do not tune on holdout results.
 
-### M23 objectives
+### Frozen holdout selection
 
-1. Predeclare a balanced 32-task batch before inspecting telemetry:
-   - 8 deterministic checker candidates
-   - 8 current-info/retrieval candidates
-   - 8 review/open-explain candidates
-   - 8 no-action controls
-2. Use only existing public task IDs and metadata. Keep prompt text in the existing
-   public dataset or ignored private run files; do not add it to reports.
-3. Load the same approved local Qwen checkpoint with the existing dual-GPU BF16
-   plan, local-only resolution, remote code disabled, hidden capture disabled,
-   and a bounded decode length sufficient to verify outputs.
-4. Capture Qwen logits/router telemetry and its output in the same forward/decode
-   run so the signals and outcomes refer to the same model execution.
-5. Pass the full Qwen output transiently to the existing approved deterministic
-   verifiers and action router before truncation. Never persist full output in a
-   public artifact.
-6. Do not introduce shell execution, dynamic commands, live web retrieval, or a
-   new checker. Retrieval remains fixture/read-only and action execution remains
-   explicitly gated.
-7. Align telemetry with Qwen-specific auto/action outcomes by task ID. Grounded
-   and reviewed coverage may remain missing unless produced through the existing
-   safe workflows; report missing coverage honestly.
-8. Predeclare comparisons and report aggregate separation for:
-   - checker-needed vs not-needed
-   - retrieval-needed vs not-needed
-   - review-needed vs not-needed
-   - deterministic checker pass vs fail, only if both groups occur
-9. Report group counts, mean/median logits features, mean/median router features,
-   and simple effect sizes with bootstrap intervals only when group sizes permit.
-   Do not fit a policy or choose thresholds after seeing the batch.
-10. Keep all raw tensors, token IDs/text, full outputs, paths, and detailed records
-    private/ignored. Keep production gated.
+Use exactly 48 unseen existing public task IDs, 12 per predeclared class:
 
-### M23 deliverables
+- checker: `m19_m_008` through `m19_m_019`
+- retrieval: `m15_c_008` through `m15_c_019`
+- review: `m15_x_008` through `m15_x_019`
+- no-action controls:
+  - `m15_e_004` through `m15_e_009`
+  - `m15_j_002` through `m15_j_004`
+  - `m15_r_002` through `m15_r_004`
 
-- deterministic predeclared 32-task selection manifest with IDs/categories only
-- same-run Qwen telemetry + transient-output adapter additions
-- private raw captures and Qwen-specific outcome/action records
-- private schema-valid detailed telemetry records
-- public aggregate run summary
-- public within-model alignment/comparison report
-- `docs/M23_WITHIN_MODEL_TELEMETRY_VALIDATION.md`
-- tests for same-run association, transient-output handling, predeclared groups,
-  degraded/missing states, no-text reporting, and resume behavior
+No M22/M23 task ID may appear in the holdout.
+
+### Frozen features and classifiers
+
+Use only these M23 aggregate features:
+
+1. decode-window mean entropy
+2. final selected-token probability
+3. final top-k margin
+4. mean router entropy
+5. mean expert concentration
+
+Train on the 32 private M23 detailed records and M23 actual action labels only.
+Freeze three nearest-centroid classifiers before reading M24 captures:
+
+- full: all five features
+- logits-only: features 1–3
+- router-only: features 4–5
+
+For each classifier:
+
+- standardize with M23 training mean and sample standard deviation
+- use one centroid per actual M23 action class
+- predict minimum squared Euclidean distance
+- break exact ties lexicographically
+- do not tune weights, thresholds, features, or class priors
+
+### Frozen metrics
+
+Report on M24 only:
+
+- accuracy
+- balanced accuracy
+- macro F1
+- aggregate confusion matrix
+- per-class precision/recall/F1/support
+- fixed-seed 2,000-bootstrap 95% interval for accuracy
+- majority-class baseline accuracy (expected 0.25 on the balanced holdout)
+- full versus logits-only versus router-only comparison
+
+Do not perform significance tests, threshold fitting, model selection, or retry a
+different manifest after seeing results.
+
+### M24 runtime objectives
+
+1. Commit the ID/group-only 48-task manifest before the real run.
+2. Use the same approved model/hardware/local-only/chat-template/router-only plan.
+3. Capture up to 64 tokens and record cap reach honestly.
+4. Derive Qwen-specific verifier/action outcomes from the same private capture.
+5. Validate all telemetry/runtime/action/result rows against existing schemas.
+6. Apply the frozen M23 classifiers to M24 features without updating centroids.
+7. Public artifacts may contain aggregate metrics/confusion only, never per-task
+   predictions, IDs, text, paths, raw tensors, or model weights.
+8. Restore agents-a1 after the capture window.
+9. Keep all labels candidate-only and production gated.
+
+### M24 deliverables
+
+- `data/prompts/m24_holdout_manifest.json` with public IDs/groups only
+- frozen classifier/evaluation code with CPU fixture tests
+- private 48 raw captures and detailed telemetry/outcome/action/result records
+- public aggregate holdout run summary
+- public aggregate frozen-evaluation report
+- `docs/M24_FROZEN_HOLDOUT_EVALUATION.md`
 - updated `STATE.md` and `reports/FINDINGS.md`
 
-### M23 stop condition
+### M24 stop condition
 
-- exactly 32 predeclared tasks are processed or an honest degraded blocker is
-  reported without redefining the batch
-- Qwen telemetry and Qwen-specific outcomes are linked to the same execution
-- logits and router capability states are honest
-- comparisons remain descriptive and predeclared; no tiny-n predictive claim
-- no weights/cache/path/raw prompt/output/token/tensor data are committed
-- public artifacts pass schema, privacy, and commit-safety checks
-- full test suite passes
-- production remains gated
+- manifest is frozen and disjoint from M22/M23 before the real run
+- exactly 48 holdout tasks complete or an honest fixed-manifest blocker is reported
+- same-run Qwen telemetry/outcome linkage validates
+- classifiers use only M23 training aggregates and remain unchanged after holdout
+- all frozen metrics are reported without per-task leakage or tuning
+- private rows validate; public artifacts pass privacy/commit-safety checks
+- full test suite passes; production remains gated
 
-## After M23
+## After M24
 
-Choose based on evidence, not preference:
-
-- If within-model groups have enough support and stable separation: M24 frozen
-  holdout evaluation with predeclared features/metrics and no threshold tuning.
-- If positive groups are too small: M24 balanced batch expansion using the same
-  model/hardware/privacy contract.
-- If telemetry shows no useful separation: stop the telemetry-policy branch and
-  return to practical verifier/retrieval quality work.
-- If output capture cannot stay transient or same-run association is unreliable:
-  stop and repair the adapter before any larger run.
+- If the full classifier materially exceeds 0.25 and is stable across classes,
+  proceed to M25 confound-controlled paired prompts; do not deploy a policy.
+- If only router/logits ablations work, focus M25 on that frozen feature family.
+- If performance is near baseline or collapses by class, stop the telemetry-policy
+  branch and return to practical verifier/retrieval quality work.
+- If same-run or privacy integrity fails, repair it before any further model run.
 
 ## Repository hygiene
 
-Do not commit local detailed records, prompts, full outputs, raw retrieved context,
-token text/IDs, raw tensors, model paths, model weights, tokenizer/model caches,
-environments, or large generated artifacts. Outcome labels remain candidates and
-production remains gated until a future steer defines audited unlock criteria.
+Do not commit private prompts, outputs, per-task predictions, token IDs/text, raw
+tensors, paths, weights, caches, or detailed records. Public reports stay aggregate;
+candidate-only and production gates remain until audited unlock criteria exist.

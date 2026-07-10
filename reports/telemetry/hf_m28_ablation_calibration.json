@@ -1,0 +1,231 @@
+{
+ "schema_version": 1,
+ "run_kind": "m28_telemetry_ablation_calibration",
+ "task_category": "integer_arithmetic_single_expression",
+ "n_train_used": 64,
+ "n_holdout_used": 32,
+ "protocol_source": "m28_frozen_protocol predeclared in the M26 manifest",
+ "ablation": {
+  "full_telemetry": {
+   "features": [
+    "decode_window_entropy",
+    "final_selected_probability",
+    "final_top_k_margin",
+    "router_entropy",
+    "expert_concentration",
+    "decode_step_count",
+    "windowed_expert_shift",
+    "high_entropy_count",
+    "low_confidence_count",
+    "top_k_margin_trend"
+   ],
+   "accuracy": 1.0,
+   "balanced_accuracy": 1.0,
+   "macro_f1": 1.0,
+   "accuracy_bootstrap_95pct": [
+    1.0,
+    1.0
+   ]
+  },
+  "single_feature": {
+   "decode_window_entropy": {
+    "accuracy": 0.9375,
+    "balanced_accuracy": 0.9227053140096618,
+    "accuracy_bootstrap_95pct": [
+     0.84375,
+     1.0
+    ]
+   },
+   "final_selected_probability": {
+    "accuracy": 0.4375,
+    "balanced_accuracy": 0.6086956521739131,
+    "accuracy_bootstrap_95pct": [
+     0.25,
+     0.625
+    ]
+   },
+   "final_top_k_margin": {
+    "accuracy": 0.4375,
+    "balanced_accuracy": 0.6086956521739131,
+    "accuracy_bootstrap_95pct": [
+     0.28125,
+     0.59375
+    ]
+   },
+   "router_entropy": {
+    "accuracy": 0.78125,
+    "balanced_accuracy": 0.8478260869565217,
+    "accuracy_bootstrap_95pct": [
+     0.625,
+     0.90625
+    ]
+   },
+   "expert_concentration": {
+    "accuracy": 0.84375,
+    "balanced_accuracy": 0.8913043478260869,
+    "accuracy_bootstrap_95pct": [
+     0.71875,
+     0.96875
+    ]
+   },
+   "decode_step_count": {
+    "accuracy": 0.84375,
+    "balanced_accuracy": 0.7898550724637681,
+    "accuracy_bootstrap_95pct": [
+     0.71875,
+     0.96875
+    ]
+   },
+   "windowed_expert_shift": {
+    "accuracy": 0.3125,
+    "balanced_accuracy": 0.5217391304347826,
+    "accuracy_bootstrap_95pct": [
+     0.15625,
+     0.46875
+    ]
+   },
+   "high_entropy_count": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_bootstrap_95pct": [
+     1.0,
+     1.0
+    ]
+   },
+   "low_confidence_count": {
+    "accuracy": 0.84375,
+    "balanced_accuracy": 0.7898550724637681,
+    "accuracy_bootstrap_95pct": [
+     0.6875,
+     0.96875
+    ]
+   },
+   "top_k_margin_trend": {
+    "accuracy": 0.6875,
+    "balanced_accuracy": 0.681159420289855,
+    "accuracy_bootstrap_95pct": [
+     0.53125,
+     0.84375
+    ]
+   }
+  },
+  "leave_one_out": {
+   "decode_window_entropy": {
+    "accuracy": 0.96875,
+    "balanced_accuracy": 0.9782608695652174,
+    "accuracy_drop_vs_full": 0.03125
+   },
+   "final_selected_probability": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "final_top_k_margin": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "router_entropy": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "expert_concentration": {
+    "accuracy": 0.96875,
+    "balanced_accuracy": 0.9444444444444444,
+    "accuracy_drop_vs_full": 0.03125
+   },
+   "decode_step_count": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "windowed_expert_shift": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "high_entropy_count": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "low_confidence_count": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "accuracy_drop_vs_full": 0.0
+   },
+   "top_k_margin_trend": {
+    "accuracy": 0.96875,
+    "balanced_accuracy": 0.9444444444444444,
+    "accuracy_drop_vs_full": 0.03125
+   }
+  },
+  "verifier_contradiction_feature": "excluded by design: the deterministic verifier defines the pass/fail label, so its signal cannot be an input feature"
+ },
+ "calibration": {
+  "score_definition": "softmax over negative squared centroid distances; probability mass on the fail class",
+  "reliability_bins_equal_count": [
+   {
+    "n": 8,
+    "mean_predicted_fail_probability": 2.090770256664423e-10,
+    "observed_fail_rate": 0.0
+   },
+   {
+    "n": 8,
+    "mean_predicted_fail_probability": 2.2055077924792493e-06,
+    "observed_fail_rate": 0.0
+   },
+   {
+    "n": 8,
+    "mean_predicted_fail_probability": 0.11088154600162889,
+    "observed_fail_rate": 0.125
+   },
+   {
+    "n": 8,
+    "mean_predicted_fail_probability": 0.9997041360983554,
+    "observed_fail_rate": 1.0
+   }
+  ],
+  "expected_calibration_error": 0.003604130904221304,
+  "candidate_threshold": {
+   "status": "candidate-only",
+   "not_for_production": true,
+   "derived_from": "train split balanced-accuracy grid search only",
+   "threshold_fail_probability": 0.95,
+   "train_balanced_accuracy_at_threshold": 0.9335748792270531,
+   "holdout_balanced_accuracy_at_threshold_descriptive": 0.9444444444444444
+  }
+ },
+ "false_positive_negative_analysis": {
+  "positive_class": "fail",
+  "totals": {
+   "correct": 32
+  },
+  "by_band": {
+   "band_a": {
+    "correct": 8,
+    "n": 8
+   },
+   "band_b": {
+    "correct": 8,
+    "n": 8
+   },
+   "band_c": {
+    "correct": 8,
+    "n": 8
+   },
+   "band_d": {
+    "correct": 8,
+    "n": 8
+   }
+  }
+ },
+ "small_holdout_caveat": "n=32 holdout tasks produce wide bootstrap intervals; ablation rankings are descriptive and must not be read as stable feature importance",
+ "threshold_status": "candidate-only",
+ "production_threshold_set": false,
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate ablation/calibration only; no ids/text/paths"
+}

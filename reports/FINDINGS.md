@@ -1985,3 +1985,41 @@ Six CPU/no-network M27 tests cover split/undecided handling, all-six-baseline
 evaluation with frozen feature counts, majority tie-breaking, the predeclared
 train-minimum stop, the frozen aggregate-only holdout manifest, and public
 no-ID/text/prediction output. Full repository suite: 123 tests green.
+
+## 176. M28 ablation localizes the error signal in decode-window entropy
+Under the predeclared protocol, the count of high-entropy decode steps alone
+reproduces the full ten-feature holdout score (1.000), with mean window
+entropy at .938. Router features are weaker (expert concentration .844,
+router entropy .781), final-token confidence features fall below the .719
+majority baseline (.438), and windowed expert shift carries ~nothing (.312).
+Wrong arithmetic answers are emitted with confident final tokens; the
+uncertainty appears mid-window during decoding.
+
+## 177. High-entropy count is not merely length
+decode_step_count alone (pure length/cap behavior, correlated with operand
+size) reaches only .844, well below high_entropy_count's 1.000, so the
+entropy-count signal is not length in disguise, though it partially reflects
+it. Leave-one-out ablation shows heavy redundancy: removing any one feature
+costs at most .031 accuracy.
+
+## 178. Calibration is excellent but saturated; threshold stays candidate-only
+The predeclared softmax-distance p(fail) yields ECE .004 on 4 equal-count
+holdout bins, with scores saturated near 0/1 — a property of this dataset's
+separability that must be re-measured on harder distributions. The proposed
+p(fail) ≥ 0.95 threshold was selected on the train split only (balanced
+accuracy .934; holdout descriptive .944) and is labeled candidate-only and
+not-for-production everywhere it appears. No production threshold exists.
+
+## 179. M28 honesty boundaries
+M28 decomposes a holdout already read once by M27, so its rankings are
+descriptive, not fresh predictive tests; n=32 bootstrap intervals are wide and
+overlapping outside the top feature. Verifier contradiction remains excluded
+as a feature because the deterministic verifier defines the label. The scope
+of every claim is one task category, one model, one decode protocol.
+
+## 180. M28 tests and milestone completion
+Five CPU/no-network M28 tests cover bounded/ordered fail probabilities,
+full-coverage single-feature and leave-one-out ablations, equal-count
+calibration bins with bounded ECE, complete aggregate FP/FN accounting, and a
+public report that carries the candidate-only label with no IDs/text/paths.
+Full repository suite: 123 tests green. The M26–M28 autoloop limit is reached.

@@ -757,3 +757,22 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Public artifacts aggregate-only (frozen holdout manifest + six-baseline
   evaluation); commit-safe passed; per-task predictions stay private/ignored.
   Full suite green: 123 tests. Production gated. Next: M28 ablation/calibration.
+
+## M28 telemetry ablation and calibration (2026-07-10) — MILESTONE COMPLETE
+- Ran the manifest-frozen ablation/calibration protocol (train-fit,
+  holdout-eval, same centroid family). M28 is a decomposition of the
+  already-read M27 holdout, flagged descriptive at n=32.
+- Single-feature: high_entropy_count alone 1.000; decode_window_entropy .938;
+  expert_concentration .844; decode_step_count .844; low_confidence_count
+  .844; router_entropy .781; final-token confidence features .438 (below the
+  .719 majority) and windowed_expert_shift .312. Error signal concentrates in
+  decode-window entropy behavior, not final-token confidence or router shift.
+- Leave-one-out: max drop +.031 — features heavily redundant, none load-bearing.
+- Calibration: softmax-distance p(fail), 4 equal-count bins, ECE .004 with
+  saturated scores (dataset separability, not general calibration quality).
+- FP/FN by band: full model has 0 errors in every band; feature-level over-
+  and under-flagging documented instead.
+- Threshold proposal p(fail) ≥ 0.95 derived from train only, marked
+  candidate-only/not-for-production throughout; no production threshold set.
+- Public report aggregate-only; commit-safe passed; full suite green: 123
+  tests. Production gated. Autoloop limit (M26–M28) reached — stopping.

@@ -1,98 +1,94 @@
-# steer.md — post-M28 decision gate
+# steer.md — post-M29 decision gate
 
-M1 through M28 are complete. Do not redo the M26 dataset build, the one-shot
-M27 frozen holdout evaluation, or the M28 ablation/calibration pass.
+M1 through M29 are complete. Do not redo the M26 dataset, the one-shot M27
+holdout, the M28 ablation, or the M29 scaled power test. The M27 and M29
+holdouts are both spent as decision targets.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
 ## Autosteer status
 
-The explicit loop completed three milestones in this run:
-
-1. M26 objective error-prediction dataset (predeclared bands/split/protocols)
-2. M27 frozen six-baseline holdout evaluation
-3. M28 telemetry ablation and candidate-only calibration
-
-The three-milestone loop limit is reached. Stop after committing this steer
-even if a loop flag remains set. A new operator instruction is required to
-choose the next milestone.
+M29 was executed as a single operator-directed milestone (option A from the
+post-M28 gate). Stop after committing this steer. A new operator instruction
+is required to choose the next milestone.
 
 ## Current evidence
 
-### M26 — dataset
+### M29 — scaled power test (n=384, sealed 192/96/96 split)
 
-- 96 arithmetic tasks, one template, four predeclared difficulty bands,
-  per-ID 16/8 train/holdout split committed before generation; deterministic
-  math_checker labels from the same-run capture; all tasks retained.
-- Constant action applicability held exactly (96/96 checker_needed), excluding
-  the M25 metadata-observability failure mode by construction.
-- Train: 46 pass / 18 fail / 0 undecided; holdout stayed sealed through M26.
+- Boundary-concentrated bands worked: holdout 51 fail/45 pass; every
+  predeclared power minimum met; 0 undecided; 0 capped; 384/384
+  checker_needed; no post-hoc selection.
+- Once-read holdout: majority .531; metadata_only .823; logits_only .854;
+  router_only .750; window_entropy .833; full_telemetry .885 [.823,.948];
+  metadata_plus_telemetry .865.
+- Predeclared paired increment over metadata: full +.063 [−.021,+.146]
+  (12 wins/6 losses), meta+tel +.042 [−.031,+.115], window +.010. All
+  intervals include zero → **telemetry-vs-metadata increment NOT
+  established**. Balanced-accuracy CI for full telemetry misses narrowly
+  ([−.006,+.153]); that is unproven, not "nearly proven".
+- M28's perfect single-feature result was a band-separability artifact:
+  window_entropy scores .833 at boundary difficulty (recall .706, precision
+  .973). Mid-window entropy is a high-precision partial failure flag.
+- Band metadata adds nothing once telemetry is present (.865 < .885) in the
+  frozen centroid family. Telemetry and metadata err differently (metadata
+  over-flags, logits under-flag).
+- Calibration off easy/hard splits: ECE .059 (full) / .117 (meta+tel);
+  validation-derived thresholds .70/.75 p(fail) stay candidate-only.
+- Power arithmetic: at the observed Δ≈+.06 with 18/96 discordant holdout
+  predictions, a decisive test needs a holdout near n≈200.
 
-### M27 — frozen holdout
+Across M26–M29: no weights/caches/paths/raw text/tensors/per-task labels or
+predictions committed; detailed records ignored/private; each holdout read
+exactly once; full suite green at 130 tests; candidate-only and production
+gates unchanged.
 
-- n=32 (9 fail/23 pass), evaluated once, no post-capture tuning.
-- majority .719; metadata_only band shortcut .969; logits_only .969 (balanced
-  .978, fail recall 1.0); router_only .812 (fail precision .60);
-  router_plus_logits .906; full_telemetry 1.000.
-- Licensed claim: within-category telemetry recovers and slightly extends the
-  difficulty signal on a frozen holdout. The increment over the metadata
-  shortcut is one task at n=32 — not statistically established.
+## Research position
 
-### M28 — ablation and calibration
+Within one controlled category, telemetry consistently outperforms the
+difficulty shortcut point-wise across two independent frozen holdouts, and
+full telemetry is the best single system tested (.885). What is still not
+established is the *statistical* increment over metadata at the sample sizes
+run so far — the honest blocker is holdout size, not signal absence. The
+frozen nearest-centroid family may also understate telemetry (it cannot use
+feature interactions).
 
-- high_entropy_count alone reproduces the full model (1.000);
-  decode_window_entropy .938; router features .78–.84; final-token confidence
-  below majority (.438); windowed_expert_shift .312. Leave-one-out max drop
-  .031 (heavy redundancy).
-- The error signal lives in decode-window entropy behavior, not final-token
-  confidence — wrong arithmetic answers end confidently.
-- Calibration ECE .004 but saturated scores; threshold p(fail) ≥ 0.95 derived
-  from train only and marked candidate-only/not-for-production everywhere.
-
-Across M26–M28: no weights/caches/paths/raw text/tensors/per-task labels or
-predictions were committed; detailed records remain ignored/private; the
-holdout was read exactly once for prediction; full suite green at 123 tests;
-candidate-only and production gates unchanged.
-
-## Research conclusion so far
-
-Within one controlled task category, internal telemetry — dominated by
-decode-window entropy signals — predicts objective model errors on a frozen
-holdout. This is the association M23–M25 could not claim. What remains
-unproven: a statistically meaningful increment over the difficulty-metadata
-shortcut, transfer beyond arithmetic, transfer across models, and calibration
-on harder distributions.
-
-## Required operator decision before M29
+## Required operator decision before M30
 
 Choose exactly one direction:
 
-### A. Scale the within-category increment test (recommended)
+### A. Decisive increment test at n≈200 holdout (recommended)
 
-Grow the dataset (more tasks per band, finer bands near the pass/fail
-boundary, e.g. 2-digit×2-digit through 4-digit×3-digit) to power the
-telemetry-versus-metadata comparison that n=32 cannot decide. Predeclare a new
-holdout; the M27 holdout is spent for confirmatory use.
+One more scaling step: predeclare ~640–768 tasks with the same six-band
+boundary design (or finer), sealed split with a ~200-task holdout, identical
+frozen protocol. This either establishes or refutes the increment at the
+observed effect size. Roughly 15–20 minutes of capture at ~1 s/task.
 
-### B. Second task category (transfer test)
+### B. Stronger frozen classifier family first
 
-Add a second deterministic category (e.g. exact string transformation or date
-arithmetic) with its own predeclared bands/split, and test whether the frozen
-window-entropy signal transfers without refitting.
+Predeclare a small model upgrade (e.g. regularized logistic regression on the
+same frozen features, fit on train, thresholds on validation) and re-run the
+n=96 M29 splits as a *new* frozen protocol on fresh captures. Tests whether
+the centroid family is leaving telemetry signal on the table before paying
+for more data.
 
-### C. Reviewed calibration toward practical use
+### C. Transfer test (second category)
 
-Wire the candidate p(fail) score into the existing shadow/review workflow
-(advisory-only), accumulate human-reviewed outcomes, and re-measure
-calibration on real workloads. No production unlock without audited criteria.
+Second deterministic category with its own predeclared bands/split to test
+whether the telemetry error signal transfers beyond arithmetic.
 
-### D. End telemetry research
+### D. Reviewed calibration toward practical use
+
+Wire the candidate p(fail) score into the shadow/review workflow
+(advisory-only) and re-measure calibration on real workloads.
+
+### E. End telemetry research
 
 Return to practical supervisor quality work.
 
-Do not begin M29 until the operator selects A, B, C, or D. Any new real model
-run must remain under the existing approval or stop for a new
-model/hardware/resource gate.
+Do not begin M30 until the operator selects A–E. Any new real model run must
+remain under the existing approval or stop for a new model/hardware/resource
+gate.
 
 ## Repository hygiene
 

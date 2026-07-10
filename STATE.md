@@ -694,3 +694,24 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   predictor was fit. agents-a1 serving restored and verified. Production gated.
 - Added public aggregate summary/evaluation, M24 doc, and CPU tests. Full suite
   green: 100/100 tests.
+
+## M25 identical-input router falsification (2026-07-10) — MILESTONE COMPLETE
+- Preregistered 16 synthetic ID/pair/action groups, then generated 32 private tasks
+  with byte-identical prompts inside each pair. Eight pairs varied checker vs
+  no-action metadata; eight varied retrieval vs review metadata.
+- Applied only the frozen M23 router-only classifier (router entropy/concentration),
+  with no refit/scaling/threshold/feature update. Same local Qwen/hardware plan.
+- Real run completed 32/32; logits/router available 32/32, hidden disabled. Actual
+  action distribution exactly balanced 8/class and matched intended labels 32/32.
+  All 8 arithmetic checks passed/EOS; all 16 topic members hit the symmetric cap.
+- Decisive pair result: actual labels discordant16/16, outputs identical16/16,
+  predictions identical16/16, divergence rate0. Both router-feature mean/max
+  absolute differences are exactly0 across stored aggregates.
+- Frozen router accuracy .500 [0.3125,0.6875], balanced accuracy .500, macro-F1
+  .413 vs majority .250. Checker recall1/no-action0; identical input cannot expose
+  metadata-only label changes. M24 .70 was substantially template/category signal.
+- Conclusion: telemetry-only action routing is not supported. Future work must
+  either explicitly include trusted task metadata or study balanced within-category
+  objective errors. No policy/threshold; production gated. agents-a1 restored.
+- Added public aggregate pair/run reports, M25 doc, and CPU tests. Full suite green:
+  105/105 tests.

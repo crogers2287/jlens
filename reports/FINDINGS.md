@@ -1851,3 +1851,46 @@ Five CPU/no-network tests cover corrected balanced/disjoint manifest resolution,
 frozen balanced-M23 fitting, full/logits/router predictions, lexical tie breaking,
 deterministic bootstrap/confusion/per-class metrics, and public no-ID/centroid/text/
 path reporting. Full repository suite: 100/100 green.
+
+## 157. M25 preregisters an unobservable metadata counterfactual
+Sixteen public-safe pairs are fixed before capture. Both members receive byte-
+identical prompts, while trusted metadata alone changes checker/no-action or
+retrieval/review applicability. The frozen M23 router-only model sees none of this
+metadata. No feature, scale, centroid, threshold, or task is tuned after capture.
+
+## 158. Identical prompts produce exact stored output/router equality
+All 32 captures complete with real 24×60 router telemetry. Within all 16 pairs,
+captured outputs are identical and both router entropy and expert concentration
+have mean/max absolute difference exactly zero. Frozen predictions are identical
+16/16 (divergence rate zero). There is no capture nondeterminism to qualify result.
+
+## 159. Actual actions differ in every indistinguishable pair
+Trusted verifier routing matches intended metadata labels 32/32, balanced 8/class.
+All arithmetic outputs pass and end before cap. Topic outputs cap symmetrically for
+both pair members; their current-info versus no-rubric explain labels remain
+metadata-driven. Actual labels are discordant in 16/16 pairs despite equal signals.
+
+## 160. Router-only hits the metadata observability ceiling
+Frozen accuracy/balanced accuracy are .500, macro-F1 .413, bootstrap accuracy
+[.3125,.6875] versus balanced majority .250. Every math pair maps checker, yielding
+checker recall1/no-action0. Topic pairs share predictions (3 retrieval/5 review),
+so exactly one member per pair can be correct. Telemetry cannot infer absent metadata.
+
+## 161. M24 generalization was substantially template/category association
+M25 falsifies the interpretation that router-only telemetry independently knows
+workflow action requirements. M24's .70 holdout score benefited from action-specific
+prompt templates/categories. A future router may include trusted metadata explicitly,
+or telemetry can be studied against balanced within-category objective error labels;
+neither supports deploying the current telemetry-only classifier.
+
+## 162. M25 public/private boundary and branch gate
+Public output contains only aggregate pair counts/differences and class metrics.
+No pair/task IDs, prompt/output text, predictions, hashes, paths, tokens, tensors,
+or detailed records are exposed outside the synthetic ID-only manifest. Candidate-
+only and production gates remain. Current three-milestone autoloop must stop.
+
+## 163. M25 tests and milestone completion
+Five CPU/no-network tests cover manifest/private generator pair equality, metadata
+discordance, frozen router prediction identity and 50% pair ceiling, exact-zero
+feature differences, honest output-mismatch reporting, and public no-ID/text/
+prediction/path output. Full repository suite: 105/105 green.

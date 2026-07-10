@@ -1,0 +1,41 @@
+{
+ "schema_version": 1,
+ "run_kind": "m25_identical_input_same_run",
+ "n_pairs": 16,
+ "n_records": 32,
+ "pair_type_task_distribution": {
+  "checker_vs_no_action": 16,
+  "retrieval_vs_review": 16
+ },
+ "capture_status_distribution": {
+  "completed": 32
+ },
+ "logits_status_distribution": {
+  "available": 32
+ },
+ "router_status_distribution": {
+  "available": 32
+ },
+ "actual_action_type_distribution": {
+  "checker_needed": 8,
+  "no_action": 8,
+  "retrieval_needed": 8,
+  "review_needed": 8
+ },
+ "checker_verdict_distribution": {
+  "pass": 8
+ },
+ "decode_cap_tokens": 64,
+ "decode_cap_reached_count": 16,
+ "decode_cap_reached_pair_type_distribution": {
+  "retrieval_vs_review": 16
+ },
+ "same_capture_supplied_telemetry_and_output": true,
+ "prompts_equal_within_pairs_pre_capture": true,
+ "hidden_capture": "disabled",
+ "architecture_family": "qwen2_moe",
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only identical-input run summary"
+}

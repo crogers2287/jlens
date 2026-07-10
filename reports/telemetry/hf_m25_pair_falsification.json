@@ -1,0 +1,124 @@
+{
+ "schema_version": 1,
+ "run_kind": "m25_identical_input_router_falsification",
+ "n_pairs": 16,
+ "n_tasks": 32,
+ "actual_class_distribution": {
+  "checker_needed": 8,
+  "no_action": 8,
+  "retrieval_needed": 8,
+  "review_needed": 8
+ },
+ "intended_action_match_count": 32,
+ "majority_class_baseline_accuracy": 0.25,
+ "frozen_router_classifier_metrics": {
+  "n": 32,
+  "accuracy": 0.5,
+  "balanced_accuracy": 0.5,
+  "macro_f1": 0.4126984126984127,
+  "accuracy_bootstrap_95pct": [
+   0.3125,
+   0.6875
+  ],
+  "bootstrap_iterations": 2000,
+  "confusion_matrix": {
+   "checker_needed": {
+    "checker_needed": 8,
+    "no_action": 0,
+    "retrieval_needed": 0,
+    "review_needed": 0
+   },
+   "no_action": {
+    "checker_needed": 8,
+    "no_action": 0,
+    "retrieval_needed": 0,
+    "review_needed": 0
+   },
+   "retrieval_needed": {
+    "checker_needed": 0,
+    "no_action": 0,
+    "retrieval_needed": 3,
+    "review_needed": 5
+   },
+   "review_needed": {
+    "checker_needed": 0,
+    "no_action": 0,
+    "retrieval_needed": 3,
+    "review_needed": 5
+   }
+  },
+  "per_class": {
+   "checker_needed": {
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1": 0.6666666666666666,
+    "support": 8
+   },
+   "no_action": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 8
+   },
+   "retrieval_needed": {
+    "precision": 0.5,
+    "recall": 0.375,
+    "f1": 0.42857142857142855,
+    "support": 8
+   },
+   "review_needed": {
+    "precision": 0.5,
+    "recall": 0.625,
+    "f1": 0.5555555555555556,
+    "support": 8
+   }
+  }
+ },
+ "overall_pair_checks": {
+  "n_pairs": 16,
+  "actual_labels_discordant": 16,
+  "outputs_identical": 16,
+  "predictions_identical": 16,
+  "prediction_divergence_rate": 0.0,
+  "router_entropy_abs_diff_mean": 0.0,
+  "router_entropy_abs_diff_max": 0.0,
+  "expert_concentration_abs_diff_mean": 0.0,
+  "expert_concentration_abs_diff_max": 0.0
+ },
+ "pair_type_checks": {
+  "checker_vs_no_action": {
+   "n_pairs": 8,
+   "actual_labels_discordant": 8,
+   "outputs_identical": 8,
+   "predictions_identical": 8,
+   "prediction_divergence_rate": 0.0,
+   "router_entropy_abs_diff_mean": 0.0,
+   "router_entropy_abs_diff_max": 0.0,
+   "expert_concentration_abs_diff_mean": 0.0,
+   "expert_concentration_abs_diff_max": 0.0
+  },
+  "retrieval_vs_review": {
+   "n_pairs": 8,
+   "actual_labels_discordant": 8,
+   "outputs_identical": 8,
+   "predictions_identical": 8,
+   "prediction_divergence_rate": 0.0,
+   "router_entropy_abs_diff_mean": 0.0,
+   "router_entropy_abs_diff_max": 0.0,
+   "expert_concentration_abs_diff_mean": 0.0,
+   "expert_concentration_abs_diff_max": 0.0
+  }
+ },
+ "classifier_training_source": "M23_only",
+ "classifier_refit_or_holdout_update": false,
+ "frozen_features": [
+  "router_entropy",
+  "expert_concentration"
+ ],
+ "telemetry_only_observability_test": true,
+ "per_task_or_pair_predictions_persisted_publicly": false,
+ "raw_text_hash_id_path_or_tensor_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate pair counts/differences/confusion only"
+}

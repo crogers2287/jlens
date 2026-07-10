@@ -1,102 +1,74 @@
-# steer.md — post-M25 telemetry branch decision gate
+# steer.md — M27 frozen error-prediction holdout
 
-M1 through M25 are complete. Do not redo the practical supervisor track, HF
-backend, same-run training, frozen holdout, or identical-input falsification.
+M1 through M26 are complete. The operator selected the objective
+error-prediction track (post-M25 option B). Do not redo the practical
+supervisor track, HF backend, action-routing holdouts, the M25 identical-input
+falsification, or the M26 dataset build.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-## Autosteer status
+## Current state after M26
 
-The explicit loop completed three milestones in this run:
+- `data/prompts/m26_error_manifest.json` was committed before generation and
+  froze: the arithmetic category/template, four difficulty bands, per-ID 16/8
+  train/holdout split, seeded generation with no post-hoc selection, the
+  deterministic `math_checker` label rule, constant checker applicability, a
+  holdout seal, and the M27/M28 protocols.
+- 96/96 same-run Qwen captures with logits + 24×60 router telemetry exist in
+  private ignored locations along with per-task labels.
+- Train labels: 46 pass / 18 fail / 0 undecided (band_a 16/0, band_b 16/0,
+  band_c 13/3, band_d 1/15). The ≥8/≥8 modeling minimum is met.
+- Holdout verdicts and holdout telemetry aggregates remain sealed: no public
+  artifact reports them and no model has touched them.
+- Train fail-vs-pass separation is descriptive only (decode entropy g≈+3.0,
+  expert concentration g≈+1.9, router entropy g≈-1.9); difficulty band remains
+  an explicit confound to be priced by the metadata-only baseline.
+- Full suite green at 123 tests; production gated; candidate-only everywhere.
 
-1. M23 within-model telemetry/outcome validation
-2. M24 frozen holdout evaluation
-3. M25 identical-input router falsification
+## M27 — frozen holdout error prediction (current milestone)
 
-The three-milestone loop limit is reached. Stop after committing this steer even
-if `CODEX_AUTOSTEER_LOOP=true` remains set. A new operator instruction is required
-to choose the next research problem.
+Goal: test whether M26 telemetry predicts pass/fail on the sealed 32-task
+holdout under the protocol frozen in the M26 manifest.
 
-## Current evidence
+Requirements (all already predeclared in `m26_error_manifest.json`):
 
-### M23 — same-run association
+- No refit, feature change, threshold tuning, or task change after reading
+  holdout rows; the holdout is evaluated exactly once.
+- All six baselines: majority_class, metadata_only (band one-hot),
+  logits_only, router_only, router_plus_logits, full_telemetry.
+- Train-standardized nearest centroid, squared Euclidean, lexicographic tie
+  break, 2000-iteration fixed-seed bootstrap accuracy intervals.
+- Undecided rows excluded from modeling and reported.
+- Template-leakage framing: train and holdout share the one declared template
+  by design; the metadata-only baseline prices the difficulty-band shortcut.
+  Telemetry claims value only where it beats that baseline.
 
-- 32 balanced Qwen tasks, same decode for telemetry and verifier/action outcome.
-- Router entropy/concentration separated checker/retrieval/review groups
-  descriptively; task category/template remained an explicit confound.
-- One checker fail was insufficient for error-prediction analysis.
+Deliverables:
 
-### M24 — frozen unseen-ID holdout
+- `src/m27_frozen_error_holdout.py` and `tests/test_m27_frozen_error_holdout.py`
+  (already present with the frozen protocol; run against real private data)
+- `data/prompts/m27_holdout_manifest.json` (aggregate metadata only)
+- `reports/telemetry/hf_m27_frozen_error_evaluation.json` (all six baselines
+  with confidence intervals; aggregate-only)
+- `docs/M27_FROZEN_ERROR_HOLDOUT.md`
+- Full test suite green
 
-- Corrected pre-run to 40 valid, M23-disjoint tasks; correction preserved in git.
-- M23-frozen router-only classifier reached .700 accuracy [.550,.850], balanced
-  accuracy .693, macro-F1 .700 versus majority .275.
-- Full features reached .600; logits-only collapsed to .225.
-- Unseen IDs still shared action-specific prompt templates and verifier rules.
+Stop condition: frozen evaluation complete with no post-capture tuning; all
+six baselines and intervals public and aggregate-only; tests green; production
+gated.
 
-### M25 — identical-input falsification
+## After M27
 
-- 16 pairs / 32 tasks; prompts byte-identical within each pair, metadata/action
-  labels different.
-- Actual actions matched intended balanced classes 32/32.
-- Outputs identical 16/16.
-- Frozen predictions identical 16/16.
-- Router entropy and expert-concentration within-pair mean/max differences: 0.
-- Frozen accuracy/balanced accuracy .500, macro-F1 .413; no-action recall 0.
-- Conclusion: telemetry alone cannot recover metadata-only action requirements.
-  M24's .70 performance was substantially prompt-template/category association.
-
-Across M23–M25:
-
-- no model weights/caches/paths/raw text/tensors were committed
-- all detailed records remain ignored/private
-- candidate-only labels and production gates remain
-- agents-a1 was restored after every GPU window
-- full repository suite is green at 105 tests
-
-## Research conclusion
-
-Do not fit or deploy a telemetry-only action-routing policy from this branch.
-
-Router telemetry may still be useful, but the next problem must be stated honestly:
-
-- workflow applicability depends on trusted task metadata that may be absent from
-  model inputs, or
-- model error prediction requires objective within-category pass/fail outcomes,
-  not action labels driven by verifier applicability.
-
-Adding metadata after M25 is not a fix to the telemetry-only classifier; it defines
-a different supervised routing system.
-
-## Required operator decision before M26
-
-Choose exactly one direction:
-
-### A. Metadata + telemetry action routing
-
-Build a conventional supervised router that explicitly consumes trusted task
-metadata plus telemetry. Evaluate metadata-only, telemetry-only, and combined
-frozen ablations on held-out prompt families. This tests incremental telemetry
-value, not hidden metadata discovery.
-
-### B. Objective error prediction (recommended research continuation)
-
-Collect balanced pass/fail outcomes within one task category using deterministic
-checkers, while holding prompt family/action applicability constant. Test whether
-router telemetry predicts Qwen correctness. Predeclare difficulty bands and a
-train/holdout split; do not select failures after generation.
-
-### C. End telemetry-policy work
-
-Return to practical quality: improve current-info fixtures/retrieval grounding,
-open-explain rubric coverage, reviewed calibration, or broader model comparison.
-
-Do not begin M26 until the operator selects A, B, or C. Any new real model run must
-remain under the existing approval or stop for a new model/hardware/resource gate.
+M28 telemetry ablation and calibration under the manifest-frozen protocol:
+single-feature and leave-one-out ablations over the ten full_telemetry
+features, softmax-distance calibration with reliability bins and ECE,
+false-positive/false-negative analysis by band, and a train-derived threshold
+proposal that stays candidate-only. Verifier contradiction stays excluded as a
+feature because the verifier defines the label.
 
 ## Repository hygiene
 
-Do not commit private prompts/outputs, per-task predictions, token IDs/text, raw
-tensors, paths, weights, caches, or detailed records. Public reports remain
-aggregate. No candidate becomes gold and production remains gated until explicit
-audited unlock criteria are defined.
+Do not commit private prompts/outputs, per-task predictions/labels, token
+IDs/text, raw tensors, paths, weights, caches, or detailed records. Public
+reports remain aggregate. No candidate becomes gold and production remains
+gated until explicit audited unlock criteria are defined.

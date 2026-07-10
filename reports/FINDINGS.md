@@ -1716,3 +1716,39 @@ dense/MoE/unsupported router handling, unapproved/no-safetensors refusal,
 no-download loader flags, schema/no-text/backend separation, and no tracked model
 weights/caches. A real dense/MoE run now requires operator-selected local path or
 approved cached model ID plus hardware/VRAM approval; autosteer must stop there.
+
+## 138. M22 approved real MoE fits dual 3090s without offload
+Operator approved MoE, GPU-first execution, model choice/download, and Thor
+storage. Qwen1.5-MoE-A2.7B-Chat (`qwen2_moe`, 14.3B total/2.7B active) occupies
+about 27 GiB on the external Thor mount. BF16 placement used roughly 14.9/13.9
+GiB across dual 3090s under a 20 GiB/GPU cap; no CPU/disk offload or hidden-state
+capture. llama-swap was temporarily unloaded and agents-a1 was restored/verified.
+
+## 139. Real logits and router telemetry validate end to end
+Eight shared M19 IDs completed four greedy decode steps each. Every capture exposed
+24 router layers with 60 real expert logits per decoded token. M22 converts full
+vocabulary distributions to capture-time entropy/probability/top-k scalars and
+raw router rows to aggregate router entropy/concentration/top-expert shift. All 8
+schema records validate; logits and router statuses are available 8/8, hidden is
+honestly disabled 8/8. Detailed records and raw captures remain gitignored.
+
+## 140. Tiny alignment shows logits movement, not a telemetry policy
+Alignment coverage is auto8/action8/grounded1/reviewed1. Checker-needed rows (n=2)
+show lower mean decode entropy than not-needed rows (0.6767 vs 1.3162) and lower
+final selected probability (0.6943 vs 0.8056), but router entropy is effectively
+unchanged (3.4300 vs 3.4277). Retrieval and review positives are each n=1. These
+are selected-sample observations only: no predictive value, threshold, calibration,
+or production usefulness is claimed.
+
+## 141. Public M22 artifacts remain aggregate-only
+`hf_m22_real_summary.json` records completion/capability distributions, aggregate
+means, hardware class, and alignment coverage. `hf_m22_alignment.json` records
+category counts and action/need group means. Neither includes IDs, text, local
+paths, tensors, or model weights. Candidate-only outcome sources and the production
+gate remain unchanged.
+
+## 142. M22 tests and milestone completion
+Five new CPU/no-network tests cover precomputed scalar conversion, real-router
+aggregation, honest missing/unsupported states, the fixed shared eight-task batch,
+candidate alignment, aggregate grouping, and no-text/path/tensor public reports.
+Decode-capture tests now require top-k mass/margin fields. Full suite: 89/89 green.

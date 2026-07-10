@@ -182,6 +182,44 @@ def _summarize_logits(steps, top_k, high_entropy, low_confidence):
     }
 
 
+def _summarize_precomputed_logits(steps, high_entropy, low_confidence):
+    """Summarize capture-time scalars without retaining full vocabulary logits."""
+    stats = []
+    for step in steps:
+        required = ("generated_token_id", "entropy_final_logits",
+                    "selected_token_prob", "top_k", "top_k_mass",
+                    "top_k_margin")
+        if not all(step.get(key) is not None for key in required):
+            continue
+        stats.append({
+            "selected_token_id": int(step["generated_token_id"]),
+            "entropy": float(step["entropy_final_logits"]),
+            "selected_token_probability": float(step["selected_token_prob"]),
+            "top_k": int(step["top_k"]),
+            "top_k_mass": float(step["top_k_mass"]),
+            "top_k_margin": float(step["top_k_margin"]),
+        })
+    if not stats:
+        return _empty_logits("missing")
+    final = stats[-1]
+    margins = [x["top_k_margin"] for x in stats]
+    return {
+        "status": "available",
+        **final,
+        "window": {
+            "step_count": len(stats),
+            "mean_entropy": _mean([x["entropy"] for x in stats]),
+            "high_entropy_count": sum(
+                x["entropy"] >= high_entropy for x in stats),
+            "low_confidence_count": sum(
+                x["selected_token_probability"] <= low_confidence
+                for x in stats),
+            "top_k_margin_trend": (
+                margins[-1] - margins[0] if len(margins) > 1 else 0.0),
+        },
+    }
+
+
 def _summarize_hidden(steps, enabled):
     if not enabled:
         return {"status": "disabled", "layer_count": None,
@@ -245,6 +283,31 @@ class HFTelemetryBackend:
             steps, self.top_k, self.high_entropy, self.low_confidence)
         hidden = _summarize_hidden(steps, capture_hidden)
         router = _summarize_router(steps, model_kind, router_supported)
+        return self._record(
+            task_id, logits, hidden, router, model_kind=model_kind,
+            input_token_count=input_token_count, alignment=alignment)
+
+    def capture_precomputed(self, task_id, steps, *, model_kind="unknown",
+                            input_token_count=0, router_supported=True,
+                            alignment=None):
+        """Build a record from private capture-time scalar/router summaries.
+
+        ``steps`` may contain router vectors, but only aggregate router features
+        enter the returned schema record. Full vocabulary logits are never
+        required or persisted by this path.
+        """
+        steps = list(steps or [])
+        logits = _summarize_precomputed_logits(
+            steps, self.high_entropy, self.low_confidence)
+        hidden = {"status": "disabled", "layer_count": None,
+                  "vector_norm_mean": None}
+        router = _summarize_router(steps, model_kind, router_supported)
+        return self._record(
+            task_id, logits, hidden, router, model_kind=model_kind,
+            input_token_count=input_token_count, alignment=alignment)
+
+    def _record(self, task_id, logits, hidden, router, *, model_kind,
+                input_token_count, alignment=None):
         alignment = alignment or {}
         statuses = [logits["status"], hidden["status"], router["status"]]
         capture_status = ("completed" if logits["status"] == "available"

@@ -62,13 +62,17 @@ def test_decode_captures_per_token():
         StubTok(), StubModel(), "hello", 128, max_new_tokens=k)
     assert len(steps) == k, f"expected {k} steps, got {len(steps)}"
     req = {"generated_token_index", "generated_token_id", "generated_token_text",
-           "selected_token_prob", "entropy_final_logits", "router_logits"}
+           "selected_token_prob", "entropy_final_logits", "top_k",
+           "top_k_mass", "top_k_margin", "router_logits"}
     for i, s in enumerate(steps):
         assert req <= set(s), set(s) ^ req
         assert s["generated_token_index"] == i
         assert isinstance(s["generated_token_id"], int)
         assert 0.0 <= s["selected_token_prob"] <= 1.0
         assert s["entropy_final_logits"] >= 0.0
+        assert s["top_k"] == 5
+        assert 0.0 <= s["top_k_mass"] <= 1.0
+        assert 0.0 <= s["top_k_margin"] <= 1.0
         assert len(s["router_logits"]) == N_LAYERS
         # single decoded token -> per-layer router shape (1, N_EXP)
         assert s["router_logits"][0].shape == (1, N_EXP)

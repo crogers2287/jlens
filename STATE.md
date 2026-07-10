@@ -629,3 +629,23 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Added public fixture aggregate, M21 doc, and 8 tests including no-download
   flags, missing/not-MoE handling, no raw text/tensors, schema validation, and
   no tracked model weights. Production remains gated.
+
+## M22 real HF MoE telemetry validation (2026-07-10) — MILESTONE COMPLETE
+- Operator approved MoE, model selection, GPU-first execution, and Thor storage.
+  Selected public Qwen1.5-MoE-A2.7B-Chat (`qwen2_moe`) because its 14.3B total /
+  2.7B active size fits BF16 across the two 3090s without CPU/disk offload.
+- Downloaded approximately 27 GiB to the Thor mount outside the repository.
+  Loader resolved the local safetensors directory with local_files_only=true and
+  trust_remote_code=false. No weight/cache/path is tracked.
+- Temporarily unloaded llama-swap, loaded BF16 with a 20 GiB/GPU cap, and captured
+  8 shared M19 task IDs × 4 decode steps. All 8 expose real 24-layer × 60-expert
+  router output; logits 8/8 available, router 8/8 available, hidden disabled 8/8.
+  Restored agents-a1 and verified a live response plus prior dual-GPU residency.
+- Added precomputed-scalar conversion so full vocabulary logits need not persist;
+  raw router tensors/text remain in ignored captures. Eight schema-valid detailed
+  records remain private. Public artifacts contain aggregate groups only.
+- Alignment coverage: auto8/action8/grounded1/reviewed1. Checker-needed mean decode
+  entropy 0.6767 vs 1.3162 not-needed, while router entropy was 3.4300 vs 3.4277.
+  Retrieval/review have n=1 positives; no predictive-value claim. Production gated.
+- Added M22 adapter/reporting, docs, and CPU fixture tests. Full suite green:
+  89/89 tests.

@@ -1,0 +1,38 @@
+{
+ "schema_version": 1,
+ "run_kind": "real_local_hf_telemetry",
+ "fixture_only": false,
+ "weights_loaded": 1,
+ "model_kind": "moe",
+ "architecture_family": "qwen2_moe",
+ "hardware_plan": "two_24gib_nvidia_gpus_bf16",
+ "hidden_capture": "disabled",
+ "n_records": 8,
+ "capture_status_distribution": {
+  "completed": 8
+ },
+ "logits_status_distribution": {
+  "available": 8
+ },
+ "hidden_status_distribution": {
+  "disabled": 8
+ },
+ "router_status_distribution": {
+  "available": 8
+ },
+ "mean_decode_window_entropy": 1.156302201416679,
+ "mean_final_selected_probability": 0.7777658924460411,
+ "mean_router_entropy": 3.42825049345766,
+ "mean_expert_concentration": 0.16668135291982808,
+ "alignment_coverage": {
+  "auto_outcome": 8,
+  "action_result": 8,
+  "grounded_result": 1,
+  "reviewed_outcome": 1
+ },
+ "raw_prompt_output_or_tensor_persisted_publicly": false,
+ "model_path_or_weights_committed": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only; private captures and records ignored"
+}

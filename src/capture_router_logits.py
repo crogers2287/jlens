@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture per-layer router logits + hidden states from a Qwen3.5/3.6 MoE model.
+"""Capture per-layer router logits + hidden states from a supported Qwen MoE.
 
 Part of jlens (interpretability sidecar). Verified against transformers 5.13.0:
   - Qwen3_5MoeForCausalLM forward accepts output_router_logits (L1818) and
@@ -8,13 +8,9 @@ Part of jlens (interpretability sidecar). Verified against transformers 5.13.0:
     surfaced in the output dataclass (fields at L1229/L1242).
   - output_hidden_states is standard PreTrainedModel plumbing.
 
-VRAM plan (see STATE.md iter 4): 4-bit NF4 35B-A3B ~= 19.3 GB weights ->
-device_map="auto" across 2x RTX 3090. Captures are streamed to CPU per
-forward: hidden states ~400 MB / 1k tokens, router logits ~12 MB / 1k tokens.
-
-GATED prerequisites (do not run until user approves):
-  1. bitsandbytes not yet installed (pip download — needs approval).
-  2. Both 3090s currently serve llama-swap; needs a temporary unload window.
+M22 verified qwen2_moe BF16 across 2x RTX 3090. The larger Qwen3.5/3.6 path can
+use the existing NF4 or CPU-offload options when its separate resource gate is
+approved. Captures are streamed to CPU after each forward.
 
 Usage:
   python src/capture_router_logits.py \
@@ -45,6 +41,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help="0 = prefill-only capture (default); >0 also captures "
                         "per-step logits during greedy decode")
     p.add_argument("--max-prompt-tokens", type=int, default=4096)
+    p.add_argument("--limit", type=int, default=None,
+                   help="capture at most this many non-empty prompt records")
     p.add_argument("--device-map", default="auto")
     p.add_argument("--trust-remote-code", action="store_true",
                    help="needed only if model_type is not in transformers "
@@ -85,12 +83,14 @@ def load_model(args):
     import torch
     from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
-    cfg = AutoConfig.from_pretrained(args.model,
-                                     trust_remote_code=args.trust_remote_code)
+    cfg = AutoConfig.from_pretrained(
+        args.model, local_files_only=True,
+        trust_remote_code=args.trust_remote_code)
     check_arch(cfg)
 
     kwargs: dict = dict(
         device_map=args.device_map,
+        local_files_only=True,
         trust_remote_code=args.trust_remote_code,
         torch_dtype=torch.bfloat16,
     )
@@ -101,12 +101,9 @@ def load_model(args):
             i: f"{args.max_gpu_mem_gib}GiB" for i in range(torch.cuda.device_count())
         }
         if args.dtype == "bf16":
-            # bf16 (~66GiB weights) can't fit 2x3090 — the fused 3D expert
-            # tensors (32.7B of 34.7B params, meta-verified 2026-07-08) are
-            # invisible to bnb, so nf4 is a dead end for qwen3_5_moe. Allow
-            # accelerate to stream the overflow from RAM; prefill-only capture
-            # makes the PCIe cost irrelevant. Cap below the 60GiB available so
-            # the OS/tokenizer keep headroom.
+            # Keep a bounded RAM fallback for larger BF16 checkpoints. Models
+            # that fit the explicit GPU caps (including the M22 qwen2_moe run)
+            # remain entirely on GPU; no offload folder is created.
             kwargs["max_memory"]["cpu"] = "52GiB"
             kwargs["offload_folder"] = None  # RAM only, never disk
     if args.dtype == "nf4":
@@ -117,20 +114,29 @@ def load_model(args):
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_use_double_quant=True,
         )
-    tok = AutoTokenizer.from_pretrained(args.model,
-                                        trust_remote_code=args.trust_remote_code)
+    tok = AutoTokenizer.from_pretrained(
+        args.model, local_files_only=True,
+        trust_remote_code=args.trust_remote_code)
     model = AutoModelForCausalLM.from_pretrained(args.model, **kwargs)
     model.eval()
     return tok, model, cfg
 
 
-def _final_logit_stats(logits, tok_id):
-    """entropy (nats) of softmax(final logits) + prob of the chosen token."""
+def _final_logit_stats(logits, tok_id, top_k=5):
+    """Aggregate-only statistics for a final-token predictive distribution."""
     import torch
 
     probs = torch.softmax(logits.float(), dim=-1)
     ent = float(-(probs * probs.clamp_min(1e-12).log()).sum(-1).mean())
-    return ent, float(probs.reshape(-1)[tok_id].item())
+    ranked = torch.topk(probs.reshape(-1), k=min(top_k, probs.numel())).values
+    margin = ranked[0] - ranked[1] if ranked.numel() > 1 else ranked[0]
+    return {
+        "entropy_final_logits": ent,
+        "selected_token_prob": float(probs.reshape(-1)[tok_id].item()),
+        "top_k": int(ranked.numel()),
+        "top_k_mass": float(ranked.sum().item()),
+        "top_k_margin": float(margin.item()),
+    }
 
 
 def capture_one(tok, model, text: str, max_prompt_tokens: int,
@@ -173,7 +179,7 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
     eos = getattr(tok, "eos_token_id", None)
     for step in range(max_new_tokens):
         tok_id = int(next_logits.argmax(-1).item())
-        ent, sel_prob = _final_logit_stats(next_logits, tok_id)
+        logit_stats = _final_logit_stats(next_logits, tok_id)
         with torch.inference_mode():
             out = model(input_ids=torch.tensor([[tok_id]], device=model.device),
                         past_key_values=past, output_router_logits=True,
@@ -183,8 +189,7 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
             "generated_token_index": step,
             "generated_token_id": tok_id,
             "generated_token_text": tok.decode([tok_id]),
-            "selected_token_prob": sel_prob,
-            "entropy_final_logits": ent,
+            **logit_stats,
             "router_logits": [r.squeeze(0).to("cpu", torch.float16)
                               for r in out.router_logits],
         })
@@ -221,17 +226,24 @@ def main(argv: list[str] | None = None) -> int:
             if not line:
                 continue
             rec = json.loads(line)
-            dest = out_dir / f"{rec['id']}.pt"
+            prompt_id = rec.get("id", rec.get("prompt_id"))
+            prompt_text = rec.get("text", rec.get("prompt"))
+            if not isinstance(prompt_id, str) or not isinstance(prompt_text, str):
+                raise ValueError(
+                    "prompt record requires id/text or prompt_id/prompt strings")
+            if args.limit is not None and n + skipped >= args.limit:
+                break
+            dest = out_dir / f"{prompt_id}.pt"
             if not args.overwrite and _valid_capture(dest):
                 skipped += 1
-                print(f"[jlens] skip {rec['id']}: existing valid capture "
+                print(f"[jlens] skip {prompt_id}: existing valid capture "
                       f"(use --overwrite to replace)")
                 continue
             input_ids, router, hidden, decode_steps = capture_one(
-                tok, model, rec["text"], args.max_prompt_tokens,
+                tok, model, prompt_text, args.max_prompt_tokens,
                 max_new_tokens=args.max_new_tokens, router_only=args.router_only)
             payload = {
-                "prompt_id": rec["id"],
+                "prompt_id": prompt_id,
                 "input_ids": input_ids,
                 "router_logits": router,
                 "hidden_states": hidden,  # None when --router-only
@@ -244,7 +256,7 @@ def main(argv: list[str] | None = None) -> int:
             n += 1
             gen = f", {len(decode_steps)} gen tokens" if decode_steps else ""
             hid = "0 (router-only)" if hidden is None else str(len(hidden))
-            print(f"[jlens] captured {rec['id']}: "
+            print(f"[jlens] captured {prompt_id}: "
                   f"{len(router)} router layers, {hid} hidden layers, "
                   f"{input_ids.shape[0]} tokens{gen}")
     print(f"[jlens] done — {n} captured, {skipped} skipped -> {out_dir}")

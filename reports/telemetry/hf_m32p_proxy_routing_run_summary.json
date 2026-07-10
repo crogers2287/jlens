@@ -1,0 +1,65 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32p_proxy_routing_dataset",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "task_category": "integer_multiplication_model_calibrated",
+ "n_tasks": 192,
+ "n_rows_evaluated": 192,
+ "undecided_excluded_counts": {},
+ "label_distribution_by_split": {
+  "discovery": {
+   "fail": 41,
+   "pass": 55
+  },
+  "validation": {
+   "fail": 18,
+   "pass": 30
+  },
+  "holdout": {
+   "fail": 21,
+   "pass": 27
+  }
+ },
+ "label_distribution_by_cell": {
+  "c_2x1": {
+   "pass": 12
+  },
+  "c_2x2_heavy": {
+   "fail": 14,
+   "pass": 22
+  },
+  "c_2x2_low": {
+   "pass": 12
+  },
+  "c_3x2_heavy": {
+   "fail": 10,
+   "pass": 2
+  },
+  "c_4x2_heavy": {
+   "fail": 12
+  },
+  "c_4x2_low": {
+   "fail": 12,
+   "pass": 24
+  },
+  "c_pow10_3x2": {
+   "fail": 15,
+   "pass": 21
+  },
+  "c_zero_3x2": {
+   "fail": 17,
+   "pass": 19
+  }
+ },
+ "decode_cap_tokens": 64,
+ "peak_gpu_memory_gib": 28.28,
+ "memory_gate_44gib": true,
+ "wall_minutes": 34.4,
+ "operands_disjoint_from_prior_milestones": true,
+ "no_posthoc_selection": true,
+ "per_task_routes_or_expert_tables_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only proxy routing summary"
+}

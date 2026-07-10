@@ -2198,3 +2198,46 @@ FP8 kernel path. Per the protocol's Branch 4, M32R stopped before
 preregistration or capture, with unblock options reported instead of a
 silent model substitution. This reproduces and extends finding-era evidence
 from the iteration-8 Qwen3.6-35B-A3B NF4 audit.
+
+## 202. M32P built and verified a safe expert-route override for the proxy
+A prepended router-gate hook edits only the last position's router logits and
+rebuilds that row's selection with the router's own arithmetic, leaving
+dispatch untouched; disabled, it is bit-identical to the normal path. CPU
+tests on a tiny real qwen2_moe cover parity, swap validity, rejection, KV
+branch independence, and privacy; the real smoke gate passed at 27.95 GiB
+peak with a forced swap verifiably changing routing.
+
+## 203. The proxy's multiplication frontier is carry-structured
+A predeclared 288-row calibration sweep shows carry density, not digit count,
+dominates difficulty: 2x2 passes .96 low-carry vs .42 carry-heavy, 3x2 .83 vs
+.04, 4x2 .71 vs .00, with middle-zero (.375) and near-power-of-ten (.667)
+mid-frontier. Frozen composition rules selected a 192-task benchmark (four
+boundary cells x36 plus easy/hard anchors x12) with expected failures 90.
+
+## 204. The frozen M30 trigger transfers imperfectly to the frontier
+On the model-calibrated cell distribution the frozen detector's precision is
+.766 and recall .738, down from ~.89 on band-based sets. Distribution shift
+in task structure (carry-heavy and structured cells at matched digit counts)
+weakens the telemetry trigger; reported as a finding without any tuning.
+
+## 205. Counterfactual expert rerouting is falsified on the proxy
+H1 NOT ESTABLISHED: on sealed-holdout triggered failures the heuristic route
+families' oracle rescue rate (.125) is identical to matched-random search
+(paired CI [0,0]); the all-route oracle ceiling is 11.9% of triggered
+failures. Family statistics show telemetry-guided swaps rescue at the same
+per-branch rate as random equal-compute perturbation (17 vs 21 rescues in
+308 continuations) while introducing more regressions than rescues. H2 NOT
+ESTABLISHED: the validation-frozen non-oracle policy exactly matches normal
+routing (.5625). H3: no layer-expert soft-penalty candidate survived
+discovery. Within this proxy and task family, systematic failures are not
+route-reachable; the small recoverable fraction reflects decode-path
+sensitivity to any perturbation, not expert misrouting.
+
+## 206. M32P scope, hygiene, and track closure
+All splits met predeclared power minimums (41/18/21 realized failures);
+0 undecided; equal verifier/candidate budgets across arms; per-task routes,
+expert tables, and branch records stay private; public artifacts aggregate-
+only and commit-safe. Claims are proxy-scoped and say nothing about
+Agents-A1. Per the preregistered Branch 3, the expert-routing autoloop stops
+after this milestone: no router training, no expert blacklist, no production
+change. Full repository suite: 166 tests green.

@@ -880,3 +880,34 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   preregistration, generation, or capture, per protocol. Public feasibility
   report: reports/telemetry/hf_m32r_feasibility_gate.json (aggregate only).
   Unblock options recorded for the operator. Full suite green: 151 tests.
+
+## M32P proxy counterfactual expert routing (2026-07-10) — MILESTONE COMPLETE
+- Executed the operator's amended model-calibrated protocol (35b12c3) with
+  separate hook/calibration/preregistration/result commits.
+- Phase 0A: route-override hook on the qwen2_moe TopKRouter (last-row logit
+  editing, model's own selection arithmetic, bit-identical when disabled);
+  6 CPU tests on a tiny real qwen2_moe; real smoke passed (parity, forced
+  swap changes routing, peak 27.95 GiB).
+- Phase 0B: predeclared 288-row calibration sweep mapped the proxy frontier —
+  carry structure dominates difficulty (2x2 .96 low/.42 heavy; 3x2 .83/.04;
+  4x2 .71/.00; middle-zero .375; near-pow10 .667). Frozen rules chose N=192:
+  4 boundary cells x36 + easy/hard anchors x12; expected failures 90.
+- Decision run (34 min, peak 28.3 GiB): realized failures 41/18/21 met all
+  power minimums; 0 undecided. Frozen M30 trigger degraded on the frontier
+  distribution (precision .766, recall .738 vs ~.89 band-based) — reported,
+  not tuned. 7,204 one-step screens; 616 full branched continuations with
+  equal heuristic/random budgets.
+- VERDICTS: H1 route recoverability NOT ESTABLISHED — sealed-holdout
+  heuristic oracle rescue .125 vs matched-random .125, paired CI [0,0];
+  oracle-recoverable fraction 11.9%. Route families rescue at random-noise
+  rates and regress more than they rescue (heuristic 17/32 vs random 21/32
+  in 308 continuations each). H2 NOT ESTABLISHED — frozen policy .5625 =
+  normal .5625 = random .5625. H3 — no soft-penalty candidate survived
+  discovery. Proxy-scoped; nothing claimed about Agents-A1.
+- Interpretation: systematic proxy multiplication failures are not caused by
+  locally poor top-4 expert choices at fragile tokens; ~12% of failures are
+  decode-path-sensitive to ANY equal-compute perturbation. Per Branch 3 the
+  expert-routing track stops; remaining repair directions are structured
+  prompting operators and telemetry-gated tools.
+- Public artifacts aggregate-only; commit-safe passed; suite green: 166
+  tests. agents-a1 restored/verified. Production gated.

@@ -1,0 +1,101 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32p_proxy_counterfactual_routing_evaluation",
+ "model_scope": "qwen2_moe research proxy only; not Agents-A1",
+ "task_category": "integer_multiplication_model_calibrated",
+ "n_rows_evaluated": 192,
+ "split_sizes": {
+  "discovery": 96,
+  "validation": 48,
+  "holdout": 48
+ },
+ "original_label_distribution": {
+  "pass": 112,
+  "fail": 80
+ },
+ "frozen_trigger": {
+  "threshold_fail_probability": 0.5,
+  "trigger_count": 77,
+  "trigger_rate": 0.4010416666666667,
+  "trigger_precision": 0.7662337662337663,
+  "trigger_recall": 0.7375
+ },
+ "causal_screen_volume": {
+  "one_step_screens": 7204,
+  "full_continuations": 616
+ },
+ "route_family_stats": {
+  "diversity_swap": {
+   "full_continuations": 57,
+   "regressions": 6,
+   "rescues": 3
+  },
+  "each_selected_to_rank5": {
+   "full_continuations": 181,
+   "regressions": 18,
+   "rescues": 13
+  },
+  "lowest_weight_to_rank5": {
+   "full_continuations": 31,
+   "regressions": 4
+  },
+  "matched_random_swap": {
+   "full_continuations": 308,
+   "regressions": 32,
+   "rescues": 21
+  },
+  "selected_to_rank6": {
+   "full_continuations": 39,
+   "regressions": 4,
+   "rescues": 1
+  }
+ },
+ "oracle_recoverable_fraction_triggered_failures": 0.11864406779661017,
+ "h1_route_recoverability": {
+  "population": "sealed holdout triggered true failures",
+  "n": 16,
+  "heuristic_oracle_rescue_rate": 0.125,
+  "random_oracle_rescue_rate": 0.125,
+  "delta_bootstrap_95pct": [
+   0.0,
+   0.0
+  ],
+  "verdict": "route_recoverability_not_established"
+ },
+ "h2_deployable_rerouting": {
+  "frozen_policy": "p1_top_screen",
+  "validation_scores": {
+   "p1_top_screen": 32,
+   "p2_each_selected_only": 32,
+   "p3_margin_only": 30
+  },
+  "holdout_success": {
+   "policy": 0.5625,
+   "normal": 0.5625,
+   "matched_random": 0.5625
+  },
+  "delta_vs_normal_bootstrap_95pct": [
+   -0.08333333333333333,
+   0.08333333333333333
+  ],
+  "delta_vs_random_bootstrap_95pct": [
+   0.0,
+   0.0
+  ],
+  "verdict": "deployable_rerouting_not_established"
+ },
+ "h3_soft_penalty": {
+  "candidates_frozen": 0,
+  "verdict": "no_candidate_survived",
+  "pairs": []
+ },
+ "per_task_routes_or_expert_tables_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/intervals only; no ids/routes",
+ "private_counterfactual_records": {
+  "branch_records": 7204,
+  "verified_rescue_branches": 38,
+  "storage": "private gitignored JSONL"
+ }
+}

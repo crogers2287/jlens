@@ -1,86 +1,180 @@
-# steer.md — post-M32P decision gate (expert-routing track closed)
+# steer.md — M32 structured-repair reactivation
 
-M1 through M32P are complete. M32 structured repair remains a preregistered,
-never-executed historical artifact; M32R stopped at its Agents-A1 resource
-gate; M32P ran the full model-calibrated counterfactual routing study on the
-Qwen proxy and returned negative causal verdicts. Per the preregistered
-Branch 3 in `docs/M32P_QWEN_PROXY_COUNTERFACTUAL_ROUTING_AUTOLOOP.md`, the
-expert-routing autoloop stops here.
+M1 through M31 and M32P are complete. M32R stopped at the Agents-A1 resource
+gate. M32P completed the model-calibrated Qwen proxy expert-routing study and
+closed that track under its preregistered Branch 3: guided equal-compute expert
+swaps did not beat matched-random perturbations, no deployable rerouting policy
+worked, and no soft expert penalty generalized.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-## M32P outcome (proxy-scoped; says nothing about Agents-A1)
+## Operator decision
 
-- Phase 0A hook verified: bit-identical when disabled; equal-compute swaps
-  with the router's own arithmetic; smoke passed at 27.95 GiB peak.
-- Phase 0B calibration: the proxy's multiplication frontier is
-  carry-structured (2x2 .96 low-carry vs .42 carry-heavy; 3x2 .83 vs .04;
-  4x2 .71 vs .00; middle-zero .375; near-pow10 .667). Frozen rules chose the
-  192-task benchmark (4 boundary cells x36, easy/hard anchors x12).
-- Decision run met every power minimum (realized failures 41/18/21) with
-  0 undecided, 34 minutes wall, 28.3 GiB peak.
-- Frozen M30 trigger degraded on the frontier distribution: precision .766,
-  recall .738 (vs ~.89 on band-based sets) — an honest distribution-shift
-  finding about the detector.
-- **H1 NOT ESTABLISHED**: heuristic-guided equal-compute swaps rescued
-  sealed-holdout triggered failures at exactly the matched-random rate
-  (.125 vs .125; paired CI [0,0]); the all-route oracle ceiling is 11.9%.
-- **H2 NOT ESTABLISHED**: the validation-frozen non-oracle policy exactly
-  matched normal routing (.5625).
-- **H3**: no layer-expert soft-penalty candidate survived discovery.
-- Route families rescue at random-perturbation rates and regress more than
-  they rescue. Conclusion: on this proxy, systematic failures are not caused
-  by locally poor top-4 expert choices at telemetry-fragile tokens; the
-  small recoverable fraction is decode-path sensitivity to any perturbation.
+The operator selects post-M32P option A: **reactivate and execute the preserved,
+preregistered M32 telemetry-gated structured-repair bakeoff**.
 
-## Cumulative repair-operator evidence
+The supersession notice on M32 is lifted for execution only. The existing
+preregistration remains immutable:
 
-- M31: temperature resample rescues ~4.5% of triggered failures.
-- M32P: equal-compute route perturbation rescues ~12% (oracle,
-  untargetable — random matches guided).
-- Neither stochastic decoding nor internal rerouting repairs systematic
-  arithmetic errors. The unexplored repair directions from the superseded
-  M32 protocol remain: structured prompting operators (deliberate re-solve,
-  checker-guided, diagnose-then-repair) and telemetry-gated deterministic
-  tools, with the tool arm as a known-perfect ceiling for this category.
+- protocol: `docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`
+- manifest: `data/prompts/m32_repair_manifest.json`
+- implementation: `src/m32_structured_repair.py`
+- tests: `tests/test_m32_structured_repair.py`
+- preregistration commit: `5f0edfeff15a20e848d99b164774c092697d1a90`
 
-## Required operator decision before the next milestone
+Do not rewrite, regenerate, rebalance, or replace the task set, repair prompts,
+candidate order, budgets, thresholds, seeds, selectors, controls, or H1/H2 claim
+rules after the fact. The manifest was committed before any M32 generation or
+capture and must now be executed exactly as written.
 
-Choose exactly one:
+The operator authorizes a bounded autoloop of up to three milestone completions
+beginning with this M32 execution, subject to the normal four-hour and blocker
+limits. Use separate result and steer commits for each completed milestone.
 
-### A. Execute the preserved M32 structured-repair bakeoff (recommended)
+## Why M32 is now the correct next test
 
-The full protocol, manifest, module, and tests already exist (preregistered
-at 5f0edfe, never executed, superseded before results). Reactivating it
-requires only an operator instruction acknowledging the supersession notice
-is lifted; the H1/H2 rules there directly test the last untested model-side
-repair direction against the M31 resample baseline, with the tool upper
-bound measured alongside.
+The detector is real but the tested repair operators have failed:
 
-### B. Telemetry-gated tool routing study
+- M30 established that full internal telemetry predicts deterministic arithmetic
+  failure better than difficulty metadata on a fresh sealed holdout.
+- M31 reproduced a high-precision trigger, but a temperature-0.7 resample rescued
+  only about 4.5% of correctly triggered failures.
+- M32P found that equal-compute expert-route perturbations had an oracle rescue
+  ceiling of only about 11.9%, with guided swaps exactly matching random swaps
+  on sealed holdout and more regressions than rescues.
 
-Skip model-side repair; measure the end-to-end value and compute savings of
-routing triggered checkable tasks to deterministic computation versus
-tool-on-every-task and random gating (runtime/product evidence).
+The remaining untested model-side question is whether a genuinely different
+reasoning procedure can repair systematic errors:
 
-### C. Detector robustness first
+- independent deliberate/decomposition re-solve;
+- checker-guided regeneration that reveals failure but not the answer;
+- diagnose-then-repair with a private intermediate plan;
+- verifier-first candidate selection;
+- deterministic computation as a product ceiling only.
 
-M32P showed the frozen detector loses precision/recall under task-structure
-shift at matched digit counts. Preregister a detector-robustness milestone
-(train/evaluate across carry-structured distributions) before investing in
-more repair studies that depend on the trigger.
+This separates “the model repeated or rerouted the same bad computation” from
+“the model can recover when forced onto a different explicit procedure.”
 
-### D. Stop the telemetry program
+## Current milestone — execute M32 exactly
 
-Document the program state and return to practical supervisor work.
+### Frozen data and detector
 
-Do not begin the next milestone until the operator selects A–D. Any new
-model run stays under the existing Qwen proxy approval.
+1. Generate the 384 manifest-defined fresh multiplication tasks across six
+   bands, deterministically disjoint from M29, M30, and M31.
+2. Retain every generated task. Stop on tuple exhaustion or action-applicability
+   violation; do not reselect.
+3. Recreate the frozen M30 full-telemetry nearest-centroid detector from private
+   M30 train records and require the existing protocol/hash/confusion-matrix
+   reproduction checks to pass.
+4. Use the frozen p(fail) >= 0.50 trigger on the original greedy decode only.
+   No M32 outcome may affect triggering.
+
+### Shared repair candidates
+
+For the exact tasks and budgets frozen in the manifest, capture:
+
+- `resample_t07` — the M31 seeded resample baseline;
+- `independent_deliberate` — fresh-context digit/decomposition re-solve;
+- `checker_guided_repair` — candidate failed, correct answer withheld;
+- `diagnose_then_repair` — private diagnosis/plan followed by recomputation;
+- `tool_upper_bound` — trusted deterministic arithmetic, ceiling only.
+
+Do not reveal the correct answer or numeric error to any model-side repair arm.
+The model/checkpoint remains frozen. No LoRA, weight update, activation steering,
+new model, or new dependency is authorized.
+
+### Policies and selectors
+
+Evaluate the preregistered shared-candidate policies with equal candidate budget
+and equal verifier access:
+
+- no repair;
+- always structured bundle;
+- trigger-count-matched random structured bundle;
+- telemetry-triggered structured bundle;
+- telemetry-triggered resample-only;
+- telemetry-triggered tool upper bound.
+
+Primary selector: first verifier-passing structured candidate in the frozen
+order, retaining the original when none pass. A verifier-passing original must
+never be replaced by a verifier-failing candidate; any violation is a stop
+condition.
+
+Secondary descriptive selectors remain exactly as preregistered:
+
+- frozen-telemetry/CLUE-style candidate reranking;
+- numeric majority/consensus.
+
+### Primary verdicts
+
+H1 — repair operator improvement:
+
+- On the same correctly triggered original failures, the structured model-side
+  bundle must rescue more errors than `resample_t07`.
+- Classify `repair_improved` only when the paired 95% bootstrap CI for the
+  rescue-rate delta is strictly above zero.
+
+H2 — end-to-end policy usefulness:
+
+- The telemetry-triggered structured bundle must improve final verified success
+  over both no repair and trigger-count-matched random structured repair.
+- Classify `useful` only when both paired 95% success-rate delta intervals are
+  strictly above zero.
+
+The deterministic tool arm is a ceiling/product reference and cannot satisfy H1
+or H2 for model self-correction.
+
+## M32P distribution-shift finding
+
+M32P found that the frozen M30 detector dropped to precision .766 / recall .738
+on a carry-structured capability frontier. Record detector performance and
+carry/difficulty subgroup metrics descriptively during M32, but do not alter the
+immutable M32 task generator, trigger, threshold, policies, or primary claim
+rules. Any carry-stratified analysis is secondary and explicitly non-confirmatory.
+
+## Recovery traces
+
+Write private gitignored traces for every model-generated wrong-to-right repair,
+including failed repairs and regressions in the private corpus. Public artifacts
+remain aggregate-only. Do not call the corpus training-ready unless the original
+M32 recovery-data gates are met; no weight training is authorized in this loop.
+
+## Result-driven continuation
+
+After M32, follow only the branches already defined in
+`docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`:
+
+- H1 improved and H2 useful: proceed to M33 trajectory-aware candidate
+  verification/reranking; M34 recovery-dataset work is eligible only if all
+  volume, diversity, provenance, and privacy gates are met.
+- H1 improved but H2 not established: proceed to M33 threshold, candidate
+  selection, retain-original, and compute-allocation study; do not merely scale.
+- Model-side repair not improved but the deterministic-tool ceiling is large:
+  proceed to M33 telemetry-gated tool routing, then use the remaining milestone
+  for detector transfer/robustness rather than claiming model self-correction.
+- Harmful result, detector reproduction failure, unequal verifier/compute access,
+  privacy failure, test failure, or other protocol blocker: stop immediately and
+  report the exact blocker.
+
+## Required reporting
+
+At the stop, report:
+
+- latest commit SHA and milestones completed;
+- M32 H1 and H2 verdicts;
+- frozen-trigger precision/recall;
+- per-operator rescue and regression rates;
+- best model-side operator and cost per verified rescue;
+- structured-policy deltas versus no repair and matched-random;
+- deterministic-tool ceiling;
+- private recovery-trace count intentionally not committed;
+- tests and commit-safety result;
+- exact next branch and operator decision, if any.
 
 ## Repository hygiene
 
 Do not commit model weights, caches, local model paths, prompts, outputs,
-operands, per-task routes, expert identities tied to private tasks, token
-ids/text, raw router tensors, or detailed counterfactual records. Public
-artifacts remain aggregate-only. No candidate becomes gold and production
-remains gated until explicit audited unlock criteria are defined.
+operands, diagnoses, per-task predictions/labels/triggers, token ids/text, raw
+router tensors, or detailed recovery records. Public reports remain
+aggregate-only. No candidate becomes gold and production remains gated until
+explicit audited unlock criteria are defined.

@@ -47,15 +47,17 @@ M24 telemetry is inspected. Do not tune on holdout results.
 
 ### Frozen holdout selection
 
-Use exactly 48 unseen existing public task IDs, 12 per predeclared class:
+Use exactly 40 unseen existing public task IDs, 10 per predeclared class. The
+initial 48-ID preregistration referenced unavailable source IDs; this was caught
+and corrected before any M24 capture. Model/features/metrics are unchanged:
 
-- checker: `m19_m_008` through `m19_m_019`
-- retrieval: `m15_c_008` through `m15_c_019`
-- review: `m15_x_008` through `m15_x_019`
+- checker: `m19_m_008` through `m19_m_017`
+- retrieval: `m15_c_008`–`m15_c_009` plus `m19_c_000`–`m19_c_007`
+- review: `m15_x_008` through `m15_x_017`
 - no-action controls:
-  - `m15_e_004` through `m15_e_009`
+  - `m15_e_004` through `m15_e_008`
   - `m15_j_002` through `m15_j_004`
-  - `m15_r_002` through `m15_r_004`
+  - `m15_r_002` through `m15_r_003`
 
 No M22/M23 task ID may appear in the holdout.
 
@@ -102,7 +104,7 @@ different manifest after seeing results.
 
 ### M24 runtime objectives
 
-1. Commit the ID/group-only 48-task manifest before the real run.
+1. Commit the corrected ID/group-only 40-task manifest before the real run.
 2. Use the same approved model/hardware/local-only/chat-template/router-only plan.
 3. Capture up to 64 tokens and record cap reach honestly.
 4. Derive Qwen-specific verifier/action outcomes from the same private capture.
@@ -117,7 +119,7 @@ different manifest after seeing results.
 
 - `data/prompts/m24_holdout_manifest.json` with public IDs/groups only
 - frozen classifier/evaluation code with CPU fixture tests
-- private 48 raw captures and detailed telemetry/outcome/action/result records
+- private 40 raw captures and detailed telemetry/outcome/action/result records
 - public aggregate holdout run summary
 - public aggregate frozen-evaluation report
 - `docs/M24_FROZEN_HOLDOUT_EVALUATION.md`
@@ -126,7 +128,7 @@ different manifest after seeing results.
 ### M24 stop condition
 
 - manifest is frozen and disjoint from M22/M23 before the real run
-- exactly 48 holdout tasks complete or an honest fixed-manifest blocker is reported
+- exactly 40 holdout tasks complete or an honest fixed-manifest blocker is reported
 - same-run Qwen telemetry/outcome linkage validates
 - classifiers use only M23 training aggregates and remain unchanged after holdout
 - all frozen metrics are reported without per-task leakage or tuning

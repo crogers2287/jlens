@@ -1,6 +1,34 @@
-# steer.md — post-M19 grounded regeneration steering
+# steer.md — post-M20 autosteer + HF telemetry steering
 
-M1 through M19 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, reviewed-calibration, safe-action-executor, or full-output action-run work.
+M1 through M20 are complete. Do not redo the previous harness, review, verifier, metadata-cleanup, action-routing, reviewed-calibration, safe-action-executor, full-output action-run, or grounded-regeneration work.
+
+Codex autosteer is now configured. `CODEX_AUTOSTEER.md` is part of the operating contract. Read it before acting.
+
+## Autosteer mode
+
+Default mode:
+
+- Complete one milestone.
+- Commit implementation.
+- Update `steer.md` for the next milestone.
+- Commit steer update separately.
+- Stop.
+
+Loop mode:
+
+- Only continue automatically when `CODEX_AUTOSTEER_LOOP=true` is explicitly set or the operator explicitly requests loop mode.
+- Maximum 3 milestones or 4 wall-clock hours.
+- Stop immediately on tests failing, commit-safety failure, private-data risk, model-download/hardware decision, real web retrieval decision, or any major architecture decision.
+
+Required at each stop:
+
+- latest commit SHA
+- milestone completed
+- tests passed
+- public artifacts created
+- private artifacts intentionally not committed
+- next steer target
+- blockers or decisions needed
 
 ## Current state
 
@@ -25,25 +53,28 @@ Completed milestones:
 - M17 reviewed calibration pass
 - M18 safe action execution
 - M19 500-task live run with transient full-output action execution
+- M20 grounded regeneration after retrieval
 
-M19 result:
+M20 result:
 
-- Built deterministic metadata-clean 500-task batch.
-- Ran live against agents-a1 on fred.
-- Completed 500/500 with 0 failures.
-- Escalation rate improved again: M11/M12 0.28 -> M13 0.164 -> M15 0.0728 -> M19 0.054.
-- Full model output reached approved checkers transiently before truncation.
-- Full output was not persisted in public artifacts.
-- 383/500 actions completed through approved paths.
-- Checker actions completed: 360 full-output math checks.
-- Retrieval actions completed: 23 fixture retrievals.
-- 117 actions were intentionally skipped: review-needed or no-action.
-- Checker results are now valid for execution input: 356 pass / 4 fail.
-- The 4 fail results are real arithmetic miss candidates requiring review.
-- Current-info fixture retrieval reached 20/20.
-- 3 retrieval-needed rows were non-current heuristic false positives: 2 explain weather rows and 1 numeric sale-price row.
-- All current-info retrieval completions still require grounded regeneration.
+- Added `grounded_result_v1` schema.
+- Added explicit-opt-in `grounded_regenerator.py`.
+- Processed 23 M19 retrieval candidates.
+- 20/20 true current-info rows entered grounded regeneration and produced changed grounded answers.
+- 3 non-current retrieval false positives were skipped before model invocation.
+- Deterministic fixture expected-token check: 4 pass / 16 fail.
+- Follow-up still needed on 19 rows: 16 fixture-token fails + 3 skipped non-current routes.
+- Four M19 arithmetic miss candidates reviewed as confirmed wrong candidates, not gold.
+- Freshness heuristic refined: bare weather/price/stock/news no longer trigger non-current tasks; explicit `current_info` still routes.
+- Full suite green at 76 tests.
 - Production remains gated.
+
+Important M20 limitation:
+
+- Fixture-grounded regeneration proves the path, not real-world correctness.
+- The generic fixture context was not question-specific evidence.
+- The 4/20 fixture-token match rate is a grounding/context-quality signal, not a model-quality score.
+- No web retrieval, raw-text persistence, or production unlock was introduced.
 
 Current live model context:
 
@@ -55,79 +86,77 @@ Current live model context:
 
 GGUF serving still has telemetry_missing=true and policy=null when no feature rows are available. Do not invent telemetry.
 
-## Next milestone: M20 grounded regeneration after retrieval
+## Next milestone: M21 HF/safetensors telemetry backend
 
-M20 should close the loop on current-info tasks. M19 proved retrieval actions can execute safely, but retrieval completion is not answer correctness. The next step is to use retrieved fixture/public-fixture context to regenerate or revise answers in a controlled way, then verify or review those grounded outputs.
+M21 should bring the original internal-telemetry research track back online without disrupting the working GGUF runtime supervisor. The goal is to add a Hugging Face / safetensors backend that can collect logits/entropy/top-k telemetry and, when available, router/expert telemetry. It must be honest about missing or unsupported telemetry.
 
 Suggested command:
 
-/jlens-m20-grounded-regeneration-loop
+/jlens-m21-hf-safetensors-telemetry-backend
 
-## M20 objectives
+## M21 objectives
 
-1. Add a grounded regeneration path for retrieval_needed tasks after retrieval completes.
-2. Keep regeneration disabled by default unless an explicit config or flag enables it.
-3. Restrict retrieved context to fixture/public-fixture sources unless a later milestone adds a real retrieval adapter.
-4. Pass retrieved context to the model only in the local live path.
-5. Do not commit raw retrieved context, raw prompts, or full regenerated outputs.
-6. Produce grounded_result records or equivalent aggregate-safe records.
-7. Track original answer vs grounded regenerated answer as candidate-only data.
-8. Run the current-info subset from M19 through grounded regeneration.
-9. Report how many current-info tasks produce a grounded answer.
-10. Report how many grounded answers can be checked deterministically, if any.
-11. Separate retrieval heuristic false positives from true current-info rows.
-12. Review the 4 M19 arithmetic miss candidates and the 3 retrieval heuristic false positives.
-13. Update the public calibration summary with reviewed results if useful.
-14. Keep auto_outcome, action_result, and grounded_result as candidates, not gold.
-15. Keep production mode gated.
+1. Add a backend abstraction that separates GGUF runtime records from HF/safetensors telemetry records.
+2. Add a HF/safetensors telemetry loader contract that can load from a local path or approved model id, but do not download weights automatically.
+3. Add fixture/fake-model tests so the backend can be developed without committing model weights.
+4. Capture final-token logits-derived features when available:
+   - entropy
+   - selected-token probability
+   - top-k margin or top-k mass
+   - sampled/selected token id
+5. Capture decode-window aggregates when available:
+   - mean entropy
+   - high-entropy count
+   - low-confidence count
+   - top-k margin trend
+6. Capture hidden states only when explicitly enabled and available.
+7. Capture router/expert telemetry only for models that actually expose it:
+   - router logits/probabilities
+   - top-k expert ids
+   - router entropy
+   - expert concentration
+   - windowed expert/domain shift
+8. Mark router fields as `not_moe`, `missing`, or `unsupported` when appropriate. Never fabricate router/expert data.
+9. Add telemetry schema/versioning for HF records.
+10. Run a tiny fixture batch through the telemetry backend and produce public-safe aggregate telemetry summaries.
+11. Align telemetry records with existing verifier/action/review outcome ids where possible.
+12. Keep model weights, caches, full outputs, prompts, and private records out of git.
+13. Keep production mode gated.
 
-## Recommended grounded_result record
+## M21 deliverables
 
-Each grounded result should be aggregate-safe:
+- `schema/hf_telemetry_record_v1.json` or equivalent
+- `src/hf_telemetry_backend.py` or equivalent
+- backend interface documentation
+- fixture/fake model for telemetry tests
+- public-safe telemetry summary artifact
+- `docs/M21_HF_SAFETENSORS_TELEMETRY.md`
+- tests for logits telemetry, missing telemetry, not-MoE handling, no model-weight commits, no raw text persistence, and schema validation
+- updated `STATE.md` and `reports/FINDINGS.md`
 
-- task_id
-- source_action_id or action_evidence_hash
-- grounded_status: completed, skipped, failed
-- context_source_kind: fixture, public_fixture, none
-- regeneration_model
-- result_confidence
-- verifier_names
-- verifier_verdicts
-- evidence_hash only, no raw context or output
-- followup_needed
-- candidate_only: true
+## M21 stop condition
 
-## M20 deliverables
-
-- schema/grounded_result_v1.json if useful
-- src/grounded_regenerator.py or extension to the live runner
-- public-safe current-info grounded regeneration summary
-- public-safe review summary for 4 arithmetic miss candidates and 3 retrieval heuristic false positives
-- reports/outcomes/agents_a1_m20_grounded_summary.json
-- docs/M20_GROUNDED_REGENERATION.md
-- tests for default-off behavior, fixture context use, no raw text persistence, verifier/review routing, aggregate no-text report, and before/after comparison
-- updated STATE.md and reports/FINDINGS.md
-
-## M20 stop condition
-
-- retrieval-completed current-info tasks can enter a safe grounded regeneration path
-- grounded_result records validate and contain no raw context/output text
-- public aggregate distinguishes retrieval completion from grounded answer quality
-- 4 arithmetic miss candidates have a review path or reviewed summary
-- 3 retrieval heuristic false positives have a review path or heuristic refinement note
-- public artifacts pass commit-safe checks
+- HF telemetry backend can run against fixture/fake model without external downloads
+- logits-derived telemetry fields are captured from fixture outputs
+- router/expert fields are honestly marked when unavailable
+- telemetry records validate against schema
+- public summaries contain no raw prompt/output/private text
+- model weights/caches are not committed
+- GGUF runtime path remains intact
 - production mode remains gated
 
-## After M20
+## After M21
 
-Choose one:
+If autosteer loop mode is enabled, choose one based on results:
 
-- M21A: larger live run with grounded regeneration enabled
-- M21B: HF/safetensors telemetry backend for internal logits/router-style research
-- M21C: broader model comparison against another local model using the M19/M20 harness
-- M21D: improve open-ended explain verifier coverage with rubric/reference strategy
-- M21E: missing-label dataset converters
+- M22A: run HF telemetry backend against a locally available safetensors dense model and compare telemetry to verifier outcomes
+- M22B: run HF telemetry backend against a locally available MoE safetensors model and collect real router/expert telemetry
+- M22C: broader model comparison using the M19/M20 supervisor harness
+- M22D: improve open-ended explain verifier coverage with rubric/reference strategy
+- M22E: larger live run with grounded regeneration enabled and better question-specific fixture evidence
+
+Stop instead of choosing automatically if a model download, model license, disk-space, or hardware/VRAM decision is required.
 
 ## Repository hygiene
 
-Do not commit local detailed records, full model outputs, retrieved raw text, grounded raw outputs, caches, local environments, model weights, raw datasets, or large generated artifacts unless explicitly intended.
+Do not commit local detailed records, full model outputs, retrieved raw text, grounded raw outputs, model weights, tokenizer/model caches, local environments, raw datasets, or large generated artifacts unless explicitly intended.

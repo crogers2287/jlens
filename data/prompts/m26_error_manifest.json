@@ -1,0 +1,696 @@
+{
+ "milestone": "M26",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m26_task_generation",
+ "research_question": "Can internal Qwen telemetry predict objective pass/fail arithmetic errors inside one fixed task category where prompt family and action applicability are held constant?",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "prompt_family_constant": true,
+ "action_applicability": {
+  "rule": "every task carries task_category=math plus a safe arithmetic expression, so the existing supervisor/router must plan checker_needed for all 96 tasks",
+  "expected_action_type": "checker_needed",
+  "constant_across_all_tasks": true,
+  "violation_handling": "stop milestone and report; do not relabel"
+ },
+ "generation": {
+  "seed": "m26-objective-error-v1",
+  "algorithm": "per band, draw unique (a, b) operand tuples from random.Random(seed + ':' + band_id) uniform in the declared inclusive ranges, rejecting duplicate tuples, until n_tasks tuples exist; assign tuples to the predeclared task_ids in draw order",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true,
+  "operand_uniqueness_scope": "within band"
+ },
+ "label_rule": {
+  "labeler": "math_checker deterministic verifier",
+  "input": "same-run captured greedy decode output only",
+  "truth_source": "safe evaluation of the task expression",
+  "classes": [
+   "pass",
+   "fail"
+  ],
+  "undecided_handling": "undecided verdicts are excluded from modeling and reported as aggregate counts",
+  "human_selection": "none"
+ },
+ "decode_protocol": {
+  "decode": "greedy",
+  "decode_cap_tokens": 64,
+  "chat_template": true,
+  "router_only_capture": true,
+  "hidden_capture": "disabled",
+  "backend_top_k": 5,
+  "dtype": "bf16",
+  "architecture_family": "qwen2_moe",
+  "hardware_plan": "two_24gib_nvidia_gpus_bf16"
+ },
+ "bands": [
+  {
+   "band_id": "band_a",
+   "operator": "+",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "expected_difficulty": "low",
+   "rationale": "two-digit addition; expected mostly pass",
+   "n_tasks": 24,
+   "n_train": 16,
+   "n_holdout": 8
+  },
+  {
+   "band_id": "band_b",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    2,
+    9
+   ],
+   "expected_difficulty": "moderate",
+   "rationale": "two-digit by one-digit multiplication; expected mostly pass",
+   "n_tasks": 24,
+   "n_train": 16,
+   "n_holdout": 8
+  },
+  {
+   "band_id": "band_c",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "expected_difficulty": "high",
+   "rationale": "two-digit by two-digit multiplication; expected mixed",
+   "n_tasks": 24,
+   "n_train": 16,
+   "n_holdout": 8
+  },
+  {
+   "band_id": "band_d",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "expected_difficulty": "very_high",
+   "rationale": "three-digit by three-digit multiplication; expected mostly fail",
+   "n_tasks": 24,
+   "n_train": 16,
+   "n_holdout": 8
+  }
+ ],
+ "n_tasks": 96,
+ "n_train": 64,
+ "n_holdout": 32,
+ "split_rule": "per band, task indices 000-015 are train and 016-023 are holdout; assigned in this manifest before any generation",
+ "tasks": [
+  {
+   "task_id": "m26_a_000",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_001",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_002",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_003",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_004",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_005",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_006",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_007",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_008",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_009",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_010",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_011",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_012",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_013",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_014",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_015",
+   "band": "band_a",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_a_016",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_017",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_018",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_019",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_020",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_021",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_022",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_a_023",
+   "band": "band_a",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_000",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_001",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_002",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_003",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_004",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_005",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_006",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_007",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_008",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_009",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_010",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_011",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_012",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_013",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_014",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_015",
+   "band": "band_b",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_b_016",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_017",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_018",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_019",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_020",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_021",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_022",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_b_023",
+   "band": "band_b",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_000",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_001",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_002",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_003",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_004",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_005",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_006",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_007",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_008",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_009",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_010",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_011",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_012",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_013",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_014",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_015",
+   "band": "band_c",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_c_016",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_017",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_018",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_019",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_020",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_021",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_022",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_c_023",
+   "band": "band_c",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_000",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_001",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_002",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_003",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_004",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_005",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_006",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_007",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_008",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_009",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_010",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_011",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_012",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_013",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_014",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_015",
+   "band": "band_d",
+   "split": "train"
+  },
+  {
+   "task_id": "m26_d_016",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_017",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_018",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_019",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_020",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_021",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_022",
+   "band": "band_d",
+   "split": "holdout"
+  },
+  {
+   "task_id": "m26_d_023",
+   "band": "band_d",
+   "split": "holdout"
+  }
+ ],
+ "holdout_seal": {
+  "rule": "all 96 captures may be collected in one hardware window, but M26 public artifacts must not report holdout verdict counts or holdout telemetry aggregates; the holdout is first evaluated by the frozen M27 protocol",
+  "no_refit_after_holdout_capture": true
+ },
+ "minimum_modeling_requirement": {
+  "train_pass_min": 8,
+  "train_fail_min": 8,
+  "on_shortfall": "stop and report; do not regenerate or reselect tasks"
+ },
+ "frozen_feature_sets": {
+  "majority_class": [],
+  "metadata_only": [
+   "band_a",
+   "band_b",
+   "band_c",
+   "band_d"
+  ],
+  "logits_only": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin"
+  ],
+  "router_only": [
+   "router_entropy",
+   "expert_concentration"
+  ],
+  "router_plus_logits": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin",
+   "router_entropy",
+   "expert_concentration"
+  ],
+  "full_telemetry": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin",
+   "router_entropy",
+   "expert_concentration",
+   "decode_step_count",
+   "windowed_expert_shift",
+   "high_entropy_count",
+   "low_confidence_count",
+   "top_k_margin_trend"
+  ]
+ },
+ "metadata_feature_rule": "metadata_only features are one-hot difficulty band indicators taken from this manifest, never from telemetry",
+ "m27_frozen_protocol": {
+  "classifier_family": "train-standardized nearest centroid",
+  "standardization": "train mean and sample standard deviation only",
+  "distance": "squared_euclidean",
+  "tie_break": "lexicographic (fail before pass)",
+  "baselines_required": [
+   "majority_class",
+   "metadata_only",
+   "logits_only",
+   "router_only",
+   "router_plus_logits",
+   "full_telemetry"
+  ],
+  "metrics": [
+   "accuracy",
+   "balanced_accuracy",
+   "macro_f1",
+   "per_class_precision_recall_f1",
+   "accuracy_bootstrap_95pct"
+  ],
+  "bootstrap_iterations": 2000,
+  "bootstrap_seed_prefix": "m27:frozen",
+  "holdout_evaluated_once": true,
+  "no_refit_or_threshold_tuning_after_holdout": true,
+  "template_leakage_control": "train and holdout share the single declared prompt template by design; operand tuples are unique, so no task instance repeats; metadata_only baseline quantifies the difficulty-band shortcut that telemetry must beat"
+ },
+ "m28_frozen_protocol": {
+  "ablations": [
+   "single_feature",
+   "leave_one_out_from_full_telemetry"
+  ],
+  "classifier_family": "same frozen nearest centroid protocol as M27",
+  "calibration_score": "softmax over negative squared centroid distances taken as pseudo-probability of fail",
+  "calibration_bins": "4 equal-count holdout bins",
+  "calibration_metrics": [
+   "expected_calibration_error",
+   "reliability_curve"
+  ],
+  "false_positive_negative_analysis": "aggregate by band and split only",
+  "threshold_status": "candidate-only; never production",
+  "verifier_contradiction_feature": "excluded by design: the verifier defines the label, so using its signal as input would leak labels"
+ },
+ "privacy": {
+  "public_artifacts": "aggregate counts, band definitions, metrics only",
+  "private_artifacts": "generated operand tuples/prompts, captures, outputs, per-task labels and predictions stay in gitignored locations",
+  "per_task_labels_public": false
+ },
+ "candidate_only": true,
+ "production_gated": true
+}

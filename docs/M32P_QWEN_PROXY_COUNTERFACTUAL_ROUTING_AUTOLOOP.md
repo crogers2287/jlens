@@ -1,156 +1,203 @@
 # M32P Qwen proxy counterfactual-routing autoloop
 
-Status: operator-authorized protocol. This supersedes the stopped Agents-A1
-M32R execution path without changing or deleting its Phase-0 feasibility record.
-All claims from this loop must be scoped to the already-local
-`Qwen1.5-MoE-A2.7B-Chat` research proxy.
+Status: operator-authorized protocol, amended before preregistration or decision
+capture. This supersedes the stopped Agents-A1 M32R execution path without
+changing or deleting its Phase-0 feasibility record. All claims from this loop
+must be scoped to the already-local `Qwen1.5-MoE-A2.7B-Chat` research proxy.
 
 `steer.md` is the execution source of truth and `CODEX_AUTOSTEER.md` remains the
 operating contract.
 
-## Why this proxy path exists
+## Why the benchmark is being rewritten
 
-M32R established, before any decision capture, that official Agents-A1
-safetensors cannot be loaded inside the current 44 GiB research ceiling with
-the installed stack. The proxy model is already local, already produced the
-M26-M31 telemetry evidence, exposes real MoE router logits, and can answer the
-causal-method question now:
+The proxy is much smaller than Agents-A1. Reusing an Agents-A1-oriented task
+frontier would risk producing mostly trivial passes or capacity-bound failures.
+Neither is useful for causal routing research:
 
-> When the model fails, does an equal-compute alternative expert route inside
-> the same frozen model produce a better answer, and can a non-oracle policy
-> choose that route without seeing the answer?
+- trivial tasks provide no failures to recover;
+- impossible tasks make every alternative route fail;
+- a benchmark dominated by either case can make routing look better or worse
+  for the wrong reason.
 
-This loop does **not** establish anything about Agents-A1 expert routing. It
-builds and validates the method on the proxy so it is ready for Agents-A1 when
-a viable checkpoint or hardware path exists.
+M32P therefore begins with a private, calibration-only capability-frontier
+sweep. That sweep chooses a multiplication benchmark where the frozen proxy has
+mixed pass/fail outcomes before any discovery, validation, or holdout task is
+generated. Calibration rows are never decision data and cannot support a claim.
+
+The causal question remains:
+
+> When this frozen proxy fails near its own capability frontier, does an
+> equal-compute alternative expert route inside the same model produce a better
+> answer, and can a non-oracle policy choose that route without seeing the
+> answer?
+
+This loop does not establish anything about Agents-A1 expert routing. It builds
+and validates the method for later transfer.
 
 ## Scope and invariants
 
 - Model: already-local `Qwen1.5-MoE-A2.7B-Chat` only.
 - Expected architecture: `qwen2_moe`, 24 routed layers, 60 experts per routed
-  layer, top-4 active experts per token. Verify from the loaded config and stop
-  on mismatch.
+  layer, top-4 active experts per token. Stop on mismatch.
 - No model download, new model family, weight update, LoRA, or new dependency.
 - Keep the M30 detector and p(fail) threshold frozen. Reproduce its published
   confusion matrix/hash before decision capture.
-- Fresh tasks only. M27, M29, M30, M31, abandoned M32, and stopped M32R records
-  are not decision data.
+- Primary task family remains exact integer multiplication because the detector
+  was validated there and `math_checker` provides deterministic labels.
+- Fresh tasks only. M27, M29, M30, M31, abandoned M32, stopped M32R, and the
+  capability-frontier sweep are excluded from decision data.
 - Never reveal the correct answer to the route-selection policy.
 - Preserve exactly top-4 active experts and equal expert compute in every
   counterfactual route. Renormalize selected routing weights.
 - Disabled route override must reproduce the normal forward path within a
-  preregistered numerical tolerance and produce identical greedy tokens on the
-  smoke set.
+  preregistered numerical tolerance and identical greedy tokens on the smoke set.
 - No global expert blacklist or permanent shutdown from observational counts.
-- Private prompts, outputs, token ids/text, raw router tensors, per-task routes,
-  expert tables, labels, and counterfactual records stay gitignored.
+- Private prompts, outputs, operands, token ids/text, raw router tensors,
+  per-task routes, expert tables, labels, calibration rows, and counterfactual
+  records stay gitignored.
 - Public reports remain aggregate-only. Production remains gated.
 
-# M32P — route-override feasibility and causal screen
+# M32P — route-override feasibility and model-calibrated causal screen
 
-## Phase 0 — safe route-override hook
+## Phase 0A — safe route-override hook
 
 Implement an opt-in proxy-only route controller around the supported sparse MoE
-forward path. It must accept a per-forward override plan keyed by generated
-step and routed layer and be able to replace selected expert ids/weights after
-router logits are computed but before expert dispatch.
+forward path. It accepts a per-forward override keyed by generated step and
+routed layer and replaces selected expert ids/weights after router scoring but
+before expert dispatch.
 
 Required behaviors:
 
-1. `override=None` follows the original model code path.
+1. `override=None` follows the original model path.
 2. A replacement keeps exactly four active experts.
-3. No duplicate expert ids are permitted.
-4. Routing weights are finite, nonnegative, and renormalized.
-5. The default path remains compatible with telemetry capture and KV cache.
+3. No duplicate expert ids.
+4. Weights finite, nonnegative, and renormalized.
+5. Default path remains compatible with telemetry capture and KV cache.
 6. Counterfactual continuations use the modified forward result and modified KV
-   cache from the intervention point onward; do not splice a changed token into
-   an unchanged cache.
-7. The hook can be enabled for exactly one layer-token choice and automatically
-   removed afterward.
+   cache from the intervention point onward.
+7. A one-layer/one-token override automatically removes itself afterward.
 
 Tests before real capture:
 
-- fake-MoE dispatch and weight-renormalization tests;
-- no-op exact-path test;
-- selected-expert/rank-next replacement test;
-- duplicate/out-of-range/nonfinite rejection tests;
-- KV-cache continuation test;
-- telemetry capture remains available under override;
-- privacy/no-route-table public-output test.
+- fake-MoE dispatch and weight-renormalization;
+- no-op exact-path parity;
+- selected-expert/rank-next replacement;
+- duplicate/out-of-range/nonfinite rejection;
+- KV-cache continuation;
+- telemetry remains available under override;
+- privacy/no-route-table public output.
 
 Real smoke gate:
 
-- load the already-local proxy within the existing hardware limits;
+- load the local proxy inside existing hardware limits;
 - verify architecture and top-k;
-- run normal and disabled-override decodes on a tiny private smoke set;
-- run one forced equal-compute swap and verify output/telemetry can differ;
+- normal and disabled-override decodes match on a tiny private smoke set;
+- one forced equal-compute swap can alter forward telemetry/output;
 - restore the normal model path after the smoke.
 
-Stop if architecture, hook placement, no-op parity, cache correctness, or
-telemetry availability cannot be verified.
+Stop on architecture, hook placement, no-op parity, cache, telemetry, or memory
+failure.
+
+## Phase 0B — calibration-only capability-frontier sweep
+
+This phase occurs before preregistration. It is benchmark engineering, not a
+result. Generate a deterministic private sweep, disjoint from every prior set,
+covering candidate multiplication cells such as:
+
+- 2-digit x 1-digit;
+- 2-digit x 2-digit, split into low-carry and carry-heavy cells;
+- 3-digit x 1-digit;
+- 3-digit x 2-digit, low-carry and carry-heavy;
+- 4-digit x 1-digit;
+- 4-digit x 2-digit, low-carry and carry-heavy;
+- 3-digit x 3-digit as a likely hard anchor;
+- structured cases with zeros, repeated digits, or near-powers-of-ten.
+
+Definitions for carry-heavy/low-carry and structured cells must be deterministic
+and committed before the sweep runs. Use a fixed seed and a small equal sample
+per cell. Report only aggregate cell counts and pass rates publicly.
+
+The sweep may choose benchmark cells only from original greedy pass rate and
+predeclared structural diversity. It must not select cells because the frozen
+telemetry trigger, a route heuristic, or an expert happens to perform well.
+
+Target benchmark composition:
+
+- 70-80% boundary cells with calibration pass rates between 20% and 80%;
+- 10-15% easy anchors with pass rate above 85%, to measure regressions/false
+  alarms;
+- 10-15% hard anchors with pass rate below 15%, to measure route-recovery
+  ceiling without allowing them to dominate the verdict;
+- at least three structurally distinct boundary cells;
+- no single digit-length/carry cell above 35% of the decision benchmark.
+
+The calibration phase must freeze, before decision task generation:
+
+- selected cells and exact generator rules;
+- task count chosen from 192, 240, or 288 based on a predeclared power table and
+  expected number of original failures, never on route results;
+- discovery/validation/holdout proportions of 1/2, 1/4, 1/4;
+- minimum expected original failures: 40 discovery, 20 validation, 20 holdout;
+- easy/hard anchor weights and all structural metadata fields.
+
+If the sweep cannot identify a mixed capability frontier satisfying these
+rules, stop and report `benchmark_frontier_not_found`. Do not silently broaden
+the task family or use an all-fail benchmark.
 
 ## Preregistered decision design
 
-Before task generation or causal capture, commit
-`data/prompts/m32p_proxy_routing_manifest.json` with:
+After Phase 0B, commit `data/prompts/m32p_proxy_routing_manifest.json` before
+creating any decision task. The manifest freezes:
 
-- 192 fresh multiplication tasks over the existing six boundary bands;
-- deterministic tuple rejection against M29, M30, M31, and abandoned M32;
-- 96 discovery / 48 validation / 48 sealed holdout;
+- the selected model-calibrated benchmark cells and exact task count;
+- deterministic rejection against all prior and calibration tuples;
+- discovery/validation/sealed-holdout ids and generators;
 - original greedy decode protocol;
 - frozen M30 detector reconstruction and threshold;
-- fragile-window rule;
-- implicated-layer rule;
+- fragile-window and implicated-layer rules;
 - candidate-route families and exact branch budgets;
-- random seeds, tie breaks, bootstrap seeds, multiple-testing correction;
-- H1/H2/H3 claim rules;
-- all tasks retained and no post-hoc operator deletion.
+- seeds, tie breaks, bootstrap seeds, multiplicity correction;
+- H1/H2/H3 rules and minimum realized class counts;
+- all tasks retained, including anchors, with no post-hoc cell/operator deletion.
+
+If realized decision counts miss 30/15/15 original failures across discovery,
+validation, and holdout, classify the causal test underpowered and report it.
+Do not regenerate or reselect tasks after seeing decision outcomes.
 
 ## Fragile-window and layer targeting
 
-Do not screen all 1,440 layer-expert modules globally. Screen causal choices
-only where the original generation shows elevated risk.
-
-Freeze a deterministic rule using original-decode telemetry only, such as:
+Do not screen all 1,440 layer-expert modules globally. Use original-decode
+telemetry only:
 
 - choose up to the top two generated steps by the frozen window-risk score;
-- at each chosen step, choose up to the top four routed layers by a predeclared
-  combination of router entropy, top-4/rank-5 margin, concentration, and
-  deviation from the task's earlier routing trajectory;
-- no verifier label or correct answer may influence step/layer selection.
+- at each step choose up to four routed layers using a frozen combination of
+  router entropy, top-4/rank-5 margin, concentration, and trajectory deviation;
+- no label, verifier result, or correct answer may influence targeting.
 
-Report sensitivity to length and difficulty metadata so route effects are not
-mistaken for task-complexity effects.
+Report controls for digit lengths, carry count, output length, task cell, and
+baseline difficulty so route effects are not confused with benchmark structure.
 
 ## Equal-compute route families
 
-For each selected step/layer, evaluate shared counterfactual candidates:
+For each selected step/layer evaluate shared candidates:
 
-1. `normal_route` — unchanged router output.
-2. `lowest_weight_to_rank5` — replace the lowest-weight selected expert with
-   the highest-ranked unselected expert.
-3. `each_selected_to_rank5` — four one-at-a-time swaps, one for each selected
-   expert, using rank-5 as replacement.
-4. `selected_to_rank6` — bounded secondary swaps fixed in the manifest.
-5. `diversity_swap` — replace the selected expert most redundant with the other
-   selected experts using a discovery-only expert-output similarity summary.
-6. `matched_random_swap` — same number of swaps, chosen from eligible unselected
-   experts with fixed seeds.
-7. `soft_penalty_route` — discovery-fit layer-expert penalties applied only in
-   fragile windows, validation-frozen before sealed holdout.
-8. `oracle_best_tested` — verifier-best tested branch, ceiling only and never a
-   deployable policy.
+1. `normal_route`;
+2. `lowest_weight_to_rank5`;
+3. `each_selected_to_rank5` — four one-at-a-time swaps;
+4. bounded `selected_to_rank6` alternatives;
+5. discovery-only `diversity_swap`;
+6. fixed-seed `matched_random_swap` with equal branch count;
+7. validation-frozen `soft_penalty_route`, applied only in fragile windows;
+8. `oracle_best_tested`, verifier ceiling only and never deployable.
 
-The normal, heuristic, random, and oracle arms must receive the same full-
-continuation budget. A cheap one-step screen may rank branches only if the
-screening rule and full-continuation count are preregistered and identical
-across heuristic and random controls.
+Normal, heuristic, random, and oracle arms receive the same full-continuation
+budget. A one-step screen may rank branches only if its rule and continuation
+count are frozen and identical across heuristic and random controls.
 
 ## Outcomes and primary hypotheses
 
-Deterministic `math_checker` verdicts define pass/fail after full continuation.
-Undecided and capped cases are reported and excluded only according to the
-manifest.
+`math_checker` defines pass/fail after full continuation. Undecided/capped rows
+are handled only as frozen in the manifest.
 
 ### H1 — route recoverability exists
 
@@ -158,100 +205,82 @@ Among frozen-trigger true failures, tested equal-compute counterfactual routes
 recover more errors than matched-random route search.
 
 Classify `route_recoverability_established` only if the paired 95% bootstrap CI
-for the oracle-tested-family rescue-rate delta over matched-random is strictly
-above zero on the sealed holdout. Oracle results are capability evidence only.
+for oracle-tested-family rescue-rate delta over matched-random is strictly above
+zero on sealed holdout. Oracle results are capability evidence only.
 
 ### H2 — a deployable route policy works
 
 A validation-frozen non-oracle route policy improves verified success over both
-normal routing and matched-random routing on the sealed holdout.
+normal and matched-random routing on sealed holdout.
 
 Classify `deployable_rerouting_established` only if both paired 95% success-rate
 delta intervals are strictly above zero. The policy may use original telemetry,
-router ranks/margins, and discovery/validation summaries, but never task labels,
-correct answers, or candidate verifier results.
+router ranks/margins, task-cell metadata, and discovery/validation summaries,
+but never labels, correct answers, or candidate verifier results.
 
 ### H3 — expert penalties generalize
 
-Any proposed layer-expert soft penalty must:
-
-- be proposed from discovery only;
-- repeat directionally on validation;
-- be frozen before holdout;
-- improve holdout outcomes after the preregistered multiplicity correction;
-- avoid a significant right-to-wrong regression increase.
-
-Otherwise classify it as exploratory only. No hard shutdown is authorized.
+Any layer-expert soft penalty must originate on discovery, repeat directionally
+on validation, freeze before holdout, survive multiplicity correction, and avoid
+a significant right-to-wrong increase. Otherwise it is exploratory. No hard
+shutdown is authorized.
 
 ## Required aggregate metrics
 
-- architecture and no-op parity checks;
-- task counts, original pass/fail, trigger precision/recall;
-- fragile steps and implicated layers per task;
-- number of causal swaps and full continuations;
-- route-family rescue and regression rates;
-- unique versus shared recoveries by route family;
+- hook/no-op parity and architecture;
+- calibration cell counts/pass rates and final benchmark composition;
+- decision task counts and original pass/fail by split and cell;
+- trigger precision/recall and false alarms;
+- fragile steps/layers and branch counts;
+- route-family rescue/regression rates and unique/shared recoveries;
 - oracle recoverable fraction;
-- non-oracle policy success, rescue, regression, and compute cost;
-- matched-random comparisons and paired bootstrap intervals;
-- layer-level and expert-level aggregate effects with corrected intervals;
-- length/difficulty confound controls;
+- non-oracle success, rescue, regression, and compute cost;
+- matched-random paired intervals;
+- layer/expert aggregate effects with corrected intervals;
+- digit-length/carry/output-length/cell confound controls;
 - private counterfactual and recovery-trace counts.
 
 ## M32P deliverables
 
 - route-override implementation with fake and real-smoke tests;
+- private calibration sweep plus aggregate-only frontier report;
 - `data/prompts/m32p_proxy_routing_manifest.json` in a separate preregistration
-  commit before decision capture;
+  commit;
 - `src/m32p_proxy_counterfactual_routing.py` and tests;
+- `reports/telemetry/hf_m32p_proxy_benchmark_frontier.json`;
 - `reports/telemetry/hf_m32p_proxy_routing_feasibility.json`;
 - `reports/telemetry/hf_m32p_proxy_routing_evaluation.json`;
 - `docs/M32P_PROXY_COUNTERFACTUAL_ROUTING_STUDY.md`;
-- private gitignored route/counterfactual/recovery records;
+- private gitignored calibration/route/counterfactual/recovery records;
 - updated `STATE.md` and `reports/FINDINGS.md`;
 - full suite and commit-safety checks green.
 
 # Result-driven autoloop
 
 The operator authorizes up to three milestone completions beginning with M32P,
-subject to the normal four-hour and blocker limits.
+subject to normal time and blocker limits.
 
-## Branch 1 — H1 and H2 established
-
-Proceed to M33P: freeze the successful non-oracle policy and compare a compact
-router-bias table with a router-only trainable adapter on fresh data. Any
-training must be router-only, explicitly approved by the existing protocol,
-and evaluated on a sealed holdout. Then M34P may test partial-generation early
-rerouting and a second deterministic task category.
-
-## Branch 2 — H1 established, H2 not established
-
-Proceed to M33P route selection: improve non-oracle selection using trajectory
-summaries, CLUE-style centroids, and validation-frozen thresholds. Do not claim
-oracle recoverability is deployable.
-
-## Branch 3 — H1 not established
-
-Stop the expert-routing track. Return to structured repair or telemetry-gated
-tool routing. Do not spend another milestone tuning expert selection when equal-
-compute alternatives do not provide a useful recovery ceiling.
-
-## Branch 4 — hook/resource/protocol failure
-
-Stop immediately with the exact blocker. Do not silently change model, task
-set, top-k, compute budget, or causal unit.
+- H1 and H2 established: M33P freezes the successful non-oracle policy and
+  compares a compact router-bias table with a router-only adapter on fresh,
+  model-calibrated data; M34P may test partial-generation rerouting and a second
+  deterministic category.
+- H1 established, H2 not: M33P studies non-oracle route selection using
+  trajectory summaries and validation-frozen thresholds.
+- H1 not established: stop expert routing and return to structured repair or
+  telemetry-gated tools.
+- hook/resource/benchmark-frontier/protocol failure: stop with the exact blocker.
 
 # Required stop report
 
 Print:
 
-- latest commit SHA and milestones completed;
-- hook/no-op parity verdict;
-- model architecture and peak memory;
+- latest commit and milestones completed;
+- hook/no-op parity, architecture, peak memory;
+- calibration frontier and chosen benchmark composition;
+- realized split class counts;
 - H1/H2/H3 verdicts;
 - oracle recoverable fraction;
 - best non-oracle policy and matched-random delta;
 - regressions and compute per rescue;
-- tests passed and public artifacts;
-- private artifacts intentionally not committed;
+- tests/public artifacts/private artifacts withheld;
 - exact next operator decision.

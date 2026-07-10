@@ -1,0 +1,31 @@
+{
+ "schema_version": 1,
+ "run_kind": "m31_intervention_dataset",
+ "task_category": "integer_arithmetic_single_expression",
+ "n_tasks": 192,
+ "n_rows_evaluated": 192,
+ "undecided_excluded_counts": {},
+ "actual_action_type_distribution": {
+  "checker_needed": 192
+ },
+ "action_applicability_constant": true,
+ "original_label_distribution": {
+  "pass": 90,
+  "fail": 102
+ },
+ "retry_label_distribution": {
+  "pass": 89,
+  "fail": 103
+ },
+ "decode_cap_tokens": 64,
+ "original_decode_cap_reached_count": 0,
+ "retry_decode_cap_reached_count": 0,
+ "retry_temperature": 0.7,
+ "operands_disjoint_from_m29_and_m30": true,
+ "no_posthoc_selection": true,
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only intervention run summary"
+}

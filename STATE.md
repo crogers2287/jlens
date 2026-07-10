@@ -825,3 +825,30 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   production claim. Public artifacts aggregate-only; commit-safe passed; full
   suite green: 136 tests. Next per operator Branch 1: M31 telemetry-triggered
   intervention study.
+
+## M31 telemetry-triggered intervention study (2026-07-10) — MILESTONE COMPLETE
+- Preregistered manifest before generation: 192 fresh tasks (M29/M30-disjoint
+  operands), frozen M30 full_telemetry score (refit verified against the
+  published M30 confusion matrix, threshold .50), seeded temperature-0.7
+  single-retry protocol (opt-in capture-script sampling; greedy path
+  unchanged), four replace-on-retry policies, paired-delta metrics with a
+  fixed useful/harmful/not-established rule.
+- One GPU window: 192 greedy + 192 sampled captures; agents-a1 restored and
+  verified. 192/192 checker_needed; 0 undecided; 0 capped. Original 90
+  pass/102 fail; retry 89 pass/103 fail; trigger rate .516.
+- Policies: no_retry .469; always_retry .464 (90 false alarms, 7 introduced);
+  random_retry .458; telemetry_triggered .474 (11 false alarms, 4 rescued, 3
+  introduced). Deltas: vs no_retry +.005 [−.021,+.031]; vs random +.016
+  [−.010,+.042]. VERDICT: NOT ESTABLISHED.
+- Decomposition: the trigger replicated (~89% of triggered retries hit real
+  failures, third consecutive fresh set); the repair operator is the
+  bottleneck — a temperature resample rescues only ~4.5% of triggered
+  failures because these errors are systematic, not stochastic. Telemetry
+  gating was the only non-losing policy. 4 verified recovery traces written
+  (private, gitignored) — too few for training use.
+- Implication recorded for the next gate: keep the frozen trigger, replace
+  the repair operator (checker-guided/decomposition regeneration or tools).
+- Public artifacts aggregate-only; commit-safe passed; full suite green: 143
+  tests. Production gated. Autoloop: M30+M31 = 2 of 3 authorized milestones;
+  the branch-appropriate third milestone depends on an operator decision, so
+  stopping at the post-M31 gate.

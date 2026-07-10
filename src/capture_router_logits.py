@@ -61,7 +61,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--overwrite", action="store_true",
                    help="re-capture prompts whose output .pt already exists "
                         "(default: skip existing valid captures / resume)")
+    p.add_argument("--temperature", type=float, default=None,
+                   help="opt-in sampled decode at this temperature (>0); "
+                        "default None keeps the original greedy path")
+    p.add_argument("--gen-seed-prefix", default=None,
+                   help="with --temperature: deterministic per-task sampling "
+                        "seed = stable hash of '<prefix>:<prompt_id>'")
     return p.parse_args(argv)
+
+
+def _stable_seed(text: str) -> int:
+    """Deterministic 63-bit seed from a string (same scheme as evidence_hash)."""
+    h = 0
+    for ch in text:
+        h = (h * 131 + ord(ch)) & 0xFFFFFFFFFFFFFFFF
+    return h & 0x7FFFFFFFFFFFFFFF
 
 
 def check_arch(config) -> None:
@@ -144,7 +158,8 @@ def _final_logit_stats(logits, tok_id, top_k=5):
 
 def capture_one(tok, model, text: str, max_prompt_tokens: int,
                 max_new_tokens: int = 0, router_only: bool = False,
-                chat_template: bool = False):
+                chat_template: bool = False, temperature: float | None = None,
+                sample_seed: int | None = None):
     """Prefill capture; when max_new_tokens>0 ALSO greedily decodes that many
     tokens, capturing per-generated-token router logits, final-logit entropy,
     and the selected-token probability.
@@ -185,8 +200,18 @@ def capture_one(tok, model, text: str, max_prompt_tokens: int,
     past = out.past_key_values
     next_logits = out.logits[:, -1, :]  # predicts the first generated token
     eos = getattr(tok, "eos_token_id", None)
+    generator = None
+    if temperature is not None and temperature > 0:
+        generator = torch.Generator(device=next_logits.device)
+        generator.manual_seed(int(sample_seed or 0))
     for step in range(max_new_tokens):
-        tok_id = int(next_logits.argmax(-1).item())
+        if generator is None:
+            tok_id = int(next_logits.argmax(-1).item())
+        else:
+            probs = torch.softmax(next_logits.float() / temperature, dim=-1)
+            tok_id = int(torch.multinomial(
+                probs.reshape(-1), 1, generator=generator).item())
+        # Stats always describe the untempered predictive distribution.
         logit_stats = _final_logit_stats(next_logits, tok_id)
         with torch.inference_mode():
             out = model(input_ids=torch.tensor([[tok_id]], device=model.device),
@@ -247,10 +272,13 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"[jlens] skip {prompt_id}: existing valid capture "
                       f"(use --overwrite to replace)")
                 continue
+            sample_seed = (_stable_seed(f"{args.gen_seed_prefix}:{prompt_id}")
+                           if args.gen_seed_prefix is not None else None)
             input_ids, router, hidden, decode_steps = capture_one(
                 tok, model, prompt_text, args.max_prompt_tokens,
                 max_new_tokens=args.max_new_tokens, router_only=args.router_only,
-                chat_template=args.chat_template)
+                chat_template=args.chat_template, temperature=args.temperature,
+                sample_seed=sample_seed)
             payload = {
                 "prompt_id": prompt_id,
                 "input_ids": input_ids,

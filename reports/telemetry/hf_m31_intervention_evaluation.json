@@ -1,0 +1,111 @@
+{
+ "schema_version": 1,
+ "run_kind": "m31_intervention_evaluation",
+ "task_category": "integer_arithmetic_single_expression",
+ "frozen_score_source": "M30 full_telemetry (refit-verified, no tuning)",
+ "frozen_threshold_fail_probability": 0.5,
+ "n_rows_evaluated": 192,
+ "policy_semantics": "replace-on-retry; no policy consults labels",
+ "trigger_count": 99,
+ "trigger_rate": 0.515625,
+ "policy_metrics": {
+  "no_retry": {
+   "verified_success_rate": 0.46875,
+   "retries_used": 0,
+   "false_alarm_count": 0,
+   "errors_rescued": 0,
+   "errors_introduced": 0
+  },
+  "always_retry": {
+   "verified_success_rate": 0.4635416666666667,
+   "retries_used": 192,
+   "false_alarm_count": 90,
+   "errors_rescued": 6,
+   "errors_introduced": 7
+  },
+  "random_retry": {
+   "verified_success_rate": 0.4583333333333333,
+   "retries_used": 99,
+   "false_alarm_count": 43,
+   "errors_rescued": 3,
+   "errors_introduced": 5
+  },
+  "telemetry_triggered": {
+   "verified_success_rate": 0.4739583333333333,
+   "retries_used": 99,
+   "false_alarm_count": 11,
+   "errors_rescued": 4,
+   "errors_introduced": 3
+  }
+ },
+ "paired_success_deltas": {
+  "telemetry_triggered_vs_no_retry": {
+   "delta_success_rate": 0.005208333333333315,
+   "delta_success_bootstrap_95pct": [
+    -0.020833333333333332,
+    0.03125
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true
+  },
+  "telemetry_triggered_vs_random_retry": {
+   "delta_success_rate": 0.015625,
+   "delta_success_bootstrap_95pct": [
+    -0.010416666666666666,
+    0.041666666666666664
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true
+  },
+  "always_retry_vs_no_retry": {
+   "delta_success_rate": -0.005208333333333315,
+   "delta_success_bootstrap_95pct": [
+    -0.041666666666666664,
+    0.03125
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true
+  },
+  "random_retry_vs_no_retry": {
+   "delta_success_rate": -0.010416666666666685,
+   "delta_success_bootstrap_95pct": [
+    -0.041666666666666664,
+    0.015625
+   ],
+   "bootstrap_iterations": 2000,
+   "paired": true
+  }
+ },
+ "telemetry_policy_classification": "not_established",
+ "classification_rule": {
+  "useful": "telemetry_triggered minus no_retry success CI lower bound > 0 AND telemetry_triggered minus random_retry success CI lower bound > 0",
+  "harmful": "telemetry_triggered minus no_retry success CI upper bound < 0",
+  "not_established": "otherwise"
+ },
+ "recovery_traces": {
+  "criterion": "verified wrong-to-right rescues under telemetry_triggered only",
+  "count": 4,
+  "storage": "private gitignored JSONL",
+  "schema_fields": [
+   "trace_kind",
+   "task_id",
+   "band",
+   "prompt",
+   "expression",
+   "known_answer",
+   "original_output",
+   "original_verdict",
+   "retry_output",
+   "retry_verdict",
+   "trigger_p_fail",
+   "retry_temperature",
+   "verifier"
+  ]
+ },
+ "threshold_status": "candidate-only",
+ "production_policy_set": false,
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate policy metrics only; no ids/text/paths"
+}

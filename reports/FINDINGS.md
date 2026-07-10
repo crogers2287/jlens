@@ -2130,3 +2130,52 @@ the three-way classification rule (established/not_established/negative), a
 synthetic established verdict, an uninformative-telemetry fixture that must
 not report established, and public no-ID/text/path candidate-only output.
 Full repository suite: 136 tests green.
+
+## 194. M31 preregisters the intervention protocol with a frozen trigger
+The M31 manifest was committed before generation: 192 fresh M29/M30-disjoint
+tasks, the M30 full_telemetry model refit deterministically and verified to
+reproduce the published M30 holdout confusion exactly, the frozen .50
+threshold, a seeded temperature-0.7 single-retry decode (added to the capture
+script as an opt-in flag with the greedy path unchanged), four
+replace-on-retry policies that never consult labels, and a fixed
+useful/harmful/not-established rule.
+
+## 195. The telemetry retry policy is NOT ESTABLISHED as useful
+On 192 fresh tasks (90 pass/102 fail original), telemetry-triggered retry
+reached .474 verified success vs .469 no-retry (+.005 [−.021,+.031]) and
+.458 matched-compute random retry (+.016 [−.010,+.042]); both primary
+intervals include zero. always_retry (.464) and random_retry were net
+negative. No policy claim survives; no production retry policy exists.
+
+## 196. The trigger replicated; the resample repair is the bottleneck
+Only 11 of 99 telemetry-triggered retries were false alarms (~89% precision
+on a third consecutive fresh task set), versus 43/99 for random gating. But a
+single temperature-0.7 resample rescued only 4 of ~88 correctly-triggered
+failures (~4.5%); the retry decode's overall pass rate (46.4%) matches greedy
+(46.9%). Within-category arithmetic errors are systematic rather than
+stochastic, so redrawing from the same distribution seldom repairs them.
+Detection is validated; the repair operator is what failed.
+
+## 197. Telemetry gating minimizes intervention damage
+Replace-on-retry carries replacement risk: always-retry introduced 7 new
+errors on originally-correct outputs and random gating 5, while telemetry
+gating introduced 3 and avoided 79 of 90 potential false alarms at equal
+compute to random. Even with a weak repair operator, gating strictly
+dominates ungated retrying — the value shown is in *not* intervening on
+likely-correct outputs.
+
+## 198. Recovery traces exist but cannot yet support training
+Four verified wrong→right rescues under the telemetry policy were stored as
+private gitignored traces (aggregate count and schema public). Trace volume
+is bounded by the repair operator's ~4.5% rescue rate, so scaling trace
+generation before strengthening the repair operator would waste compute —
+the next-step decision recorded for the operator gate.
+
+## 199. M31 tests and milestone completion
+Seven CPU/no-network M31 tests cover deterministic M29/M30-disjoint
+generation, frozen-score verification accept/reject paths, zero and positive
+paired success-delta bootstraps, shared-retry policy accounting with a
+perfect-trigger fixture, uninformative and harmful fixtures mapping to their
+verdicts, and aggregate-only policy reports. The capture-script sampling
+addition leaves all greedy decode tests passing. Full repository suite: 143
+tests green.

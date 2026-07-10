@@ -1,70 +1,73 @@
-# steer.md — M27 frozen error-prediction holdout
+# steer.md — M28 telemetry ablation and calibration
 
-M1 through M26 are complete. The operator selected the objective
-error-prediction track (post-M25 option B). Do not redo the practical
-supervisor track, HF backend, action-routing holdouts, the M25 identical-input
-falsification, or the M26 dataset build.
+M1 through M27 are complete on the objective error-prediction track. Do not
+redo the M26 dataset build or the one-shot M27 frozen holdout evaluation; the
+holdout has now been read once and any further fitting against it must be
+labeled exploratory.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-## Current state after M26
+## Current state after M27
 
-- `data/prompts/m26_error_manifest.json` was committed before generation and
-  froze: the arithmetic category/template, four difficulty bands, per-ID 16/8
-  train/holdout split, seeded generation with no post-hoc selection, the
-  deterministic `math_checker` label rule, constant checker applicability, a
-  holdout seal, and the M27/M28 protocols.
-- 96/96 same-run Qwen captures with logits + 24×60 router telemetry exist in
-  private ignored locations along with per-task labels.
-- Train labels: 46 pass / 18 fail / 0 undecided (band_a 16/0, band_b 16/0,
-  band_c 13/3, band_d 1/15). The ≥8/≥8 modeling minimum is met.
-- Holdout verdicts and holdout telemetry aggregates remain sealed: no public
-  artifact reports them and no model has touched them.
-- Train fail-vs-pass separation is descriptive only (decode entropy g≈+3.0,
-  expert concentration g≈+1.9, router entropy g≈-1.9); difficulty band remains
-  an explicit confound to be priced by the metadata-only baseline.
-- Full suite green at 123 tests; production gated; candidate-only everywhere.
+- Frozen six-baseline holdout results (n=32, 9 fail/23 pass): majority .719;
+  metadata_only band shortcut .969; logits_only .969 (balanced .978, fail
+  recall 1.0); router_only .812 (fail recall 1.0, precision .60);
+  router_plus_logits .906; full_telemetry 1.000.
+- Licensed claim: within one controlled category, telemetry recovers and
+  slightly extends the difficulty signal; the increment over the metadata
+  shortcut is one task at n=32 and is not statistically established.
+- Router-only over-flags within category; logits-window signals carry most of
+  the error information.
+- All public artifacts aggregate-only; per-task labels/predictions private.
+- Full suite green at 123 tests; candidate-only and production gates active.
 
-## M27 — frozen holdout error prediction (current milestone)
+## M28 — telemetry ablation and calibration (current milestone)
 
-Goal: test whether M26 telemetry predicts pass/fail on the sealed 32-task
-holdout under the protocol frozen in the M26 manifest.
+Goal: identify which telemetry signals carry the predictive value observed in
+M27, and calibrate the full-telemetry score, all under the M28 protocol frozen
+in `data/prompts/m26_error_manifest.json`.
 
-Requirements (all already predeclared in `m26_error_manifest.json`):
+Requirements (predeclared in the M26 manifest):
 
-- No refit, feature change, threshold tuning, or task change after reading
-  holdout rows; the holdout is evaluated exactly once.
-- All six baselines: majority_class, metadata_only (band one-hot),
-  logits_only, router_only, router_plus_logits, full_telemetry.
-- Train-standardized nearest centroid, squared Euclidean, lexicographic tie
-  break, 2000-iteration fixed-seed bootstrap accuracy intervals.
-- Undecided rows excluded from modeling and reported.
-- Template-leakage framing: train and holdout share the one declared template
-  by design; the metadata-only baseline prices the difficulty-band shortcut.
-  Telemetry claims value only where it beats that baseline.
+- Single-feature and leave-one-out ablations over the ten full_telemetry
+  features (entropy, selected-token probability, top-k margin, router entropy,
+  expert concentration, decode-window shift, decode length, high-entropy and
+  low-confidence counts, margin trend), same frozen centroid family,
+  train-fit/holdout-eval.
+- Calibration score: softmax over negative squared centroid distances as
+  pseudo-probability of fail; 4 equal-count holdout reliability bins; ECE.
+- False-positive/false-negative analysis aggregated by band only.
+- Threshold proposal derived from the train split only and marked
+  candidate-only; no production threshold may be set.
+- Verifier contradiction stays excluded as a feature: the deterministic
+  verifier defines the label, so using it as input would leak labels.
+- Report feature importance honestly: n=32 holdout rankings are descriptive,
+  not stable importance.
 
 Deliverables:
 
-- `src/m27_frozen_error_holdout.py` and `tests/test_m27_frozen_error_holdout.py`
+- `src/m28_ablation_calibration.py` and `tests/test_m28_ablation_calibration.py`
   (already present with the frozen protocol; run against real private data)
-- `data/prompts/m27_holdout_manifest.json` (aggregate metadata only)
-- `reports/telemetry/hf_m27_frozen_error_evaluation.json` (all six baselines
-  with confidence intervals; aggregate-only)
-- `docs/M27_FROZEN_ERROR_HOLDOUT.md`
+- `reports/telemetry/hf_m28_ablation_calibration.json` (ablation table,
+  reliability curve, ECE, FP/FN by band, candidate-only threshold)
+- `docs/M28_TELEMETRY_ABLATION_CALIBRATION.md`
 - Full test suite green
 
-Stop condition: frozen evaluation complete with no post-capture tuning; all
-six baselines and intervals public and aggregate-only; tests green; production
-gated.
+Stop condition: feature importance reported without overstatement; calibration
+outputs marked candidate-only; no production threshold; tests green.
 
-## After M27
+## After M28
 
-M28 telemetry ablation and calibration under the manifest-frozen protocol:
-single-feature and leave-one-out ablations over the ten full_telemetry
-features, softmax-distance calibration with reliability bins and ECE,
-false-positive/false-negative analysis by band, and a train-derived threshold
-proposal that stays candidate-only. Verifier contradiction stays excluded as a
-feature because the verifier defines the label.
+The three-milestone autoloop limit (M26–M28) is reached at M28 completion.
+Stop after committing the M28 steer update. Candidate follow-ups requiring a
+new operator instruction:
+
+- Scale the within-category dataset (more tasks per band, finer bands) to
+  power the telemetry-vs-metadata increment test that n=32 cannot decide.
+- A second task category (e.g. deterministic string transformation) to test
+  whether the logits-window error signal transfers across categories.
+- Reviewed calibration of the candidate threshold against human-audited
+  outcomes before any production discussion.
 
 ## Repository hygiene
 

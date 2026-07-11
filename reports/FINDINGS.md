@@ -2308,3 +2308,15 @@ category-level competence prior that bypasses selective gating in favor of
 tool-on-every-task. A float32 top_k_mass artifact (1.0000001 > schema max 1)
 was clamped at capture write and telemetry read during M34; no-op for all
 previously validated milestones.
+
+## 214. The M35 campaign realizes the full competence-regime spread
+Extraction over all 1536 campaign captures (0 undecided): descriptive family
+fail rates add_carry .073, sub_borrow .041, div_exact .188, mul_carry .375,
+mod_mul .812, mul_add .953. The campaign delivers two high-competence, two
+mixed, and two near-total-failure regimes — the spread the hierarchical
+router (track A) and transfer detector (track B) studies require. One regime
+prediction was wrong in an informative direction: subtraction with borrowing
+was predicted mixed but the model is nearly perfect at it (.041), so borrow
+cascades do not stress this model the way carry-dense multiplication does.
+Splits: D 576 / R 288 / B_test 288 / A_test 384 rows, all sealed reads still
+unopened.

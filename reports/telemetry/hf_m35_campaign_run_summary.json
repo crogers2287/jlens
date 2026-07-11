@@ -1,0 +1,51 @@
+{
+ "schema_version": 1,
+ "run_kind": "m35_campaign_dataset",
+ "n_tasks": 1536,
+ "n_rows_extracted": 1536,
+ "undecided_excluded_counts": {},
+ "original_decode_cap_reached_count": 93,
+ "family_fail_rates_descriptive": {
+  "add_carry": {
+   "n_rows": 192,
+   "fail_rate": 0.07291666666666667,
+   "predicted_regime": "high"
+  },
+  "sub_borrow": {
+   "n_rows": 320,
+   "fail_rate": 0.040625,
+   "predicted_regime": "mixed"
+  },
+  "mul_carry": {
+   "n_rows": 320,
+   "fail_rate": 0.375,
+   "predicted_regime": "mixed"
+  },
+  "div_exact": {
+   "n_rows": 320,
+   "fail_rate": 0.1875,
+   "predicted_regime": "mixed"
+  },
+  "mul_add": {
+   "n_rows": 192,
+   "fail_rate": 0.953125,
+   "predicted_regime": "near_total_failure"
+  },
+  "mod_mul": {
+   "n_rows": 192,
+   "fail_rate": 0.8125,
+   "predicted_regime": "mixed_low"
+  }
+ },
+ "split_row_counts": {
+  "D": 576,
+  "R": 288,
+  "B_test": 288,
+  "A_test": 384
+ },
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only campaign extraction summary"
+}

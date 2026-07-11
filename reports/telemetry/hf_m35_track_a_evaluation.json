@@ -1,0 +1,77 @@
+{
+ "schema_version": 1,
+ "run_kind": "m35_track_a_evaluation",
+ "a_test_row_count": 384,
+ "router": {
+  "t_low": 0.05,
+  "t_high": 0.7,
+  "action_row_counts": {
+   "no_tool": 128,
+   "telemetry_gated_tool": 208,
+   "tool_on_every_task": 48
+  },
+  "invocation_count": 133,
+  "invocation_fraction": 0.3463541666666667,
+  "budget_fraction": 0.5
+ },
+ "policy_metrics": {
+  "hierarchical_router": {
+   "verified_success_rate_family_weighted": 0.94375,
+   "verified_success_rate_task_level": 0.9348958333333334,
+   "tool_invocations": 133
+  },
+  "count_matched_random": {
+   "verified_success_rate_family_weighted": 0.7270833333333333,
+   "verified_success_rate_task_level": 0.7578125,
+   "tool_invocations": 133
+  },
+  "global_threshold_same_budget": {
+   "verified_success_rate_family_weighted": 0.9402777777777778,
+   "verified_success_rate_task_level": 0.9322916666666666,
+   "tool_invocations": 133
+  },
+  "no_repair": {
+   "verified_success_rate_family_weighted": 0.5729166666666666,
+   "verified_success_rate_task_level": 0.6223958333333334,
+   "tool_invocations": 0
+  },
+  "tool_on_every_task": {
+   "verified_success_rate_family_weighted": 1.0,
+   "verified_success_rate_task_level": 1.0,
+   "tool_invocations": 384
+  }
+ },
+ "a_h1_fixed_budget": {
+  "comparisons": {
+   "router_vs_count_matched_random": {
+    "delta_family_weighted": 0.21666666666666667,
+    "delta_bootstrap_95pct": [
+     0.17708333333333334,
+     0.25555555555555554
+    ]
+   },
+   "router_vs_global_threshold_same_budget": {
+    "delta_family_weighted": 0.00347222222222221,
+    "delta_bootstrap_95pct": [
+     0.0,
+     0.010416666666666666
+    ]
+   }
+  },
+  "verdict": "not_established"
+ },
+ "a_h2_non_inferiority": {
+  "success_delta_vs_tool_everywhere_bootstrap_95pct": [
+   -0.07916666666666661,
+   -0.03541666666666673
+  ],
+  "non_inferiority_margin": 0.05,
+  "tool_calls_saved": 251,
+  "verdict": "not_established"
+ },
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/intervals only",
+ "router_config_hash": "d2b9333c3c8da41f"
+}

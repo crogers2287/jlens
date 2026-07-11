@@ -14,7 +14,9 @@
  "budget_fraction": 0.5,
  "non_inferiority_margin": 0.05,
  "comparator_seed": "m35:a-random-trigger",
- "sealed_reads_performed": [],
+ "sealed_reads_performed": [
+  "A_test"
+ ],
  "per_task_predictions_persisted_publicly": false,
  "privacy_check_status": "aggregate metrics only"
 }

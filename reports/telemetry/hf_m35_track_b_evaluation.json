@@ -1,0 +1,314 @@
+{
+ "schema_version": 1,
+ "run_kind": "m35_track_b_evaluation",
+ "config_hash": "8cb5e95f3adfc0c4",
+ "b_test_row_count": 288,
+ "primary_lofo": {
+  "add_carry": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   }
+  },
+  "sub_borrow": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   }
+  },
+  "mul_carry": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 14,
+    "trigger_precision": 1.0,
+    "trigger_recall": 0.7
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 15,
+    "trigger_precision": 0.9333333333333333,
+    "trigger_recall": 0.7
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 15,
+    "trigger_precision": 0.9333333333333333,
+    "trigger_recall": 0.7
+   }
+  },
+  "div_exact": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 8,
+    "trigger_precision": 0.5,
+    "trigger_recall": 0.36363636363636365
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 10,
+    "trigger_precision": 0.5,
+    "trigger_recall": 0.45454545454545453
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 10,
+    "trigger_precision": 0.5,
+    "trigger_recall": 0.45454545454545453
+   }
+  },
+  "mul_add": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 25,
+    "trigger_precision": 0.96,
+    "trigger_recall": 0.7058823529411765
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 26,
+    "trigger_precision": 0.9615384615384616,
+    "trigger_recall": 0.7352941176470589
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 26,
+    "trigger_precision": 0.9615384615384616,
+    "trigger_recall": 0.7352941176470589
+   }
+  },
+  "mod_mul": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 36,
+    "trigger_precision": 0.8888888888888888,
+    "trigger_recall": 1.0
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 36,
+    "trigger_precision": 0.8888888888888888,
+    "trigger_recall": 1.0
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 36,
+    "trigger_precision": 0.8888888888888888,
+    "trigger_recall": 1.0
+   }
+  }
+ },
+ "full_fit_per_family_descriptive": {
+  "add_carry": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 7,
+    "trigger_precision": 0.14285714285714285,
+    "trigger_recall": 0.3333333333333333
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 3,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   }
+  },
+  "div_exact": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 5,
+    "trigger_precision": 0.8,
+    "trigger_recall": 0.36363636363636365
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 14,
+    "trigger_precision": 0.35714285714285715,
+    "trigger_recall": 0.45454545454545453
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 11,
+    "trigger_count": 14,
+    "trigger_precision": 0.35714285714285715,
+    "trigger_recall": 0.45454545454545453
+   }
+  },
+  "mod_mul": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 36,
+    "trigger_precision": 0.8888888888888888,
+    "trigger_recall": 1.0
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 20,
+    "trigger_precision": 0.95,
+    "trigger_recall": 0.59375
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 32,
+    "trigger_count": 20,
+    "trigger_precision": 0.95,
+    "trigger_recall": 0.59375
+   }
+  },
+  "mul_add": {
+   "global": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 34,
+    "trigger_precision": 0.9705882352941176,
+    "trigger_recall": 0.9705882352941176
+   },
+   "per_family": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 25,
+    "trigger_precision": 0.96,
+    "trigger_recall": 0.7058823529411765
+   },
+   "hierarchical": {
+    "n_rows": 36,
+    "original_fail_count": 34,
+    "trigger_count": 36,
+    "trigger_precision": 0.9444444444444444,
+    "trigger_recall": 1.0
+   }
+  },
+  "mul_carry": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 16,
+    "trigger_precision": 0.9375,
+    "trigger_recall": 0.75
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 23,
+    "trigger_precision": 0.7391304347826086,
+    "trigger_recall": 0.85
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 20,
+    "trigger_count": 23,
+    "trigger_precision": 0.7391304347826086,
+    "trigger_recall": 0.85
+   }
+  },
+  "sub_borrow": {
+   "global": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   },
+   "per_family": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 2,
+    "trigger_precision": 0.0,
+    "trigger_recall": 0.0
+   },
+   "hierarchical": {
+    "n_rows": 60,
+    "original_fail_count": 2,
+    "trigger_count": 0,
+    "trigger_precision": null,
+    "trigger_recall": 0.0
+   }
+  }
+ },
+ "pooled_b_test_secondary": {
+  "global": {
+   "n_rows": 288,
+   "original_fail_count": 102,
+   "trigger_count": 91,
+   "trigger_precision": 0.9230769230769231,
+   "trigger_recall": 0.8235294117647058
+  },
+  "per_family": {
+   "n_rows": 288,
+   "original_fail_count": 102,
+   "trigger_count": 91,
+   "trigger_precision": 0.7252747252747253,
+   "trigger_recall": 0.6470588235294118
+  },
+  "hierarchical": {
+   "n_rows": 288,
+   "original_fail_count": 102,
+   "trigger_count": 93,
+   "trigger_precision": 0.8064516129032258,
+   "trigger_recall": 0.7352941176470589
+  }
+ },
+ "claim_scope": "LOFO establishes robustness across these named withheld families under this generator/prompt/model/decode/telemetry regime and nothing beyond; pooled held-out performance is secondary and is not transfer evidence",
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics only"
+}

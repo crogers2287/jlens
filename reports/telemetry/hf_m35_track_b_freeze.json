@@ -32,7 +32,9 @@
    "trigger_recall": 0.7839195979899497
   }
  },
- "sealed_reads_performed": [],
+ "sealed_reads_performed": [
+  "B_test"
+ ],
  "per_task_predictions_persisted_publicly": false,
  "privacy_check_status": "aggregate metrics only"
 }

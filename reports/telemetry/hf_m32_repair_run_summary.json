@@ -1,0 +1,29 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32_structured_repair_dataset",
+ "task_category": "integer_arithmetic_single_expression",
+ "n_tasks": 384,
+ "n_rows_evaluated": 384,
+ "undecided_excluded_counts": {},
+ "original_label_distribution": {
+  "pass": 181,
+  "fail": 203
+ },
+ "original_decode_cap_reached_count": 0,
+ "capture_phase_counts": {
+  "original": 384,
+  "resample_t07": 384,
+  "independent_deliberate": 203,
+  "checker_guided_repair": 203,
+  "diagnose_stage_a": 203,
+  "diagnose_then_repair": 203
+ },
+ "operands_disjoint_from_m29_m30_m31": true,
+ "no_posthoc_selection": true,
+ "action_applicability_constant": true,
+ "per_task_labels_or_predictions_persisted_publicly": false,
+ "raw_text_token_tensor_or_path_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate-only structured repair summary"
+}

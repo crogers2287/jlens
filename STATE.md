@@ -911,3 +911,30 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   prompting operators and telemetry-gated tools.
 - Public artifacts aggregate-only; commit-safe passed; suite green: 166
   tests. agents-a1 restored/verified. Production gated.
+
+## M32 structured repair (2026-07-11) — MILESTONE COMPLETE
+- Capture interrupted by a power outage mid diagnose_stage_b and resumed via
+  the idempotent capture driver (identical frozen prompts/settings); all six
+  phases complete: 384 originals, 384 resample_t07, 203 each for
+  independent_deliberate / checker_guided_repair / diag_a / diag_b.
+- VERDICTS: H1 repair_not_established (bundle .0056 vs resample .0333 on 180
+  triggered failures, delta CI [-.0556, 0]); H2 not_established (+.0026,
+  CI [0, .0078] vs both no_repair and random trigger). Structured operators
+  pass at ~0% while costing ~7x resample tokens. Verifier-first arms
+  introduced zero errors (stop condition held).
+- Frozen M30 trigger reproduced in-band: precision .900, recall .887.
+  Deterministic tool ceiling .940 vs .471 no_repair (180/200 rescues, zero
+  decode tokens). Model-side self-correction now negative across three
+  operator families (M31 resample, M32P rerouting, M32 structured prompting).
+- Secondary per-band descriptives (steer-required, non-confirmatory) show the
+  detector weakest mid-frontier (band_3 precision .64) and strongest on hard
+  bands (band_4/6 precision 1.0) — mirrors M32P off-distribution finding.
+- External consult (Codex gpt-5.6-terra) reviewed the design pre-evaluation;
+  its score-stratification concerns are answered by the band artifact and
+  moot for uplift given ~0% operator pass rates.
+- BRANCH DECISION (preregistered): model-side repair not improved + large tool
+  ceiling → M33 telemetry-gated tool routing, remaining milestone for
+  detector transfer/robustness. No self-correction claim.
+- Public artifacts aggregate-only; check_commit_safe passed; 9 private
+  recovery traces intentionally not committed; suite green: 168 tests.
+  Production gated.

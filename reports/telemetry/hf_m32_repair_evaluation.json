@@ -1,0 +1,191 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32_structured_repair_evaluation",
+ "task_category": "integer_arithmetic_single_expression",
+ "n_rows_evaluated": 384,
+ "frozen_trigger": {
+  "source": "M30 full_telemetry (refit-verified)",
+  "threshold_fail_probability": 0.5,
+  "trigger_count": 200,
+  "trigger_rate": 0.5208333333333334,
+  "trigger_precision": 0.9,
+  "trigger_recall": 0.8866995073891626,
+  "false_alarm_count": 20
+ },
+ "original_label_distribution": {
+  "pass": 181,
+  "fail": 203
+ },
+ "policy_metrics": {
+  "no_repair": {
+   "verified_success_rate": 0.4713541666666667,
+   "tasks_attempted": 0,
+   "candidates_consumed": 0,
+   "candidate_decode_tokens": 0,
+   "false_alarm_checks": 0,
+   "errors_rescued": 0,
+   "errors_introduced": 0,
+   "tokens_per_rescue": null
+  },
+  "always_structured_bundle": {
+   "verified_success_rate": 0.4739583333333333,
+   "tasks_attempted": 384,
+   "candidates_consumed": 609,
+   "candidate_decode_tokens": 77289,
+   "false_alarm_checks": 181,
+   "errors_rescued": 1,
+   "errors_introduced": 0,
+   "tokens_per_rescue": 77289.0
+  },
+  "random_trigger_structured_bundle": {
+   "verified_success_rate": 0.4713541666666667,
+   "tasks_attempted": 200,
+   "candidates_consumed": 312,
+   "candidate_decode_tokens": 39545,
+   "false_alarm_checks": 96,
+   "errors_rescued": 0,
+   "errors_introduced": 0,
+   "tokens_per_rescue": null
+  },
+  "telemetry_trigger_structured_bundle": {
+   "verified_success_rate": 0.4739583333333333,
+   "tasks_attempted": 200,
+   "candidates_consumed": 540,
+   "candidate_decode_tokens": 68601,
+   "false_alarm_checks": 20,
+   "errors_rescued": 1,
+   "errors_introduced": 0,
+   "tokens_per_rescue": 68601.0
+  },
+  "telemetry_trigger_resample_only": {
+   "verified_success_rate": 0.46875,
+   "tasks_attempted": 200,
+   "candidates_consumed": 200,
+   "candidate_decode_tokens": 3594,
+   "false_alarm_checks": 20,
+   "errors_rescued": 6,
+   "errors_introduced": 7,
+   "tokens_per_rescue": 599.0
+  },
+  "telemetry_trigger_tool_upper_bound": {
+   "verified_success_rate": 0.9401041666666666,
+   "tasks_attempted": 200,
+   "candidates_consumed": 0,
+   "candidate_decode_tokens": 0,
+   "false_alarm_checks": 20,
+   "errors_rescued": 180,
+   "errors_introduced": 0,
+   "tokens_per_rescue": 0.0
+  }
+ },
+ "h1_repair_operator": {
+  "population": "triggered_and_original_fail",
+  "n": 180,
+  "bundle_rescue_rate": 0.005555555555555556,
+  "resample_rescue_rate": 0.03333333333333333,
+  "delta_rescue_rate": -0.027777777777777776,
+  "delta_bootstrap_95pct": [
+   -0.05555555555555555,
+   0.0
+  ],
+  "verdict": "repair_not_established"
+ },
+ "h2_policy_usefulness": {
+  "comparisons": {
+   "telemetry_trigger_structured_bundle_vs_no_repair": {
+    "delta_success_rate": 0.0026041666666666297,
+    "delta_success_bootstrap_95pct": [
+     0.0,
+     0.0078125
+    ]
+   },
+   "telemetry_trigger_structured_bundle_vs_random_trigger_structured_bundle": {
+    "delta_success_rate": 0.0026041666666666297,
+    "delta_success_bootstrap_95pct": [
+     0.0,
+     0.0078125
+    ]
+   }
+  },
+  "verdict": "not_established"
+ },
+ "operator_candidate_stats": {
+  "independent_deliberate": {
+   "candidates_generated": 203,
+   "candidate_pass_rate": 0.0,
+   "mean_decode_tokens": 128.0
+  },
+  "checker_guided_repair": {
+   "candidates_generated": 203,
+   "candidate_pass_rate": 0.0,
+   "mean_decode_tokens": 126.32019704433498
+  },
+  "diagnose_then_repair": {
+   "candidates_generated": 203,
+   "candidate_pass_rate": 0.0049261083743842365,
+   "mean_decode_tokens": 126.41379310344827
+  },
+  "resample_t07": {
+   "candidates_generated": 203,
+   "candidate_pass_rate": 0.03940886699507389,
+   "mean_decode_tokens": 17.945812807881772
+  }
+ },
+ "operator_unique_rescues": {
+  "independent_deliberate": 0,
+  "checker_guided_repair": 0,
+  "diagnose_then_repair": 1,
+  "resample_t07": 8
+ },
+ "selectors_on_failing_originals": {
+  "n_with_full_candidate_telemetry": 203,
+  "verifier_first_pass_rate": 0.0049261083743842365,
+  "telemetry_rerank_pick_passes_given_any_passing": 0.0,
+  "first_candidate_pass_rate": 0.0,
+  "majority_pass_rate": 0.0,
+  "distribution_shift_caveat": "candidate telemetry comes from repair prompts outside the M30 training prompt family; rerank results are exploratory"
+ },
+ "tool_upper_bound_success_rate": 0.9401041666666666,
+ "tool_upper_bound_excluded_from_h1_h2": true,
+ "claim_rules": {
+  "h1_repair_improvement": {
+   "population": "correctly-triggered original failures (triggered AND original verdict fail)",
+   "comparison": "verifier-first structured-bundle rescue rate minus resample_t07 candidate rescue rate, paired per task",
+   "classification": {
+    "repair_improved": "paired 95% CI strictly above zero",
+    "repair_worse": "paired 95% CI strictly below zero",
+    "repair_not_established": "otherwise"
+   },
+   "bootstrap_seed": "m32:h1:bundle-vs-resample"
+  },
+  "h2_policy_usefulness": {
+   "comparisons": [
+    [
+     "telemetry_trigger_structured_bundle",
+     "no_repair"
+    ],
+    [
+     "telemetry_trigger_structured_bundle",
+     "random_trigger_structured_bundle"
+    ]
+   ],
+   "classification": {
+    "useful": "both paired success-delta 95% CIs strictly above zero",
+    "harmful": "delta versus no_repair 95% CI strictly below zero",
+    "not_established": "otherwise"
+   },
+   "bootstrap_seed_prefix": "m32:h2"
+  },
+  "tool_upper_bound_excluded_from_h1_h2": true,
+  "bootstrap_iterations": 2000
+ },
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/intervals only; no ids/text/paths",
+ "private_recovery_trace_counts": {
+  "total_candidate_traces": 812,
+  "verified_rescue_traces": 9,
+  "storage": "private gitignored JSONL"
+ }
+}

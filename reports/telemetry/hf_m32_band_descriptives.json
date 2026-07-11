@@ -1,0 +1,81 @@
+{
+ "schema_version": 1,
+ "run_kind": "m32_band_descriptives_secondary",
+ "confirmatory": false,
+ "note": "descriptive per-band frozen-trigger metrics required by the post-M32P steer; secondary and non-confirmatory",
+ "threshold_fail_probability": 0.5,
+ "bands": [
+  {
+   "band": "band_1",
+   "n_tasks": 64,
+   "original_fail_count": 1,
+   "trigger_count": 0,
+   "trigger_true_positives": 0,
+   "trigger_false_alarms": 0,
+   "resample_rescues": 0,
+   "bundle_rescues": 0,
+   "trigger_precision": null,
+   "trigger_recall": 0.0
+  },
+  {
+   "band": "band_2",
+   "n_tasks": 64,
+   "original_fail_count": 8,
+   "trigger_count": 6,
+   "trigger_true_positives": 5,
+   "trigger_false_alarms": 1,
+   "resample_rescues": 1,
+   "bundle_rescues": 0,
+   "trigger_precision": 0.8333333333333334,
+   "trigger_recall": 0.625
+  },
+  {
+   "band": "band_3",
+   "n_tasks": 64,
+   "original_fail_count": 30,
+   "trigger_count": 36,
+   "trigger_true_positives": 23,
+   "trigger_false_alarms": 13,
+   "resample_rescues": 2,
+   "bundle_rescues": 0,
+   "trigger_precision": 0.6388888888888888,
+   "trigger_recall": 0.7666666666666667
+  },
+  {
+   "band": "band_4",
+   "n_tasks": 64,
+   "original_fail_count": 61,
+   "trigger_count": 54,
+   "trigger_true_positives": 54,
+   "trigger_false_alarms": 0,
+   "resample_rescues": 0,
+   "bundle_rescues": 1,
+   "trigger_precision": 1.0,
+   "trigger_recall": 0.8852459016393442
+  },
+  {
+   "band": "band_5",
+   "n_tasks": 64,
+   "original_fail_count": 40,
+   "trigger_count": 44,
+   "trigger_true_positives": 38,
+   "trigger_false_alarms": 6,
+   "resample_rescues": 2,
+   "bundle_rescues": 0,
+   "trigger_precision": 0.8636363636363636,
+   "trigger_recall": 0.95
+  },
+  {
+   "band": "band_6",
+   "n_tasks": 64,
+   "original_fail_count": 63,
+   "trigger_count": 60,
+   "trigger_true_positives": 60,
+   "trigger_false_alarms": 0,
+   "resample_rescues": 1,
+   "bundle_rescues": 0,
+   "trigger_precision": 1.0,
+   "trigger_recall": 0.9523809523809523
+  }
+ ]
+}

@@ -2241,3 +2241,31 @@ only and commit-safe. Claims are proxy-scoped and say nothing about
 Agents-A1. Per the preregistered Branch 3, the expert-routing autoloop stops
 after this milestone: no router training, no expert blacklist, no production
 change. Full repository suite: 166 tests green.
+
+## 207. Structured repair operators are falsified on the proxy
+M32 (384 predeclared tasks, 181 pass / 203 fail, frozen M30 trigger) — H1
+repair_not_established and directionally reversed: on 180 correctly-triggered
+failures the verifier-first structured bundle rescues .0056 vs resample .0333
+(delta -.0278, 95% CI [-.0556, 0]). Candidate pass rates on failing originals:
+independent_deliberate .000, checker_guided_repair .000, diagnose_then_repair
+.0049, resample_t07 .0394 — the structured operators are weaker than plain
+resampling at ~7x the decode tokens. Verifier-first arms introduced zero
+errors; unguarded resample-only introduced 7 while rescuing 6.
+
+## 208. The telemetry trigger's value is tool routing, not model repair
+M32 H2 not_established (+.0026 vs no_repair and vs random trigger, CIs
+[0, .0078] not strictly positive). The frozen trigger reproduced in-band
+(precision .900, recall .887) and the deterministic tool ceiling is large:
+.940 verified success vs .471 no_repair, 180/200 triggered rescues at zero
+decode tokens. With M31 (resample ~4.5%) and M32P (rerouting at random rates),
+model-side self-correction is negative across three operator families; per the
+preregistered branch rules M33 is telemetry-gated tool routing plus detector
+transfer/robustness.
+
+## 209. Per-band trigger descriptives mirror the M32P frontier finding
+Secondary non-confirmatory band descriptives (src/m32_band_descriptives.py,
+aggregate-only with no-text guard): trigger precision/recall band_2 .83/.63,
+band_3 .64/.77, band_4 1.0/.89, band_5 .86/.95, band_6 1.0/.95. The detector
+is weakest mid-frontier and strongest where failure is near-certain —
+consistent with the M32P distribution-shift result, now visible within the
+M32 band structure itself.

@@ -92,6 +92,9 @@ def main(argv=None):
                     default="reports/telemetry/m36v_phase0_gate.json")
     ap.add_argument("--private-out",
                     default="reports/shadow/private/m36v_smoke_local.jsonl")
+    ap.add_argument("--max-tokens", type=int, default=64,
+                    help="decode cap; Agents-A1 is a thinking model and "
+                         "needs headroom to reach its final answer")
     args = ap.parse_args(argv)
 
     import vllm
@@ -121,7 +124,8 @@ def main(argv=None):
     }
 
     items = smoke_prompts()
-    params = SamplingParams(temperature=0.0, max_tokens=64, logprobs=5)
+    params = SamplingParams(temperature=0.0, max_tokens=args.max_tokens,
+                            logprobs=5)
     tok_start = time.time()
     outputs = llm.chat(
         [[{"role": "user", "content": item["prompt"]}] for item in items],
@@ -176,6 +180,7 @@ def main(argv=None):
                     "quantization_backend": str(quant),
                     "tensor_parallel_size": 2,
                     "max_model_len": 1024, "enforce_eager": True,
+                    "max_tokens": args.max_tokens,
                     "hidden_state_capture": "disabled"},
         "gates": gates,
         "all_gates_passed": all(v is True for v in gates.values()),

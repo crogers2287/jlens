@@ -1,0 +1,46 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36v_phase0_gate",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "model_ref_hash": "[h:9b11cf7f6663aa5c]",
+ "runtime": {
+  "vllm": "0.24.0",
+  "quantization_backend": "compressed-tensors",
+  "tensor_parallel_size": 2,
+  "max_model_len": 1024,
+  "enforce_eager": true,
+  "max_tokens": 512,
+  "hidden_state_capture": "disabled"
+ },
+ "gates": {
+  "model_type_qwen3_5_moe": true,
+  "routed_text_layers_40": true,
+  "experts_per_layer_256": true,
+  "top_8_active_experts": true,
+  "quantization_backend_reported": true,
+  "finite_logprobs": true,
+  "stable_text_generation": true,
+  "gpu_combined_within_44gib": true
+ },
+ "all_gates_passed": true,
+ "load_seconds": 365.3,
+ "generation_seconds_8_prompts": 79.33,
+ "output_tokens_total": 2399,
+ "tokens_per_second": 30.24,
+ "gpu_peak_mib_per_device": {
+  "gpu_0": 22323.0,
+  "gpu_1": 21889.0
+ },
+ "gpu_combined_peak_gib": 43.18,
+ "peak_process_rss_gib": 1.89,
+ "smoke_verifier_outcomes": {
+  "pass": 4,
+  "fail": 0,
+  "undecided": 0,
+  "unchecked": 4
+ },
+ "malformed_json_count": 2,
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate gates/metrics only; outputs private"
+}

@@ -21,11 +21,12 @@
   "gpus": "2x RTX 3090 24GiB"
  },
  "per_steer_options_for_operator": [
-  "A: attempt a different transformers/compressed-tensors version pair whose qwen3_5_moe path runs per-expert compressed modules without conversion (risk: research venv churn; the M22-M35 stack depends on transformers 5.13)",
-  "B: vLLM/SGLang load path \u2014 steer permits only if it exposes equivalent router-logit telemetry and hooks (vLLM does not by default -> black-box arm)",
-  "C: different checkpoint identity (operator decision per steer; no silent switch)"
+  "A (transformers version pair): no documented fix found for the DecompressExperts asymmetric per-expert path as of 2026-07; treat as speculative venv churn against the working M22-M35 stack",
+  "B (vLLM >= 0.22): supports Qwen3.5 MoE with compressed-tensors AWQ Marlin MoE (modular WNA16), so the checkpoint should RUN compressed; router logits are not a first-class API but published MoE-routing studies collect them by patching the MoE block \u2014 a bounded source patch could expose real router telemetry, satisfying the steer clause; otherwise B degrades to the black-box arm",
+  "C (different checkpoint identity): operator decision; no silent switch"
  ],
  "service_state_after": "GPUs freed (50/18 MiB); ollama up; llama-server processes present",
  "per_task_text_persisted_publicly": false,
- "privacy_check_status": "aggregate diagnosis only; no text/paths/weights"
+ "privacy_check_status": "aggregate diagnosis only; no text/paths/weights",
+ "research_note": "option facts from vLLM v0.22 release notes and 2026 MoE-routing literature; validated only as published claims, not yet reproduced locally"
 }

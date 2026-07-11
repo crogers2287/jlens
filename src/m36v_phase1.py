@@ -118,37 +118,26 @@ def run_stock(args) -> int:
     return 0
 
 
-def _decode_rpc_array(value):
-    """Decode one array field from a collective_rpc result.
+def load_capture(fetch_result: dict) -> dict:
+    """Rebuild a full capture dict from an RPC fetch result.
 
-    vLLM's msgpack layer encodes ndarrays as (dtype_str, shape, data)
-    triples (vllm/v1/serial_utils.py:_encode_ndarray) and only rebuilds
-    them for typed fields, so untyped dict values arrive as the raw
-    triple. Plain nested lists (test/dry-run path) are handled too.
+    Scalar counters travel over the RPC; array fields are reloaded from
+    the private npz the worker wrote (collective_rpc cannot carry large
+    ndarrays — vLLM ships them as out-of-band buffer indices that
+    untyped results cannot reconstruct).
     """
     import numpy as np
 
-    if isinstance(value, np.ndarray):
-        return value
-    if (isinstance(value, (list, tuple)) and len(value) == 3
-            and isinstance(value[0], str)
-            and isinstance(value[1], (list, tuple))
-            and isinstance(value[2], (bytes, bytearray, memoryview))):
-        dtype_str, shape, data = value
-        return np.frombuffer(data, dtype=np.dtype(dtype_str)).reshape(shape)
-    return np.asarray(value)
-
-
-def normalize_capture(cap: dict) -> dict:
-    """Coerce the array-valued capture fields back to typed ndarrays."""
-    import numpy as np
-
-    out = dict(cap)
-    for key, dtype in (("ids", np.int64), ("weights", np.float64),
-                       ("entropy", np.float64), ("mass", np.float64),
-                       ("raw_logits_sample", np.float64)):
-        if key in out:
-            out[key] = _decode_rpc_array(out[key]).astype(dtype)
+    out = dict(fetch_result)
+    npz_path = out.get("npz_path")
+    if npz_path:
+        with np.load(npz_path) as data:
+            out["ids"] = data["ids"].astype(np.int64)
+            out["weights"] = data["weights"].astype(np.float64)
+            out["entropy"] = data["entropy"].astype(np.float64)
+            out["mass"] = data["mass"].astype(np.float64)
+            out["raw_logits_sample"] = (
+                data["raw_logits_sample"].astype(np.float64))
     return out
 
 
@@ -188,13 +177,17 @@ def run_instrumented(args) -> int:
 
     # Arm D: telemetry enabled; per-prompt reset/fetch for alignment.
     llm.collective_rpc("jlens_set_telemetry_enabled", args=(True,))
+    PRIVATE_DIR.mkdir(parents=True, exist_ok=True)
     arm_d, captures = [], []
     t0 = time.time()
     for item in items:
         llm.collective_rpc("jlens_reset_telemetry")
         rec = run_smoke(llm, [item], args.max_tokens, want_routed=True)[0]
-        fetches = [normalize_capture(f)
-                   for f in llm.collective_rpc("jlens_fetch_telemetry")]
+        prefix = str((PRIVATE_DIR /
+                      f"m36v_phase1_cap_{item['prompt_id']}").resolve())
+        fetches = [load_capture(f) for f in
+                   llm.collective_rpc("jlens_fetch_telemetry",
+                                      args=(prefix,))]
         arm_d.append(rec)
         captures.append(fetches)
     arm_d_seconds = time.time() - t0
@@ -319,15 +312,8 @@ def run_instrumented(args) -> int:
         "seconds_enabled": round(arm_d_seconds, 2),
     })
 
-    # Private per-token dump (never committed).
-    PRIVATE_DIR.mkdir(parents=True, exist_ok=True)
-    private_path = PRIVATE_DIR / "m36v_phase1_telemetry_local.npz"
-    np.savez_compressed(
-        private_path,
-        **{f"p{i}_{k}": captures[i][0][k]
-           for i in range(len(captures))
-           for k in ("ids", "weights", "entropy", "mass", "raw_logits_sample")})
-
+    # Per-prompt npz files written by the workers under PRIVATE_DIR are
+    # the private per-token record; nothing array-shaped goes public.
     payload = {
         "schema_version": 1,
         "run_kind": "m36v_phase1_router_telemetry_gate",

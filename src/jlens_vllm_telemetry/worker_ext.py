@@ -58,10 +58,26 @@ class JlensWorkerExtension:
         collector.reset()
         return True
 
-    def jlens_fetch_telemetry(self) -> dict:
+    def jlens_fetch_telemetry(self, save_prefix: str | None = None) -> dict:
+        """Return scalar counters over RPC; write arrays to a private npz.
+
+        collective_rpc is a control plane: vLLM's msgpack layer ships large
+        ndarrays as out-of-band buffer indices that untyped results cannot
+        reconstruct. Arrays therefore go to disk (`{save_prefix}_rank{N}.npz`)
+        and only plain scalars/lists travel back over the RPC.
+        """
+        import numpy as np
+
         collector, _ = self._jlens_state
         out = collector.fetch()
         out["rank"] = getattr(self, "rank", -1)
+        arrays = {k: out.pop(k) for k in
+                  ("ids", "weights", "entropy", "mass", "raw_logits_sample")
+                  if k in out}
+        if save_prefix is not None and arrays:
+            path = f"{save_prefix}_rank{out['rank']}.npz"
+            np.savez_compressed(path, **arrays)
+            out["npz_path"] = path
         return out
 
     def jlens_uninstall_telemetry(self) -> bool:

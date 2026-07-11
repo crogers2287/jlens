@@ -1,0 +1,102 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36v_phase1_router_telemetry_gate",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "model_ref_hash": "[h:9b11cf7f6663aa5c]",
+ "runtime": {
+  "vllm": "0.24.0",
+  "torch": "2.11.0+cu130",
+  "cuda": "13.0",
+  "tensor_parallel_size": 2,
+  "max_model_len": 1024,
+  "enforce_eager": true,
+  "max_tokens": 512,
+  "max_num_seqs": 1,
+  "batch_invariant": "0",
+  "vllm_source_patched": false,
+  "override_mechanism": "worker_extension_cls + enable_return_routed_experts",
+  "override_hash": "2b3e50264b503bec",
+  "hidden_state_capture": "disabled"
+ },
+ "gates": {
+  "stock_parity": true,
+  "observation_parity": true,
+  "architecture_identity": true,
+  "dispatch_identity": true,
+  "weight_identity": true,
+  "feature_availability": true,
+  "bounded_overhead": true,
+  "privacy": true
+ },
+ "all_gates_passed": true,
+ "telemetry_path_classification": "full_telemetry",
+ "load_seconds": 374.3,
+ "gpu_combined_peak_gib": 40.47,
+ "detail": {
+  "parity_legs": {
+   "stock_vs_pre_install": false,
+   "pre_install_vs_installed_disabled": false,
+   "installed_disabled_vs_enabled": false
+  },
+  "parity_divergence": {
+   "stock_vs_pre_install": {
+    "prompts_differing": 6,
+    "first_divergence_min": 13,
+    "first_divergence_mean": 223.7
+   },
+   "pre_install_vs_installed_disabled": {
+    "prompts_differing": 5,
+    "first_divergence_min": 119,
+    "first_divergence_mean": 186.0
+   },
+   "installed_disabled_vs_enabled": {
+    "prompts_differing": 3,
+    "first_divergence_min": 13,
+    "first_divergence_mean": 166.0
+   }
+  },
+  "baseline_determinism": {
+   "stock_repeat_identical": false,
+   "stock_repeat_divergence": {
+    "prompts_differing": 5,
+    "first_divergence_min": 13,
+    "first_divergence_mean": 122.8
+   },
+   "batch_invariant": "0"
+  },
+  "parity_gate_semantics": "within_baseline_nondeterminism_envelope",
+  "parity_envelope": {
+   "margin_prompts": 2,
+   "first_divergence_floor": 8
+  },
+  "rows_total": 2609,
+  "id_mismatch_total": 0,
+  "dispatch_missed_total": 0,
+  "native_mismatch_rows": 0,
+  "native_len_delta_max": 1,
+  "rank_mismatch_rows": 0,
+  "sampled_layer_mismatch": {
+   "early": 0,
+   "middle": 0,
+   "late": 0
+  },
+  "weight_maxdiff": 0.0,
+  "weight_nonfinite": 0,
+  "weight_min": 0.008729713037610054,
+  "weight_normdev": 2.384185791015625e-07,
+  "raw_check_entropy_maxdev": 1.0533467653672801e-06,
+  "raw_check_mass_maxdev": 1.6358111942782472e-07,
+  "raw_check_weight_maxdev": 1.5762533955854252e-07,
+  "raw_check_id_exact_mismatch": 142,
+  "raw_check_tie_mass_gap_max": 0.0,
+  "raw_check_rows": 512,
+  "feature_decode_rows": 2389,
+  "telemetry_overhead_ratio": 1.332,
+  "seconds_pre_install": 374.36,
+  "seconds_installed_disabled": 373.98,
+  "seconds_enabled": 498.18
+ },
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate gates/metrics only; outputs private"
+}

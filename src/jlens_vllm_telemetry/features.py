@@ -116,10 +116,16 @@ def summary_vs_raw_check(capture: dict) -> dict:
     mass_re = top_p.sum(-1)
     w_re = top_p / np.clip(top_p.sum(-1, keepdims=True), 1e-12, None)
 
-    # Order-insensitive id comparison (topk kernels may order ties freely).
+    # Exact-set comparison is informational only: k-boundary ties (8th vs
+    # 9th expert with probabilities within float rounding) let the router
+    # kernel and a numpy recompute legitimately pick different sets. The
+    # binding criterion is mass equivalence: the captured set must carry
+    # the same top-k probability mass under the recomputed distribution.
     ids_sorted = np.sort(ids, axis=-1)
     re_sorted = np.sort(top_idx, axis=-1)
     id_mismatch_rows = int((ids_sorted != re_sorted).any(axis=-1).sum())
+    mass_captured = np.take_along_axis(probs, ids, axis=-1).sum(-1)
+    mass_gap = float((mass_re - mass_captured).max())
 
     # Weight comparison in sorted order to stay order-insensitive.
     w_sorted = np.sort(weights, axis=-1)
@@ -128,7 +134,8 @@ def summary_vs_raw_check(capture: dict) -> dict:
     result = {
         "raw_rows": int(R),
         "checked": True,
-        "id_mismatch_rowlayers": id_mismatch_rows,
+        "id_exact_mismatch_rowlayers": id_mismatch_rows,
+        "tie_equivalent_mass_gap": mass_gap,
         "entropy_maxdev": float(np.abs(ent_re - entropy).max()),
         "mass_maxdev": float(np.abs(mass_re - mass).max()),
         "weight_maxdev": float(np.abs(w_re_sorted - w_sorted).max()),
@@ -139,7 +146,7 @@ def summary_vs_raw_check(capture: dict) -> dict:
         },
     }
     result["passed"] = (
-        result["id_mismatch_rowlayers"] == 0
+        result["tie_equivalent_mass_gap"] <= RAW_MASS_TOL
         and result["entropy_maxdev"] <= RAW_ENTROPY_TOL
         and result["mass_maxdev"] <= RAW_MASS_TOL
         and result["weight_maxdev"] <= RAW_WEIGHT_TOL

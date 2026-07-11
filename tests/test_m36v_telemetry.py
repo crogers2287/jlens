@@ -246,6 +246,41 @@ def test_dispatch_mismatch_is_detected():
     assert cap["weight_maxdiff"][0] > 0.0
 
 
+def test_summary_vs_raw_tie_equivalence():
+    """A k-boundary tie (8th and 9th expert with equal probability) may be
+    broken differently by the kernel and the recompute; the mass-equivalence
+    criterion must accept it, while a genuinely wrong id must fail."""
+    rows, L = 1, 1
+    logits = np.zeros((rows, L, NUM_EXPERTS), dtype=np.float64)
+    logits[0, 0, :TOP_K + 1] = 5.0          # experts 0..4 tied at the boundary
+    probs = np.exp(logits[0, 0] - logits[0, 0].max())
+    probs /= probs.sum()
+    tied = list(range(TOP_K + 1))
+    ent = float(-(probs * np.log(np.clip(probs, 1e-12, None))).sum())
+    mass = float(probs[tied[:TOP_K]].sum())
+
+    def capture_with(ids_row):
+        w = probs[ids_row]
+        return {
+            "top_k": TOP_K,
+            "raw_logits_sample": logits.copy(),
+            "ids": np.array([[ids_row]]),
+            "weights": (w / w.sum()).reshape(1, 1, TOP_K),
+            "entropy": np.array([[ent]]),
+            "mass": np.array([[mass]]),
+        }
+
+    # Kernel picked experts 1..K (skipping 0), recompute picks 0..K-1: tie.
+    tie_check = summary_vs_raw_check(capture_with(tied[1:TOP_K + 1]))
+    assert tie_check["passed"], tie_check
+    assert tie_check["id_exact_mismatch_rowlayers"] == 1
+
+    # A non-tied expert (prob ~uniform tail) in the set must fail.
+    wrong = tied[:TOP_K - 1] + [NUM_EXPERTS - 1]
+    wrong_check = summary_vs_raw_check(capture_with(wrong))
+    assert not wrong_check["passed"]
+
+
 def test_inference_mode_capture_then_reset_outside():
     """Regression: capture runs inside torch.inference_mode (as in vLLM's
     forward), while reset()/fetch() are called outside it via RPC. With

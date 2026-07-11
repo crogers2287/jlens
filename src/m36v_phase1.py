@@ -103,18 +103,51 @@ def ids_equal(a, b):
             [r["output_token_ids"] for r in b])
 
 
+def divergence_stats(a, b):
+    """Aggregate-only comparison of two smoke passes' token ids."""
+    diffs = []
+    for ra, rb in zip(a, b):
+        ta, tb = ra["output_token_ids"], rb["output_token_ids"]
+        if ta == tb and ra["prompt_token_ids"] == rb["prompt_token_ids"]:
+            continue
+        first = next((i for i, (x, y) in enumerate(zip(ta, tb)) if x != y),
+                     min(len(ta), len(tb)))
+        diffs.append(first)
+    return {"prompts_differing": len(diffs),
+            "first_divergence_min": min(diffs) if diffs else None,
+            "first_divergence_mean": (round(sum(diffs) / len(diffs), 1)
+                                      if diffs else None)}
+
+
 def run_stock(args) -> int:
+    """Stock engine reference plus a same-engine repeat (determinism null).
+
+    If two back-to-back greedy passes in one unmodified engine already
+    diverge, token-level parity gates measure runtime nondeterminism, not
+    observation effects — the sidecar records that baseline.
+    """
     sampler = GpuPeakSampler()
     sampler.start()
     llm = make_llm(args.model_ref, instrumented=False)
     items = smoke_prompts()
-    results = run_smoke(llm, items, args.max_tokens)
+    pass1 = run_smoke(llm, items, args.max_tokens)
+    pass2 = run_smoke(llm, items, args.max_tokens)
     sampler.stop_flag = True
     PRIVATE_DIR.mkdir(parents=True, exist_ok=True)
     Path(args.stock_ids).write_text(
-        "".join(json.dumps(r) + "\n" for r in results))
-    print(f"[jlens] M36V phase1 stock arm: {len(results)} prompts, ids -> "
-          f"{args.stock_ids}", flush=True)
+        "".join(json.dumps(r) + "\n" for r in pass1))
+    Path(args.stock_ids + ".pass2").write_text(
+        "".join(json.dumps(r) + "\n" for r in pass2))
+    baseline = {
+        "stock_repeat_identical": ids_equal(pass1, pass2),
+        "stock_repeat_divergence": divergence_stats(pass1, pass2),
+        "batch_invariant": os.environ.get("VLLM_BATCH_INVARIANT", "0"),
+    }
+    Path(args.stock_ids + ".baseline.json").write_text(
+        json.dumps(baseline, indent=1) + "\n")
+    print(f"[jlens] M36V phase1 stock arm: {len(pass1)} prompts, "
+          f"repeat_identical={baseline['stock_repeat_identical']} "
+          f"divergence={baseline['stock_repeat_divergence']}", flush=True)
     return 0
 
 
@@ -193,12 +226,38 @@ def run_instrumented(args) -> int:
     arm_d_seconds = time.time() - t0
     llm.collective_rpc("jlens_set_telemetry_enabled", args=(False,))
 
+    # Persist arm ids privately for post-hoc diagnosis.
+    for name, arm in (("b", arm_b), ("c", arm_c), ("d", arm_d)):
+        (PRIVATE_DIR / f"m36v_phase1_arm_{name}_ids.jsonl").write_text(
+            "".join(json.dumps({k: r[k] for k in
+                                ("prompt_id", "prompt_token_ids",
+                                 "output_token_ids", "text")}) + "\n"
+                    for r in arm))
+
+    baseline_path = Path(args.stock_ids + ".baseline.json")
+    baseline = (json.loads(baseline_path.read_text())
+                if baseline_path.exists() else None)
+
     # ---- gate evaluation -------------------------------------------------
     gates = {}
     detail = {}
 
-    gates["stock_parity"] = ids_equal(stock, arm_b) and ids_equal(arm_b, arm_c)
-    gates["observation_parity"] = ids_equal(arm_c, arm_d)
+    parity_legs = {
+        "stock_vs_pre_install": ids_equal(stock, arm_b),
+        "pre_install_vs_installed_disabled": ids_equal(arm_b, arm_c),
+        "installed_disabled_vs_enabled": ids_equal(arm_c, arm_d),
+    }
+    detail["parity_legs"] = parity_legs
+    detail["parity_divergence"] = {
+        "stock_vs_pre_install": divergence_stats(stock, arm_b),
+        "pre_install_vs_installed_disabled": divergence_stats(arm_b, arm_c),
+        "installed_disabled_vs_enabled": divergence_stats(arm_c, arm_d),
+    }
+    detail["baseline_determinism"] = baseline
+
+    gates["stock_parity"] = (parity_legs["stock_vs_pre_install"]
+                             and parity_legs["pre_install_vs_installed_disabled"])
+    gates["observation_parity"] = parity_legs["installed_disabled_vs_enabled"]
 
     # Architecture identity.
     gates["architecture_identity"] = (
@@ -303,6 +362,11 @@ def run_instrumented(args) -> int:
             (c.get("mass_maxdev", 0.0) for c in raw_checks), default=0.0),
         "raw_check_weight_maxdev": max(
             (c.get("weight_maxdev", 0.0) for c in raw_checks), default=0.0),
+        "raw_check_id_exact_mismatch": sum(
+            c.get("id_exact_mismatch_rowlayers", 0) for c in raw_checks),
+        "raw_check_tie_mass_gap_max": max(
+            (c.get("tie_equivalent_mass_gap", 0.0) for c in raw_checks),
+            default=0.0),
         "raw_check_rows": sum(c.get("raw_rows", 0) for c in raw_checks),
         "feature_decode_rows": feature_rows,
         "telemetry_overhead_ratio": round(arm_d_seconds / arm_c_seconds, 3)
@@ -327,6 +391,7 @@ def run_instrumented(args) -> int:
             "tensor_parallel_size": 2, "max_model_len": 1024,
             "enforce_eager": True, "max_tokens": args.max_tokens,
             "max_num_seqs": 1,
+            "batch_invariant": os.environ.get("VLLM_BATCH_INVARIANT", "0"),
             "vllm_source_patched": False,
             "override_mechanism":
                 "worker_extension_cls + enable_return_routed_experts",

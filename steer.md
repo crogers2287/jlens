@@ -141,6 +141,25 @@ release tracks.
 Do not begin M35 until the operator selects A–D. A new autoloop requires an
 explicit new authorization and fresh milestone limit.
 
+## Operator decision (2026-07-11)
+
+The operator selects **A, B, and C in parallel**, consulting Codex as needed
+during design. Execution constraints:
+
+- A (hierarchical competence router) and B (transfer-robust detector) run as
+  one shared multi-family capture campaign with predeclared, disjoint sealed
+  splits: B's detector fitting/calibration data must never touch A's router
+  evaluation split, and neither may touch the other's holdout. Both manifests
+  are preregistered before any task generation or capture, after an external
+  design consult.
+- C (M33 policy in supervisor shadow mode) is advisory-only integration work:
+  no GPU research claims, aggregate-only logging, no production action or
+  threshold unlock without reviewed audit criteria.
+- GPU captures serialize on the research hardware; C proceeds concurrently on
+  CPU.
+- The M32/M33/M34 decision sets remain spent and are not reused for any M35
+  primary claim.
+
 ## Repository hygiene
 
 Do not commit model weights, caches, local paths, prompts, outputs, operands,

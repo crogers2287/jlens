@@ -1,0 +1,31 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36p_preflight_blocked",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "outcome": "blocked",
+ "blocker": {
+  "kind": "loader_dependency_incompatibility",
+  "summary": "transformers 5.13.0 qwen3_5_moe uses fused expert tensors (experts.gate_up_proj); the checkpoint stores 256 per-expert compressed-tensors modules per layer (weight_packed/scale/shape/zero_point, asymmetric INT4 group-32). The loader runs an unconditional DecompressExperts weight conversion that (1) fails with AssertionError: Asymmetric quant requires zero-point values although zero-points exist in the ckpt, and (2) decompresses INT4 to BF16 during load, which cannot fit the 44 GiB two-GPU gate by construction.",
+  "evidence": [
+   "DecompressExperts on tensors destined for model.layers.39.mlp.experts.gate_up_proj. Ckpt contains: 6",
+   "AssertionError: Asymmetric quant requires zero-point values",
+   "torch.OutOfMemoryError during conversion on GPU 1"
+  ],
+  "first_attempt_note": "initial load also hit an allocator-fragmentation OOM, fixed with PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True; the conversion failure above is the real blocker"
+ },
+ "environment": {
+  "transformers": "5.13.0",
+  "compressed_tensors": "0.17.1",
+  "torch": "2.5.1+cu121",
+  "gpus": "2x RTX 3090 24GiB"
+ },
+ "per_steer_options_for_operator": [
+  "A: attempt a different transformers/compressed-tensors version pair whose qwen3_5_moe path runs per-expert compressed modules without conversion (risk: research venv churn; the M22-M35 stack depends on transformers 5.13)",
+  "B: vLLM/SGLang load path \u2014 steer permits only if it exposes equivalent router-logit telemetry and hooks (vLLM does not by default -> black-box arm)",
+  "C: different checkpoint identity (operator decision per steer; no silent switch)"
+ ],
+ "service_state_after": "GPUs freed (50/18 MiB); ollama up; llama-server processes present",
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate diagnosis only; no text/paths/weights"
+}

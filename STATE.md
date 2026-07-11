@@ -999,3 +999,18 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   (cyankiwi/Agents-A1-AWQ-INT4) load/quality/telemetry preflight, then the
   three-arm raw-vs-jLens benchmark. Checkpoint download + compressed-tensors
   dependency authorized for the research venv only.
+
+## M36P AWQ preflight (2026-07-11) — BLOCKED, operator decision required
+- Checkpoint downloaded complete at pinned revision 3e522d4 (24.5 GB,
+  authenticated aria2c per hf-download pattern); compressed-tensors 0.17.1
+  installed in the research venv (with recovery from pip's silent torch
+  upgrade — venv restored to system torch 2.5.1, suite re-verified green).
+- BLOCKER (finding 218): transformers 5.13 qwen3_5_moe fused-expert
+  DecompressExperts conversion is incompatible with the checkpoint's
+  per-expert asymmetric INT4 modules — assertion failure + inherent
+  BF16 decompression that cannot fit the 44 GiB gate.
+- Recorded options: (A) different transformers/compressed-tensors pair that
+  runs per-expert modules compressed (venv-churn risk to M22-M35 stack);
+  (B) vLLM/SGLang only if router telemetry is exposed (else black-box arm);
+  (C) different checkpoint identity — operator decides. No silent switch.
+- GPUs freed; ollama/llama-server verified up. Suite 205 green.

@@ -2351,3 +2351,19 @@ per-family splits (M35B pooled), model-side repair (M31/M32/M32P), and
 frozen-detector transfer (M34) all failed to beat it. Remaining validated
 gap: structurally novel families (division) need representation in fitting
 data — detector coverage, not architecture, is the binding constraint.
+
+## 218. M36P preflight BLOCKED — fused-expert conversion incompatibility
+The pinned cyankiwi/Agents-A1-AWQ-INT4 checkpoint (compressed-tensors
+pack-quantized, asymmetric INT4 group-32) stores 256 per-expert modules per
+routed layer with zero-points present. transformers 5.13's qwen3_5_moe
+runtime uses fused expert tensors and runs an unconditional DecompressExperts
+conversion at load, which (1) fails an asymmetric-quant zero-point assertion
+despite the tensors existing, and (2) decompresses INT4 to BF16 during load
+— structurally unable to fit the 44 GiB two-GPU gate even if the assertion
+were fixed. A first-attempt allocator-fragmentation OOM was separately fixed
+with expandable segments; the conversion failure is the real blocker.
+Architecture gates verified from config only: qwen3_5_moe, 40 routed text
+layers, 256 experts, top-8. GPUs freed and the serving stack verified up
+afterward. Per the preregistered M36P outcome rules the milestone is
+BLOCKED; the operator decides the next model identity or load path — no
+silent checkpoint switch.

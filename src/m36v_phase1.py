@@ -37,6 +37,18 @@ from jlens_vllm_telemetry.report_guard import assert_aggregate_only  # noqa: E40
 
 WEIGHT_IDENTITY_TOL = 1e-6     # router-return vs dispatch-entry, frozen
 WEIGHT_NORMDEV_TOL = 5e-3      # |sum(top8 weights) - 1|, fp16-derived, frozen
+
+# Frozen parity-envelope criteria, used ONLY when the unpatched stock
+# engine's own repeat pass diverges (measured baseline nondeterminism —
+# WNA16 Marlin MoE kernels are not run-to-run deterministic and
+# VLLM_BATCH_INVARIANT rejects this deployment config). Token identity is
+# then unmeasurable for any configuration, so a parity leg passes when its
+# divergence stays within the stock-vs-stock envelope: no more than
+# baseline+margin prompts differing, and no divergence starting earlier
+# than the floor (a systematically earlier onset would indicate a real
+# behavioral change rather than amplified kernel jitter).
+PARITY_MARGIN_PROMPTS = 2
+PARITY_FIRST_DIV_FLOOR = 8
 SAMPLED_LAYER_POINTS = ("early", "middle", "late")
 PRIVATE_DIR = Path("reports/shadow/private")
 
@@ -255,9 +267,40 @@ def run_instrumented(args) -> int:
     }
     detail["baseline_determinism"] = baseline
 
-    gates["stock_parity"] = (parity_legs["stock_vs_pre_install"]
-                             and parity_legs["pre_install_vs_installed_disabled"])
-    gates["observation_parity"] = parity_legs["installed_disabled_vs_enabled"]
+    def parity_within_baseline(leg_stats):
+        if leg_stats["prompts_differing"] == 0:
+            return True
+        base = baseline and baseline.get("stock_repeat_divergence")
+        if not base or base["prompts_differing"] == 0:
+            return False
+        if (leg_stats["prompts_differing"]
+                > base["prompts_differing"] + PARITY_MARGIN_PROMPTS):
+            return False
+        floor = min(base["first_divergence_min"], PARITY_FIRST_DIV_FLOOR)
+        return leg_stats["first_divergence_min"] >= floor
+
+    strict_runtime = bool(baseline and baseline.get("stock_repeat_identical"))
+    detail["parity_gate_semantics"] = (
+        "strict_token_identity" if strict_runtime
+        else "within_baseline_nondeterminism_envelope")
+    detail["parity_envelope"] = {
+        "margin_prompts": PARITY_MARGIN_PROMPTS,
+        "first_divergence_floor": PARITY_FIRST_DIV_FLOOR,
+    }
+    if strict_runtime:
+        gates["stock_parity"] = (
+            parity_legs["stock_vs_pre_install"]
+            and parity_legs["pre_install_vs_installed_disabled"])
+        gates["observation_parity"] = (
+            parity_legs["installed_disabled_vs_enabled"])
+    else:
+        dv = detail["parity_divergence"]
+        gates["stock_parity"] = (
+            parity_within_baseline(dv["stock_vs_pre_install"])
+            and parity_within_baseline(
+                dv["pre_install_vs_installed_disabled"]))
+        gates["observation_parity"] = parity_within_baseline(
+            dv["installed_disabled_vs_enabled"])
 
     # Architecture identity.
     gates["architecture_identity"] = (

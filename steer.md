@@ -1,75 +1,150 @@
-# steer.md — M34 second-category detector transfer
+# steer.md — post-M34 decision gate
 
-M1 through M33 are complete. M33 established the first positive intervention
-result of the repair track: on a fresh disjoint decision set the frozen M30
-trigger reproduced (precision .902 / recall .889) and verifier-first tool
-routing gated on it was USEFUL (.938 vs .435 no-repair CI [.453, .555]; vs
-.714 random routing CI [.177, .271]) and EFFICIENT (uplift retention .889
-CI [.846, .929] at invocation fraction .557). Zero errors introduced.
+M1 through M34 are complete. The bounded M32–M34 autoloop is finished and
+must not continue automatically. Do not redo the M32 structured-repair study,
+the M33 telemetry-gated tool-routing study, or the M34 second-category transfer
+test. Their decision sets are spent.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-## Operator decision
+## Autoloop status
 
-Per Branch 3 of `docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`, M34 is a
-**second-category transfer test of the frozen detector**, not trace scaling.
-This is the final milestone of the bounded autoloop budget authorized at M32
-reactivation (M32, M33 complete). After M34 the loop STOPS and prints the
-required final stop report regardless of outcome.
+The operator-authorized three-milestone loop completed:
 
-## M34 protocol
+1. M32 — structured model-side repair
+2. M33 — telemetry-gated deterministic tool routing
+3. M34 — second-category detector transfer
 
-Predeclare `data/prompts/m34_transfer_manifest.json` BEFORE any task
-generation or capture, in its own commit, then execute exactly as written.
+The loop budget is exhausted. Stop until the operator selects a new direction.
 
-- Category shift: mixed arithmetic expressions `a*b + c` (the M19-M24 prompt
-  family), a genuine shift from the pure-multiplication M30 training
-  distribution while remaining deterministically checkable by the existing
-  math verifier.
-- Decision set: 384 tasks over the six M32/M33 multiplication bands with a
-  predeclared additive term range (c drawn per band from [2, 99]), seed
-  `m34-transfer-v1`, (a, b) tuples disjoint from everything M29-M33 generate.
-- One GPU capture phase: greedy 64-token originals, same validity rules.
-- Detector: the frozen M30 classifier, refit deterministically, threshold 0.5,
-  scored on the same feature recipe. No M34 labels may influence triggering;
-  no refitting, recalibration, or threshold tuning on M34 data.
-- Tool: deterministic integer evaluator on the task's own predeclared
-  expression, verifier-first, zero decode tokens (as in M33).
-- Policies: `no_repair`, `tool_on_every_task`, `random_trigger_tool`
-  (count-matched, seed `m34:random-trigger`), `telemetry_trigger_tool`.
-- T1 transfer classification (primary, descriptive thresholds preregistered):
-  - `transfer_maintained`: precision >= .80 AND recall >= .75;
-  - `transfer_degraded`: below either bound but routing H1 still useful;
-  - `transfer_failed`: otherwise.
-- H1 routing usefulness and H2 routing efficiency: identical claim rules to
-  M33 (paired bootstrap 95% CIs strictly > 0 for both H1 comparisons;
-  retention >= .80 at invocation fraction <= .60), bootstrap seeds
-  predeclared (`m34:h1`, `m34:h2:retention`, 2000 iterations). H1/H2 verdicts
-  are reported under whichever T1 class obtains — there is no reproduction
-  gate blocking them in M34, because degradation itself is the measurement.
-- Report per-band trigger and routing metrics descriptively (aggregate-only),
-  secondary and non-confirmatory.
+## Current evidence
 
-## Stop conditions
+### M32 — structured model-side repair: negative
 
-Stop immediately and report the exact blocker on: any policy arm replacing a
-passing original, privacy/commit-safety failure, test failure, tuple
-exhaustion during generation, or unresumable capture invalidity.
+- 384 preregistered fresh multiplication tasks with the frozen M30 trigger.
+- Structured prompting operators rescued fewer triggered failures than the
+  M31 resample baseline: .0056 versus .0333; H1 CI [-.0556, 0].
+- The telemetry-gated structured bundle did not establish an improvement over
+  no repair or matched-random triggering; H2 CI [0, .0078].
+- The frozen trigger reproduced in-distribution at precision .900 and recall
+  .887.
+- The deterministic tool ceiling reached .940 verified success versus .471 for
+  the original model answers.
 
-## Required final stop report (end of autoloop)
+Conclusion: deliberate re-solve, checker-guided prompting, and
+ diagnose-then-repair did not fix the proxy model's systematic arithmetic
+failures. Model-side self-repair is not supported by this evidence.
 
-After the M34 result commit, print the `docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md`
-required final stop report: latest commit SHA and milestone count; M32 H1/H2
-verdicts; trigger precision and rescue rates across M32/M33/M34; best
-model-side operator and compute per rescue; whether M33/M34 ran and why;
-public artifacts created; private traces intentionally not committed; tests
-passed; and the M34 transfer classification with its routing verdicts. The
-autoloop then STOPS; any further milestone requires a fresh operator decision.
+### M33 — telemetry-gated tool routing: positive in mixed competence
+
+- Fresh disjoint multiplication set with a mixed model-competence regime.
+- Frozen trigger reproduced at precision .902 and recall .889.
+- Verified success:
+  - no repair: .435
+  - matched-random tool routing: .714
+  - telemetry-triggered tool routing: .938
+  - tool on every task: 1.000
+- Telemetry routing beat both no repair and matched-random routing with paired
+  confidence intervals strictly above zero.
+- It retained .889 of the full-tool uplift [CI .846, .929] while invoking the
+  tool on .557 of tasks.
+- Verifier-first semantics introduced zero new errors.
+
+Conclusion: when the model has mixed competence, telemetry can allocate a
+trusted deterministic tool substantially better than random while saving
+roughly 44% of tool calls versus tool-on-every-task.
+
+### M34 — frozen detector transfer: failed
+
+- Fresh 384-task category shift from `a*b` to `a*b+c`.
+- The proxy model collapsed: 18 pass / 366 fail (95.3% failure).
+- Frozen trigger precision .966 was trivial at that failure base rate; recall
+  fell to .612 and missed 39% of failures.
+- Telemetry-triggered tool routing .630 versus matched-random .617; paired CI
+  [-.060, .083]. H1 not established.
+- Uplift retention .612 at invocation fraction .604; H2 not established.
+- Zero errors introduced.
+
+Conclusion: the M30 detector is real but distribution-bound. Selective gating
+has value only where the model has a meaningful mixture of successes and
+failures. When nearly everything fails, the correct policy is tool-on-every-
+task rather than attempting to predict individual failures.
+
+## Closed research branches
+
+- Naive resampling: ineffective (M31, about 4.5% rescue).
+- Structured model-side prompting repair: ineffective (M32).
+- Counterfactual expert rerouting on the Qwen proxy: no advantage over matched
+  random perturbation (M32P); expert-routing track closed for this model.
+- Agents-A1 expert-routing execution remains blocked by checkpoint memory
+  geometry on the dual-3090 research hardware. The Phase-0 feasibility record
+  remains valid and must not be reframed as a causal result.
+
+## Research position
+
+The strongest supported jLens architecture is now hierarchical:
+
+1. **Category/regime competence gate** — decide whether the model is operating
+   in a high-competence, mixed-competence, or near-total-failure regime.
+2. **Telemetry risk gate** — inside a mixed-competence regime, identify which
+   individual answers should be checked or routed to a tool.
+3. **Verifier-first action** — never replace an already verified-correct answer
+   with a failing repair.
+4. **Direct tool policy** — bypass selective gating when category-level evidence
+   shows the model fails almost universally.
+
+Telemetry should not be treated as a universal, model-independent threshold.
+Feature capture and control infrastructure may generalize, but calibration,
+thresholds, and competence priors must be validated per model, task family,
+and decode protocol.
+
+## Required operator decision before M35
+
+Choose exactly one direction:
+
+### A. Hierarchical competence router (recommended)
+
+Build and preregister a category/regime-level controller that chooses among:
+
+- model answer with no tool;
+- telemetry-gated selective tool use;
+- tool-on-every-task.
+
+Use several deterministic task families spanning high, mixed, and near-total
+failure regimes. Freeze category features, competence thresholds, policies,
+and sealed evaluation splits before decision capture. Primary question: can a
+hierarchical controller retain near-full verified uplift while using fewer
+resources than tool-on-every-task and avoiding the M34 transfer failure?
+
+### B. Detector robustness and recalibration
+
+Develop a detector designed to transfer across task structure rather than
+reusing the frozen M30 score. Include carry structure, task-family indicators,
+normalized telemetry, and category-specific calibration. Compare global,
+per-category, and hierarchical detectors on fresh sealed holdouts. No claim of
+model-independent telemetry unless transfer is actually established.
+
+### C. Productize the M33 policy in shadow mode
+
+Wire telemetry-gated verifier/tool routing into the practical supervisor as an
+advisory-only shadow policy on real local workloads. Record aggregate compute
+savings, verifier outcomes, false alarms, misses, and category-level competence
+statistics. No production action or threshold unlock without reviewed audit
+criteria.
+
+### D. End the telemetry research program
+
+Document M30–M34 as the final research result and return exclusively to the
+practical supervisor, retrieval, verifier, review, model-comparison, CLI, and
+release tracks.
+
+Do not begin M35 until the operator selects A–D. A new autoloop requires an
+explicit new authorization and fresh milestone limit.
 
 ## Repository hygiene
 
-Unchanged: no operands, prompts, outputs, per-task predictions/labels/
-triggers, token ids/text, raw tensors, or local model paths in public
-artifacts; aggregate-only public reports; `src/check_commit_safe.py` must pass
-on anything staged under `reports/`. Candidate-only; production remains gated;
-no weight training; no training dataset from tool outputs.
+Do not commit model weights, caches, local paths, prompts, outputs, operands,
+per-task predictions/labels/triggers, token ids/text, raw tensors, detailed
+counterfactual records, or private tool results. Public artifacts remain
+aggregate-only. Candidate outputs remain candidates, no tool output becomes a
+training label without a future audited protocol, and production remains gated.

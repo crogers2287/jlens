@@ -181,3 +181,12 @@ def test_repository_tracks_no_model_weights_or_cache_files():
            if path.lower().endswith(forbidden_suffixes)
            or Path(path).name.lower() in forbidden_names]
     assert bad == []
+
+
+def test_top_k_mass_clamped_to_one():
+    from hf_telemetry_backend import _logit_stats
+    # float32-style rounding can make the top-k probability sum exceed 1.0;
+    # the schema caps probabilities at 1, so the stat must clamp (M34 fix)
+    probs = [0.5000001, 0.5000001]
+    stats = _logit_stats(probs, selected_token_id=0, top_k=2)
+    assert stats["top_k_mass"] <= 1.0

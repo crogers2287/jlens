@@ -139,7 +139,7 @@ def _logit_stats(logits, selected_token_id=None, top_k=2):
         "entropy": entropy,
         "selected_token_probability": probs[selected],
         "top_k": k,
-        "top_k_mass": sum(ranked[:k]),
+        "top_k_mass": min(1.0, sum(ranked[:k])),
         "top_k_margin": margin,
     }
 

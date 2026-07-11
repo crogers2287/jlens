@@ -2320,3 +2320,34 @@ was predicted mixed but the model is nearly perfect at it (.041), so borrow
 cascades do not stress this model the way carry-dense multiplication does.
 Splits: D 576 / R 288 / B_test 288 / A_test 384 rows, all sealed reads still
 unopened.
+
+## 215. Family-refit detectors transfer where the frozen detector could not
+M35 track B LOFO (full-pipeline refits, withheld family indicator mapped to
+unknown, sealed B-test): withheld mul_carry global 1.00/.70 precision/recall,
+mul_add .96/.71, mod_mul .89/1.00 — but div_exact fails (.50 precision) and
+the high-competence families (2-3 sparse failures) trigger nothing. Claim
+restricted to these named families under this regime. Pooled secondary:
+global .92/.82 > hierarchical .81/.74 > per-family .73/.65. Contrast M34:
+the unrefit frozen detector managed recall .612 — refitting normalization
+and family encoding on related families recovers most failure-bearing
+regimes, with division as the structural outlier.
+
+## 216. The competence hierarchy is redundant over a global detector
+M35 track A sealed A-test: the hierarchical router (.944 family-weighted
+verified success at .346 invocation fraction) beats count-matched random
+(+.217, CI [.177, .256]) but is statistically indistinguishable from a plain
+global-detector threshold at the same budget (+.003, CI [0, .010]) — A-H1
+not established by the preregistered both-comparators rule. A-H2 misses the
+-.05 non-inferiority bound ([-.079, -.035]) while saving 251/384 tool calls.
+The global detector's family indicators already encode category difficulty;
+an explicit competence-prior routing layer adds nothing on this campaign.
+
+## 217. The strongest supported jLens artifact after M35
+One well-fit global telemetry detector (scalar features + family
+indicators), thresholded to the tool budget: .94 verified success at ~35% of
+tool calls vs .57 no-repair, with verifier-first semantics introducing zero
+errors across every arm and sealed read of the campaign. Hierarchy (M35A),
+per-family splits (M35B pooled), model-side repair (M31/M32/M32P), and
+frozen-detector transfer (M34) all failed to beat it. Remaining validated
+gap: structurally novel families (division) need representation in fitting
+data — detector coverage, not architecture, is the binding constraint.

@@ -975,3 +975,27 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   183 tests. Production gated.
 - BOUNDED AUTOLOOP COMPLETE (M32, M33, M34). Loop STOPS per steer.md; any
   further milestone requires a fresh operator decision.
+
+## M35 parallel tracks A/B/C (2026-07-11) — MILESTONE COMPLETE
+- Campaign: 1536 tasks / six families / fail rates .041-.953; splits
+  D 576 / R 288 / B-test 288 / A-test 384; each sealed set read exactly once
+  in order; commits: manifest 47f4ed3 (+2ad210b amendment), impl 2ad210b,
+  extraction 089de66/7ad320c, track B impl 864a44c, detector freeze 6b7e5fc
+  (hash 8cb5e95f3adfc0c4), B-test 89c80d6, track A impl 9c07216, router
+  freeze b7b86b3 (hash d2b9333c3c8da41f), A-test + report fb6e5cb.
+- TRACK B: LOFO transfer holds for mul_carry/mul_add/mod_mul, fails for
+  div_exact (.50 precision); no triggers on high-competence families.
+  Pooled secondary: global .92/.82 best (finding 215).
+- TRACK A: A-H1 not_established (router ≈ global threshold at matched
+  budget, +.003 CI [0,.010]); A-H2 not_established ([-.079,-.035] vs -.05
+  margin, 251/384 calls saved). Hierarchy redundant (finding 216).
+- TRACK C: advisory-only shadow policy shipped (601fa3c) with audit-schema
+  rollups; live smokes quantify the M34 recall collapse on real workloads.
+- Strongest supported artifact: single global detector thresholded to
+  budget — .94 verified success at ~35% tool calls (finding 217).
+- Suite green: 205 tests; commit-safe passed on all staged reports;
+  verifier-first held everywhere; production gated.
+- NEXT per operator steer 31d702c: M36P — Agents-A1 AWQ INT4
+  (cyankiwi/Agents-A1-AWQ-INT4) load/quality/telemetry preflight, then the
+  three-arm raw-vs-jLens benchmark. Checkpoint download + compressed-tensors
+  dependency authorized for the research venv only.

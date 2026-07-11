@@ -1,5 +1,12 @@
 # steer.md — finish M35, then benchmark Agents-A1 AWQ INT4 with and without jLens
 
+**M35 STATUS (2026-07-11): COMPLETE.** All sealed reads done exactly once, in
+order. Track B: LOFO transfer holds for mul_carry/mul_add/mod_mul, fails for
+div_exact; track A: A-H1 and A-H2 not established — the hierarchy is
+redundant over a global-detector threshold at matched budget (findings
+215-217, `docs/M35_PARALLEL_TRACKS_RESULTS.md`, result commit fb6e5cb).
+Track C shadow mode is live. **M36P below is now the active directive.**
+
 M1 through M34 are complete. M35 tracks A, B, and C are active under
 `docs/M35_PARALLEL_TRACKS_PROTOCOL.md`. The shared campaign has completed
 capture and extraction:

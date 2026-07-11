@@ -1,0 +1,460 @@
+{
+ "milestone": "M35AB",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m35_task_generation",
+ "protocol_source": "docs/M35_PARALLEL_TRACKS_PROTOCOL.md (commit 91844cd) + steer.md operator decision (c3c67fa)",
+ "research_question": "Track B: does a transfer-designed detector hold up leave-one-family-out across six deterministic task families? Track A: can a hierarchical competence router retain near-full verified uplift at materially fewer tool calls than tool-on-every-task, beating random and a global threshold at fixed budget?",
+ "families": [
+  {
+   "family_id": "add_carry",
+   "predicted_regime": "high",
+   "prompt_template": "What is {a} + {b}? Reply with the final number only.",
+   "expression_template": "{a}+{b}",
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      100,
+      999
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "operand_a_range": [
+      1000,
+      9999
+     ],
+     "operand_b_range": [
+      1000,
+      9999
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "operand_a_range": [
+      10000,
+      99999
+     ],
+     "operand_b_range": [
+      10000,
+      99999
+     ]
+    }
+   ],
+   "n_tasks": 192
+  },
+  {
+   "family_id": "sub_borrow",
+   "predicted_regime": "mixed",
+   "prompt_template": "What is {a} - {b}? Reply with the final number only.",
+   "expression_template": "{a}-{b}",
+   "constraint": "a > b",
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "operand_a_range": [
+      1000,
+      9999
+     ],
+     "operand_b_range": [
+      100,
+      999
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "operand_a_range": [
+      10000,
+      99999
+     ],
+     "operand_b_range": [
+      1000,
+      9999
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "operand_a_range": [
+      10000,
+      99999
+     ],
+     "operand_b_range": [
+      10000,
+      99999
+     ]
+    }
+   ],
+   "n_tasks": 320
+  },
+  {
+   "family_id": "mul_carry",
+   "predicted_regime": "mixed",
+   "prompt_template": "What is {a} * {b}? Reply with the final number only.",
+   "expression_template": "{a}*{b}",
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      100,
+      999
+     ]
+    }
+   ],
+   "n_tasks": 320
+  },
+  {
+   "family_id": "div_exact",
+   "predicted_regime": "mixed",
+   "prompt_template": "What is {a} / {b}? Reply with the final number only.",
+   "expression_template": "{a}/{b}",
+   "construction": "draw quotient q and divisor b from stratum ranges; a = q*b so division is exact; answer is q",
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "quotient_range": [
+      2,
+      9
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "quotient_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "quotient_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "quotient_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    }
+   ],
+   "n_tasks": 320
+  },
+  {
+   "family_id": "mul_add",
+   "predicted_regime": "near_total_failure",
+   "prompt_template": "Compute {a} * {b} + {c}. Give the final number.",
+   "expression_template": "{a}*{b}+{c}",
+   "additive_term_range": [
+    2,
+    99
+   ],
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      100,
+      999
+     ]
+    }
+   ],
+   "n_tasks": 192
+  },
+  {
+   "family_id": "mod_mul",
+   "predicted_regime": "mixed_low",
+   "prompt_template": "What is ({a} * {b}) mod {m}? Reply with the final number only.",
+   "expression_template": "({a}*{b})%{m}",
+   "modulus_range": [
+    3,
+    19
+   ],
+   "strata": [
+    {
+     "stratum_id": "s1",
+     "operand_a_range": [
+      2,
+      9
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s2",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      2,
+      9
+     ]
+    },
+    {
+     "stratum_id": "s3",
+     "operand_a_range": [
+      10,
+      99
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    },
+    {
+     "stratum_id": "s4",
+     "operand_a_range": [
+      100,
+      999
+     ],
+     "operand_b_range": [
+      10,
+      99
+     ]
+    }
+   ],
+   "n_tasks": 192
+  }
+ ],
+ "n_tasks_total": 1536,
+ "allocation_note": "predicted-mixed families oversampled (320 vs 192) per protocol; regimes are predictions, measured not assumed; per-stratum n = family n / 4",
+ "generation": {
+  "seed": "m35-campaign-v1",
+  "algorithm": "per family x stratum, draw operand tuples from random.Random(seed + ':' + family_id + ':' + stratum_id), rejecting duplicates against (1) all tuples drawn anywhere in this campaign \u2014 (a, b) pairs are unique campaign-wide across families so shared arithmetic structure cannot leak across splits \u2014 and (2) every (a, b) tuple the committed M29-M34 manifests generate; auxiliary operands (c, m, quotient) come from the same rng after the tuple; stop before capture on exhaustion",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true
+ },
+ "split_assignment": {
+  "splits": {
+   "D": "detector_development",
+   "R": "router_calibration",
+   "B_test": "sealed_detector_test",
+   "A_test": "sealed_router_test"
+  },
+  "rule": "deterministic at draw time, stratified within family x stratum: the ordered tuples drawn for each family x stratum cell are assigned round-robin over a fixed split sequence built from the fractions below, so every cell contributes to every split and operand sets are disjoint across splits by construction",
+  "fractions": {
+   "D": 0.375,
+   "R": 0.1875,
+   "B_test": 0.1875,
+   "A_test": 0.25
+  },
+  "sequence": [
+   "D",
+   "R",
+   "B_test",
+   "A_test",
+   "D",
+   "B_test",
+   "R",
+   "D",
+   "A_test",
+   "D",
+   "B_test",
+   "A_test",
+   "D",
+   "R",
+   "D",
+   "A_test"
+  ],
+  "sequence_note": "16-slot cycle realizing the fractions exactly: D=6/16, R=3/16, B_test=3/16, A_test=4/16",
+  "sequence_counts": {
+   "D": 6,
+   "R": 3,
+   "B_test": 3,
+   "A_test": 4
+  },
+  "read_discipline": "D: all track-B fitting, feature/normalization/calibration and model selection. R: frozen-detector router and competence-prior fitting only. B_test and A_test: sealed, single evaluation read each, in that order; A_test opens only after detector, router, and priors are frozen and B_test is already read.",
+  "lofo_rule": "leave-one-family-out refits the ENTIRE detector pipeline on D minus the withheld family, including normalization and family encoding; the withheld family's indicator maps to 'unknown'; evaluated on the withheld family's B_test rows"
+ },
+ "decode_protocols": {
+  "original": {
+   "decode": "greedy",
+   "decode_cap_tokens": 64,
+   "chat_template": true,
+   "router_only_capture": true,
+   "dtype": "bf16"
+  },
+  "greedy_path_unchanged": true,
+  "single_capture_phase": true
+ },
+ "tool": {
+  "kind": "deterministic_integer_evaluator",
+  "input": "the task's own predeclared expression, never model output",
+  "verifier_conditioning": "tool output passes the same verifier as model output",
+  "decode_tokens_per_invocation": 0,
+  "tool_call_unit": "completed invocation"
+ },
+ "track_b_claim_rules": {
+  "primary": "LOFO only: per withheld family, transfer-detector performance on that family's sealed B_test rows; establishes robustness across these named withheld families under this generator/prompt/model/decode/telemetry regime and NOTHING beyond",
+  "comparators": [
+   "global_m30_recipe_refit_on_D",
+   "per_category",
+   "hierarchical"
+  ],
+  "pooled_heldout_is_secondary": true,
+  "no_model_independent_claim": true,
+  "metrics": [
+   "precision",
+   "recall",
+   "auc_descriptive"
+  ]
+ },
+ "track_a_claim_rules": {
+  "a_h1_fixed_budget": {
+   "budget_tool_call_fraction": 0.5,
+   "comparators": [
+    "count_matched_random_routing",
+    "global_telemetry_threshold_same_budget"
+   ],
+   "classification": {
+    "useful": "both paired 95% success-delta lower bounds strictly above zero on A_test",
+    "harmful": "either upper bound strictly below zero",
+    "not_established": "otherwise"
+   },
+   "bootstrap_seed_prefix": "m35:a-h1",
+   "bootstrap_iterations": 2000
+  },
+  "a_h2_non_inferiority": {
+   "reference": "tool_on_every_task",
+   "success_non_inferiority_margin": 0.05,
+   "classification": {
+    "efficient": "paired 95% lower bound of (router - reference + margin) success delta strictly above zero AND paired 95% lower bound of call reduction strictly above zero on A_test",
+    "not_established": "otherwise"
+   },
+   "bootstrap_seed": "m35:a-h2",
+   "bootstrap_iterations": 2000
+  },
+  "family_weights": "uniform over families in A_test aggregate",
+  "router_action_space": [
+   "no_tool",
+   "telemetry_gated_tool",
+   "tool_on_every_task"
+  ]
+ },
+ "privacy": {
+  "public_artifacts": "aggregate counts, metrics, intervals only",
+  "private_artifacts": "operands, prompts, outputs, per-task labels/predictions/triggers/splits stay gitignored",
+  "traces_not_training_ready": true
+ },
+ "framing": "track B is detector robustness measurement; track A is product/runtime routing evidence; no model self-correction claim; no training dataset from tool outputs",
+ "candidate_only": true,
+ "production_gated": true
+}

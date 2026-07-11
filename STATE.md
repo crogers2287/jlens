@@ -956,3 +956,22 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
   174 tests. Production gated.
 - NEXT per Branch 3: M34 second-category detector transfer test (separate
   steer commit). Autoloop budget: M32, M33 done — one milestone remains.
+
+## M34 second-category detector transfer (2026-07-11) — MILESTONE COMPLETE, AUTOLOOP STOPPED
+- Executed preregistered protocol: manifest 7300b20 (predeclared before
+  generation/capture), implementation 5220b32, steer 7b2e462. Fresh 384-task
+  a*b+c set, (a,b) disjoint from M29-M33, c in [2,99] per band.
+- Category shift collapsed the model: 18 pass / 366 fail (95.3% failure).
+- VERDICT T1 = TRANSFER_FAILED: frozen-trigger recall .612 (precision .966 is
+  trivial at 95% base rate); H1 not_established (telemetry .630 vs random
+  .617, CI [-.060, .083]); H2 not_established (retention .612, invocation
+  fraction .604). Zero errors introduced (verifier-first held).
+- Interpretation: the detector is distribution-bound; selective gating only
+  pays in the mixed-competence regime (M33). Near-total failure regimes want
+  tool-on-every-task, not a gate.
+- Bugfix during evaluation: top_k_mass float32 clamp at capture write + read
+  (f747193, c84e054), regression-tested, no-op for prior milestones.
+- Public artifacts aggregate-only; check_commit_safe passed; suite green:
+  183 tests. Production gated.
+- BOUNDED AUTOLOOP COMPLETE (M32, M33, M34). Loop STOPS per steer.md; any
+  further milestone requires a fresh operator decision.

@@ -2288,3 +2288,23 @@ a carry-structured capability frontier (.766/.738). Its per-band weakness is
 stable too (M33 band_2 precision .54, mirroring M32's band_3 .64): the gate
 is trustworthy where failures are dense and weakest mid-frontier. M34 should
 test transfer to a second task category, not scale traces.
+
+## 212. The frozen detector does not transfer across task categories (M34)
+On 384 mixed a*b+c tasks (six bands, (a,b) disjoint from M29-M33) the model
+failed 366/384 (95.3% vs ~53-57% on pure multiplication). The frozen M30
+trigger scored precision .966 (trivial at that base rate) but recall .612,
+missing 39% of failures with structureless per-band recall (.38-.83). T1 =
+transfer_failed per the preregistered thresholds. H1 not established:
+telemetry routing .630 vs random .617 (CI [-.060, .083]) — at near-total
+failure any routing hits failures, so selection adds nothing. H2 not
+established (retention .612; invocation fraction .604).
+
+## 213. Telemetry gating pays only in the mixed-competence regime
+Across the autoloop: at ~56% failure (M33) the gate retained .889 of the
+full-tool uplift at .557 invocations; at ~95% failure (M34) it retained .612
+with no edge over random. The M30 signal is real but distribution-bound —
+category shifts need detector retraining on the new distribution or a
+category-level competence prior that bypasses selective gating in favor of
+tool-on-every-task. A float32 top_k_mass artifact (1.0000001 > schema max 1)
+was clamped at capture write and telemetry read during M34; no-op for all
+previously validated milestones.

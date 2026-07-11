@@ -1,0 +1,2114 @@
+{
+ "milestone": "M33",
+ "schema_version": 1,
+ "selection_status": "predeclared_before_m33_task_generation",
+ "protocol_source": "steer.md (M33 telemetry-gated tool routing) + docs/M32_RESEARCH_CLUSTER_AUTOLOOP.md Branch 3",
+ "research_question": "Does routing telemetry-triggered checkable tasks to a deterministic tool beat no-repair and count-matched random routing on verified success, and does it retain the full-tool uplift at materially fewer invocations?",
+ "task_category": "integer_arithmetic_single_expression",
+ "prompt_template": "What is {a} {op} {b}? Reply with the final number only.",
+ "action_applicability": {
+  "expected_action_type": "checker_needed",
+  "constant_across_all_tasks": true,
+  "violation_handling": "stop milestone and report; do not relabel"
+ },
+ "generation": {
+  "seed": "m33-tool-routing-v1",
+  "algorithm": "per band, seed the seen-set with every tuple the committed M29, M30, M31, and M32 manifests generate, then draw unique (a, b) tuples from random.Random(seed + ':' + band_id), rejecting duplicates, until n_tasks exist; stop before capture on tuple exhaustion",
+  "no_posthoc_selection": true,
+  "all_generated_tasks_retained": true,
+  "operand_uniqueness_scope": "within band, disjoint from M29/M30/M31/M32"
+ },
+ "bands": [
+  {
+   "band_id": "band_1",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    2,
+    9
+   ],
+   "n_tasks": 64
+  },
+  {
+   "band_id": "band_2",
+   "operator": "*",
+   "operand_a_range": [
+    10,
+    99
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 64
+  },
+  {
+   "band_id": "band_3",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 64
+  },
+  {
+   "band_id": "band_4",
+   "operator": "*",
+   "operand_a_range": [
+    100,
+    999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "n_tasks": 64
+  },
+  {
+   "band_id": "band_5",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    10,
+    99
+   ],
+   "n_tasks": 64
+  },
+  {
+   "band_id": "band_6",
+   "operator": "*",
+   "operand_a_range": [
+    1000,
+    9999
+   ],
+   "operand_b_range": [
+    100,
+    999
+   ],
+   "n_tasks": 64
+  }
+ ],
+ "n_tasks": 384,
+ "split_rule": "single routing split; no detector fitting on M33 data",
+ "tasks": [
+  {
+   "task_id": "m33_b1_000",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_001",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_002",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_003",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_004",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_005",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_006",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_007",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_008",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_009",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_010",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_011",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_012",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_013",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_014",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_015",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_016",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_017",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_018",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_019",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_020",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_021",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_022",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_023",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_024",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_025",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_026",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_027",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_028",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_029",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_030",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_031",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_032",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_033",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_034",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_035",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_036",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_037",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_038",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_039",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_040",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_041",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_042",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_043",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_044",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_045",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_046",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_047",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_048",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_049",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_050",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_051",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_052",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_053",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_054",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_055",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_056",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_057",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_058",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_059",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_060",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_061",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_062",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b1_063",
+   "band": "band_1",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_000",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_001",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_002",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_003",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_004",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_005",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_006",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_007",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_008",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_009",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_010",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_011",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_012",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_013",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_014",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_015",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_016",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_017",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_018",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_019",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_020",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_021",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_022",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_023",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_024",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_025",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_026",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_027",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_028",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_029",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_030",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_031",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_032",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_033",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_034",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_035",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_036",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_037",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_038",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_039",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_040",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_041",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_042",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_043",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_044",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_045",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_046",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_047",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_048",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_049",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_050",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_051",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_052",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_053",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_054",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_055",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_056",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_057",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_058",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_059",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_060",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_061",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_062",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b2_063",
+   "band": "band_2",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_000",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_001",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_002",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_003",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_004",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_005",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_006",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_007",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_008",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_009",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_010",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_011",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_012",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_013",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_014",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_015",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_016",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_017",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_018",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_019",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_020",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_021",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_022",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_023",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_024",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_025",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_026",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_027",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_028",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_029",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_030",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_031",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_032",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_033",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_034",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_035",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_036",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_037",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_038",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_039",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_040",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_041",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_042",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_043",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_044",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_045",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_046",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_047",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_048",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_049",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_050",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_051",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_052",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_053",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_054",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_055",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_056",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_057",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_058",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_059",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_060",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_061",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_062",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b3_063",
+   "band": "band_3",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_000",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_001",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_002",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_003",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_004",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_005",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_006",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_007",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_008",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_009",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_010",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_011",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_012",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_013",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_014",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_015",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_016",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_017",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_018",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_019",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_020",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_021",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_022",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_023",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_024",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_025",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_026",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_027",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_028",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_029",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_030",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_031",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_032",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_033",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_034",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_035",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_036",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_037",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_038",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_039",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_040",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_041",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_042",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_043",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_044",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_045",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_046",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_047",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_048",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_049",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_050",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_051",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_052",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_053",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_054",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_055",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_056",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_057",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_058",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_059",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_060",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_061",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_062",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b4_063",
+   "band": "band_4",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_000",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_001",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_002",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_003",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_004",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_005",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_006",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_007",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_008",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_009",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_010",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_011",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_012",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_013",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_014",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_015",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_016",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_017",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_018",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_019",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_020",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_021",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_022",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_023",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_024",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_025",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_026",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_027",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_028",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_029",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_030",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_031",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_032",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_033",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_034",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_035",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_036",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_037",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_038",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_039",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_040",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_041",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_042",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_043",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_044",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_045",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_046",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_047",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_048",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_049",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_050",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_051",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_052",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_053",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_054",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_055",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_056",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_057",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_058",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_059",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_060",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_061",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_062",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b5_063",
+   "band": "band_5",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_000",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_001",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_002",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_003",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_004",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_005",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_006",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_007",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_008",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_009",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_010",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_011",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_012",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_013",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_014",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_015",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_016",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_017",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_018",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_019",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_020",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_021",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_022",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_023",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_024",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_025",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_026",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_027",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_028",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_029",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_030",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_031",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_032",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_033",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_034",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_035",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_036",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_037",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_038",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_039",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_040",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_041",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_042",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_043",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_044",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_045",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_046",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_047",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_048",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_049",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_050",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_051",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_052",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_053",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_054",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_055",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_056",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_057",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_058",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_059",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_060",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_061",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_062",
+   "band": "band_6",
+   "split": "routing"
+  },
+  {
+   "task_id": "m33_b6_063",
+   "band": "band_6",
+   "split": "routing"
+  }
+ ],
+ "frozen_trigger": {
+  "source": "M30 full_telemetry nearest centroid",
+  "reinstantiation": "deterministic refit from private M30 train records; must exactly reproduce the published M30 holdout confusion matrix",
+  "threshold_fail_probability": 0.5,
+  "scored_input": "original greedy decode telemetry only",
+  "no_m32_labels_affect_triggering": true
+ },
+ "decode_protocols": {
+  "original": {
+   "decode": "greedy",
+   "decode_cap_tokens": 64,
+   "chat_template": true,
+   "router_only_capture": true,
+   "dtype": "bf16"
+  },
+  "greedy_path_unchanged": true,
+  "no_repair_or_resample_decodes": true
+ },
+ "tool": {
+  "kind": "deterministic_integer_evaluator",
+  "input": "the task's own predeclared expression, never model output",
+  "verifier_conditioning": "tool output passes the same verifier as model output",
+  "decode_tokens_per_invocation": 0,
+  "compute_unit": "tool invocation count, reported per policy"
+ },
+ "policies": {
+  "no_repair": "original outputs for all tasks",
+  "tool_on_every_task": "verifier-first tool answer on every task; a passing original is never replaced",
+  "random_trigger_tool": "verifier-first tool answer on a fixed-seed random.Random('m33:random-trigger') subset of task ids, size matched to the telemetry trigger count",
+  "telemetry_trigger_tool": "verifier-first tool answer iff frozen p(fail) >= 0.5 on original telemetry"
+ },
+ "hypotheses": {
+  "h1_routing_usefulness": {
+   "population": "all 384 tasks",
+   "comparisons": [
+    [
+     "telemetry_trigger_tool",
+     "no_repair"
+    ],
+    [
+     "telemetry_trigger_tool",
+     "random_trigger_tool"
+    ]
+   ],
+   "classification": {
+    "useful": "both paired 95% success-delta CIs strictly above zero",
+    "harmful": "either upper bound strictly below zero",
+    "not_established": "otherwise"
+   },
+   "bootstrap_seed_prefix": "m33:h1",
+   "bootstrap_iterations": 2000
+  },
+  "h2_routing_efficiency": {
+   "uplift_retention": "(telemetry_trigger_tool - no_repair) / (tool_on_every_task - no_repair), verified success rates",
+   "invocation_fraction": "telemetry_trigger_tool invocations / 384",
+   "classification": {
+    "efficient": "uplift retention >= 0.80 AND invocation fraction <= 0.60 on point estimates",
+    "not_established": "otherwise"
+   },
+   "retention_bootstrap_seed": "m33:h2:retention",
+   "bootstrap_iterations": 2000
+  }
+ },
+ "detector_reproduction_gate": {
+  "min_precision": 0.8,
+  "min_recall": 0.75,
+  "on_failure": "stop and report before any H1/H2 claim"
+ },
+ "metrics_required": [
+  "trigger_precision",
+  "trigger_recall",
+  "trigger_rate",
+  "verified_success_rate_per_policy",
+  "tool_invocations_per_policy",
+  "decode_tokens_per_policy",
+  "errors_rescued_per_policy",
+  "errors_introduced_per_policy",
+  "h1_bootstrap_intervals",
+  "h2_uplift_retention_interval",
+  "per_band_descriptives_secondary"
+ ],
+ "privacy": {
+  "public_artifacts": "aggregate counts, metrics, intervals only",
+  "private_artifacts": "operands, prompts, outputs, diagnoses, per-task labels/predictions/triggers, and all recovery traces stay gitignored",
+  "traces_not_training_ready": true
+ },
+ "framing": "product/runtime routing evidence only; no model self-correction claim; no training dataset from tool outputs",
+ "candidate_only": true,
+ "production_gated": true
+}

@@ -41,11 +41,11 @@ SAMPLED_LAYER_POINTS = ("early", "middle", "late")
 PRIVATE_DIR = Path("reports/shadow/private")
 
 OVERRIDE_FILES = [
-    "src/jlens_vllm_telemetry/__init__.py",
-    "src/jlens_vllm_telemetry/capture.py",
-    "src/jlens_vllm_telemetry/worker_ext.py",
-    "src/jlens_vllm_telemetry/features.py",
-    "src/jlens_vllm_telemetry/report_guard.py",
+    "jlens_vllm_telemetry/__init__.py",
+    "jlens_vllm_telemetry/capture.py",
+    "jlens_vllm_telemetry/worker_ext.py",
+    "jlens_vllm_telemetry/features.py",
+    "jlens_vllm_telemetry/report_guard.py",
 ]
 
 
@@ -53,7 +53,7 @@ def override_hash() -> str:
     h = hashlib.sha256()
     for rel in OVERRIDE_FILES:
         h.update(rel.encode())
-        h.update(Path(rel).read_bytes())
+        h.update((ROOT / rel).read_bytes())
     return h.hexdigest()[:16]
 
 
@@ -118,6 +118,20 @@ def run_stock(args) -> int:
     return 0
 
 
+def normalize_capture(cap: dict) -> dict:
+    """collective_rpc may round-trip numpy arrays as nested lists; coerce
+    the array-valued fields back to ndarrays for the gate evaluation."""
+    import numpy as np
+
+    out = dict(cap)
+    for key, dtype in (("ids", np.int64), ("weights", np.float64),
+                       ("entropy", np.float64), ("mass", np.float64),
+                       ("raw_logits_sample", np.float64)):
+        if key in out:
+            out[key] = np.asarray(out[key], dtype=dtype)
+    return out
+
+
 def run_instrumented(args) -> int:
     import numpy as np
     import torch
@@ -159,7 +173,8 @@ def run_instrumented(args) -> int:
     for item in items:
         llm.collective_rpc("jlens_reset_telemetry")
         rec = run_smoke(llm, [item], args.max_tokens, want_routed=True)[0]
-        fetches = llm.collective_rpc("jlens_fetch_telemetry")
+        fetches = [normalize_capture(f)
+                   for f in llm.collective_rpc("jlens_fetch_telemetry")]
         arm_d.append(rec)
         captures.append(fetches)
     arm_d_seconds = time.time() - t0

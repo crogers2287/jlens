@@ -104,7 +104,8 @@ def aggregate_steps(capture):
             "entropy_final_logits": step.get("entropy_final_logits"),
             "selected_token_prob": step.get("selected_token_prob"),
             "top_k": step.get("top_k"),
-            "top_k_mass": step.get("top_k_mass"),
+            "top_k_mass": (min(1.0, step["top_k_mass"])
+                           if step.get("top_k_mass") is not None else None),
             "top_k_margin": step.get("top_k_margin"),
             "router_logits": _last_router_vectors(step),
         })

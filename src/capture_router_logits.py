@@ -151,7 +151,7 @@ def _final_logit_stats(logits, tok_id, top_k=5):
         "entropy_final_logits": ent,
         "selected_token_prob": float(probs.reshape(-1)[tok_id].item()),
         "top_k": int(ranked.numel()),
-        "top_k_mass": float(ranked.sum().item()),
+        "top_k_mass": min(1.0, float(ranked.sum().item())),
         "top_k_margin": float(margin.item()),
     }
 

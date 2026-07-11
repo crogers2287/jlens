@@ -128,3 +128,17 @@ def test_public_reports_have_groups_but_no_ids_text_paths_or_tensors():
     keys = set(_walk_keys([summary, comparison]))
     assert not ({"prompt", "output", "task_id", "model_path",
                  "router_logits", "hidden_states"} & keys)
+
+
+def test_aggregate_steps_clamps_top_k_mass():
+    from m22_real_telemetry import aggregate_steps
+    # captures written before the capture-side clamp can carry float32
+    # rounding above 1.0; the read side must clamp so frozen-schema
+    # validation holds without recapturing (M34 fix)
+    capture = {"decode_steps": [
+        {"generated_token_id": 1, "top_k_mass": 1.0000001192092896},
+        {"generated_token_id": 2, "top_k_mass": None},
+    ]}
+    steps = aggregate_steps(capture)
+    assert steps[0]["top_k_mass"] == 1.0
+    assert steps[1]["top_k_mass"] is None

@@ -1,276 +1,243 @@
-# steer.md — finish M35, then benchmark Agents-A1 AWQ INT4 with and without jLens
+# steer.md — M36V vLLM AWQ telemetry recovery, then Agents-A1 benchmark
 
-**M35 STATUS (2026-07-11): COMPLETE.** All sealed reads done exactly once, in
-order. Track B: LOFO transfer holds for mul_carry/mul_add/mod_mul, fails for
-div_exact; track A: A-H1 and A-H2 not established — the hierarchy is
-redundant over a global-detector threshold at matched budget (findings
-215-217, `docs/M35_PARALLEL_TRACKS_RESULTS.md`, result commit fb6e5cb).
-Track C shadow mode is live. **M36P below is now the active directive.**
+M1 through M35 are complete. Do not reopen their sealed decision sets.
 
-M1 through M34 are complete. M35 tracks A, B, and C are active under
-`docs/M35_PARALLEL_TRACKS_PROTOCOL.md`. The shared campaign has completed
-capture and extraction:
+M35's strongest supported policy is a single cross-family global detector
+thresholded to a tool budget: about .94 verified success at about .35 tool
+invocation on its sealed proxy benchmark. The hierarchical family router was
+redundant at matched budget, and structurally novel families still require
+representation in detector fitting data.
 
-- 1,536 / 1,536 rows extracted;
-- zero undecided outcomes;
-- D 576 / R 288 / B-test 288 / A-test 384;
-- the sealed B-test and A-test splits remain unopened;
-- realized family failure rates span .041 to .953, providing high-, mixed-,
-  and near-total-failure regimes;
-- track C is implemented in advisory-only shadow mode and executes no actions.
+M36P attempted the pinned full Agents-A1 AWQ checkpoint through Transformers
+and stopped correctly before calibration or decision capture:
+
+- checkpoint: `cyankiwi/Agents-A1-AWQ-INT4`;
+- pinned revision: `3e522d4e46438c782789b73c8ff4503e0edd037c`;
+- architecture from config: `qwen3_5_moe`, 40 routed text layers, 256 experts,
+  top-8;
+- blocker: Transformers 5.13 converts the checkpoint's per-expert asymmetric
+  INT4 modules through fused `DecompressExperts`, fails its zero-point path,
+  and would expand the experts toward BF16 beyond the 44 GiB GPU gate;
+- no M36 calibration or benchmark decision data were generated;
+- GPUs were freed and the normal serving stack was restored.
+
+Preserve finding 218 and `reports/telemetry/m36p_preflight_gates.json` as the
+failed Transformers-path record. Do not rewrite it as an AWQ/checkpoint
+failure: it is a loader-path failure.
 
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
 ## Operator decision
 
-Complete M35 exactly as preregistered, then move directly to an Agents-A1
-raw-versus-jLens benchmark using the full Hugging Face AWQ INT4 checkpoint:
+Select blocker option **B**: use an isolated **vLLM >= 0.22** runtime for the
+same pinned AWQ checkpoint. Do not spend another cycle on speculative
+Transformers/compressed-tensors version roulette, and do not change checkpoint
+identity.
 
-`cyankiwi/Agents-A1-AWQ-INT4`
+The intended vLLM path is compressed AWQ Marlin MoE across both RTX 3090s. A
+small, bounded, auditable MoE-block instrumentation patch is authorized to
+expose real router telemetry. Router telemetry is not assumed merely because
+the model generates successfully; it must be causally tied to the actual
+expert dispatch and validated below.
 
-This is now the preferred M36 research and benchmark model. It is a community
-AWQ INT4 quantization in Hugging Face safetensors/compressed-tensors format,
-not the official BF16 checkpoint and not the current Q8 GGUF serving artifact.
-Every result must name the exact checkpoint and pinned revision. Do not report
-AWQ results as official-BF16 or GGUF results.
+Authorize a bounded two-stage continuation:
 
-The previous official-BF16 CPU-offload plan is superseded as the primary M36
-telemetry path. Preserve its Phase-0 feasibility record as history. CPU spill
-may be used only as a bounded preflight fallback; the intended AWQ path is an
-all-GPU load across the two RTX 3090s.
+1. **M36V** — vLLM AWQ load/quality/router-telemetry preflight.
+2. **M36** — paired raw Agents-A1 AWQ versus jLens benchmark, using full
+   telemetry if M36V validates it, otherwise black-box jLens if the AWQ model
+   itself runs correctly.
 
-The operator authorizes downloading this exact checkpoint and installing the
-minimum `compressed-tensors`/AWQ runtime dependency in the isolated research
-venv if it is absent. Do not modify the production llama-swap environment.
+Stop after the M36 result and request a fresh operator decision.
 
-## Immediate milestone — finish M35 A/B evaluation
+# M36V — isolated vLLM AWQ preflight
 
-Follow the frozen split discipline in `docs/M35_PARALLEL_TRACKS_PROTOCOL.md`.
+## Environment isolation
 
-### Track B — detector robustness
+1. Create a separate venv or container for M36V. Do not alter the working
+   M22-M35 research venv, system Torch, Ollama, llama-swap, or the production
+   GGUF environment.
+2. Pin and record the exact vLLM version, CUDA/Torch versions, quantization
+   backend, checkpoint revision, command line, and source-patch hash.
+3. Use the exact full checkpoint above. Do not substitute the text-only AWQ,
+   official BF16, FP8/NVFP4, MLX, GGUF, or another community quant.
+4. Use text prompts only, but do not prune the checkpoint or silently remove
+   multimodal/MTP components.
+5. Keep all weights and caches local and gitignored.
 
-1. Use D only for feature selection, normalization, detector fitting,
-   calibration, thresholds, and all model selection.
-2. Run the full preregistered leave-one-family-out pipeline, refitting every
-   preprocessing and detector component for each withheld family.
-3. Freeze the selected global, per-family, and hierarchical detector variants
-   before opening B-test.
-4. Open B-test once, evaluate the preregistered transfer claims, and do not use
-   B-test outcomes to tune track A.
+## Phase 0 — unmodified compressed-runtime gate
 
-### Track A — hierarchical competence router
+First prove the unpatched runtime works:
 
-1. Use only the already-frozen track-B detector components plus R to fit family
-   competence priors and the three-way controller:
-   - trust the model answer;
-   - telemetry-gated selective tool use;
-   - tool on every eligible task.
-2. Freeze the router, thresholds, fixed tool budget, family weights, and
-   non-inferiority policy before opening A-test.
-3. Open A-test once and evaluate A-H1 and A-H2 exactly as preregistered.
-4. Preserve verifier-first semantics: no policy may replace a verified-correct
-   original with a failing tool or repair result.
+- tensor parallel size 2 across the two RTX 3090s;
+- short maximum context and short greedy continuations for preflight;
+- hidden-state capture disabled;
+- no broad CPU weight offload;
+- combined GPU allocated/reserved target <= 44 GiB;
+- finite logits and stable text generation;
+- no architecture or checkpoint revision mismatch.
 
-### M35 completion requirements
+Run eight fixed private smoke prompts before adding telemetry instrumentation.
+Record aggregate-only:
 
-Commit separately:
+- load time;
+- peak GPU memory per device and combined;
+- peak process RAM;
+- prompt and generation latency;
+- output tokens and tokens/second;
+- crashes, retries, CPU-mapped modules, and quantization kernel actually used.
 
-1. detector implementation and fitting code;
-2. frozen detector/router configuration hashes;
-3. B-test result;
-4. A-test result and aggregate-only M35 study report;
-5. updated `STATE.md`, `reports/FINDINGS.md`, and post-M35 steer.
+If the exact AWQ checkpoint cannot generate through the compressed vLLM path
+on this hardware, stop M36V as `runtime_blocked`, restore the normal service,
+and request a new operator decision. Do not fall back silently.
 
-Run the full suite and `check_commit_safe`. No sealed row, operand, prompt,
-output, label, prediction, score, or private path may enter public artifacts.
+## Phase 1 — bounded router-telemetry instrumentation
 
-# M36 — Agents-A1 AWQ INT4 raw versus jLens
+After the unmodified runtime passes, implement the smallest practical source
+patch or registered layer override around the real Qwen3.5 MoE routing path.
+Commit the patch and CPU/fake-MoE tests separately before any M36 calibration or
+benchmark capture.
 
-Begin M36 after the M35 result commit. M36 has a preflight gate followed by a
-paired benchmark. The benchmark is checkpoint-specific external-model
-validation; proxy-model thresholds and competence priors do not transfer.
+The patch must expose, for each generated token and routed layer:
 
-## M36P — AWQ load, quality, and telemetry preflight
+- finite pre-dispatch router scores or logits over 256 experts;
+- the exact eight selected expert ids;
+- the exact dispatch weights after the runtime's top-k normalization;
+- enough timing/index metadata to align routing with the generated decode step.
 
-Use only the pinned revision of:
+Validation requirements:
 
-`cyankiwi/Agents-A1-AWQ-INT4`
+1. Telemetry disabled follows the stock vLLM path and produces identical greedy
+   tokens on the smoke set.
+2. Telemetry enabled is observation-only and produces the same greedy tokens as
+   telemetry disabled.
+3. Captured selected expert ids exactly match the ids handed to the actual
+   fused expert dispatch for sampled tokens and layers.
+4. Captured dispatch weights are finite, nonnegative, normalized within a
+   declared tolerance, and match the values consumed by dispatch.
+5. Architecture is verified from the loaded runtime: 40 routed text layers,
+   256 experts per layer, top-8.
+6. The existing jLens telemetry adapter can derive its approved scalar feature
+   schema from the captured values.
+7. Full raw router tensors, token ids/text, expert traces, prompts, and outputs
+   remain private and gitignored. Public artifacts are aggregate-only.
 
-### Load path
+A tiny full-logit capture is permitted for validation. For benchmark scale,
+prefer online computation of approved summaries plus top-8 ids/weights so that
+copying 40 x 256 router values per token to CPU does not become the benchmark's
+main cost. Any change from validation capture to summary capture must be tested
+for numerical equivalence of the derived jLens features.
 
-1. Prefer Hugging Face Transformers in the research venv because M36 requires
-   direct access to router logits and model internals. Do not begin with vLLM
-   or SGLang unless the Transformers path is proven incompatible and the
-   alternative exposes equivalent real telemetry and hooks.
-2. Use both RTX 3090s with an explicit memory map. Target combined allocated
-   plus reserved GPU memory <= 44 GiB, leaving runtime headroom.
-3. Hidden-state capture stays disabled. Capture only output logits and router
-   telemetry needed by the existing jLens feature schema.
-4. CPU RAM may absorb loader metadata and a bounded fallback spill, but record
-   peak process RAM and every CPU-mapped module. Silent broad CPU offload is
-   forbidden for the decision benchmark.
-5. No weights, caches, local model paths, prompts, outputs, token ids, logits,
-   tensors, or expert routes may be committed.
+## Phase 2 — quality and overhead smoke
 
-### Required architecture and hook gates
+Run 16 fixed private prompts spanning exact arithmetic, JSON, instruction
+following, and short reasoning with:
 
-Verify from the loaded model, not from assumptions:
+- stock vLLM AWQ;
+- instrumented vLLM AWQ with telemetry enabled;
+- the currently served Agents-A1 Q8 GGUF as a separate quality diagnostic.
 
-- model type `qwen3_5_moe`;
-- 40 routed text layers;
-- 256 experts per routed layer;
-- top-8 active experts per token;
-- finite next-token logits;
-- finite router logits or equivalent pre-dispatch gate scores;
-- selected expert ids and normalized routing weights;
-- telemetry extraction through a real greedy decode;
-- opt-in instrumentation whose disabled path preserves the normal forward
-  result and greedy tokens on the smoke set.
+AWQ and Q8 answers need not be identical. Report deterministic verifier
+outcomes, malformed-output counts, gross instruction-following failures,
+throughput, and telemetry overhead. This is a checkpoint/runtime diagnostic,
+not the M36 efficacy claim.
 
-AWQ expert kernels may replace ordinary linear modules. Router visibility and
-hook placement must therefore be demonstrated on the real compressed model.
-Memory fit alone is not enough.
+Always unload M36V and restore/verify the normal `agents-a1` GGUF service after
+preflight work.
 
-### Smoke and parity checks
+## M36V outcomes
 
-Run a small fixed private smoke set before any M36 calibration or decision
-capture:
+### Full telemetry feasible
 
-1. 16 short text prompts spanning exact arithmetic, JSON, instruction
-   following, and short reasoning.
-2. Record aggregate load time, peak GPU memory per device, peak process RAM,
-   prompt latency, generation latency, and tokens/second.
-3. Compare deterministic verifier outcomes and gross response validity with the
-   currently served Agents-A1 Q8 GGUF. This is a checkpoint-quality diagnostic,
-   not the M36 efficacy claim.
-4. Confirm telemetry records validate against the schema and contain no raw
-   private text in public output.
-5. Unload the AWQ model and restore/verify normal GGUF `agents-a1` service after
-   the preflight.
+The exact AWQ checkpoint runs compressed within the memory gate, generates
+valid outputs, and the patch exposes dispatch-validated router telemetry with
+observation-only parity. Proceed to the full M36 benchmark with raw,
+black-box-jLens, and full-telemetry-jLens arms.
 
-### M36P outcomes
+### Black-box only
 
-- **Full telemetry feasible:** AWQ loads stably within the GPU gate, generates
-  valid outputs, and exposes correct router/logit telemetry. Proceed to the
-  full three-arm M36 benchmark below.
-- **Black-box only:** AWQ generates correctly but compressed kernels prevent
-  trustworthy router telemetry. Proceed with raw AWQ versus black-box jLens,
-  and report the exact hook blocker.
-- **CPU-spill diagnostic only:** correct telemetry requires substantial CPU
-  mapping or median smoke runtime above six minutes. Limit internal telemetry
-  to a tiny diagnostic sample; do not use that path for the primary benchmark.
-- **Blocked:** loader, dependency, OOM, architecture, output-validity, or
-  correctness failure. Do not silently switch to the text-only AWQ checkpoint,
-  NVFP4, MLX, GGUF, or another model. Record the blocker; the operator decides
-  the next model identity.
+The exact AWQ checkpoint runs correctly, but trustworthy router telemetry
+cannot be exposed without changing dispatch semantics, violating parity, or
+using an unbounded patch. Record the exact blocker and proceed to M36 with raw
+AWQ versus black-box jLens plus random/tool-all controls. Do not fabricate a
+full-telemetry arm.
 
-## M36 calibration and preregistration
+### Runtime blocked
 
-Before decision capture:
+The exact checkpoint cannot run correctly through the compressed vLLM path on
+this hardware. Stop, restore service, and request an operator decision. No
+checkpoint switch is authorized.
 
-1. Run a private AWQ-specific capability sweep over deterministic,
-   tool-checkable families. Calibration rows are never decision data.
-2. Locate this checkpoint's high-, mixed-, and near-total-failure regimes.
-3. Fit or recalibrate telemetry normalization and the failure detector using
-   only AWQ calibration/development data. Never reuse the proxy threshold as
-   though it were frozen for Agents-A1.
-4. Preregister fresh disjoint decision tasks, sealed splits, decoding settings,
-   seeds, task-family weights, competence priors, tool budget, bootstrap seeds,
-   non-inferiority margin, and all claim rules.
-5. Freeze the AWQ detector and hierarchical policy before opening the sealed
-   benchmark.
+# M36 — paired Agents-A1 AWQ raw versus jLens
 
-Use enough fresh tasks to power the paired raw-versus-jLens comparison, with a
-useful mixture of competence regimes. Determine the exact count from a
-predeclared power rule rather than copying M35 mechanically.
+Begin only after an M36V result commit.
 
-## M36 paired benchmark arms
+## AWQ-specific calibration and preregistration
 
-Generate exactly one deterministic AWQ original per task. Every arm begins
-from that same original answer and capture.
+Before any decision capture:
 
-1. **Raw Agents-A1 AWQ** — score the original answer unchanged.
-2. **Black-box jLens** — category/regime competence prior, verifier-first
-   checks, and deterministic tools, without internal telemetry selection.
-3. **Full jLens** — AWQ-specific competence prior plus AWQ router/logit
-   telemetry risk gate, verifier-first checks, and deterministic tools.
-4. **Tool on every eligible task** — upper-bound and resource reference, not a
-   jLens selectivity claim.
-5. **Count-matched random tool routing** — selection control.
+1. Run a private capability sweep for this exact AWQ runtime over several
+   deterministic, tool-checkable families.
+2. Locate high-, mixed-, and near-total-failure cells from AWQ outcomes only.
+3. If full telemetry exists, fit normalization and the detector only on fresh
+   AWQ development data. Proxy thresholds, centroids, priors, and score scales
+   do not transfer.
+4. For black-box jLens, fit category/regime competence estimates from AWQ
+   calibration data only.
+5. Preregister fresh disjoint development/calibration/sealed splits, task count
+   from a power rule, prompt/decode settings, seeds, tool budget, family
+   weighting, bootstrap seeds, non-inferiority margin, and all claim rules.
+6. Freeze every detector and policy hash before the sealed read.
 
-If M36P is black-box-only, arm 3 is omitted and the result must say so plainly.
-Do not fabricate telemetry from GGUF metadata or proxy-model features.
+## Paired arms
 
-## Primary questions and claim boundaries
+Generate exactly one deterministic AWQ original per task. Every arm starts from
+that same original answer and capture:
 
-### H1 — practical jLens value
+1. `raw_awq` — unchanged model answer;
+2. `black_box_jlens` — AWQ competence prior, verifier-first checks, and
+   deterministic tools without token/router telemetry selection;
+3. `full_jlens` — only when M36V validated telemetry: AWQ-specific telemetry
+   detector plus verifier-first tools;
+4. `count_matched_random` — selection control;
+5. `tool_on_every_eligible_task` — accuracy/resource ceiling.
 
-Full jLens must improve verified success over raw Agents-A1 AWQ on the sealed
-paired benchmark with a paired 95% confidence interval strictly above zero.
-When full telemetry is unavailable, black-box jLens is tested against raw
-instead.
+No arm may replace a verified-correct original with a failing result.
 
-### H2 — incremental internal-telemetry value
+## Confirmatory questions
 
-When arm 3 exists, full jLens must beat black-box jLens and count-matched random
-routing under the preregistered fixed tool budget, with both paired lower
-confidence bounds strictly above zero. Otherwise internal telemetry is not
-established as adding value beyond the hierarchical black-box controller.
+- **H1 practical value:** selected jLens policy improves paired verified success
+  over raw AWQ with the 95% lower confidence bound strictly above zero.
+- **H2 telemetry increment:** when `full_jlens` exists, it beats black-box jLens
+  and count-matched random at the frozen budget with both lower confidence
+  bounds strictly above zero.
+- **H3 efficiency:** selected jLens policy is non-inferior to tool-all within the
+  preregistered success margin while using significantly fewer tool calls.
 
-### H3 — efficiency versus tool-on-every-task
-
-The selected jLens policy must meet the preregistered verified-success
-non-inferiority margin versus tool-on-every-task while using significantly
-fewer tool calls. Tool-on-every-task cannot satisfy this claim by construction.
-
-All claims are scoped to this exact AWQ checkpoint, task generators, prompt
-format, decode protocol, tools, and verifier bundle. No claim of universal
-model-independent telemetry is permitted.
-
-## Required M36 metrics
-
-- raw, black-box, full-jLens, random, and tool-all verified success rates;
-- paired confidence intervals for every confirmatory comparison;
-- errors corrected, errors missed, false alarms, and regressions introduced;
-- tool invocation fraction and calls saved versus tool-on-every-task;
-- model latency, tool latency, total latency, output tokens, and compute per
-  corrected answer;
-- detector precision/recall/calibration by family and competence regime;
-- category-level route choice and abstention counts;
-- AWQ peak GPU memory, peak process RAM, and throughput;
-- exact checkpoint repository and pinned revision;
-- Q8 GGUF smoke-parity diagnostics, reported separately from M36 claims.
+Report success, corrections, misses, regressions, false alarms, tool fraction,
+calls saved, model/tool/total latency, output tokens, throughput, memory,
+telemetry overhead, and compute per corrected answer. Claims remain scoped to
+the exact AWQ checkpoint, vLLM version, patch hash, task generators, prompt,
+decode protocol, tools, and verifier bundle.
 
 ## Result-driven continuation
 
-- If H1 and H3 pass, freeze an Agents-A1-AWQ jLens candidate policy for extended
-  shadow evaluation. Production remains gated.
-- If H1 passes but H2 fails, retain the black-box hierarchical controller and
-  stop claiming internal telemetry adds value.
-- If telemetry is useful but efficiency fails, return to router calibration on
-  fresh development data; do not tune on the sealed benchmark.
-- If H1 fails, stop the Agents-A1 jLens efficacy track and report the negative
-  result without changing checkpoints post hoc.
-- Stop after the M36 result and request a fresh operator decision.
+- H1 + H3 pass: freeze an Agents-A1 AWQ jLens candidate for extended shadow
+  evaluation; production remains gated.
+- H1 passes and H2 fails: retain the black-box policy and stop claiming internal
+  telemetry adds incremental value.
+- H1 fails: close this Agents-A1 efficacy track without checkpoint shopping or
+  post-hoc benchmark changes.
+- Stop after the result commit in every branch.
 
-## Stop conditions
+## Stop conditions and hygiene
 
-Stop and report immediately on:
+Stop immediately on checkpoint/revision mismatch, invalid dispatch telemetry,
+observation changing tokens, sealed-split leakage, verifier-first violation,
+unbounded memory, test failure, privacy/commit-safety failure, or inability to
+restore the serving stack.
 
-- M35 or M36 sealed-split leakage or read-order violation;
-- any policy replacing a verified-correct answer with an incorrect result;
-- privacy or commit-safety failure;
-- test failure;
-- checkpoint identity or pinned-revision mismatch;
-- unbounded CPU/GPU memory growth;
-- invalid or fabricated router telemetry;
-- inability to restore the production GGUF service.
-
-## Repository hygiene
-
-Do not commit model weights, caches, local paths, prompts, outputs, operands,
-per-task labels/predictions/scores, token ids/text, raw logits, router tensors,
-expert identities tied to private tasks, or detailed tool results. Public
-artifacts remain aggregate-only. Candidate outputs remain candidates, no tool
-output becomes training data without a future audited protocol, and production
-remains gated.
+Do not commit weights, caches, local paths, prompts, outputs, operands, per-task
+labels/predictions/scores, token ids/text, raw logits, router tensors, or expert
+traces. Public artifacts remain aggregate-only. Candidate outputs stay
+candidates; no tool output becomes training data without a future audited
+protocol, and production remains gated.

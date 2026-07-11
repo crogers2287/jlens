@@ -1,0 +1,97 @@
+{
+ "schema_version": 1,
+ "run_kind": "m33_shadow_policy_rollup",
+ "policy_version": "m33-shadow-v1",
+ "config": {
+  "policy_version": "m33-shadow-v1",
+  "detector": "frozen M30 full_telemetry centroid",
+  "threshold_fail_probability": 0.5,
+  "score_basis": "bandless_unknown",
+  "feature_schema": "m26 FEATURES v1",
+  "checkable_categories": [
+   "math",
+   "numeric",
+   "json",
+   "exact"
+  ],
+  "tool_call_unit": "advised only; never executed"
+ },
+ "config_hash": "e7c7a43802cb13c5",
+ "eligible_denominator": 40,
+ "eligible_count": 13,
+ "abstain_counts": {
+  "category_not_checkable": 27
+ },
+ "advised_tool_call_rate_over_eligible": 0.15384615384615385,
+ "actual_tool_invocations": 0,
+ "cells": [
+  {
+   "workload_class": "current_info",
+   "score_band": null,
+   "recommendation": "abstain",
+   "count": 10,
+   "auto_was_wrong_unset": 10
+  },
+  {
+   "workload_class": "exact_answer",
+   "score_band": null,
+   "recommendation": "abstain",
+   "count": 5,
+   "auto_was_wrong_false": 5
+  },
+  {
+   "workload_class": "explain",
+   "score_band": null,
+   "recommendation": "abstain",
+   "count": 10,
+   "auto_was_wrong_unset": 10
+  },
+  {
+   "workload_class": "json",
+   "score_band": "band_0",
+   "recommendation": "no_action",
+   "count": 1,
+   "auto_was_wrong_false": 1
+  },
+  {
+   "workload_class": "json",
+   "score_band": "band_1",
+   "recommendation": "no_action",
+   "count": 1,
+   "auto_was_wrong_false": 1
+  },
+  {
+   "workload_class": "json",
+   "score_band": "band_3",
+   "recommendation": "advise_tool_check",
+   "count": 1,
+   "auto_was_wrong_false": 1
+  },
+  {
+   "workload_class": "math",
+   "score_band": "band_0",
+   "recommendation": "no_action",
+   "count": 9,
+   "auto_was_wrong_true": 8,
+   "auto_was_wrong_false": 1
+  },
+  {
+   "workload_class": "math",
+   "score_band": "band_3",
+   "recommendation": "advise_tool_check",
+   "count": 1,
+   "auto_was_wrong_true": 1
+  },
+  {
+   "workload_class": "regex",
+   "score_band": null,
+   "recommendation": "abstain",
+   "count": 2,
+   "auto_was_wrong_false": 1,
+   "auto_was_wrong_true": 1
+  }
+ ],
+ "advisory_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate counts only; no ids/text/paths"
+}

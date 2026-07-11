@@ -1,0 +1,20 @@
+{
+ "schema_version": 1,
+ "run_kind": "m35_track_a_freeze",
+ "calibration_split": "R",
+ "r_row_count": 288,
+ "detector_config_hash": "8cb5e95f3adfc0c4",
+ "router_config_hash": "d2b9333c3c8da41f",
+ "router_thresholds": {
+  "t_low": 0.05,
+  "t_high": 0.7
+ },
+ "r_invocation_fraction": 0.3368055555555556,
+ "r_verified_success": 0.9375,
+ "budget_fraction": 0.5,
+ "non_inferiority_margin": 0.05,
+ "comparator_seed": "m35:a-random-trigger",
+ "sealed_reads_performed": [],
+ "per_task_predictions_persisted_publicly": false,
+ "privacy_check_status": "aggregate metrics only"
+}

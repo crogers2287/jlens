@@ -118,9 +118,29 @@ def run_stock(args) -> int:
     return 0
 
 
+def _decode_rpc_array(value):
+    """Decode one array field from a collective_rpc result.
+
+    vLLM's msgpack layer encodes ndarrays as (dtype_str, shape, data)
+    triples (vllm/v1/serial_utils.py:_encode_ndarray) and only rebuilds
+    them for typed fields, so untyped dict values arrive as the raw
+    triple. Plain nested lists (test/dry-run path) are handled too.
+    """
+    import numpy as np
+
+    if isinstance(value, np.ndarray):
+        return value
+    if (isinstance(value, (list, tuple)) and len(value) == 3
+            and isinstance(value[0], str)
+            and isinstance(value[1], (list, tuple))
+            and isinstance(value[2], (bytes, bytearray, memoryview))):
+        dtype_str, shape, data = value
+        return np.frombuffer(data, dtype=np.dtype(dtype_str)).reshape(shape)
+    return np.asarray(value)
+
+
 def normalize_capture(cap: dict) -> dict:
-    """collective_rpc may round-trip numpy arrays as nested lists; coerce
-    the array-valued fields back to ndarrays for the gate evaluation."""
+    """Coerce the array-valued capture fields back to typed ndarrays."""
     import numpy as np
 
     out = dict(cap)
@@ -128,7 +148,7 @@ def normalize_capture(cap: dict) -> dict:
                        ("entropy", np.float64), ("mass", np.float64),
                        ("raw_logits_sample", np.float64)):
         if key in out:
-            out[key] = np.asarray(out[key], dtype=dtype)
+            out[key] = _decode_rpc_array(out[key]).astype(dtype)
     return out
 
 

@@ -180,7 +180,7 @@
      ],
      "operand_b_range": [
       2,
-      9
+      99
      ]
     },
     {
@@ -456,5 +456,12 @@
  },
  "framing": "track B is detector robustness measurement; track A is product/runtime routing evidence; no model self-correction claim; no training dataset from tool outputs",
  "candidate_only": true,
- "production_gated": true
+ "production_gated": true,
+ "amendments": [
+  {
+   "when": "pre-capture",
+   "what": "div_exact s1 operand_b_range widened [2,9] -> [2,99]",
+   "why": "the original cell had 64 possible (quotient, divisor) pairs but requires 80 unique tasks; exhaustion was caught by the generation test before any task generation for capture"
+  }
+ ]
 }

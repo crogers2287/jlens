@@ -39,6 +39,8 @@ class JlensWorkerExtension:
             raw_sample_tokens=cfg.get("raw_sample_tokens", 64),
         )
         handles = install_router_telemetry(runners, collector)
+        # Allocate outside inference mode so reset()/fill_() stay legal.
+        collector.allocate(self.model_runner.device)
         self._jlens_state = (collector, handles)
         return {
             "rank": getattr(self, "rank", -1),

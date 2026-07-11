@@ -81,6 +81,18 @@ class RouterTelemetryCollector:
     def num_layers(self) -> int:
         return len(self.layer_ids)
 
+    def allocate(self, device) -> None:
+        """Eagerly allocate buffers OUTSIDE torch.inference_mode.
+
+        Capture hooks run inside vLLM's inference-mode forward pass; tensors
+        created there become inference tensors, and later out-of-band
+        ``reset()`` calls (``zero_()``/``fill_()``) would raise
+        "Inplace update to inference tensor outside InferenceMode".
+        Allocating at install time keeps every buffer a normal tensor,
+        which may be freely written inside inference mode.
+        """
+        self._ensure_buffers(torch.device(device))
+
     def _ensure_buffers(self, device: torch.device) -> None:
         if self._ids is not None:
             return

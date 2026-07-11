@@ -246,6 +246,30 @@ def test_dispatch_mismatch_is_detected():
     assert cap["weight_maxdiff"][0] > 0.0
 
 
+def test_inference_mode_capture_then_reset_outside():
+    """Regression: capture runs inside torch.inference_mode (as in vLLM's
+    forward), while reset()/fetch() are called outside it via RPC. With
+    eager allocation this must not raise the inference-tensor error."""
+    runners = [FakeMoERunner(layer_id=i) for i in range(NUM_LAYERS)]
+    collector = RouterTelemetryCollector(
+        num_experts=NUM_EXPERTS, top_k=TOP_K,
+        capacity_tokens=32, raw_sample_tokens=8,
+    )
+    install_router_telemetry(runners, collector)
+    collector.allocate("cpu")
+    collector.enabled = True
+    with torch.inference_mode():
+        run_tokens(runners, collector, num_tokens=5)
+    cap = collector.fetch()
+    assert cap["rows"] == 5
+    collector.reset()          # raised before the eager-allocation fix
+    cap2 = collector.fetch()
+    assert cap2["rows"] == 0
+    with torch.inference_mode():
+        run_tokens(runners, collector, num_tokens=3)
+    assert collector.fetch()["rows"] == 3
+
+
 def test_aggregate_only_report_guard():
     good = {
         "schema_version": 1,

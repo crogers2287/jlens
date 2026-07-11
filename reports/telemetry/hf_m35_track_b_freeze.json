@@ -1,0 +1,38 @@
+{
+ "schema_version": 1,
+ "run_kind": "m35_track_b_freeze",
+ "fit_split": "D",
+ "d_row_count": 576,
+ "config_hash": "8cb5e95f3adfc0c4",
+ "threshold": 0.5,
+ "prior_gates": {
+  "pass": 0.15,
+  "fail": 0.85
+ },
+ "in_sample_d_metrics_descriptive": {
+  "global": {
+   "n_rows": 576,
+   "original_fail_count": 199,
+   "trigger_count": 195,
+   "trigger_precision": 0.8461538461538461,
+   "trigger_recall": 0.8291457286432161
+  },
+  "per_family": {
+   "n_rows": 576,
+   "original_fail_count": 199,
+   "trigger_count": 202,
+   "trigger_precision": 0.7475247524752475,
+   "trigger_recall": 0.7587939698492462
+  },
+  "hierarchical": {
+   "n_rows": 576,
+   "original_fail_count": 199,
+   "trigger_count": 200,
+   "trigger_precision": 0.78,
+   "trigger_recall": 0.7839195979899497
+  }
+ },
+ "sealed_reads_performed": [],
+ "per_task_predictions_persisted_publicly": false,
+ "privacy_check_status": "aggregate metrics only"
+}

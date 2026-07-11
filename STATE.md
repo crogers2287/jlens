@@ -938,3 +938,21 @@ iter 6 | prompts + loader done | data/prompts.jsonl (12 prompts, 6 categories: c
 - Public artifacts aggregate-only; check_commit_safe passed; 9 private
   recovery traces intentionally not committed; suite green: 168 tests.
   Production gated.
+
+## M33 telemetry-gated tool routing (2026-07-11) — MILESTONE COMPLETE
+- Executed preregistered Branch 3 of the M32 cluster: manifest predeclared
+  (5bfaf46) before generation/capture; implementation a4c2440; steer c10190e.
+- Fresh 384-task set (six bands, disjoint from M29-M32, regression-tested);
+  single greedy originals GPU capture; frozen M30 gate at threshold 0.5.
+- Reproduction gate PASSED: precision .902 / recall .889 (214 triggers).
+- VERDICTS: H1 USEFUL — telemetry_trigger_tool .938 verified success vs
+  no_repair .435 (CI [.453, .555]) and vs count-matched random .714
+  (CI [.177, .271]). H2 EFFICIENT — uplift retention .889 (CI [.846, .929])
+  at invocation fraction .557; 170/384 invocations saved. Zero errors
+  introduced (verifier-first held in all arms).
+- Framing: product/runtime routing evidence; no self-correction claim; no
+  training data from tool outputs.
+- Public artifacts aggregate-only; check_commit_safe passed; suite green:
+  174 tests. Production gated.
+- NEXT per Branch 3: M34 second-category detector transfer test (separate
+  steer commit). Autoloop budget: M32, M33 done — one milestone remains.

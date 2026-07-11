@@ -2269,3 +2269,22 @@ band_3 .64/.77, band_4 1.0/.89, band_5 .86/.95, band_6 1.0/.95. The detector
 is weakest mid-frontier and strongest where failure is near-certain —
 consistent with the M32P distribution-shift result, now visible within the
 M32 band structure itself.
+
+## 210. Telemetry-gated tool routing is useful and efficient (M33)
+On a fresh 384-task decision set (operands disjoint from M29-M32) the frozen
+M30 trigger reproduced at precision .902 / recall .889 (gate PASSED), and
+verifier-first tool routing gated on it reached .938 verified success vs .435
+no-repair (CI [.453, .555]) and .714 count-matched random routing
+(CI [.177, .271]) — H1 useful. H2 efficient: uplift retention .889
+(CI [.846, .929]) at invocation fraction .557, saving 170/384 tool calls vs
+tool-on-every-task. Zero errors introduced in any arm. First positive
+intervention result of the repair track; product/runtime routing evidence
+only, no self-correction claim.
+
+## 211. The detector reproduces across fresh decision sets
+The frozen M30 classifier has now held ~.90 precision on three sets: M32
+in-band (.900/.887), M33 fresh (.902/.889) — while M32P showed it degrades on
+a carry-structured capability frontier (.766/.738). Its per-band weakness is
+stable too (M33 band_2 precision .54, mirroring M32's band_3 .64): the gate
+is trustworthy where failures are dense and weakest mid-frontier. M34 should
+test transfer to a second task category, not scale traces.

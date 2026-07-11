@@ -1,0 +1,189 @@
+{
+ "schema_version": 1,
+ "run_kind": "m33_tool_routing_evaluation",
+ "task_category": "integer_arithmetic_single_expression",
+ "n_rows_evaluated": 384,
+ "frozen_trigger": {
+  "source": "M30 full_telemetry (refit-verified)",
+  "threshold_fail_probability": 0.5,
+  "trigger_count": 214,
+  "trigger_rate": 0.5572916666666666,
+  "trigger_precision": 0.9018691588785047,
+  "trigger_recall": 0.8894009216589862,
+  "reproduction_gate": {
+   "min_precision": 0.8,
+   "min_recall": 0.75,
+   "on_failure": "stop and report before any H1/H2 claim",
+   "passed": true
+  }
+ },
+ "original_label_distribution": {
+  "pass": 167,
+  "fail": 217
+ },
+ "policy_metrics": {
+  "no_repair": {
+   "verified_success_rate": 0.4348958333333333,
+   "tool_invocations": 0,
+   "candidate_decode_tokens": 0,
+   "errors_rescued": 0,
+   "errors_introduced": 0,
+   "false_alarm_checks": 0
+  },
+  "tool_on_every_task": {
+   "verified_success_rate": 1.0,
+   "tool_invocations": 384,
+   "candidate_decode_tokens": 0,
+   "errors_rescued": 217,
+   "errors_introduced": 0,
+   "false_alarm_checks": 167
+  },
+  "random_trigger_tool": {
+   "verified_success_rate": 0.7135416666666666,
+   "tool_invocations": 214,
+   "candidate_decode_tokens": 0,
+   "errors_rescued": 107,
+   "errors_introduced": 0,
+   "false_alarm_checks": 107
+  },
+  "telemetry_trigger_tool": {
+   "verified_success_rate": 0.9375,
+   "tool_invocations": 214,
+   "candidate_decode_tokens": 0,
+   "errors_rescued": 193,
+   "errors_introduced": 0,
+   "false_alarm_checks": 21
+  }
+ },
+ "h1_routing_usefulness": {
+  "comparisons": {
+   "telemetry_trigger_tool_vs_no_repair": {
+    "delta_success_rate": 0.5026041666666667,
+    "delta_success_bootstrap_95pct": [
+     0.453125,
+     0.5546875
+    ]
+   },
+   "telemetry_trigger_tool_vs_random_trigger_tool": {
+    "delta_success_rate": 0.22395833333333337,
+    "delta_success_bootstrap_95pct": [
+     0.17708333333333334,
+     0.2708333333333333
+    ]
+   }
+  },
+  "verdict": "useful"
+ },
+ "h2_routing_efficiency": {
+  "uplift_retention": 0.8894009216589862,
+  "uplift_retention_bootstrap_95pct": [
+   0.8457943925233645,
+   0.9285714285714286
+  ],
+  "invocation_fraction": 0.5572916666666666,
+  "invocations_saved_vs_tool_on_every_task": 170,
+  "verdict": "efficient"
+ },
+ "per_band_descriptives_secondary": {
+  "confirmatory": false,
+  "bands": [
+   {
+    "band": "band_1",
+    "n_tasks": 64,
+    "original_fail_count": 1,
+    "trigger_count": 1,
+    "trigger_true_positives": 0,
+    "telemetry_rescues": 0,
+    "trigger_precision": 0.0,
+    "trigger_recall": 0.0
+   },
+   {
+    "band": "band_2",
+    "n_tasks": 64,
+    "original_fail_count": 10,
+    "trigger_count": 13,
+    "trigger_true_positives": 7,
+    "telemetry_rescues": 7,
+    "trigger_precision": 0.5384615384615384,
+    "trigger_recall": 0.7
+   },
+   {
+    "band": "band_3",
+    "n_tasks": 64,
+    "original_fail_count": 38,
+    "trigger_count": 38,
+    "trigger_true_positives": 32,
+    "telemetry_rescues": 32,
+    "trigger_precision": 0.8421052631578947,
+    "trigger_recall": 0.8421052631578947
+   },
+   {
+    "band": "band_4",
+    "n_tasks": 64,
+    "original_fail_count": 61,
+    "trigger_count": 61,
+    "trigger_true_positives": 59,
+    "telemetry_rescues": 59,
+    "trigger_precision": 0.9672131147540983,
+    "trigger_recall": 0.9672131147540983
+   },
+   {
+    "band": "band_5",
+    "n_tasks": 64,
+    "original_fail_count": 43,
+    "trigger_count": 39,
+    "trigger_true_positives": 33,
+    "telemetry_rescues": 33,
+    "trigger_precision": 0.8461538461538461,
+    "trigger_recall": 0.7674418604651163
+   },
+   {
+    "band": "band_6",
+    "n_tasks": 64,
+    "original_fail_count": 64,
+    "trigger_count": 62,
+    "trigger_true_positives": 62,
+    "telemetry_rescues": 62,
+    "trigger_precision": 1.0,
+    "trigger_recall": 0.96875
+   }
+  ]
+ },
+ "claim_rules": {
+  "h1_routing_usefulness": {
+   "population": "all 384 tasks",
+   "comparisons": [
+    [
+     "telemetry_trigger_tool",
+     "no_repair"
+    ],
+    [
+     "telemetry_trigger_tool",
+     "random_trigger_tool"
+    ]
+   ],
+   "classification": {
+    "useful": "both paired 95% success-delta CIs strictly above zero",
+    "harmful": "either upper bound strictly below zero",
+    "not_established": "otherwise"
+   },
+   "bootstrap_seed_prefix": "m33:h1",
+   "bootstrap_iterations": 2000
+  },
+  "h2_routing_efficiency": {
+   "uplift_retention": "(telemetry_trigger_tool - no_repair) / (tool_on_every_task - no_repair), verified success rates",
+   "invocation_fraction": "telemetry_trigger_tool invocations / 384",
+   "classification": {
+    "efficient": "uplift retention >= 0.80 AND invocation fraction <= 0.60 on point estimates",
+    "not_established": "otherwise"
+   },
+   "retention_bootstrap_seed": "m33:h2:retention",
+   "bootstrap_iterations": 2000
+  }
+ },
+ "framing": "product/runtime routing evidence only; no model self-correction claim; no training dataset from tool outputs",
+ "per_task_predictions_persisted_publicly": false,
+ "candidate_only": true,
+ "production_gated": true,
+ "privacy_check_status": "aggregate metrics/intervals only; no ids/text/paths"
+}

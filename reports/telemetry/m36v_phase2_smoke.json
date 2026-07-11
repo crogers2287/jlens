@@ -1,0 +1,160 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36v_phase2_parity_quality_overhead",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "runtime": {
+  "vllm": "0.24.0",
+  "tensor_parallel_size": 2,
+  "max_model_len": 1024,
+  "enforce_eager": true,
+  "max_tokens": 512,
+  "override_hash": "2b3e50264b503bec",
+  "prompt_count": 16,
+  "prompt_families": [
+   "math",
+   "json",
+   "instruction",
+   "reasoning"
+  ]
+ },
+ "arms": {
+  "stock": {
+   "verifier_outcomes_by_family": {
+    "math": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "json": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "instruction": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "reasoning": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    }
+   },
+   "verifier_outcomes_total": {
+    "pass": 16,
+    "fail": 0,
+    "undecided": 0
+   },
+   "malformed_json_count": 0,
+   "output_tokens_total": 6147,
+   "output_tokens_mean": 384.2,
+   "load_seconds": 375.2,
+   "generation_seconds": 892.93,
+   "tokens_per_second": 6.88,
+   "gpu_combined_peak_gib": 41.51
+  },
+  "instrumented": {
+   "verifier_outcomes_by_family": {
+    "math": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "json": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "instruction": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "reasoning": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    }
+   },
+   "verifier_outcomes_total": {
+    "pass": 16,
+    "fail": 0,
+    "undecided": 0
+   },
+   "malformed_json_count": 0,
+   "output_tokens_total": 5639,
+   "output_tokens_mean": 352.4,
+   "load_seconds": 382.1,
+   "generation_seconds": 1125.35,
+   "tokens_per_second": 5.01,
+   "gpu_combined_peak_gib": 40.48,
+   "telemetry_overhead_ratio": 1.319,
+   "seconds_disabled": 852.93,
+   "seconds_enabled": 1125.35,
+   "disabled_enabled_identical": false,
+   "disabled_enabled_divergence": {
+    "prompts_differing": 9,
+    "first_divergence_min": 39,
+    "first_divergence_mean": 146.8
+   },
+   "parity_within_baseline_envelope": true,
+   "telemetry_rows_total": 6099,
+   "telemetry_id_mismatch_total": 0,
+   "telemetry_dispatch_missed_total": 0,
+   "telemetry_weight_maxdiff": 0.0,
+   "telemetry_weight_nonfinite_total": 0,
+   "moe_layers": 40
+  },
+  "gguf": {
+   "verifier_outcomes_by_family": {
+    "math": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "json": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "instruction": {
+     "pass": 4,
+     "fail": 0,
+     "undecided": 0
+    },
+    "reasoning": {
+     "pass": 3,
+     "fail": 1,
+     "undecided": 0
+    }
+   },
+   "verifier_outcomes_total": {
+    "pass": 15,
+    "fail": 1,
+    "undecided": 0
+   },
+   "malformed_json_count": 0,
+   "output_tokens_total": 188,
+   "output_tokens_mean": 11.8,
+   "load_seconds": null,
+   "generation_seconds": 107.3,
+   "tokens_per_second": 1.75,
+   "gpu_combined_peak_gib": null,
+   "endpoint_model": "agents-a1",
+   "serving_stack_responsive": true
+  }
+ },
+ "gates": {
+  "instrumented_verifiers_not_worse_than_stock": true,
+  "telemetry_dispatch_clean": true,
+  "parity_within_baseline_envelope": true,
+  "bounded_overhead": true,
+  "gguf_service_restored": true
+ },
+ "awq_vs_q8_note": "diagnostic only; output equality neither required nor an efficacy claim",
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate gates/metrics only; outputs private",
+ "all_gates_passed": true
+}

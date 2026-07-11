@@ -66,6 +66,23 @@ captured set carries identical probability mass). The binding
 summary-vs-raw criterion is mass equivalence; exact-set mismatch is
 recorded informationally.
 
+## Phase 2 — parity, quality, and overhead smoke (all gates passed)
+
+Sixteen fixed private prompts (4x deterministic arithmetic, JSON, exact
+instruction following, short reasoning; operands seeded, instances and
+outputs private). Artifact: `reports/telemetry/m36v_phase2_smoke.json`.
+
+| Arm | Verifiers | tok/s | Notes |
+|---|---|---|---|
+| stock vLLM AWQ | 16/16 pass | 6.88 (single-stream) | 41.51 GiB peak |
+| instrumented vLLM AWQ | 16/16 pass | 5.01 | overhead 1.319x; 0 id mismatches over 6,099 rows; weight maxdiff 0.0 |
+| Agents-A1 Q8 GGUF (diagnostic) | 15/16 pass | 1.75 | 1 reasoning miss; equality with AWQ neither required nor claimed |
+
+Disabled-vs-enabled diverged on 9/16 prompts, first divergence at token
+39 — within the frozen baseline envelope (scaled from the Phase 1 null).
+The normal `agents-a1` GGUF service was exercised and verified
+responsive after the research runtime exited (gguf_service_restored).
+
 ## Feature schema coverage
 
 Per decode token and routed layer, derivable with no hidden-state and no

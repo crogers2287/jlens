@@ -4,6 +4,30 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-12T21:40Z
+
+- **Milestone/phase:** M36C adaptive calibration (branch A — healthy) on
+  the dual-3090 host; M37J Phase 1 lens fit running on the V100 host.
+- **Remote head at collection:** `7aef746`; `steer_sha_seen`
+  `9aa560e1d8111c67a67dc4fad6b72d68f8f8ed1a` — unchanged, no new steer.
+- **Process state:** supervisor alive; adaptive attempt 2 running since
+  17:34 UTC (retry 1/1 used); keep-alive sidecar active; GPU busy.
+- **Rows:** retained 156 / 192 cap; completed_correct **92 / 48 — met**;
+  completed_incorrect **0 / 48 — binding**; truncated 64; mixed cells
+  0 / 2; failure families 0 / 3; 107 new rows this run.
+- **Last completed task id:** `m36c_sub_mixed_s3_001`; last progress
+  21:36 UTC.
+- **Throughput:** ~26 rows/h (≈139 s/row). **ETA:** cap-bound in
+  ~1.5–2 h if completed-failure yield stays zero (outcome would be
+  `completed_failure_frontier_not_found`); quotas-met earlier only if
+  incorrect completions appear in expansion.
+- **Blockers:** none. **Retries:** adaptive 1/1 stage retry used.
+- **Tests/privacy/serving:** 12/12 unit tests at `0a5e023`; all
+  task-level data private; serving restoration pending run completion.
+- **M37J:** pre-fit manifest committed pre-fitting (`7aef746`); Phase 1
+  fit RUNNING on the V100 (launched ~21:21 UTC, first resumable
+  checkpoint ~0.39 GB written 21:35; cadence 5 prompts; 30 GiB gate).
+
 ## Heartbeat 2026-07-12T21:15Z
 
 - **Milestone/phase:** M36C adaptive calibration (branch A — healthy,

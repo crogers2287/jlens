@@ -1,8 +1,9 @@
 # jlens — Interpretability Sidecar for Qwen3.5/3.6 MoE — STATE
 
-Current phase: 0
-Iteration count: 7
-Loop status: RUNNING (gates cleared by user "Do it all, use the 3.6 variant") 
+Current phase: M36C (adaptive Agents-A1 calibration) + M37J pilot (parallel)
+Live status: docs/OVERNIGHT_STATUS_2026-07-12.md and steer.md are current
+M1-M35 sealed; M36V complete (full_telemetry). Below is the original
+phase-0 planning record, retained for history.
 
 ## Phase 0 — Feasibility (exit: go/no-go memo in STATE.md)
 - [x] Create project venv + dir layout (jlens/{src,probes,data,lenses,reports})

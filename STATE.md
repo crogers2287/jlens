@@ -1,7 +1,25 @@
 # jlens — Interpretability Sidecar for Qwen3.5/3.6 MoE — STATE
 
-Current phase: M36C (adaptive Agents-A1 calibration) + M37J pilot (parallel)
-Live status: docs/OVERNIGHT_STATUS_2026-07-12.md and steer.md are current
+Current phase: M36T (pre-truncation routing, steer 79878ab) + M37J-A pilot
+Live status: docs/LIVE_STATUS.md (pushed 30-min heartbeats) and steer.md
+
+## FINDING — M36C closeout (2026-07-12, steer 79878ab)
+
+M36C adaptive calibration completed 23:03 UTC with the protocol-valid
+outcome `completed_failure_frontier_not_found`: 115 completed-correct
+rows, 0 completed-incorrect, 81 truncated_budget rows (separate
+budget-policy dataset), 145 new captures, 0 completed-failure families,
+0 mixed cells. Scope of the finding: this does NOT establish that
+Agents-A1 never produces wrong completed answers — only that the frozen
+M36C task families, strata, checkpoint, runtime, and decode policy did
+not produce the completed-error population the planned detector
+benchmark required. Every observed operational failure was decode-budget
+truncation. The M36-H1/H2/H3 completed-error efficacy questions are
+CLOSED as not testable on this population (not passed, not falsified).
+Router/logit telemetry has not established incremental completed-error
+prediction on Agents-A1. Private rows preserved unchanged; no
+completed-error detector was fit (zero positive examples). Serving
+restored and verified (agents-a1 on llama-swap) at 23:2x UTC.
 M1-M35 sealed; M36V complete (full_telemetry). Below is the original
 phase-0 planning record, retained for history.
 

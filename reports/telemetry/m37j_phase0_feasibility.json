@@ -1,0 +1,30 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_phase0_feasibility",
+ "pilot_model": "Qwen1.5-MoE-A2.7B-Chat",
+ "model_ref_hash": "[h:7859e788e86a8de8]",
+ "gpu": "Tesla V100-PCIE-32GB",
+ "torch": "2.5.1+cu121",
+ "transformers": "5.13.1",
+ "jlens_version": "unversioned",
+ "dtype": "float16",
+ "seq_len": 128,
+ "n_layers": 24,
+ "load_seconds": 77.9,
+ "forward_seconds": 0.72,
+ "backward_seconds": 0.45,
+ "peak_allocated_gib": 27.89,
+ "peak_reserved_gib": 28.27,
+ "gates": {
+  "backward_smoke_completes": true,
+  "peak_memory_within_30gib": true,
+  "fully_on_gpu_no_offload": true,
+  "hidden_states_accessible": true,
+  "unembedding_accessible": true,
+  "jlens_adapter_works": true,
+  "forward_unchanged_without_lens": true
+ },
+ "all_gates_passed": true,
+ "adapter_error": null,
+ "privacy_check_status": "aggregate feasibility metrics only"
+}

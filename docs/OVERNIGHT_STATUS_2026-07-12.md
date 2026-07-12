@@ -52,6 +52,26 @@ detector/policy freeze -> benchmark manifest commit -> decision capture
   inference-only (steer's explicit claim boundary). Nothing from M37J
   is an Agents-A1 result.
 
+## Power-loss recovery (~12:00–16:20 UTC)
+
+Host lost power ~11:56 UTC, mid-way through the post-race-fix profile
+re-run (vLLM had just finished engine init). The supervisor was an
+ad-hoc shell loop and died with the host. Recovery at 16:20 UTC:
+
+- M37J Phase 0 **completed and passed all 7 gates on the V100 before
+  the outage** (peak 28.27 GiB < 30 GiB, backward smoke 0.45 s, jlens
+  adapter works, forward unchanged) — only the local watcher was lost.
+  Artifact pulled into `reports/telemetry/m37j_phase0_feasibility.json`.
+- M36C supervisor rewritten as a committed script
+  (`scripts/m36c_supervisor.sh`): profile -> adaptive chained, one
+  retry per stage, 20-min silent-stall watchdog (profile is
+  legitimately quiet ~13 min during its 8 generations), process-group
+  kill on stall, launched detached (nohup+setsid) so it survives
+  operator-session loss. Model path read from untracked
+  `.m36c_model_ref` (never committed).
+- Profile re-run (with the async-scheduler race fix, `8cc6489`)
+  relaunched 16:20 UTC.
+
 ## Next checkpoints
 
 1. Profile gates -> adaptive calibration rows accumulate (supervised).

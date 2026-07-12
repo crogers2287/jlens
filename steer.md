@@ -1,433 +1,199 @@
-# steer.md — active M36C adaptive run, reliable heartbeats, and M37J-A fit
-
-`CODEX_AUTOSTEER.md` remains the operating contract. This top section is the
-current binding override. The detailed M36/M37J protocol below remains binding
-except where this section updates phase status or operational behavior.
-
-## Current established state
-
-Remote GitHub head at the time of this steer was:
-
-- `10767bbac808bf517962b24a499e092973ab4d4b` — M36C Phase 0 profile passed;
-- summary-versus-raw maximum difference `8.88e-16`;
-- median non-generation overhead `0.59%` versus the `25%` gate;
-- adaptive M36C calibration auto-launched at 17:06 UTC;
-- `27bafe12f8689754d5662c4d0024020dadeb086b` established that M37J Phase 0
-  passed all seven V100 feasibility gates at 28.27 GiB peak reserved memory.
-
-M36V remains complete and sealed. The original 384-row calibration remains
-abandoned at 88 preserved rows. Do not rerun either.
-
-## Immediate operational anomaly
-
-More than four hours elapsed after adaptive launch without a pushed 30-minute
-status commit. The new heartbeat/check-steer loop is therefore not yet proven to
-be functioning end-to-end. A local commit, local status file, or watcher message
-is insufficient; the checkpoint must appear on the remote default branch.
-
-Do **not** kill a healthy adaptive generation merely to satisfy this steer.
-Finish the current atomic prompt, save private progress, then perform the status
-and steer check below.
-
-## Immediate directive — determine actual M36C state
-
-At the next safe task boundary:
-
-1. fetch the remote default branch and reread `steer.md`;
-2. inspect the adaptive worker, supervisor, log modification time, GPU activity,
-   private retained-row count, last completed task id, retries, and exit status;
-3. write or update one aggregate-only public live-status file;
-4. commit and push that status immediately;
-5. continue according to exactly one branch:
-
-### A. Adaptive calibration is healthy and progressing
-
-- leave it running;
-- report completed/retained rows, correct/incorrect/truncated counts, families,
-  mixed cells, throughput, last task, last-progress timestamp, and ETA;
-- continue to the frozen quota/cap stop condition;
-- do not change the task order, budgets, labels, expansion rule, or quota rule.
-
-### B. Adaptive calibration has completed
-
-- restore and verify normal Agents-A1 serving;
-- commit the aggregate M36C calibration result;
-- freeze the five required comparators and policy hashes;
-- commit the fresh decision-manifest **before** any decision capture;
-- proceed directly to the paired M36 benchmark and single sealed evaluation;
-- stop after the M36 result commit and request an operator decision.
-
-### C. Adaptive calibration is stalled or dead
-
-- preserve every completed private row unchanged;
-- allow the committed supervisor one process-group restart only;
-- resume by task id without regenerating completed rows;
-- if the retry also fails, restore serving, commit the exact blocker and latest
-  safe progress, and stop rather than silently looping.
-
-## Binding 30-minute heartbeat and steer check
-
-The heartbeat must be independent of the research worker and supervisor. Every
-30 minutes while either M36C/M36 or M37J is active, it must:
-
-1. fetch the remote default branch;
-2. compare the current remote `steer.md` blob/commit with `steer_sha_seen`;
-3. if the steer changed, finish the current atomic task, flush private progress,
-   reread the full steer, and obey it before launching another task;
-4. collect aggregate operational state;
-5. update a stable public status file such as `docs/LIVE_STATUS.md`;
-6. commit and **push** the status to the remote default branch;
-7. verify that the pushed SHA is visible remotely.
-
-Each heartbeat must record at minimum:
-
-- UTC timestamp;
-- active milestone, phase, host class, and process state;
-- remote head SHA and `steer_sha_seen`;
-- completed/total or retained/cap rows;
-- last completed task id and last-progress timestamp;
-- correct, incorrect, truncated, family, and mixed-cell aggregates when relevant;
-- throughput and ETA when estimable;
-- retry count and current blocker;
-- tests/privacy/serving-restoration state;
-- M37J phase/checkpoint progress when active.
-
-Operational heartbeat commits must not alter prompts, sealed data, labels,
-thresholds, claim rules, manifests, or research results. They are status-only.
-Never commit private task text, operands, outputs, token ids, telemetry arrays,
-paths, weights, or per-task predictions.
-
-If a 30-minute heartbeat cannot push, record the failure locally and retry the
-push, but do not create conflicting research changes. Two consecutive missed
-remote heartbeats are an operational failure requiring an immediate pushed
-incident/status commit when connectivity returns.
-
-## M37J current directive
-
-M37J Phase 0 feasibility is complete. On the separate V100, without delaying or
-altering M36:
-
-1. commit a pre-fit manifest naming the exact pilot model, Jacobian-lens revision,
-   environment hashes, 100 fit sequences, 20 validation sequences, sequence
-   length, seeds, checkpoint cadence, memory gate, and privacy rules;
-2. fit the lens using resumable/checkpointed execution;
-3. validate readout/forward invariance before generating the 192-task diagnostic
-   dataset;
-4. continue only through M37J-A observation-only evaluation;
-5. run M37J-B intervention only if J-H1 or J-H2 passes under the frozen protocol.
-
-Nothing from M37J is an Agents-A1 result. No permanent model edit, exported
-altered checkpoint, safety bypass, or production modification is authorized.
-
----
-
-# Detailed binding protocol retained from the previous steer
-
-M1 through M35 are complete. Do not reopen their sealed decision sets.
-
-Detailed adjacent-research protocol:
-
-`docs/M37J_JACOBIAN_LENS_SEMANTIC_WORKSPACE_AUTOLOOP.md`
-
-Read it in full before beginning M37J work.
-
-# Current established state
-
-## M36V — Agents-A1 AWQ runtime and telemetry qualification: COMPLETE
-
-Exact research model:
-
-- checkpoint: `cyankiwi/Agents-A1-AWQ-INT4`;
-- revision: `3e522d4e46438c782789b73c8ff4503e0edd037c`;
-- runtime: isolated vLLM 0.24.0, compressed-tensors, tensor parallel 2;
-- architecture: `qwen3_5_moe`, 40 routed text layers, 256 experts, top-8;
-- full observation-only router telemetry validated against actual fused dispatch;
-- zero expert-id mismatches and exact dispatch-weight identity in validation;
-- stock and instrumented AWQ both passed 16/16 Phase-2 verifier checks;
-- telemetry overhead in the controlled smoke was about 1.32x;
-- normal Agents-A1 GGUF serving restored after every research run.
-
-Do not repeat M36V. Preserve its artifacts as the runtime/telemetry qualification
-for M36.
-
-## M36C — calibration amendment and implementation status
-
-The original 384-row fixed calibration sweep was stopped correctly at a safe
-boundary after **88 completed private rows**. Those rows remain unchanged. The
-normal serving stack was restored. Do not restart the original full sweep.
-
-The first multiplication family showed a decode-budget cliff:
-
-- 3x2 and 4x3 multiplication: about .94 pass;
-- 5x4 and 6x5 multiplication: apparent .06/.00 pass, but .94/1.00 truncation at
-  the 1,024-token cap;
-- those hard cells are budget-bound, not established capability failures.
-
-Commit `8066fe2` implements the approved M36C machinery:
-
-- device-side summary telemetry for the four router features;
-- bounded scalar RPC instead of per-prompt full tensor transfer;
-- raw NPZ capture only for validation samples;
-- summary-versus-raw equivalence testing at <= 1e-5 per feature;
-- per-component harness profiling;
-- adaptive four-row cell probes;
-- staged 512 -> 1,024 -> 2,048 token rescue budgets;
-- separate `truncated_budget` classification;
-- frozen quota-driven selective expansion;
-- retention cap for completed calibration rows.
-
-# Primary operator decision — finish M36 efficiently
-
-M36 remains the primary research program. Continue from the existing 88 rows and
-the committed M36C machinery. Do not return to the 20-hour fixed sweep.
-
-## M36C Phase 0 — profile and validate summary telemetry
-
-Run the fixed eight-prompt profile before new adaptive rows.
-
-Record aggregate median and p95 timing for:
-
-- model generation;
-- collector reset/install/fetch;
-- worker RPC;
-- telemetry serialization;
-- feature derivation;
-- verifier execution;
-- result append/fsync.
-
-Binding gates:
-
-1. every device-summary router feature matches raw-NPZ recomputation within
-   absolute difference <= 1e-5;
-2. no request/telemetry alignment error;
-3. no dispatch identity regression;
-4. no public prompt/output/token/route/tensor/path leakage;
-5. median non-generation harness overhead <= 25% of model generation time.
-
-If gate 5 fails, optimize only the largest measured component once, then rerun
-the profile. Microbatching 2-8 prompts is permitted only when per-request
-telemetry alignment, feature identity, and verifier outcomes are regression-
-tested. Do not optimize speculatively.
-
-## M36C Phase 1 — adaptive frontier map
-
-Keep all 88 completed rows. For untested cells, run deterministic four-row probes
-using the committed task order.
-
-Staged budget policy:
-
-1. begin at 512 output tokens;
-2. rerun at most two predetermined truncated rows per cell at 1,024;
-3. rerun at most one predetermined still-truncated row per cell at 2,048;
-4. never run an entire cell at 2,048.
-
-For each cell report separately:
-
-- completed-correct rate;
-- completed-incorrect rate;
-- truncation rate by budget;
-- median/p95 output tokens;
-- generation and harness time.
-
-Never label a capped output as a completed wrong answer.
-
-## M36C Phase 2 — selective expansion
-
-Use the already-frozen expansion rules:
-
-- mixed completed frontier: pass rate .20-.80 and truncation <= .25 -> expand
-  to 16 completed rows;
-- high/low completed anchor: pass rate outside that range and truncation <= .25
-  -> retain or expand to 8;
-- budget-bound: truncation > .50 at 1,024 -> no broad expansion;
-- ambiguous cells may expand to 8 only to meet quotas.
-
-Stop when all are met or the retention cap is exhausted:
-
-- >=48 completed-correct rows;
-- >=48 completed-incorrect rows;
-- completed failures from >=3 task families;
-- >=2 mixed-frontier cells;
-- <=192 retained completed calibration rows.
-
-If these cannot be met, report `completed_failure_frontier_not_found`; do not
-construct a benchmark dominated by timeouts.
-
-Split completed calibration rows deterministically within cell into detector D
-(two thirds) and policy R (one third). Keep truncation rows as a separate budget-
-policy dataset.
-
-## Agents-A1 detector and policy freeze
-
-Fit only from fresh Agents-A1 AWQ calibration data. Do not import proxy
-thresholds, centroids, priors, or score scales.
-
-Freeze these comparators:
-
-1. metadata only;
-2. metadata + output length/finish reason;
-3. metadata + length + logit features;
-4. metadata + length + router features;
-5. full approved telemetry.
-
-The operational black-box controller may route explicit truncations and verifier
-failures directly to a trusted deterministic tool. Report this separately from
-internal telemetry prediction.
-
-The binding internal-telemetry claim population is completed, nontruncated
-outputs. Full telemetry must add value beyond metadata plus output length at the
-same tool budget. Detecting the token cap is useful but is not evidence of
-model-internal error awareness.
-
-Freeze detector and policy hashes before creating the decision manifest.
-
-# M36 — paired Agents-A1 AWQ raw versus jLens
-
-After M36C result and freeze commits, preregister fresh, disjoint decision tasks.
-Calibration prompts and M29-M35 decision tuples remain excluded.
-
-Use the committed power rule to select N from 192, 240, or 288 with expected raw
-operational failures >=24.
-
-Primary benchmark composition:
-
-- 60-70% mixed completed-error frontier cells;
-- 15-20% high-competence anchors;
-- 15-20% low-competence but mostly completed anchors;
-- separate small non-confirmatory budget-bound set.
-
-Choose a fixed decode cap whose primary cells have estimated truncation <=.10.
-Do not use timeout-heavy cells to inflate apparent jLens uplift.
-
-Every policy arm starts from the same single AWQ original and telemetry capture:
-
-1. `raw_awq`;
-2. `black_box_jlens` — competence, finish reason, verifier-first tools;
-3. `full_jlens` — Agents-A1 telemetry detector plus verifier-first tools;
-4. `count_matched_random`;
-5. `tool_on_every_eligible_task`.
-
-No arm may replace a verified-correct answer with a failing result.
-
-Confirmatory questions:
-
-- **M36-H1 practical value:** selected jLens improves verified success over raw
-  AWQ with paired 95% lower confidence bound >0;
-- **M36-H2 telemetry increment:** on completed, nontruncated outputs, full jLens
-  beats black-box jLens and count-matched random at the frozen budget, both lower
-  bounds >0;
-- **M36-H3 efficiency:** selected jLens is non-inferior to tool-all within the
-  frozen success margin while using significantly fewer calls.
-
-Report operational and completed-only results separately, including truncation
-rescues, wrong-answer rescues, misses, false alarms, regressions, tool fraction,
-calls saved, tokens, latency, telemetry overhead, and compute per correction.
-
-Stop after the M36 result commit and print the required report. Any further
-Agents-A1 efficacy work requires a new operator decision.
-
-# Adjacent track — M37J Jacobian-lens semantic workspace
-
-The operator authorizes the detailed M37J protocol as a **parallel, model-scoped
-pilot**, not as a replacement for M36.
-
-## Scheduling and hardware
-
-- M36 retains priority on the dual 3090 machine.
-- Use the separate 32 GiB V100 host for M37J when it is reachable.
-- Do not stop, slow, or alter an active M36 run to fit a Jacobian lens.
-- If the V100 is unavailable, implementation and CPU tests may proceed, but real
-  fitting waits for non-conflicting GPU capacity.
-- Use an isolated environment pinned to an exact
-  `anthropics/jacobian-lens` revision.
-
-## Claim boundary
-
-The official Jacobian lens reads intermediate residual representations by
-fitting average layerwise Jacobian transports. It requires differentiable
-backward passes. The current Agents-A1 AWQ/vLLM path is inference-oriented and
-is **not** approved for direct lens fitting.
-
-M37J therefore begins on a differentiable Qwen pilot model. Preferred order:
-
-1. already-local `Qwen1.5-MoE-A2.7B-Chat` if a 128-token backward smoke fits
-   within 30 GiB on the V100;
-2. otherwise an already-local dense Qwen decoder <=4B, selected and committed
-   before fitting.
-
-No silent model-family change is allowed. All claims name the exact pilot model.
+# steer.md — close M36 completed-error track; run M36T pre-truncation routing; continue M37J-A
+
+`CODEX_AUTOSTEER.md` remains the operating contract. This file is the current
+binding directive. Older M36 benchmark instructions are superseded where they
+conflict with this steer.
+
+## Established state
+
+M36V remains complete and sealed on the exact Agents-A1 AWQ checkpoint.
+Do not repeat it.
+
+M36C adaptive calibration completed at 23:03 UTC with the protocol-valid outcome
+`completed_failure_frontier_not_found`:
+
+- 115 completed-correct rows;
+- 0 completed-incorrect rows;
+- 81 `truncated_budget` rows;
+- 145 new captures in the adaptive run;
+- 0 completed-failure families;
+- 0 mixed completed-error cells.
+
+This does **not** establish that Agents-A1 never produces wrong completed answers.
+It establishes only that the frozen M36C task families, strata, checkpoint,
+runtime, and decode policy did not produce the completed-error population needed
+for the planned detector benchmark. Every observed operational failure in M36C
+was decode-budget truncation.
+
+M37J Phase 0 passed all seven V100 feasibility gates. Its pre-fit manifest was
+committed before fitting, and the M37J-A fit is allowed to continue on the V100.
 Nothing from M37J is an Agents-A1 result.
 
-Community claims that J-space modification replaces LoRA are unverified and out
-of scope. No permanent weight edit, exported altered checkpoint, personality
-edit, safety bypass, or production behavior modification is authorized.
+## Immediate closeout of M36C
 
-## Authorized bounded autoloop
+At the next safe boundary:
 
-Authorize at most two M37J milestones:
+1. fetch the remote default branch and reread this steer;
+2. restore and verify normal Agents-A1 serving;
+3. commit the already-written aggregate M36C result and frontier artifacts;
+4. record the exact scoped finding above in STATE/findings;
+5. preserve all private rows unchanged;
+6. do not fit a completed-error detector from zero positive examples;
+7. do not create or run the superseded M36 raw-vs-jLens completed-error manifest;
+8. do not post-hoc shop for a harder task set under the M36 claim.
 
-### M37J-A — fit and semantic-monitor evaluation
+The old M36-H1/H2/H3 efficacy questions are closed as **not testable on the
+frozen M36C population**, not passed and not falsified. Router/logit telemetry has
+not yet established incremental completed-error prediction on Agents-A1.
 
-Follow the detailed protocol:
+# M36T — pre-truncation prediction and budget-aware routing
 
-- feasibility/backward gate;
-- 100 fit plus 20 lens-validation sequences of 128 tokens;
-- exact lens/environment hash;
-- 192 fresh tasks split 96 discovery / 48 validation / 48 sealed holdout;
-- four outcome classes: completed correct, completed incorrect, short-cap
-  truncation rescued at long cap, and truncation at both caps;
-- fixed semantic groups for completion, continuation, verification,
-  error/conflict, and uncertainty;
-- discovery-only sparse J-readout features frozen before holdout;
-- compare metadata+length, current telemetry, J-space features, and combined.
+M36T is a new, narrower operational study. Its question is:
 
-Primary M37J-A claims:
+> From an early, observation-only prefix of an Agents-A1 generation, can jLens
+> predict whether the run will finish within the normal decode budget and use
+> that prediction to choose `continue` versus `trusted tool` more efficiently
+> than metadata, ordinary confidence signals, or random routing?
 
-- **J-H1 semantic increment:** on completed nontruncated outputs, J-space plus
-  current telemetry beats current telemetry alone in accuracy and balanced
-  accuracy with both paired lower confidence bounds >0;
-- **J-H2 budget-state prediction:** among short-cap truncations, J-space predicts
-  long-cap successful completion better than metadata, length, and ordinary
-  telemetry, lower bound >0.
+This is a truncation/compute-allocation claim only. Do not describe it as
+hallucination detection, hidden error awareness, or completed-answer repair.
 
-If neither passes, stop the Jacobian-lens track.
+## Phase 0 — feasibility from existing calibration only
 
-### M37J-B — temporary workspace intervention
+Use only aggregate/cell-level M36C results to identify candidate cells. Before
+new capture, require:
 
-Run only if J-H1 or J-H2 passes and observation-only validation is clean.
+- at least two task families with useful budget variation;
+- primary development label prevalence between .20 and .80 for
+  `needs_more_than_512_tokens`;
+- most long-cap completions verifiable by the existing deterministic verifier;
+- no cell selected solely because it makes jLens look favorable.
 
-Test frozen temporary activation interventions only:
+If those conditions cannot be met from the frozen M36C evidence, commit
+`m36t_budget_frontier_not_identifiable` and close M36T. Do not manufacture a
+benchmark.
 
-- no intervention;
-- matched-norm random sham;
-- completion steering;
-- verification-then-completion steering;
-- optional bounded continuation ablation only after numerical smoke gates.
+## Phase 1 — prefix capture and development
 
-No correct answer or verifier result may select an intervention.
+Create fresh, disjoint, deterministic tool-checkable tasks. Exclude all M29-M36C
+operands and prompts. Use a committed generator seed and task-family mix.
 
-Primary intervention claim:
+Run one uninterrupted greedy Agents-A1 generation per task with a 2,048-token
+ceiling. From that single run, record private prefix snapshots at fixed decode
+steps 128, 256, and 384 and the final finish state. The **primary decision point
+is step 256**. The 128/384 points are secondary lead-time analyses.
 
-- **J-H3 efficiency:** reduce median output tokens or truncation versus no-op and
-  random sham with paired lower bounds >0 while verified accuracy is non-
-  inferior within absolute margin .02.
+A single long run defines these outcome classes without rerunning the model:
 
-Forcing an early wrong answer is a failure. Track right-to-wrong regressions,
-malformed outputs, activation norms, and numerical instability.
+1. verified completion by 512 tokens;
+2. verified completion from 513-1,024;
+3. verified completion from 1,025-2,048;
+4. still truncated, malformed, or verifier-failing at 2,048.
 
-Stop after M37J-B or the first negative/blocking branch. Request an operator
-decision before any attempt to port a lens or intervention to Agents-A1.
+Do not use any feature computed after the decision checkpoint to predict that
+checkpoint's label. Do not expose prompt text, generated text, token ids, raw
+routes, tensors, or per-task predictions publicly.
 
-# Shared stop conditions and hygiene
+Use a bounded development set sufficient to freeze the feature schema,
+checkpoint, detector, tool budget, and label definition. Development tasks are
+never sealed decision data.
 
-Stop immediately on checkpoint/revision mismatch, invalid telemetry/readout,
-sealed-set leakage, verifier-first violation, unbounded memory, numerical
-instability, test failure, privacy/commit-safety failure, or inability to restore
-the serving stack.
+Freeze these prefix comparators:
 
-Do not commit weights, caches, local paths, prompts, outputs, operands, per-task
-labels/predictions/scores, token ids/text, raw logits, router tensors, expert
-traces, residual activations, gradients, Jacobians, lens matrices, or steering
-vectors. Public artifacts remain aggregate-only and must pass
-`check_commit_safe`. Production remains gated; no tool or lens output becomes
-training data without a future audited protocol.
+1. `metadata_only` — family/stratum and prompt-length metadata;
+2. `metadata_plus_logprob` — metadata plus prefix token-confidence summaries;
+3. `metadata_plus_router` — metadata plus prefix router summaries;
+4. `full_prefix_telemetry` — all approved prefix logprob and router summaries.
+
+The full model may be simple: calibrated logistic regression, nearest centroid,
+or another already-used transparent classifier. No large learned head, hidden
+state capture, or post-hoc feature search is authorized.
+
+## Phase 2 — preregistered paired benchmark
+
+Commit the decision manifest **before** generating or opening decision outcomes.
+Freeze:
+
+- exact checkpoint and revision;
+- vLLM and telemetry override hashes;
+- task generators, families, cell mix, and seeds;
+- 2,048-token source-run ceiling;
+- primary 256-token decision point;
+- 512-token normal budget;
+- feature schema and detector hashes;
+- tool-call budget chosen only on development/calibration data;
+- bootstrap seeds, metrics, confidence intervals, and stop rules.
+
+Use at least 192 fresh decision tasks if the predeclared power check supports it.
+If expected positive labels are below 24, stop before capture and report the
+power failure.
+
+Every policy arm is evaluated counterfactually from the same single source run:
+
+1. `normal_512` — no tool, generation limited to the first 512 tokens;
+2. `metadata_policy` — metadata/logprob baseline routes selected tasks to tool at
+   step 256, otherwise continues to 512;
+3. `full_jlens_policy` — full prefix telemetry routes at the identical frozen
+   tool-call budget;
+4. `count_matched_random` — same number of tool calls;
+5. `long_decode_2048` — no tool, accuracy/compute ceiling;
+6. `tool_all` — deterministic-tool ceiling, reported but not a realistic budgeted
+   comparator.
+
+A trusted tool result may replace the model result only when the verifier accepts
+the tool result. No arm may turn a verified-correct answer into a failing one.
+
+## Confirmatory M36T questions
+
+- **T-H1 prefix prediction:** on the sealed set, `full_prefix_telemetry` improves
+  balanced accuracy and average precision for `needs_more_than_512_tokens` over
+  `metadata_plus_logprob`, with both paired 95% lower confidence bounds > 0.
+- **T-H2 budgeted routing:** at the exact same frozen tool-call count,
+  `full_jlens_policy` improves verified success over `metadata_policy` and
+  `count_matched_random`, with both paired lower bounds > 0.
+- **T-H3 compute efficiency:** `full_jlens_policy` is non-inferior to
+  `long_decode_2048` within an absolute verified-success margin of .02 while
+  using significantly fewer model output tokens, with the paired token-saving
+  lower bound > 0.
+
+Report prediction metrics, completion-by-budget curves, verified success,
+truncation rescues, misses, false alarms, tool fraction, model tokens, model/tool
+latency, total latency, telemetry overhead, and compute per rescued completion.
+
+If T-H1 fails, do not claim internal telemetry adds value; retain only any
+supported metadata policy. If T-H2 fails, close budgeted routing as not
+established. If T-H3 fails, report that long decoding remains the better policy.
+Stop after the M36T result commit and request an operator decision.
+
+# M37J-A — continue observation-only Jacobian-lens pilot
+
+Do not interrupt a healthy checkpointed fit merely to adopt this steer. Finish
+the current atomic fit unit, record the new steer SHA, and continue under the
+already-committed M37J manifest and protocol.
+
+After fitting:
+
+1. validate lens readout and forward invariance;
+2. commit the aggregate fit/validation result;
+3. run the frozen 192-task observation-only semantic-workspace evaluation;
+4. test J-H1/J-H2 exactly as preregistered;
+5. do not begin temporary intervention unless J-H1 or J-H2 passes;
+6. stop on the first negative or blocking branch.
+
+No permanent weight edits, exported altered checkpoints, safety bypasses, or
+production behavior changes are authorized.
+
+# Heartbeats and hygiene
+
+Continue pushed 30-minute heartbeats while M36T or M37J is active. Each heartbeat
+must fetch and compare the remote `steer.md`, report aggregate progress, and
+verify its pushed SHA is visible remotely.
+
+Stop immediately on checkpoint mismatch, sealed-data leakage, invalid prefix
+alignment, post-checkpoint feature leakage, verifier-first violation, numerical
+instability, unbounded memory, privacy failure, or inability to restore serving.
+
+Never commit prompts, outputs, operands, token ids/text, per-task labels or
+predictions, raw logits, router tensors, expert traces, residual activations,
+gradients, Jacobians, lens matrices, steering vectors, weights, caches, or local
+paths. Public artifacts remain aggregate-only. Production remains gated.

@@ -1,0 +1,70 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36c_phase0_profile",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "override_hash": "9f4d46aa99276d07",
+ "profile_set": {
+  "prompt_count": 8,
+  "decode_cap": 512,
+  "kinds": [
+   "short",
+   "medium",
+   "truncation_prone"
+  ]
+ },
+ "component_seconds": {
+  "generation_s": {
+   "median": 89.023,
+   "p95": 102.897
+  },
+  "reset_rpc_s": {
+   "median": 0.016,
+   "p95": 0.022
+  },
+  "summary_fetch_rpc_s": {
+   "median": 0.338,
+   "p95": 0.352
+  },
+  "feature_derivation_s": {
+   "median": 0.004,
+   "p95": 0.005
+  },
+  "npz_read_s": {
+   "median": 0.019,
+   "p95": 0.022
+  },
+  "raw_feature_derivation_s": {
+   "median": 0.139,
+   "p95": 0.17
+  },
+  "verifier_s": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "append_fsync_s": {
+   "median": 0.0,
+   "p95": 0.0
+  },
+  "non_generation_s": {
+   "median": 0.471,
+   "p95": 0.531
+  }
+ },
+ "overhead_ratio_median": 0.0059,
+ "overhead_ratio_p95": 0.013,
+ "overhead_target": 0.25,
+ "equivalence": {
+  "prompts_checked": 8,
+  "per_feature_tolerance": 1e-05,
+  "max_abs_diff": 8.881784197001252e-16,
+  "passed": true
+ },
+ "gates": {
+  "summary_equivalence": true,
+  "overhead_within_target": true
+ },
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate medians/p95 only",
+ "all_gates_passed": true
+}

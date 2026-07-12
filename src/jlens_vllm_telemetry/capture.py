@@ -211,18 +211,31 @@ class RouterTelemetryCollector:
         self._w_min.fill_(float("inf"))
         self._w_normdev.zero_()
 
-    def summarize(self, prompt_rows: int) -> dict:
+    def summarize(self, prompt_rows: int,
+                  expected_rows: int | None = None) -> dict:
         """Device-side router feature summary (M36C summary telemetry path).
 
         Mirrors the numpy router-feature semantics of
         ``m36_calibration.router_features`` exactly, in float64, and
         returns four bounded scalars — no per-token arrays leave the
         worker. Gate: per-feature |summary - raw recompute| <= 1e-5.
+
+        ``expected_rows`` (prompt tokens + output tokens - 1) bounds the
+        read: vLLM's async scheduler can still have the final sampled
+        token's forward pass in flight when this RPC runs, appending rows
+        concurrently. Rows below ``expected_rows`` were written by
+        completed forward passes and are stable; everything beyond is
+        ignored so the summary and any later raw recompute see the same
+        slice.
         """
         if self._ids is None:
             return {"rows": 0}
+        if self._ids.is_cuda:
+            torch.cuda.synchronize(self._ids.device)
         cursors = self._cursor.tolist()
         rows = min(cursors) if cursors else 0
+        if expected_rows is not None:
+            rows = min(rows, int(expected_rows))
         prompt_rows = min(prompt_rows, rows)
         device = self._ids.device
         L, E = self.num_layers, self.num_experts

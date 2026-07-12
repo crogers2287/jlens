@@ -35,6 +35,7 @@ def main() -> int:
     import transformers
 
     device = torch.device("cuda:0")
+    torch.zeros(1, device=device)   # init CUDA context before stats reset
     torch.cuda.reset_peak_memory_stats(device)
 
     t0 = time.time()

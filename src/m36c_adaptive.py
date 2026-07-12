@@ -145,9 +145,13 @@ def timed_generation(llm, prompt: str, max_tokens: int, save_prefix=None):
     prompt_rows = len(out.prompt_token_ids)
 
     t0 = time.time()
+    # Bound the read to rows written by completed forward passes; the
+    # final sampled token's forward may still be in flight (async
+    # scheduler) and must not race the summary or the raw recompute.
+    expected_rows = prompt_rows + max(0, len(comp.token_ids) - 1)
     summary = llm.collective_rpc(
         "jlens_fetch_summary",
-        args=(prompt_rows, save_prefix))[0]
+        args=(prompt_rows, save_prefix, expected_rows))[0]
     timings["summary_fetch_rpc_s"] = time.time() - t0
 
     t0 = time.time()

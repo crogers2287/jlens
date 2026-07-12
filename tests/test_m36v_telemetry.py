@@ -324,6 +324,22 @@ def test_summary_path_equals_raw_router_features():
     prompt_rows = 6
 
     summary = collector.summarize(prompt_rows)
+    # expected_rows bounds the read below the written cursor (the async
+    # scheduler race): summary on the bounded slice must equal the numpy
+    # recompute on the same slice.
+    bounded = collector.summarize(prompt_rows, expected_rows=15)
+    assert bounded["rows"] == 15
+    cap_full = collector.fetch()
+    import m36_calibration as C2
+    cap15 = {**cap_full, "rows": 15,
+             "ids": cap_full["ids"][:15].astype(np.int64),
+             "weights": cap_full["weights"][:15].astype(np.float64),
+             "entropy": cap_full["entropy"][:15].astype(np.float64),
+             "mass": cap_full["mass"][:15].astype(np.float64)}
+    raw15 = C2.router_features(cap15, prompt_rows)
+    for name in C2.ROUTER_FEATURE_NAMES:
+        assert abs(bounded[name] - raw15[name]) <= 1e-5, name
+
     cap = collector.fetch()
     cap = {**cap,
            "ids": cap["ids"].astype(np.int64),

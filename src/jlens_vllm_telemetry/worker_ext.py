@@ -81,7 +81,8 @@ class JlensWorkerExtension:
         return out
 
     def jlens_fetch_summary(self, prompt_rows: int,
-                            save_prefix: str | None = None) -> dict:
+                            save_prefix: str | None = None,
+                            expected_rows: int | None = None) -> dict:
         """Bounded router-feature summary (M36C summary telemetry path).
 
         Returns four float64 scalars computed device-side plus counters.
@@ -90,7 +91,7 @@ class JlensWorkerExtension:
         so the equivalence gate can recompute features from raw capture.
         """
         collector, _ = self._jlens_state
-        out = collector.summarize(prompt_rows)
+        out = collector.summarize(prompt_rows, expected_rows=expected_rows)
         out["rank"] = getattr(self, "rank", -1)
         if collector._id_mismatch is not None:
             out["id_mismatch_total"] = int(collector._id_mismatch.sum())

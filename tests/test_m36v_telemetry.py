@@ -355,6 +355,50 @@ def test_summary_path_equals_raw_router_features():
     assert all(isinstance(v, (int, float)) for v in summary.values())
 
 
+def test_summary_window_clamps_to_bounded_rows_over_stale_tail():
+    """Regression for the M36C profile gate failure (2026-07-12): buffers
+    are reused across prompts without zeroing, and the windowed-drift
+    loop's final window overruns ``rows`` whenever the decode length is
+    not divisible by 8 — reading stale rows written by the previous
+    prompt. summarize() must clamp every window to the bounded row count
+    so it matches the numpy recompute on the cursor-truncated arrays."""
+    import m36_calibration as C
+
+    runners = [FakeMoERunner(layer_id=i) for i in range(NUM_LAYERS)]
+    collector = RouterTelemetryCollector(
+        num_experts=NUM_EXPERTS, top_k=TOP_K,
+        capacity_tokens=64, raw_sample_tokens=4,
+    )
+    install_router_telemetry(runners, collector)
+    collector.allocate("cpu")
+    collector.enabled = True
+
+    # Prompt A: long — leaves a stale nonzero tail in the reused buffers.
+    run_tokens(runners, collector, num_tokens=6, tokens_per_call=6)
+    run_tokens(runners, collector, num_tokens=30, seed=3)
+    collector.reset()
+
+    # Prompt B: shorter than A, decode 19 = 9*2 + 1 -> step 2; the final
+    # window [23:25] overruns rows=24 into prompt A's stale row 24.
+    run_tokens(runners, collector, num_tokens=5, tokens_per_call=5, seed=11)
+    run_tokens(runners, collector, num_tokens=19, seed=12)
+    prompt_rows = 5
+
+    summary = collector.summarize(prompt_rows, expected_rows=24)
+    assert summary["rows"] == 24
+    cap = collector.fetch()
+    assert cap["ids"].shape[0] == 24  # fetch truncates at the cursor
+    cap = {**cap,
+           "ids": cap["ids"].astype(np.int64),
+           "weights": cap["weights"].astype(np.float64),
+           "entropy": cap["entropy"].astype(np.float64),
+           "mass": cap["mass"].astype(np.float64)}
+    raw = C.router_features(cap, prompt_rows)
+    for name in C.ROUTER_FEATURE_NAMES:
+        assert abs(summary[name] - raw[name]) <= 1e-5, (
+            name, summary[name], raw[name])
+
+
 def test_aggregate_only_report_guard():
     good = {
         "schema_version": 1,

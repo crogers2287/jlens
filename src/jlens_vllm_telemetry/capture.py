@@ -262,8 +262,13 @@ class RouterTelemetryCollector:
         drift = []
         step = max(1, (rows - prompt_rows) // 8)
         for start in range(prompt_rows, rows, step):
-            window_sig = usage_sig(self._ids[start:start + step],
-                                   self._weights[start:start + step])
+            # Clamp the window to the bounded row count: buffers are
+            # reused across prompts without zeroing, so an unclamped
+            # final window would read stale rows from the previous
+            # prompt (or a row the in-flight final forward is writing).
+            end = min(start + step, rows)
+            window_sig = usage_sig(self._ids[start:end],
+                                   self._weights[start:end])
             drift.append(cos_drift(window_sig, prefill_sig))
 
         decode_entropy = self._entropy[prompt_rows:rows].to(torch.float64)

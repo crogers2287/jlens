@@ -236,8 +236,12 @@ def router_features(cap: dict, prompt_rows: int) -> dict:
     drift = []
     step = max(1, (rows - prompt_rows) // 8)
     for start in range(prompt_rows, rows, step):
-        window_sig = usage(cap["ids"][start:start + step],
-                           cap["weights"][start:start + step])
+        # Clamp to the bounded row count so the final window never reads
+        # rows past ``rows`` (the raw npz can hold one extra row written
+        # by the async scheduler's in-flight final forward).
+        end = min(start + step, rows)
+        window_sig = usage(cap["ids"][start:end],
+                           cap["weights"][start:end])
         na, nb = np.linalg.norm(window_sig), np.linalg.norm(prefill_sig)
         drift.append(0.0 if na == 0 or nb == 0 else
                      float(1.0 - window_sig @ prefill_sig / (na * nb)))

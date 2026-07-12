@@ -1,263 +1,267 @@
-# steer.md — M36V router telemetry validation, then Agents-A1 raw-vs-jLens
+# steer.md — M36 adaptive Agents-A1 calibration, then raw-vs-jLens benchmark
 
 M1 through M35 are complete. Do not reopen their sealed decision sets.
-
-M35's strongest supported proxy result is a single cross-family global detector
-thresholded to a tool budget: about .94 verified success at about .35 tool use
-on its sealed benchmark. The family hierarchy did not beat that global score at
-matched budget. Treat this as architecture evidence only; no proxy threshold,
-centroid, prior, or calibration transfers automatically to Agents-A1.
-
 `CODEX_AUTOSTEER.md` remains the operating contract.
 
-## Current status
+## Established state
 
-M36P's Transformers path remains a recorded loader failure, not a checkpoint
-failure. Preserve finding 218 and its aggregate artifact unchanged.
-
-M36V Phase 0 has now PASSED on the exact pinned checkpoint:
+M36V is complete on the exact pinned checkpoint:
 
 - checkpoint: `cyankiwi/Agents-A1-AWQ-INT4`;
-- pinned revision: `3e522d4e46438c782789b73c8ff4503e0edd037c`;
+- revision: `3e522d4e46438c782789b73c8ff4503e0edd037c`;
 - runtime: isolated vLLM 0.24.0, compressed-tensors, tensor parallel 2;
-- architecture verified: `qwen3_5_moe`, 40 routed text layers, 256 experts,
-  top-8 routing;
-- 512-token greedy headroom required for the thinking model to reach final
-  answers;
-- all eight runtime gates passed;
-- combined peak GPU memory: 43.18 GiB;
-- decode throughput: 30.24 tokens/second;
-- checkable smoke prompts: 4 pass, 0 fail, 0 undecided;
-- peak process RSS: 1.89 GiB;
-- no broad CPU weight offload;
-- normal serving stack restored after the run.
+- architecture: `qwen3_5_moe`, 40 routed text layers, 256 experts, top-8;
+- full observation-only router telemetry validated against actual fused dispatch;
+- zero expert-id mismatches and exact dispatch-weight identity in validation;
+- Phase-2 stock and instrumented AWQ both passed 16/16 verifier checks;
+- telemetry overhead in the controlled smoke was about 1.32x;
+- normal Agents-A1 GGUF serving was restored after every research run.
 
-The memory/runtime question is closed positively for this exact AWQ checkpoint.
-Do not repeat Phase 0 unless required to verify a source-patch hash or parity.
+Do not repeat M36V. Preserve its artifacts and findings as the telemetry/runtime
+qualification for M36.
 
-## Operator decision
+## New calibration finding and immediate operator decision
 
-Proceed immediately to **M36V Phase 1: dispatch-validated, observation-only
-router telemetry**. The purpose is not more runtime experimentation. The purpose
-is to determine whether jLens can read the real routing decisions used by the
-compressed vLLM MoE kernel without altering generation.
+The first 64/384 M36 calibration rows exposed a decode-budget cliff:
 
-A small, isolated, auditable vLLM source patch or registered layer override is
-authorized. Do not modify the working M22-M35 research venv, production
-llama-swap/Ollama environment, checkpoint identity, or quantization.
+- 3x2 and 4x3 multiplication: about .94 pass;
+- 5x4 and 6x5 multiplication: apparent .06/.00 pass, but .94/1.00 truncation at
+  the 1,024-token cap;
+- the hard cells are therefore budget-bound, not yet demonstrated capability
+  failures.
 
-After the M36V result commit:
+The current sequential full-tensor calibration is also running at about 22
+rows/hour, far below the model's raw serving throughput. Do **not** spend the
+remaining 15-20 hours completing the original 384-row sweep unchanged.
 
-- if router telemetry validates, proceed directly to the full three-arm M36
-  benchmark;
-- if the AWQ model remains valid but telemetry cannot be exposed safely, proceed
-  directly to the paired raw-AWQ versus black-box-jLens benchmark;
-- do not stop merely because the full-telemetry arm is unavailable;
-- stop only if the exact AWQ checkpoint cannot continue generating correctly,
-  the patch changes dispatch/generation, privacy fails, or the serving stack
-  cannot be restored.
+At the next safe task boundary:
 
-Authorize one bounded continuation covering:
+1. stop the current capture gracefully;
+2. preserve every completed private row and capture;
+3. record the exact completed count and last task id;
+4. do not delete, relabel, or regenerate completed rows;
+5. restore the serving stack before implementation work.
 
-1. M36V Phase 1 telemetry instrumentation and validation;
-2. M36V Phase 2 parity/overhead smoke and result commit;
-3. M36 AWQ-specific calibration, preregistration, paired benchmark, result, and
-   final stop report.
+Calibration rows are not benchmark decision data, so the adaptive amendment
+below is permitted. Record it publicly before generating any new calibration
+rows.
 
-Stop after the M36 result and request a fresh operator decision.
+# M36C — profiled, adaptive Agents-A1 calibration
 
-# M36V Phase 1 — real router telemetry
+The goal is to obtain enough **completed correct and completed incorrect**
+examples to fit Agents-A1-specific policies without wasting most runtime on
+repeated truncations or telemetry file handling.
 
-## Patch boundary
+## Phase 0 — profile the research harness
 
-Patch only the real Qwen3.5 MoE routing path between router score production and
-the fused expert dispatch call. The patch must be observation-only.
+Before resuming the sweep, add per-task timing for:
 
-Capture or compute, for every generated decode token and routed layer:
+- model generation;
+- collector reset/install/fetch;
+- worker RPC;
+- telemetry serialization write and read;
+- feature derivation;
+- verifier execution;
+- result append/fsync.
 
-- pre-dispatch router scores or logits over the 256 experts, at least for a tiny
-  validation sample;
-- exact top-8 expert ids consumed by dispatch;
-- exact normalized top-8 dispatch weights consumed by dispatch;
-- decode-step and layer indices needed to align telemetry with output logits;
-- approved aggregate summaries required by the existing jLens feature schema.
+Profile a fixed private eight-prompt set spanning short, medium, and
+truncation-prone outputs. Report aggregate medians and p95 values only.
 
-For benchmark scale, prefer device-side or in-process summary computation rather
-than copying all 40 x 256 router values per generated token to CPU. A tiny raw
-full-logit validation sample is permitted. Any summary-only path must match the
-features recomputed from raw validation tensors within a frozen tolerance.
+Implement a benchmark-scale **summary telemetry path** that computes the frozen
+12 approved scalar features in-process or on-device and returns only bounded
+summaries. Full per-token/per-layer NPZ capture remains enabled only for a tiny
+validation sample.
 
-## Required gates
+Required equivalence gate:
 
-All gates must pass before any Agents-A1 calibration or decision capture:
+- on at least eight prompts, every summary-path feature must match the feature
+  recomputed from the raw telemetry capture with maximum absolute difference
+  <= 1e-5;
+- selected expert ids and dispatch validation remain covered by the completed
+  M36V evidence and need not be repeated for every calibration prompt;
+- no raw token, prompt, output, route, tensor, or local path enters public
+  artifacts.
 
-1. **Stock parity** — unpatched stock vLLM and patched-with-telemetry-disabled
-   produce identical greedy token ids on the fixed smoke set.
-2. **Observation parity** — telemetry enabled and disabled produce identical
-   greedy token ids on the same fixed smoke set.
-3. **Dispatch identity** — captured top-8 expert ids exactly equal the ids passed
-   to the real fused expert dispatch for sampled tokens across early, middle,
-   and late layers.
-4. **Weight identity** — captured weights equal the actual dispatch weights
-   within the declared numeric tolerance; finite, nonnegative, and normalized.
-5. **Architecture identity** — loaded runtime remains 40 layers, 256 experts,
-   top-8, exact pinned revision.
-6. **Feature availability** — the existing approved jLens scalar telemetry
-   schema can be derived without hidden-state capture.
-7. **Bounded overhead** — record telemetry throughput and memory overhead. The
-   patch must not push combined peak GPU use above the 44 GiB gate during the
-   short validation run.
-8. **Privacy** — no prompt/output text, token ids, raw router tensors, expert
-   traces, local paths, or weights in public artifacts.
+Performance target:
 
-Required tests before the real patched smoke:
+- median non-generation harness overhead <= 25% of model generation time on the
+  profile set.
 
-- fake-MoE router/dispatch alignment;
-- top-k id and weight capture;
-- normalization and finite-value checks;
-- disabled-path no-op behavior;
-- summary-versus-raw feature equivalence;
-- bounded ring-buffer or aggregation behavior;
-- aggregate-only public-report guard.
+If the target is missed, fix the largest measured component once before
+continuing. Do not optimize speculatively. Microbatching of 2-8 prompts is
+permitted only if request-to-telemetry alignment, per-request feature identity,
+and verifier outcomes are regression-tested. Otherwise retain sequential
+summary capture.
 
-Commit the patch and tests separately before the real telemetry result commit.
-Record vLLM version, patch hash, checkpoint revision, CUDA/Torch versions, and
-launch configuration.
+Commit profiling/optimization code and tests separately from calibration
+results.
 
-## Phase 1 outcomes
+## Phase 1 — adaptive frontier map
 
-### Full telemetry feasible
+Keep the completed 64 multiplication rows. For each of the remaining five
+families and four strata, run a deterministic **four-row probe** using the
+already-generated task order.
 
-The patch passes every gate. Proceed to Phase 2 and then the full M36 benchmark
-with raw, black-box-jLens, full-telemetry-jLens, count-matched-random, and
- tool-on-every-eligible-task arms.
+Use staged decode budgets:
 
-### Black-box only
+1. start probes at 512 output tokens;
+2. when a probe truncates, rerun at most two predetermined truncated examples
+   from that cell at 1,024 tokens;
+3. if those still truncate, rerun at most one predetermined example at 2,048
+   tokens;
+4. do not run a whole cell at 2,048 tokens.
 
-The model continues to run correctly, but trustworthy router telemetry cannot be
-exposed without changing generation/dispatch semantics, exceeding the bounded
-patch, or violating the memory gate. Record the exact blocker, omit the full
-telemetry arm, and continue to M36 raw versus black-box jLens.
+For every cell, report separately:
 
-### Runtime regressed
+- completed-correct rate;
+- completed-incorrect rate;
+- truncation rate at each tested cap;
+- median and p95 output length;
+- median generation time and telemetry overhead.
 
-The patch or environment makes the exact checkpoint unstable, invalid, or
-unrestorable. Revert the patch, verify stock Phase 0 still passes, restore normal
-serving, stop, and report.
+Never count a capped output as evidence that the model reasoned incorrectly.
+Classify it as `truncated_budget`.
 
-# M36V Phase 2 — parity, quality, and overhead smoke
+## Phase 2 — selective expansion
 
-Run 16 fixed private prompts spanning deterministic arithmetic, JSON, exact
-instruction following, and short reasoning under:
+After the four-row probes, freeze the expansion rule before adding rows:
 
-1. stock vLLM AWQ;
-2. instrumented vLLM AWQ with telemetry enabled, only if Phase 1 passed;
-3. current Agents-A1 Q8 GGUF as a separate diagnostic.
+- **mixed completed frontier:** completed pass rate 0.20-0.80 and truncation
+  <= .25 at the chosen cap -> expand that cell to 16 total rows;
+- **high/low completed anchor:** completed pass rate > .80 or < .20 with
+  truncation <= .25 -> retain or expand to 8 total rows;
+- **budget-bound cell:** truncation > .50 at 1,024 tokens -> do not expand beyond
+  the probe/rescue sample; keep it as a separate output-budget finding;
+- cells between these rules may expand to 8 only when needed to meet the class
+  quotas below.
 
-Use 512-token output headroom unless a smaller cap is proven sufficient for the
-specific prompt family before decision capture. Do not mistake truncation for a
-model failure.
+Stop adaptive calibration when all are true:
 
-Report aggregate-only:
+- at least 48 completed-correct rows;
+- at least 48 completed-incorrect rows;
+- at least three task families represented among completed failures;
+- at least two mixed-frontier cells;
+- total retained calibration rows <= 192, excluding capped reruns of the same
+  calibration prompt.
 
-- deterministic verifier outcomes;
-- malformed-output counts;
-- output-token counts;
-- load and generation latency;
-- tokens/second;
-- peak memory;
-- telemetry overhead versus stock;
-- disabled/enabled token parity;
-- telemetry validation gates.
+If the quotas cannot be reached within 192 rows, stop and report
+`completed_failure_frontier_not_found`; do not manufacture a benchmark dominated
+by timeouts.
 
-AWQ-versus-Q8 output equality is not required and is not an efficacy claim.
-Always unload the research runtime and restore/verify the normal `agents-a1`
-GGUF service afterward.
+Split retained completed rows deterministically within cell into detector
+`D` (two thirds) and policy calibration `R` (one third). Truncated rows remain a
+separate budget-policy dataset and are never silently mixed into the completed
+wrong-answer label.
 
-# M36 — paired Agents-A1 AWQ raw versus jLens
+# Detector and policy freeze
 
-Begin only after an M36V result commit classifies the path as `full_telemetry`
-or `black_box_only`.
+Fit Agents-A1-specific components only from M36C data.
 
-## Calibration before preregistration
+## Operational black-box policy
 
-Run a private capability sweep using this exact AWQ checkpoint/runtime over
-fresh deterministic, tool-checkable families. Calibration rows are never
-benchmark decision data.
+The black-box controller may use:
 
-The sweep must find Agents-A1's own:
+- family/stratum metadata;
+- output length;
+- explicit finish reason/truncation flag;
+- deterministic verifier availability and outcome.
 
-- high-competence cells;
-- mixed-competence cells;
-- near-total-failure anchors;
-- output-length requirements and truncation risk.
+A truncated or verifier-failing output may be routed directly to the trusted
+ tool. This is practical supervisor behavior and must be reported separately
+from telemetry prediction.
 
-For full telemetry:
+## Internal telemetry detector
 
-- derive normalized telemetry features from fresh AWQ data only;
-- fit and calibrate an Agents-A1-specific global detector;
-- compare against difficulty/category metadata during development;
-- do not import the proxy's threshold or score scale.
+Fit the full detector on completed outputs using router/logit telemetry.
+`decode_step_count` may be retained for operational scoring, but internal
+telemetry increment is not established merely by recognizing the token cap.
 
-For black-box jLens:
+Freeze and report these comparators:
 
-- derive category/regime competence estimates from AWQ calibration outcomes;
-- freeze the category policy and tool budget before decision capture.
+1. metadata only;
+2. metadata + output length;
+3. metadata + output length + logit features;
+4. metadata + output length + router features;
+5. full approved telemetry.
 
-Use a predeclared power rule to choose the benchmark count. Then commit a fresh
-manifest before any decision-task generation or capture. Freeze task generators,
-splits, decode cap, seeds, tool budget, feature schema, detector/policy hashes,
-bootstrap seeds, family weights, non-inferiority margin, metrics, and claim
-rules.
+For the future H2 telemetry claim, the binding population is **completed,
+nontruncated outputs**, and full telemetry must beat the metadata+length
+black-box baseline at the same tool budget. Truncation detection is useful, but
+it is not evidence of model-internal error awareness.
 
-## Paired benchmark arms
+Freeze detector/policy hashes before creating the decision manifest.
 
-Generate exactly one deterministic AWQ original per decision task. Every arm
-starts from that same original answer and capture:
+# M36 paired Agents-A1 benchmark
 
-1. `raw_awq` — unchanged Agents-A1 AWQ result;
-2. `black_box_jlens` — AWQ-specific competence policy, verifier-first checks,
-   and deterministic tools without token/router telemetry selection;
-3. `full_jlens` — only if M36V validated real router telemetry; AWQ-specific
-   telemetry detector plus verifier-first tools;
-4. `count_matched_random` — same tool-call count as the selected jLens arm;
-5. `tool_on_every_eligible_task` — accuracy/resource ceiling.
+After the M36C result and freeze commits, preregister fresh decision tasks.
+Calibration prompts and all M29-M35 decision tuples remain excluded.
 
-No policy may replace a verified-correct original with a failing tool result.
+## Benchmark composition
+
+Use the existing predeclared power rule to choose N from 192, 240, or 288 with
+expected raw operational failures >= 24.
+
+Choose a fixed benchmark decode cap from calibration such that confirmatory
+cells have estimated truncation <= .10. Do not include a truncation-heavy cell
+in the primary completed-error claim merely to inflate jLens uplift.
+
+Target composition:
+
+- 60-70% mixed completed-error frontier cells;
+- 15-20% high-competence anchors;
+- 15-20% low-competence but mostly completed anchors;
+- a separate small budget-bound secondary set, non-confirmatory, for timeout
+  policy measurement.
+
+Freeze the exact checkpoint, vLLM version, telemetry override hash, task
+families, generators, split, decode settings, seeds, feature schema, detector
+and policy hashes, tool budget, bootstrap seeds, family weights,
+non-inferiority margin, and claim rules before decision capture.
+
+## Paired arms
+
+Generate one AWQ original per decision task. Every arm starts from that same
+original and capture:
+
+1. `raw_awq`;
+2. `black_box_jlens` — competence, finish reason, verifier-first tools;
+3. `full_jlens` — AWQ telemetry detector plus verifier-first tools;
+4. `count_matched_random`;
+5. `tool_on_every_eligible_task`.
+
+No arm may replace a verified-correct original with a failing result.
 
 ## Confirmatory questions
 
 - **H1 practical value:** selected jLens policy improves paired verified success
-  over raw AWQ with the paired 95% lower confidence bound strictly above zero.
-- **H2 telemetry increment:** when `full_jlens` exists, it beats black-box jLens
-  and count-matched random at the frozen budget with both lower confidence
-  bounds strictly above zero.
-- **H3 efficiency:** the selected jLens policy is non-inferior to tool-all within
-  the preregistered success margin while using significantly fewer tool calls.
+  over raw AWQ with the 95% lower confidence bound strictly above zero.
+- **H2 telemetry increment:** on completed, nontruncated outputs, full jLens beats
+  black-box jLens and count-matched random at the frozen budget with both lower
+  confidence bounds strictly above zero.
+- **H3 efficiency:** selected jLens is non-inferior to tool-all within the frozen
+  success margin while using significantly fewer tool calls.
 
-Report raw and final verified success, corrections, misses, false alarms,
-regressions, tool fraction, calls saved, model/tool/total latency, output tokens,
-throughput, memory, telemetry overhead, and compute per corrected answer.
+Report primary operational results and completed-only results separately. Also
+report truncation rescues, wrong-answer rescues, misses, false alarms,
+regressions, tool fraction, calls saved, output tokens, model/tool/total
+latency, telemetry overhead, and compute per corrected answer.
 
-Claims remain scoped to the exact AWQ checkpoint revision, vLLM version, patch
-hash, prompts, decode protocol, task generators, tools, and verifier bundle.
-
-## Result branches
+# Result branches
 
 - H1 + H3 pass: freeze an Agents-A1-AWQ jLens candidate for extended shadow
   evaluation; production remains gated.
-- H1 passes and H2 fails: retain black-box jLens and stop claiming internal
+- H1 passes and H2 fails: retain black-box jLens and stop claiming router/logit
   telemetry adds incremental value.
 - H1 fails: close the Agents-A1 efficacy track without checkpoint shopping or
   post-hoc benchmark changes.
-- Stop after the result commit in every branch.
+- Stop after the M36 result in every branch and request a fresh operator
+  decision.
 
-## Stop conditions and hygiene
+# Stop conditions and hygiene
 
-Stop immediately on checkpoint/revision mismatch, invalid dispatch telemetry,
-observation changing tokens, sealed-split leakage, verifier-first violation,
-unbounded memory, test failure, privacy/commit-safety failure, or inability to
-restore the serving stack.
+Stop immediately on checkpoint/revision mismatch, invalid telemetry, sealed-set
+leakage, verifier-first violation, unbounded memory, test failure, privacy or
+commit-safety failure, or inability to restore the serving stack.
 
 Do not commit weights, caches, local paths, prompts, outputs, operands, per-task
 labels/predictions/scores, token ids/text, raw logits, router tensors, or expert

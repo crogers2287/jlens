@@ -1,0 +1,72 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_phase0_feasibility",
+ "steer": "79878ab",
+ "source": "frozen M36C calibration rows (aggregates only; no new capture)",
+ "label_definition": "needs_more_than_512_tokens := truncated_budget at the 512 probe",
+ "families": {
+  "add_chain": {
+   "tasks_at_512": 8,
+   "needs_more_than_512": 8,
+   "rescued_completed": 0,
+   "rescue_attempted": 6,
+   "rescued_verified_pass": 0,
+   "prevalence": 1.0,
+   "has_budget_variation": false
+  },
+  "div_exact": {
+   "tasks_at_512": 22,
+   "needs_more_than_512": 11,
+   "rescued_completed": 3,
+   "rescue_attempted": 5,
+   "rescued_verified_pass": 3,
+   "prevalence": 0.5,
+   "has_budget_variation": true
+  },
+  "json_digits": {
+   "tasks_at_512": 29,
+   "needs_more_than_512": 13,
+   "rescued_completed": 7,
+   "rescue_attempted": 8,
+   "rescued_verified_pass": 7,
+   "prevalence": 0.448,
+   "has_budget_variation": true
+  },
+  "mod_arith": {
+   "tasks_at_512": 20,
+   "needs_more_than_512": 15,
+   "rescued_completed": 2,
+   "rescue_attempted": 7,
+   "rescued_verified_pass": 2,
+   "prevalence": 0.75,
+   "has_budget_variation": true
+  },
+  "sub_mixed": {
+   "tasks_at_512": 20,
+   "needs_more_than_512": 16,
+   "rescued_completed": 5,
+   "rescue_attempted": 8,
+   "rescued_verified_pass": 5,
+   "prevalence": 0.8,
+   "has_budget_variation": true
+  }
+ },
+ "candidate_families": [
+  "div_exact",
+  "json_digits",
+  "mod_arith",
+  "sub_mixed"
+ ],
+ "pooled_prevalence": 0.604,
+ "pooled_needs_over_tasks": "55/91",
+ "rescued_completed_verified_pass": "17/17",
+ "gates": {
+  "two_plus_families_with_budget_variation": true,
+  "pooled_prevalence_in_20_80": true,
+  "long_cap_completions_verifiable": true,
+  "selection_rule_fixed_not_favorability": true
+ },
+ "all_gates_passed": true,
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate family stats only"
+}

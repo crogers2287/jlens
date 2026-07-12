@@ -1,0 +1,19 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_phase1_fit",
+ "pilot_model": "Qwen1.5-MoE-A2.7B-Chat",
+ "dim_batch": 8,
+ "max_seq_len": 128,
+ "skip_first": 16,
+ "checkpoint_every": 5,
+ "n_fit_prompts": 100,
+ "load_seconds": 16.4,
+ "fit_seconds": 7958.4,
+ "peak_allocated_gib": 30.89,
+ "peak_reserved_gib": 31.18,
+ "memory_gate_gib": 30.0,
+ "memory_gate_passed": false,
+ "jacobians_finite": true,
+ "lens_sha256": "d77ae0028a3a3d4fdf494c43dc1f3cd74146623b7c9599d57317bb16c4a5e674",
+ "privacy_check_status": "aggregate fit metrics only"
+}

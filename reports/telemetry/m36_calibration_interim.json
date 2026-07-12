@@ -1,0 +1,59 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36_calibration_summary",
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "runtime": {
+  "max_tokens": 1024,
+  "max_model_len": 2048,
+  "override_hash": "2b3e50264b503bec",
+  "seed": "m36-calibration-v1",
+  "tasks_per_cell": 16
+ },
+ "cells_total": 4,
+ "rows_total": 64,
+ "regime_counts": {
+  "high": 2,
+  "mixed": 0,
+  "near_total_failure": 2
+ },
+ "competence_by_family": {
+  "mul_multi": {
+   "s1": {
+    "n": 16,
+    "pass_rate": 0.938,
+    "regime": "high",
+    "truncation_rate": 0.062,
+    "output_tokens_mean": 476.3,
+    "output_tokens_p95": 609
+   },
+   "s2": {
+    "n": 16,
+    "pass_rate": 0.938,
+    "regime": "high",
+    "truncation_rate": 0.125,
+    "output_tokens_mean": 726.4,
+    "output_tokens_p95": 1024
+   },
+   "s3": {
+    "n": 16,
+    "pass_rate": 0.062,
+    "regime": "near_total_failure",
+    "truncation_rate": 0.938,
+    "output_tokens_mean": 1004.7,
+    "output_tokens_p95": 1024
+   },
+   "s4": {
+    "n": 16,
+    "pass_rate": 0.0,
+    "regime": "near_total_failure",
+    "truncation_rate": 1.0,
+    "output_tokens_mean": 1024.0,
+    "output_tokens_p95": 1024
+   }
+  }
+ },
+ "calibration_rows_are_benchmark_data": false,
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate cell stats only; rows private"
+}

@@ -1,7 +1,129 @@
-# steer.md — finish M36 Agents-A1 benchmark; run M37J semantic-workspace pilot in parallel
+# steer.md — active M36C adaptive run, reliable heartbeats, and M37J-A fit
+
+`CODEX_AUTOSTEER.md` remains the operating contract. This top section is the
+current binding override. The detailed M36/M37J protocol below remains binding
+except where this section updates phase status or operational behavior.
+
+## Current established state
+
+Remote GitHub head at the time of this steer was:
+
+- `10767bbac808bf517962b24a499e092973ab4d4b` — M36C Phase 0 profile passed;
+- summary-versus-raw maximum difference `8.88e-16`;
+- median non-generation overhead `0.59%` versus the `25%` gate;
+- adaptive M36C calibration auto-launched at 17:06 UTC;
+- `27bafe12f8689754d5662c4d0024020dadeb086b` established that M37J Phase 0
+  passed all seven V100 feasibility gates at 28.27 GiB peak reserved memory.
+
+M36V remains complete and sealed. The original 384-row calibration remains
+abandoned at 88 preserved rows. Do not rerun either.
+
+## Immediate operational anomaly
+
+More than four hours elapsed after adaptive launch without a pushed 30-minute
+status commit. The new heartbeat/check-steer loop is therefore not yet proven to
+be functioning end-to-end. A local commit, local status file, or watcher message
+is insufficient; the checkpoint must appear on the remote default branch.
+
+Do **not** kill a healthy adaptive generation merely to satisfy this steer.
+Finish the current atomic prompt, save private progress, then perform the status
+and steer check below.
+
+## Immediate directive — determine actual M36C state
+
+At the next safe task boundary:
+
+1. fetch the remote default branch and reread `steer.md`;
+2. inspect the adaptive worker, supervisor, log modification time, GPU activity,
+   private retained-row count, last completed task id, retries, and exit status;
+3. write or update one aggregate-only public live-status file;
+4. commit and push that status immediately;
+5. continue according to exactly one branch:
+
+### A. Adaptive calibration is healthy and progressing
+
+- leave it running;
+- report completed/retained rows, correct/incorrect/truncated counts, families,
+  mixed cells, throughput, last task, last-progress timestamp, and ETA;
+- continue to the frozen quota/cap stop condition;
+- do not change the task order, budgets, labels, expansion rule, or quota rule.
+
+### B. Adaptive calibration has completed
+
+- restore and verify normal Agents-A1 serving;
+- commit the aggregate M36C calibration result;
+- freeze the five required comparators and policy hashes;
+- commit the fresh decision-manifest **before** any decision capture;
+- proceed directly to the paired M36 benchmark and single sealed evaluation;
+- stop after the M36 result commit and request an operator decision.
+
+### C. Adaptive calibration is stalled or dead
+
+- preserve every completed private row unchanged;
+- allow the committed supervisor one process-group restart only;
+- resume by task id without regenerating completed rows;
+- if the retry also fails, restore serving, commit the exact blocker and latest
+  safe progress, and stop rather than silently looping.
+
+## Binding 30-minute heartbeat and steer check
+
+The heartbeat must be independent of the research worker and supervisor. Every
+30 minutes while either M36C/M36 or M37J is active, it must:
+
+1. fetch the remote default branch;
+2. compare the current remote `steer.md` blob/commit with `steer_sha_seen`;
+3. if the steer changed, finish the current atomic task, flush private progress,
+   reread the full steer, and obey it before launching another task;
+4. collect aggregate operational state;
+5. update a stable public status file such as `docs/LIVE_STATUS.md`;
+6. commit and **push** the status to the remote default branch;
+7. verify that the pushed SHA is visible remotely.
+
+Each heartbeat must record at minimum:
+
+- UTC timestamp;
+- active milestone, phase, host class, and process state;
+- remote head SHA and `steer_sha_seen`;
+- completed/total or retained/cap rows;
+- last completed task id and last-progress timestamp;
+- correct, incorrect, truncated, family, and mixed-cell aggregates when relevant;
+- throughput and ETA when estimable;
+- retry count and current blocker;
+- tests/privacy/serving-restoration state;
+- M37J phase/checkpoint progress when active.
+
+Operational heartbeat commits must not alter prompts, sealed data, labels,
+thresholds, claim rules, manifests, or research results. They are status-only.
+Never commit private task text, operands, outputs, token ids, telemetry arrays,
+paths, weights, or per-task predictions.
+
+If a 30-minute heartbeat cannot push, record the failure locally and retry the
+push, but do not create conflicting research changes. Two consecutive missed
+remote heartbeats are an operational failure requiring an immediate pushed
+incident/status commit when connectivity returns.
+
+## M37J current directive
+
+M37J Phase 0 feasibility is complete. On the separate V100, without delaying or
+altering M36:
+
+1. commit a pre-fit manifest naming the exact pilot model, Jacobian-lens revision,
+   environment hashes, 100 fit sequences, 20 validation sequences, sequence
+   length, seeds, checkpoint cadence, memory gate, and privacy rules;
+2. fit the lens using resumable/checkpointed execution;
+3. validate readout/forward invariance before generating the 192-task diagnostic
+   dataset;
+4. continue only through M37J-A observation-only evaluation;
+5. run M37J-B intervention only if J-H1 or J-H2 passes under the frozen protocol.
+
+Nothing from M37J is an Agents-A1 result. No permanent model edit, exported
+altered checkpoint, safety bypass, or production modification is authorized.
+
+---
+
+# Detailed binding protocol retained from the previous steer
 
 M1 through M35 are complete. Do not reopen their sealed decision sets.
-`CODEX_AUTOSTEER.md` remains the operating contract.
 
 Detailed adjacent-research protocol:
 

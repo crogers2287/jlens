@@ -237,7 +237,8 @@ def run_profile(args) -> int:
         "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
         "revision_pinned": EXPECTED_REVISION,
         "override_hash": override_hash(),
-        "profile_set": {"prompts": len(items), "decode_cap": PROBE_BUDGET,
+        "profile_set": {"prompt_count": len(items),
+                        "decode_cap": PROBE_BUDGET,
                         "kinds": ["short", "medium", "truncation_prone"]},
         "component_seconds": {
             key: agg(key) for key in

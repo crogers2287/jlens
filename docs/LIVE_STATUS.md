@@ -4,6 +4,28 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-12T22:40Z
+
+- **Milestone/phase:** M36C adaptive expansion, ~8 rows from the 192
+  retention cap; M37J Phase 1 fit running on the V100.
+- **Remote head at collection:** `3169539`; `steer_sha_seen`
+  `9aa560e1d8111c67a67dc4fad6b72d68f8f8ed1a` — unchanged.
+- **Process state:** supervisor alive, adaptive attempt 2 (retry 1/1
+  used); sidecar active; GPU 100%.
+- **Rows:** retained 184 / 192; completed_correct **110 / 48 — met**;
+  completed_incorrect **0 / 48 — unmet**; truncated 74; mixed 0 / 2;
+  139 new rows. Last task id `m36c_json_digits_s4_007` (expansion),
+  last progress 22:39 UTC.
+- **ETA:** cap binds within ~20–30 min at current rate; expected
+  outcome `completed_failure_frontier_not_found` (Agents-A1 has
+  produced zero completed-incorrect rows across 184 retained rows —
+  every failure mode observed is budget truncation, itself a
+  substantive M36C finding).
+- **Blockers:** none. **Tests/privacy/serving:** unchanged; serving
+  restore will follow run completion per protocol.
+- **M37J:** fit RUNNING; checkpoint last written 22:34 UTC; no result
+  artifact yet.
+
 ## Heartbeat 2026-07-12T22:10Z
 
 - **Milestone/phase:** M36C adaptive — probe phase COMPLETE (all

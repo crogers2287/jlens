@@ -1,0 +1,18 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36c_adaptive_amendment_record",
+ "steer_commit": "9faf2131bd2fcac81b9ea21d298a0ab1e103d68b",
+ "reason": "decode-budget cliff: hard multiplication cells 94-100% truncated at 1024 tokens; sequential full-tensor capture ~22 rows/hour",
+ "original_sweep": {
+  "planned_rows": 384,
+  "completed_rows": 88,
+  "last_completed_task_id": "m36c_add_chain_s2_007",
+  "completed_rows_preserved": true,
+  "rows_deleted_or_relabeled": false
+ },
+ "amendment": "M36C profiled adaptive calibration: harness profiling + summary telemetry path (12-feature equivalence gate <=1e-5), staged decode budgets 512/1024/2048 with four-row probes, frozen expansion rule with completed-correct/incorrect quotas, truncated rows classified truncated_budget and never mixed into completed wrong-answer labels",
+ "calibration_rows_are_benchmark_data": false,
+ "serving_stack_restored": true,
+ "recorded_before_new_calibration_rows": true,
+ "privacy_check_status": "aggregate only"
+}

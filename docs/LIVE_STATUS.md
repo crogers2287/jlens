@@ -4,6 +4,33 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-12T23:10Z
+
+- **Milestone/phase:** M36C adaptive calibration **COMPLETE** at
+  23:03 UTC, outcome `completed_failure_frontier_not_found`
+  (protocol-valid stop: eligible expansion exhausted with zero
+  completed-incorrect rows). M37J Phase 1 fit running on the V100.
+- **Remote head at collection:** `6ad3179`; `steer_sha_seen`
+  `9aa560e1d8111c67a67dc4fad6b72d68f8f8ed1a` — unchanged.
+- **Final quota state:** completed_correct 115 / 48 (met);
+  completed_incorrect 0 / 48; failure families 0 / 3; mixed cells
+  0 / 2; truncated-budget rows 81 (separate budget-policy dataset);
+  145 new captures this run. Every observed failure mode is budget
+  truncation — Agents-A1 produced no wrong completed answer across
+  the full calibration.
+- **Process state:** adaptive worker and vLLM exited; GPUs released
+  (supervisor logged rc=1 per cap-outcome exit semantics — not an
+  operational failure). Result + frontier artifacts written locally
+  at 23:03, aggregate-only, commit pending.
+- **Next per steer branch B:** restore/verify serving → commit
+  calibration result → freeze five comparators + policy hashes →
+  fresh decision-manifest commit → paired benchmark + single sealed
+  evaluate → stop for operator decision. **Paused before the serving
+  check: the operator interrupted the first branch-B commands at
+  23:0x UTC — awaiting operator direction before proceeding.**
+- **Blockers:** operator hold on branch B (interactive interrupt).
+- **M37J:** fit RUNNING; checkpoint last written 23:08 UTC.
+
 ## Heartbeat 2026-07-12T22:40Z
 
 - **Milestone/phase:** M36C adaptive expansion, ~8 rows from the 192

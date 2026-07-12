@@ -4,6 +4,31 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-12T23:40Z
+
+- **Milestone/phase:** steer `79878ab` adopted in full — M36C CLOSED
+  (completed-error track not testable on frozen population, all eight
+  closeout directives executed); **M36T Phase 0 PASSED** (`a1a09be`);
+  M36T Phase 1 build (fresh task generator + prefix capture) is next.
+- **Remote head at collection:** `a1a09be`; `steer_sha_seen`
+  `0f131fd1adea036f5253ca542ded085b1c35e0b6` (steer 79878ab) —
+  current, no newer steer.
+- **M36T Phase 0 aggregates:** candidate families div_exact (.50),
+  json_digits (.45), mod_arith (.75), sub_mixed (.80); pooled
+  needs_more_than_512_tokens prevalence 0.604; 17/17 long-cap
+  completions verifier-accepted; all 4 gates passed.
+- **M37J:** fit COMPLETE (7958 s, finite Jacobians, lens sha
+  `d77ae002…`) but **memory gate breached**: peak reserved 31.18 GiB
+  vs manifest-pinned 30.0. Honest deviation committed
+  (memory_gate_passed=false); **validation/evaluation ON HOLD pending
+  operator decision** (amend envelope vs refit at lower dim_batch).
+  V100 idle (0 MiB), fit checkpoint + lens preserved.
+- **Process state:** no research workers running on the 3090 host;
+  GPUs free; serving verified UP (agents-a1 on llama-swap).
+- **Blockers:** M37J operator decision only. M36T unblocked.
+- **Privacy/tests:** aggregate-only artifacts verified before both
+  pushes; 12/12 telemetry tests at `0a5e023`.
+
 ## Heartbeat 2026-07-12T23:10Z
 
 - **Milestone/phase:** M36C adaptive calibration **COMPLETE** at

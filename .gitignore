@@ -12,3 +12,4 @@ reports/risk_heads.json
 reports/shadow/private/*
 !reports/shadow/private/README.md
 .m36c_model_ref
+private/m37j/

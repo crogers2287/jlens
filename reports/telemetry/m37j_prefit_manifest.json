@@ -1,0 +1,44 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_phase1_prefit_manifest",
+ "committed_before_fitting": true,
+ "pilot_model": "Qwen1.5-MoE-A2.7B-Chat",
+ "pilot_model_ref_hash": "[h:7859e788e86a8de8]",
+ "pilot_dtype": "float16",
+ "pilot_n_layers": 24,
+ "jacobian_lens_repo": "anthropics/jacobian-lens",
+ "jacobian_lens_revision": "581d3986",
+ "host": "V100-PCIE-32GB (isolated pilot host)",
+ "environment": {"torch": "2.5.1+cu121", "transformers": "5.13.1"},
+ "corpus": {
+  "seed": 37,
+  "n_sequences": 120,
+  "n_fit": 100,
+  "n_validation": 20,
+  "min_tokens_per_sequence": 128,
+  "fit_truncation_max_seq_len": 128,
+  "source": "generic Wikipedia evidence prose sampled deterministically from the local FEVER validation file",
+  "contains_m36_benchmark_prompts_or_answers": false,
+  "corpus_sha256": "4e4a8ed276c4072bd1da659069ded73d6f00521fc676bdce277902ca7c4eac5f",
+  "sequences_public": false,
+  "sequences_gitignored": true
+ },
+ "estimator": {
+  "implementation": "official jlens.fitting.fit",
+  "reduction": "cotangents summed over current-and-future target positions, averaged over source positions (paper reduction)",
+  "dim_batch": 8,
+  "skip_first_positions": 16,
+  "source_layers": "all layers below the final target layer (0-22)",
+  "target_layer": "final layer (23)"
+ },
+ "checkpointing": {
+  "cadence_prompts": 5,
+  "atomic_writes": true,
+  "resume": "by prompt index from checkpoint",
+  "merge_procedure": "single shard; JacobianLens.merge unused (merge count 1)"
+ },
+ "memory_gate_gib": 30.0,
+ "seeds": {"corpus_seed": 37, "fitting": "deterministic given corpus (no sampling)"},
+ "privacy_rules": "fit/validation sequences private and gitignored; public outputs limited to aggregate fit time, peak memory, merge counts, numerical health, and lens hash; no M36 data used; nothing from M37J is an Agents-A1 result",
+ "driver": "src/m37j_fit.py at this commit"
+}

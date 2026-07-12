@@ -201,16 +201,24 @@ def logprob_step_stats(step_logprobs) -> tuple[float, float, float]:
     return selected, margin, entropy
 
 
-def derive_features(cap: dict, prompt_rows: int, logprob_steps,
-                    n_output_tokens: int) -> dict:
+ROUTER_FEATURE_NAMES = [
+    "router_entropy_mean", "expert_concentration_mean",
+    "windowed_expert_shift", "drift_final_window",
+]
+
+
+def router_features(cap: dict, prompt_rows: int) -> dict:
+    """Router-side features recomputed from a raw capture (numpy path).
+
+    The device-side mirror is RouterTelemetryCollector.summarize; the
+    M36C equivalence gate holds them within 1e-5 per feature.
+    """
     import numpy as np
 
     rows = cap["rows"]
-    decode = slice(min(prompt_rows, rows), rows)
-    entropy = cap["entropy"][decode]      # [T, L]
-    mass = cap["mass"][decode]
-    ids = cap["ids"][decode]
-    weights = cap["weights"][decode]
+    prompt_rows = min(prompt_rows, rows)
+    entropy = cap["entropy"][prompt_rows:rows]
+    mass = cap["mass"][prompt_rows:rows]
     num_experts = cap["num_experts"]
 
     def usage(rows_ids, rows_w):
@@ -234,6 +242,16 @@ def derive_features(cap: dict, prompt_rows: int, logprob_steps,
         drift.append(0.0 if na == 0 or nb == 0 else
                      float(1.0 - window_sig @ prefill_sig / (na * nb)))
 
+    return {
+        "router_entropy_mean": float(entropy.mean()) if entropy.size else 0.0,
+        "expert_concentration_mean": float(mass.mean()) if mass.size else 0.0,
+        "windowed_expert_shift": (float(sum(drift) / len(drift))
+                                  if drift else 0.0),
+        "drift_final_window": drift[-1] if drift else 0.0,
+    }
+
+
+def logprob_features(logprob_steps, n_output_tokens: int) -> dict:
     stats = [logprob_step_stats(s) for s in (logprob_steps or []) if s]
     selected = [s[0] for s in stats]
     margins = [s[1] for s in stats]
@@ -243,10 +261,6 @@ def derive_features(cap: dict, prompt_rows: int, logprob_steps,
         return float(sum(xs) / len(xs)) if xs else 0.0
 
     return {
-        "router_entropy_mean": float(entropy.mean()) if entropy.size else 0.0,
-        "expert_concentration_mean": float(mass.mean()) if mass.size else 0.0,
-        "windowed_expert_shift": mean(drift),
-        "drift_final_window": drift[-1] if drift else 0.0,
         "decode_window_entropy": mean(entropies),
         "final_selected_probability": selected[-1] if selected else 0.0,
         "final_top_k_margin": margins[-1] if margins else 0.0,
@@ -259,6 +273,12 @@ def derive_features(cap: dict, prompt_rows: int, logprob_steps,
         else 0.0,
         "decode_step_count": float(n_output_tokens),
     }
+
+
+def derive_features(cap: dict, prompt_rows: int, logprob_steps,
+                    n_output_tokens: int) -> dict:
+    return {**router_features(cap, prompt_rows),
+            **logprob_features(logprob_steps, n_output_tokens)}
 
 
 FEATURE_NAMES = [

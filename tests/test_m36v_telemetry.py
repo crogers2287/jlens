@@ -305,6 +305,40 @@ def test_inference_mode_capture_then_reset_outside():
     assert collector.fetch()["rows"] == 3
 
 
+def test_summary_path_equals_raw_router_features():
+    """M36C equivalence gate at unit level: the collector's device-side
+    summarize() must match the numpy router_features recompute from the
+    same buffers within 1e-5 per feature."""
+    import m36_calibration as C
+
+    runners = [FakeMoERunner(layer_id=i) for i in range(NUM_LAYERS)]
+    collector = RouterTelemetryCollector(
+        num_experts=NUM_EXPERTS, top_k=TOP_K,
+        capacity_tokens=64, raw_sample_tokens=4,
+    )
+    install_router_telemetry(runners, collector)
+    collector.allocate("cpu")
+    collector.enabled = True
+    run_tokens(runners, collector, num_tokens=6, tokens_per_call=6)  # prefill
+    run_tokens(runners, collector, num_tokens=17, seed=5)            # decode
+    prompt_rows = 6
+
+    summary = collector.summarize(prompt_rows)
+    cap = collector.fetch()
+    cap = {**cap,
+           "ids": cap["ids"].astype(np.int64),
+           "weights": cap["weights"].astype(np.float64),
+           "entropy": cap["entropy"].astype(np.float64),
+           "mass": cap["mass"].astype(np.float64)}
+    raw = C.router_features(cap, prompt_rows)
+    for name in C.ROUTER_FEATURE_NAMES:
+        assert abs(summary[name] - raw[name]) <= 1e-5, (
+            name, summary[name], raw[name])
+    assert summary["rows"] == 23
+    # Bounded return: scalars only, no arrays.
+    assert all(isinstance(v, (int, float)) for v in summary.values())
+
+
 def test_aggregate_only_report_guard():
     good = {
         "schema_version": 1,

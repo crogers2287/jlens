@@ -80,6 +80,35 @@ class JlensWorkerExtension:
             out["npz_path"] = path
         return out
 
+    def jlens_fetch_summary(self, prompt_rows: int,
+                            save_prefix: str | None = None) -> dict:
+        """Bounded router-feature summary (M36C summary telemetry path).
+
+        Returns four float64 scalars computed device-side plus counters.
+        When ``save_prefix`` is set (tiny validation samples only), also
+        writes the full raw arrays npz exactly like jlens_fetch_telemetry
+        so the equivalence gate can recompute features from raw capture.
+        """
+        collector, _ = self._jlens_state
+        out = collector.summarize(prompt_rows)
+        out["rank"] = getattr(self, "rank", -1)
+        if collector._id_mismatch is not None:
+            out["id_mismatch_total"] = int(collector._id_mismatch.sum())
+            out["dispatch_missed_total"] = int(
+                collector._dispatch_missed.sum())
+        if save_prefix is not None:
+            full = collector.fetch()
+            if "ids" in full:
+                import numpy as np
+
+                arrays = {k: full[k] for k in
+                          ("ids", "weights", "entropy", "mass",
+                           "raw_logits_sample")}
+                path = f"{save_prefix}_rank{out['rank']}.npz"
+                np.savez_compressed(path, **arrays)
+                out["npz_path"] = path
+        return out
+
     def jlens_uninstall_telemetry(self) -> bool:
         state = getattr(self, "_jlens_state", None)
         if state is None:

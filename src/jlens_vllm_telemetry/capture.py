@@ -211,6 +211,62 @@ class RouterTelemetryCollector:
         self._w_min.fill_(float("inf"))
         self._w_normdev.zero_()
 
+    def summarize(self, prompt_rows: int) -> dict:
+        """Device-side router feature summary (M36C summary telemetry path).
+
+        Mirrors the numpy router-feature semantics of
+        ``m36_calibration.router_features`` exactly, in float64, and
+        returns four bounded scalars — no per-token arrays leave the
+        worker. Gate: per-feature |summary - raw recompute| <= 1e-5.
+        """
+        if self._ids is None:
+            return {"rows": 0}
+        cursors = self._cursor.tolist()
+        rows = min(cursors) if cursors else 0
+        prompt_rows = min(prompt_rows, rows)
+        device = self._ids.device
+        L, E = self.num_layers, self.num_experts
+
+        def usage_sig(ids, weights):
+            offsets = (torch.arange(L, device=device, dtype=torch.int64)
+                       .view(1, L, 1) * E)
+            flat = (ids.to(torch.int64) + offsets).reshape(-1)
+            out = torch.zeros(L * E, dtype=torch.float64, device=device)
+            out.index_add_(0, flat, weights.reshape(-1).to(torch.float64))
+            out = out.view(L, E)
+            sums = out.sum(dim=1, keepdim=True)
+            out = torch.where(sums > 0, out / sums, out)
+            return out.reshape(-1)
+
+        def cos_drift(sig, ref):
+            na, nb = sig.norm(), ref.norm()
+            if float(na) == 0.0 or float(nb) == 0.0:
+                return 0.0
+            return float(1.0 - (sig @ ref) / (na * nb))
+
+        prefill_sig = usage_sig(self._ids[:prompt_rows],
+                                self._weights[:prompt_rows])
+        drift = []
+        step = max(1, (rows - prompt_rows) // 8)
+        for start in range(prompt_rows, rows, step):
+            window_sig = usage_sig(self._ids[start:start + step],
+                                   self._weights[start:start + step])
+            drift.append(cos_drift(window_sig, prefill_sig))
+
+        decode_entropy = self._entropy[prompt_rows:rows].to(torch.float64)
+        decode_mass = self._mass[prompt_rows:rows].to(torch.float64)
+        return {
+            "rows": rows,
+            "prompt_rows": prompt_rows,
+            "router_entropy_mean": (float(decode_entropy.mean())
+                                    if decode_entropy.numel() else 0.0),
+            "expert_concentration_mean": (float(decode_mass.mean())
+                                          if decode_mass.numel() else 0.0),
+            "windowed_expert_shift": (sum(drift) / len(drift)
+                                      if drift else 0.0),
+            "drift_final_window": drift[-1] if drift else 0.0,
+        }
+
     def fetch(self) -> dict:
         """Move captured data to CPU numpy. Private-side use only."""
         if self._ids is None:

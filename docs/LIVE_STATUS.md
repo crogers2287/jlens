@@ -4,6 +4,26 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-12T22:10Z
+
+- **Milestone/phase:** M36C adaptive — probe phase COMPLETE (all
+  non-excluded families), now in quota-driven expansion; M37J Phase 1
+  fit running on the V100.
+- **Remote head at collection:** `dc529a0`; `steer_sha_seen`
+  `9aa560e1d8111c67a67dc4fad6b72d68f8f8ed1a` — unchanged.
+- **Process state:** supervisor alive, adaptive attempt 2 (retry 1/1
+  used); sidecar active; GPUs 100%/63%.
+- **Rows:** retained 167 / 192; completed_correct **98 / 48 — met**;
+  completed_incorrect **0 / 48 — binding**; truncated 69; mixed 0 / 2;
+  122 new rows. Last completed task id `m36c_div_exact_s2_006`
+  (expansion), last progress 22:10 UTC.
+- **Throughput/ETA:** ~26 rows/h; 25 rows to cap → cap-bound in ~1 h
+  if completed-failure yield stays zero.
+- **Blockers:** none. **Tests/privacy/serving:** unchanged (12/12 at
+  `0a5e023`; task data private; serving restore pending).
+- **M37J:** fit RUNNING; resumable checkpoint last written 22:08 UTC
+  (cadence 5 prompts); result artifact not yet emitted.
+
 ## Heartbeat 2026-07-12T21:40Z
 
 - **Milestone/phase:** M36C adaptive calibration (branch A — healthy) on

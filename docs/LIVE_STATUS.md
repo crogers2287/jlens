@@ -4,6 +4,27 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T23:55Z (extended for steer e2d5b5e)
+
+- **Steer:** NEW steer `e2d5b5e` read and executed in full
+  (`steer_sha_seen` now `6cb5cdcd2a96c7303b738c65f386b60eb9bd2449`).
+  All five gaps closed control-plane-only: no LOCK_UN after lock
+  inheritance (surviving-child lock survival source-asserted),
+  permissive termination removed (start-time/SID/phase evidence bound
+  behind the barrier, re-proved before each signal, pidfd reuse
+  resistance), close_fds=True with an exact pass-fd allowlist + a
+  pre-exec launcher FD audit, package probes under the sha-bound
+  original executable and complete recorded environment, and the
+  read-only untracked-import audit of attempt 1's tree — **PASS**
+  (6 untracked paths, zero importable, zero symlinks in import
+  roots; aggregate result recorded). Executable identity captured
+  read-only while attempt 1 lives. 26 controller tests; 385 green.
+  No retry launched.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 52 rows at
+  collection (mod_chain b2 complete-ish), fresh progress.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T23:13Z
 
 - **Steer:** `0821351` current (`steer_sha_seen 7bcd58ed…`), no newer.

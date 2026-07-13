@@ -1,208 +1,216 @@
-# steer.md — close the M38E smoke-identity and explicit task-provenance false-pass paths before launch
+# steer.md — pin M38E execution source across retries; do not disturb the active first attempt
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `dfcade72cf88181b3b27539a0e21871e587fc459` only where explicitly
-amended below. The complete M36T interpretation, M38E protocol corrections,
-sealed-data rules, verifier rules, privacy rules, resource limits, claim
-boundaries, production gates, and stop conditions in that steer remain binding
-by incorporation. No frozen result may be re-evaluated or tuned, and no M38E
-task, family, band, seed, count, threshold, verifier, output-cap rule, power
-gate, or production gate may be weakened.
+steer commit `a9b91f71a4258a6e43cca49e2133ed3d61b536c2` only where explicitly
+amended below. That steer and every predecessor are incorporated in full,
+including all sealed-data, verifier, privacy, provenance, exact-set, cap-
+escalation, resource, claim-boundary, production-gating, repository-hygiene,
+and stop rules. No frozen result may be re-evaluated or tuned. No M38E task,
+family, band, seed, count, threshold, verifier, sampling setting, output-cap
+rule, power gate, comparator gate, or production gate may be weakened.
 
 ## Current established state
 
-- Remote head before this steer was
-  `18f861e296b29912acf668df9ea7ec46c9bb3b76`.
-- M36T remains interpreted exactly as recorded in steer `dfcade7`: T-H3 is
-  established only as verifier-backed adaptive tool/compute allocation on the
-  frozen deterministic population. T-H1 and T-H2 are not established. This is
-  not evidence that router telemetry, hidden states, semantic readouts, or a
-  Jacobian Lens caused the gain.
-- M37J-C finalized with the frozen outcome
-  `agents_a1_semantic_bridge_feasibility_blocked` at commit
-  `0339c80044598a1cd55ad19a1f487adc7aba2b49`. Seven of eight gates passed:
-  all-rank install conformance, dispatch identity, readout conformance,
-  enabled-leg divergence, the 44 GiB resource gate, the 1.50x overhead gate,
-  and cleanup. The disabled-path parity count gate failed: 11 of 16 prompts
-  differed against the frozen absolute allowance of 7. The observed 11/16 rate
-  matching the earlier 5/8 baseline is descriptive only. It does not convert
-  the blocked result into a pass and does not authorize a rerun or a gate edit.
-- M37J-C measured 40.04 GiB combined peak and 1.313x median generation
-  overhead. These observations support continued technical work on a fresh
-  protocol, but they do not establish semantic correctness, error prediction,
-  causal attribution, safe stopping, intervention value, or production use.
-- M38E pre-outcome hardening landed at
-  `18f861e296b29912acf668df9ea7ec46c9bb3b76`; the commit reports 344 green
-  tests, commit-safe clean, and zero official rows. The 2,048-to-4,096 cap
-  escalation, exact Fraction gates, official-row provenance, and eligible-band
-  counting changes are retained.
+- Remote `master` before this steer was
+  `3e4bceab74c2d3784d3f5cfcd3a42789f4d67e30`.
+- The M38E smoke/official identity and explicit task-provenance corrections
+  required by `a9b91f7` landed at
+  `4469b100842732cb68ffbc0cec7270ccf240cf40`. Smoke rows are content-marked
+  `run_kind=m38e_driver_smoke` and `attempt_kind=smoke_2048`; official rows are
+  content-marked `run_kind=m38e_official_dev`; every task and row binds an
+  explicit `task_index` and `generator_seed_id=m38e-dev-v1`. The commit reports
+  23 driver tests, 351 green repository-wide tests, commit-safe clean, and zero
+  official rows before launch.
+- The corrected two-row nonofficial smoke passed without touching the official
+  ledger. The official 288-task M38E development sweep was launched at
+  2026-07-13T18:46Z from source commit `4469b10`.
+- The latest pre-steer heartbeat reports four official rows captured and 52/52
+  fresh core tests. This is an in-progress development sweep, not a result.
+- M36T remains interpreted exactly as frozen: T-H3 establishes only verifier-
+  backed adaptive tool/compute allocation on its deterministic population.
+  T-H1 and T-H2 are not established. No router, hidden-state, semantic, or
+  Jacobian mechanism was established by M36T.
+- M37J-C remains blocked by its frozen disabled-path parity outcome. Seven of
+  eight technical gates passed, but 11 of 16 prompts differed against the
+  absolute allowance of seven. Its 40.04 GiB peak and 1.313x overhead are
+  descriptive technical observations only.
 
-## Block M38E smoke and official launch on two remaining provenance defects
+## Newly identified operational false-resume path
 
-Source review of `18f861e` found two pre-outcome false-pass paths. No M38E
-smoke or official row may be generated from that commit.
+The current first M38E attempt must not be interrupted. Its source identity is
+valid as launched. The automatic retry path is not valid after repository head
+movement.
 
-### 1. Smoke rows are currently indistinguishable from official rows
+`src/m38e_dev_sweep.py` derives `source_commit` from `git rev-parse HEAD`, hashes
+provenance files from that HEAD, includes the source commit in `run_id`, and
+requires resumed rows to match that exact identity. The committed supervisor,
+however, changes into the ordinary repository checkout and launches the driver
+again on attempt two. Since launch, status-only commits have advanced `master`
+from `4469b10` through `0d64fc5`, `a527652`, and `3e4bce`. A retry from the
+mutable checkout would therefore derive a new source identity and reject the
+existing official rows. The validator would fail safely, but the supervisor's
+claim that it provides a usable provenance-valid retry is false.
 
-The smoke path writes to a separate file but calls capture with
-`attempt_kind="official_2048"` and the same run identity used by the official
-path. The test suite constructs an artificial `smoke_2048` row and proves that
-such a marker is rejected, but the actual smoke implementation never emits
-that marker. A smoke row copied, concatenated, redirected, or otherwise placed
-in the official ledger can therefore satisfy `validate_rows` as an official
-row when source and task identity match. This violates the frozen requirements
-that smoke and official rows have zero shared rows, zero resume interaction,
-and a named refusal path.
+This is a control-plane defect, not permission to alter rows, regenerate tasks,
+relax provenance, or restart under a new source commit.
 
-Correct this without changing any scientific setting:
+## Binding handling of the active attempt
 
-- Give every smoke row an explicit nonofficial identity, including at minimum
-  `run_kind="m38e_driver_smoke"` and an `attempt_kind` that cannot be accepted
-  by the official ledger, such as `smoke_2048`.
-- Give the official rows an explicit `run_kind="m38e_official_dev"` and require
-  exact equality during resume.
-- Make the official validator reject every missing, unknown, smoke, or foreign
-  run-kind value before engine construction.
-- Keep the smoke ledger physically separate, but do not rely on path separation
-  as the identity boundary.
-- Validate any existing smoke ledger before reuse. Foreign source commits,
-  stale run ids, changed task hashes, duplicates, malformed rows, wrong caps,
-  or rows outside the exact requested smoke subset must block. They may not be
-  silently skipped and counted as a successful smoke.
-- A smoke aggregate must report rows actually generated or exact-validated for
-  that smoke identity. It may not report `len(plan)` merely because stale keys
-  were present.
+1. Do not stop, signal, restart, pull into, checkout over, patch, or otherwise
+   mutate the running first-attempt process or its execution tree.
+2. Record the supervisor PID, child process-group PID, execution working tree,
+   exact `HEAD`, environment identity, model pointer, and private-ledger byte
+   count without exposing private values in a public artifact.
+3. Prevent the supervisor from launching attempt two from the mutable checkout.
+   If necessary, terminate only the waiting supervisor shell after verifying the
+   `setsid` child remains alive and unchanged. Never kill or reparent the active
+   generation process merely to correct the retry controller.
+4. Allow the first attempt to complete under `4469b10`. If it completes, finalize
+   only through the existing exact-set, cap-escalation, verifier, privacy,
+   cleanup, and result gates.
+5. If the first attempt exits nonzero, do not launch a second attempt from
+   `master`, the current checkout, or any source tree whose exact identity differs
+   from the rows already captured.
+6. Preserve the private ledger byte-for-byte. Do not copy any private row,
+   prompt, answer, output, task id, cap-pilot membership, token data, or telemetry
+   into a committed artifact or log excerpt.
 
-### 2. The ordered task identity does not explicitly bind seed and index
+## Required immutable retry architecture
 
-The current `task_identity()` records task id, family, band, prompt hash, and
-answer hash. The task id encodes the index and the generator source hash covers
-`M38E_SEED`, but the frozen steer required the ordered digest and each private
-row to bind the index/seed identity explicitly rather than infer it from a
-string convention.
+A retry is authorized only as a resume of the same official run identity. It
+must execute from an immutable execution checkout satisfying every condition
+below before engine construction:
 
-Correct this without regenerating or changing any task:
+- detached `HEAD` exactly
+  `4469b100842732cb68ffbc0cec7270ccf240cf40`, or the exact full source commit
+  recorded in the official rows if the launch record proves a different value;
+- clean tracked tree and byte-identical provenance files;
+- exact frozen model repository, immutable model revision, runtime, worker
+  override, tensor-parallel configuration, sampling settings, and environment
+  identity used by the first attempt;
+- byte-for-byte preserved private ledger placed in the expected private location
+  with no row transformation;
+- recomputed run identity exactly equal to every existing row before GPU engine
+  construction;
+- no status, heartbeat, steer, documentation, or control-plane commits written
+  from the execution checkout.
 
-- Add an explicit integer `task_index` to generated task metadata and to every
-  row identity.
-- Add an explicit stable generator seed identifier, for example
-  `generator_seed_id="m38e-dev-v1"`, to the run identity, task-set digest, and
-  each private row. Do not expose raw prompt or answer content.
-- Require exact equality for both fields on resume.
-- Recompute the pre-outcome run identity and technical amendment after the
-  implementation commit. Because zero official rows exist, this is a legal
-  pre-outcome provenance correction, not a scientific change.
+Use two physically separate Git worktrees or source trees:
 
-## Required tests before any M38E execution
+1. a control checkout that may receive status, steer, tests, and operational
+   supervisor changes; and
+2. an execution checkout permanently pinned to the official source identity.
 
-Add deterministic tests proving all of the following:
+The control supervisor must accept an explicit pinned execution directory and
+explicit expected source SHA. It must refuse symbolic refs such as `master`,
+`main`, `HEAD`, or an unverified current directory. It must verify the detached
+execution SHA and provenance hashes immediately before each launch. It must not
+silently create, reset, clean, or update the execution checkout.
 
-1. The real smoke capture path emits smoke-marked rows, not
-   `official_2048` rows.
-2. An actual smoke row inserted into the official ledger is rejected even when
-   task id, hashes, source commit, model revision, and output cap otherwise
-   match.
-3. Missing or unknown `run_kind` values block.
-4. A stale, foreign, duplicate, malformed, cross-cap, or out-of-subset smoke
-   ledger blocks before engine construction.
-5. A smoke followed by an official run under the same source commit causes the
-   official path to generate all required official rows and reuse zero smoke
-   rows.
-6. Smoke completion accounting cannot be satisfied by stale existing keys or
-   row count alone.
-7. `task_index` and `generator_seed_id` are included in the ordered task-set
-   digest and every row; changing either blocks resume.
-8. The official ledger still rejects unknown, duplicate, extra, missing,
-   tampered, cross-cap, and malformed rows and still uses exact-set completion.
-9. The existing deterministic cap-pilot, exact-denominator, eligible-band,
-   privacy, and frontier-completeness tests remain green.
-10. All public artifacts pass the recursive aggregate-only audit and
-    `check_commit_safe.py`.
+If the exact execution source, environment, model revision, or private ledger
+cannot be reconstructed and verified, commit only an aggregate blocked status
+and stop M38E. Do not regenerate completed rows under a new source identity and
+do not call a fresh run a resume.
 
-Commit the implementation, tests, and a replacement aggregate-only M38E
-technical amendment. The amendment must state that the correction is
-pre-outcome, that zero official rows existed, and that no task content,
-scientific setting, threshold, family, band, cap rule, verifier, or gate
-changed.
+## Required control-plane tests and audit
 
-## Execution order
+Before any retry or future long-running sealed/development capture, add tests or
+a deterministic operational preflight proving:
 
-1. Do not launch the M38E driver smoke or official sweep from `18f861e`.
-2. Implement the two provenance corrections above offline.
-3. Run the full private-safe test suite and commit-safety audit.
-4. Commit the corrected implementation and aggregate-only amendment, then push
-   and verify the exact remote head.
-5. Run a separate nonofficial driver smoke. Verify its rows are smoke-marked,
-   its subset is exact, and the official ledger remains absent or byte-for-byte
-   unchanged.
-6. Restore and verify stock Agents-A1 serving after the smoke if the local
-   harness requires a service window.
-7. Launch the official M38E development sweep exactly once. Resume only under
-   the exact validated official run identity.
-8. Execute every frozen 2,048 band and every triggered deterministic 4,096
-   pilot/full-band path. Never mix caps in a primary band estimate.
-9. If the frontier gates fail, commit only the aggregate
-   `m38e_completed_error_frontier_not_found` result and stop that branch.
-10. If the gates pass, fit and freeze transparent comparators only on eligible
-    completed, nontruncated development rows; complete the preregistered power
-    calculation; commit the sealed manifest before generating sealed outcomes.
-11. Stop after the M38E result for operator-level scientific interpretation.
-    Do not promote a policy automatically.
+1. status-only commits after launch do not change the execution checkout SHA;
+2. a retry launches from the row-bound source commit, not the control checkout;
+3. a newer control `master` cannot satisfy or replace the expected execution SHA;
+4. a source mismatch blocks before model loading or engine construction;
+5. existing rows are exact-validated before resume and no row-count shortcut can
+   satisfy completion;
+6. the supervisor has no automatic fallback to the current directory, branch
+   tip, or latest commit;
+7. heartbeat and steer writes occur only in the control checkout;
+8. a simulated first-attempt failure followed by control-head advancement either
+   resumes from the immutable original source or blocks cleanly;
+9. public artifacts remain aggregate-only and pass the recursive privacy audit
+   and `check_commit_safe.py`.
 
-## Agents-A1 scaling and research scan
+An operational supervisor correction may be committed in the control checkout
+while the first attempt runs, but it may not change the executing driver,
+scientific code, private rows, or frozen M38E identity. No official row may be
+produced by revised scientific source code as part of this repair.
 
-- As of 2026-07-13, the official InternScience Hugging Face organization still
-  lists only the 35B Agents-A1 BF16/FP8/GGUF variants. The official repository
-  still says the 4B model is coming, but no official 4B Agents-A1 checkpoint is
-  available. Do not substitute Agents-K1, an unofficial distillation, or a
-  different model under the Agents-A1 name.
-- The credible near-term full-model path remains observation-only telemetry on
-  the pinned 35B runtime plus M38E's verifier-backed incremental prediction
-  test. Full backward/Jacobian fitting remains blocked by the official smaller
-  checkpoint not being released and by the unchanged local fitting-memory
-  ceiling.
-- PUMA (`arXiv:2605.17672`, `giovanni-vaccarino/PUMA`) is relevant only as a
-  future verified stopping comparator. Its public repository currently states
-  that the released implementation is offline and that the online version is
-  still being prepared. It does not justify semantic-only early exit.
-- Hidden Error Awareness (`arXiv:2605.09502`) supports diagnostic hidden-state
-  prediction while explicitly separating it from successful intervention.
-- When Are Experts Misrouted? (`arXiv:2605.07260`) supports testing router
-  telemetry empirically but shows standard routes can be least informative on
-  fragile reasoning tokens.
-- The Myth of Expert Specialization in MoEs (`arXiv:2604.09780`) reinforces that
-  expert identities should not be assigned human semantic meaning and that
-  prompt-level routing does not reliably predict rollout routing.
-- IG-Lens (`arXiv:2606.29693`, `anhnda/IGLens`) is a lightweight additive
-  probability-attribution comparator with no backward call. It is not a
-  Jacobian Lens, and its current public repository is a minimal implementation.
-  Evaluate it only in a fresh preregistered comparator study after M38E.
-- No actionable r/LocalLLaMA implementation lead was found. Reddit remains a
-  lead source only and cannot alter protocol or claims without primary-source
-  verification.
+## M38E completion order remains frozen
 
-After M38E, a fresh M37J-D protocol may characterize disabled-path
-nondeterminism using an independently calibrated, prompt-count-aware parity
-criterion or a deterministic backend. It must be preregistered before new live
-outputs and must preserve M37J-C as blocked. Do not retroactively normalize the
-11/16 result, reuse its prompts for threshold calibration and evaluation, or
-relax its frozen gate.
+- Finish every complete 2,048-token band and every deterministically triggered
+  4,096 pilot/full-band path under one validated run identity.
+- Never mix 2,048 rows, pilot rows, and full-band 4,096 rows in a primary band
+  estimate.
+- Apply exact rational eligibility arithmetic and count completed errors only
+  from eligible final-cap bands.
+- A completed-error frontier-not-found result is legal only after all required
+  paths and exact-set checks finish.
+- If the frontier gates pass, fit transparent development comparators only on
+  eligible completed, nontruncated rows; complete the preregistered power
+  calculation; freeze and commit the sealed manifest before generating sealed
+  outcomes.
+- Stop after the M38E result for operator-level scientific interpretation. Do not
+  promote a policy automatically.
 
-## Privacy and production boundary
+## Agents-A1 scaling path
+
+As of 2026-07-13, the official InternScience organization still exposes the 35B
+Agents-A1 BF16, FP8, and GGUF variants. The official repository's 2026-07-08
+notice says a 4B model is coming, but no official Agents-A1 4B checkpoint is
+listed. `InternScience/Agents-K1` is a separate 4B model and may not be
+substituted under the Agents-A1 name.
+
+The technically credible sequence is:
+
+1. complete M38E without changing its in-flight protocol;
+2. retain observation-only router and hidden-state telemetry on the pinned 35B
+   runtime as the near-term full-model path;
+3. after M38E, preregister a separate scaling study comparing full Jacobian
+   construction against low-rank target-space VJPs and bounded finite-difference
+   probes, using a smaller comparable open MoE or an official Agents-A1 4B model
+   if released;
+4. require approximation-error, rank-stability, finite-value, memory, runtime,
+   parity, privacy, and predictive-increment gates before attempting the 35B
+   backward path;
+5. only then run a one-sequence 35B memory smoke on rented high-memory hardware,
+   with frozen abort thresholds and no scientific outcome claims.
+
+Jacobian Scopes (`arXiv:2601.16407`) provides relevant engineering comparators:
+its Fisher low-rank path computes only top-k target-space batched VJPs, while its
+finite-difference path estimates Jacobian quadratic forms without materializing
+the full Jacobian. These methods may reduce probe count or memory, but they are
+token-attribution methods, not a validated Jacobian Lens, semantic monitor, or
+error predictor. They may be evaluated only in a fresh preregistered study.
+
+The Diminishing Returns of Early-Exit Decoding (`arXiv:2603.23701`) reports that
+modern MoE models are generally less early-exit-friendly than dense models.
+Hidden Error Awareness (`arXiv:2605.09502`) reports strong hidden-state error
+prediction but failed steering and correction interventions. When Are Experts
+Misrouted? (`arXiv:2605.07260`) reports that standard routes can be
+uninformative on fragile reasoning tokens. Together these support empirical
+prediction tests while prohibiting semantic-only stopping, causal repair claims,
+or trust in router confidence as a correctness label.
+
+ICA Lens (`arXiv:2606.11722`) is a low-cost activation-geometry comparator for a
+future semantic study, not a substitute for Jacobians or verifier-backed error
+prediction. No actionable r/LocalLLaMA implementation lead has been verified by
+a primary source.
+
+## Claim, privacy, and production boundary
 
 GitHub currently reports this repository as public. Treat every committed byte
-as externally visible. Never commit private prompts, answers, operands,
-outputs, token text or ids, per-task labels or predictions, raw telemetry,
-hidden states, activations, gradients, Jacobians, lens matrices, model weights,
-caches, stack traces, local paths, private task ids, or cap-pilot membership.
-Public artifacts remain aggregate-only and must pass `check_commit_safe.py`.
+as externally visible. Never commit private prompts, answers, operands, outputs,
+token text or ids, per-task labels or predictions, raw telemetry, hidden states,
+activations, gradients, Jacobians, lens matrices, model weights, caches, stack
+traces, local paths, private task ids, or cap-pilot membership. Public artifacts
+remain aggregate-only.
 
-Stop on dirty or changed source provenance, model revision mismatch, task-set or
-row mismatch, smoke/official contamination, unsupported resume, cap-ledger
-mixing, incomplete escalation, malformed counters, verifier bypass, non-finite
-values, rank disagreement, cleanup failure, serving restoration failure,
-privacy failure, resource-gate breach, or repeated worker failure.
+M36T does not establish an internal telemetry mechanism. M37J-C remains blocked.
+M38E is in progress. No Jacobian Lens on Agents-A1, semantic correctness,
+completed-error prediction, safe truncation, early exit, causal repair,
+activation steering, or production utility is established.
 
 Production remains gated. No observation, classifier, tool policy, route edit,
-activation intervention, semantic monitor, or early-exit rule is authorized for
-production by this directive.
+activation intervention, semantic monitor, truncation rule, or early-exit rule
+is authorized for production by this directive.

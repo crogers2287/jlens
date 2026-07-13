@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T09:43Z (extended for steer 65c76ec)
+
+- **Steer:** NEW steer `65c76ec` read and executed in full;
+  `steer_sha_seen` now `e9b3695ddf41b8878de3b340fe0b21d8fe7b085f`.
+  All five false-pass closures completed CPU-only pre-live-prompt
+  (`13b8107`): per-prompt all-rank dispatch identity, empty-readout-
+  is-failure structural validation (+ bridge duplicate-final fix),
+  all-rank install conformance gate, strict internally-consistent
+  finalizer with exact-reply matching and technical-SHA recording,
+  and a guarded lifecycle with aggregate-only exception blockers.
+  Amendment 2 + rewritten 22-test suite committed; 318 tests green.
+- **M36T:** sealed capture 94/192 at collection — approaching
+  half-way; healthy, ~30 rows/h, ETA ~3 h.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T09:13Z
 
 - **Steer:** `821e430` current (`steer_sha_seen 1ac1f2c6…`), no newer.

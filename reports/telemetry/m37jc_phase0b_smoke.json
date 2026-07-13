@@ -1,0 +1,106 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37jc_phase0b_smoke",
+ "steer": "04920b0",
+ "provenance": {
+  "source_commit": "2cd9220aae6ce347a2f22e6c1948510a1d3bdac0",
+  "file_sha256": {
+   "src/m37jc_smoke.py": "1ad3983fb651a84745ef18cf00f6fb2e22dc0d1d1bf1698d100df5446fdae8c0",
+   "src/jlens_vllm_telemetry/bridge.py": "725785250821925cf9c3c3c9ebadd8816e3b6d32d5796e953335bd7a1a0440fb",
+   "src/jlens_vllm_telemetry/worker_ext.py": "381072ec479385595fdb18164512625a1a40ca7c593de53153e187a007d257ba",
+   "reports/telemetry/m36v_phase1_router_telemetry.json": "6c842888c014dc8ed314ed57f02672d2c84ff042c159f0c2b5a4f08e7823d77c"
+  }
+ },
+ "override_hash": "13e88025b28b48ed",
+ "envelope": {
+  "margin_prompts": 2,
+  "first_divergence_floor": 8,
+  "baseline_prompts_differing": 5,
+  "sha256": "e57726f62351926b4e5517e3ad6487cd5e4c6eb65ed6fac58c0208280d1aaa10"
+ },
+ "n_prompts": 16,
+ "max_tokens": 256,
+ "install_conformance": {
+  "ok": true,
+  "reason": null
+ },
+ "divergence_pre_vs_disabled": {
+  "prompts_differing": 11,
+  "first_divergence_min": 9
+ },
+ "divergence_disabled_vs_enabled": {
+  "prompts_differing": 7,
+  "first_divergence_min": 20
+ },
+ "identity": {
+  "ok": true,
+  "prompts_checked": 16,
+  "prompt_failures": 0,
+  "id_mismatch_max": 0,
+  "id_mismatch_sum": 0,
+  "dispatch_missed_max": 0,
+  "dispatch_missed_sum": 0
+ },
+ "readout_conformance_failures": 0,
+ "generation_overhead_median": 1.313,
+ "combined_peak_gib": 40.04,
+ "semantic_group_aggregates": {
+  "group_completion": {
+   "mean": 0.06,
+   "max": 1.0
+  },
+  "group_continuation": {
+   "mean": 0.44,
+   "max": 2.0
+  },
+  "group_verification": {
+   "mean": 0.12,
+   "max": 1.0
+  },
+  "group_error_conflict": {
+   "mean": 0.25,
+   "max": 1.0
+  },
+  "group_uncertainty": {
+   "mean": 0.0,
+   "max": 0.0
+  }
+ },
+ "cleanup": {
+  "ok": true,
+  "steps": [
+   {
+    "step": "jlens_bridge_set_enabled",
+    "ok": true
+   },
+   {
+    "step": "jlens_set_telemetry_enabled",
+    "ok": true
+   },
+   {
+    "step": "jlens_bridge_uninstall",
+    "ok": true
+   },
+   {
+    "step": "jlens_uninstall_telemetry",
+    "ok": true
+   },
+   {
+    "step": "postcondition_absent_all_ranks",
+    "ok": true
+   }
+  ]
+ },
+ "gates": {
+  "disabled_path_within_envelope": false,
+  "install_conformance_all_ranks": true,
+  "dispatch_identity_all_prompts_all_ranks": true,
+  "readout_conformance_all_prompts": true,
+  "enabled_divergence_within_envelope": true,
+  "combined_peak_within_44gib": true,
+  "overhead_within_1p50": true,
+  "cleanup_verified_all_ranks": true
+ },
+ "outcome": "agents_a1_semantic_bridge_feasibility_blocked",
+ "privacy_check_status": "aggregate gate results only"
+}

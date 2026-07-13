@@ -1,0 +1,21 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_dev_generation_manifest",
+ "steer": "79878ab",
+ "purpose": "development only \u2014 never sealed decision data",
+ "seed": "m36t-dev-v1",
+ "families": [
+  "div_exact",
+  "json_digits",
+  "mod_arith",
+  "sub_mixed"
+ ],
+ "strata_per_family": 4,
+ "tasks_per_cell": 6,
+ "n_tasks": 96,
+ "disjointness": "prompt-string exclusion vs all prior local task files (M35/M36C private sets + data/prompts/*)",
+ "collisions_skipped": 0,
+ "tasks_sha256": "3ec0b15bd8e7faf2449646db969e19ac255a02ced764bc5ce70478b7e7b2af54",
+ "tasks_public": false,
+ "privacy_check_status": "aggregate manifest only; tasks private"
+}

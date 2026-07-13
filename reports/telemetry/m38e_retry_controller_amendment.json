@@ -1,0 +1,15 @@
+{
+ "schema_version": 1,
+ "run_kind": "m38e_technical_amendment",
+ "steer": "3f422ad",
+ "nature": "control-plane only; the active first attempt was never touched; no driver, task, row, manifest, threshold, verifier, sampling, cap, or gate changed",
+ "corrections": {
+  "owned_process_group": "a minimal launcher (chdir + setsid + exec) makes the recorded PID the exact owned PGID; stall signals go only to that PGID after re-proving its cmdline and cwd; host-global pgrep/pkill/name-matching is gone; the superseded bash supervisor now hard-refuses execution",
+  "attempt_accounting": "a persisted private launch record (captured live from the running original attempt: PID==PGID, cmdline, cwd, python, vllm/torch versions, protocol env) counts the original launch as attempt one; the controller permits at most one additional launch and blocks permanently once the budget is spent",
+  "single_writer": "an exclusive nonblocking flock keyed to the row-bound run id is acquired before preflight and held for the retry lifetime; liveness of any recorded driver for the run identity (exact cmdline+cwd proof, PID-reuse safe) blocks launch",
+  "runtime_identity": "retry verifies the original python executable, vllm and torch versions, protocol environment variables, and byte-equal model pointers between control and execution checkouts against the private launch record; missing evidence blocks; immutable-source + exact-ledger preflight runs after the lock and immediately before engine construction"
+ },
+ "tests": "tests/test_m38e_retry_controller.py — 8 synthetic-process tests (launcher PID==PGID through exec, decoy never selected or signaled, group signal hits only the owned group, live-original blocks, flock exclusivity, budget accounting incl. permanent block, live record counts attempt one, runtime mismatch blocks)",
+ "retry_launched": false,
+ "privacy_check_status": "aggregate amendment only; PIDs/paths/env stay in the private record"
+}

@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T20:43Z (extended for steer 3f422ad)
+
+- **Steer:** NEW steer `3f422ad` read and executed in full
+  (`steer_sha_seen` now `86f16c33aabdf387857fd7c6d5258c4ba7e0e592`).
+  Control-plane-only corrections landed (`a7249a2`): owned-PGID
+  launcher (chdir+setsid+exec; recorded PID IS the signaled group,
+  re-proven by cmdline+cwd before any signal — decoys impossible;
+  the superseded bash supervisor now hard-refuses), persisted attempt
+  accounting with the live original attempt captured as attempt one
+  of a permanent two-total budget, an exclusive run-id flock for
+  single-writer retries, liveness-blocks-launch, and full runtime
+  identity verification against the private launch record. No retry
+  launched; the controller exists only for an actual attempt-1
+  failure. 8 new tests; 367 green repo-wide.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 24 rows at
+  collection, uniform official identity, fresh progress.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T20:13Z
 
 - **Steer:** `a726b35` current (`steer_sha_seen ae389cee…`), no newer.

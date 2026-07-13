@@ -68,6 +68,11 @@ TASKS_PER_BAND = 24
 CAP_2048, CAP_4096 = 2048, 4096
 PILOT_SALT = "m38e-4096-pilot-v1:"
 PILOT_N = 8
+GENERATOR_SEED_ID = "m38e-dev-v1"
+RUN_KIND_OFFICIAL = "m38e_official_dev"
+RUN_KIND_SMOKE = "m38e_driver_smoke"
+ATTEMPT_KINDS_OFFICIAL = ("official_2048", "pilot_4096", "band_4096")
+ATTEMPT_KIND_SMOKE = "smoke_2048"
 
 OFFICIAL_ROWS = "reports/shadow/private/m38e_dev_rows.jsonl"
 SMOKE_ROWS = "reports/shadow/private/m38e_smoke_rows.jsonl"
@@ -110,15 +115,22 @@ def source_provenance() -> dict:
 def expected_tasks() -> list[dict]:
     from m38e_families import BANDS, generate
 
-    return [generate(family, band, i)
-            for family in BANDS
-            for band in range(1, len(BANDS[family]) + 1)
-            for i in range(TASKS_PER_BAND)]
+    out = []
+    for family in BANDS:
+        for band in range(1, len(BANDS[family]) + 1):
+            for i in range(TASKS_PER_BAND):
+                task = generate(family, band, i)
+                task["task_index"] = i            # explicit, not inferred
+                task["generator_seed_id"] = GENERATOR_SEED_ID
+                out.append(task)
+    return out
 
 
 def task_identity(task: dict) -> dict:
     return {"task_id": task["task_id"], "family": task["family"],
             "band": task["band"],
+            "task_index": int(task["task_index"]),
+            "generator_seed_id": task["generator_seed_id"],
             "prompt_sha256": hashlib.sha256(
                 task["prompt"].encode()).hexdigest(),
             "answer_sha256": hashlib.sha256(
@@ -142,25 +154,38 @@ def run_identity(model_ref: str) -> dict:
     digest = task_set_digest(tasks)
     run_id = hashlib.sha256(
         f"{prov['source_commit']}:{manifest_digest}:{digest}:"
+        f"{GENERATOR_SEED_ID}:"
         f"{PINNED_CHECKPOINT}:{PINNED_REVISION}:{CAP_2048}".encode()
     ).hexdigest()[:16]
     return {"provenance": prov, "manifest_digest": manifest_digest,
             "task_set_digest": digest, "run_id": run_id,
+            "generator_seed_id": GENERATOR_SEED_ID,
             "checkpoint": PINNED_CHECKPOINT,
             "revision_pinned": PINNED_REVISION, "tasks": tasks}
 
 
 # -- row ledger -----------------------------------------------------------
 
-def validate_rows(rows: list[dict], ident: dict, override: str) -> None:
-    """Every resumed row must match the exact run identity; no unknown,
-    duplicate, or malformed rows (steer dfcade7 item 2)."""
+def validate_rows(rows: list[dict], ident: dict, override: str,
+                  run_kind: str = RUN_KIND_OFFICIAL,
+                  allowed_kinds: tuple = ATTEMPT_KINDS_OFFICIAL,
+                  allowed_task_ids: set | None = None) -> None:
+    """Every resumed row must match the exact run identity INCLUDING its
+    run_kind — the identity boundary is the row content, never the file
+    path (steer a9b91f7 item 1). No unknown, duplicate, foreign,
+    cross-cap, out-of-subset, or malformed rows."""
     known = {t["task_id"]: task_identity(t) for t in ident["tasks"]}
     seen: set[tuple] = set()
     for r in rows:
+        if r.get("run_kind") != run_kind:
+            raise SweepBlocked(
+                f"row {r.get('task_id')}: run_kind "
+                f"{r.get('run_kind')!r} != required {run_kind!r}")
         for field, want in (("run_id", ident["run_id"]),
                             ("manifest_digest", ident["manifest_digest"]),
                             ("task_set_digest", ident["task_set_digest"]),
+                            ("generator_seed_id",
+                             ident["generator_seed_id"]),
                             ("source_commit",
                              ident["provenance"]["source_commit"]),
                             ("revision_pinned", ident["revision_pinned"]),
@@ -171,14 +196,20 @@ def validate_rows(rows: list[dict], ident: dict, override: str) -> None:
         tid = r.get("task_id")
         if tid not in known:
             raise SweepBlocked(f"unknown task id in ledger: {tid}")
+        if allowed_task_ids is not None and tid not in allowed_task_ids:
+            raise SweepBlocked(f"row {tid}: outside the exact requested "
+                               "subset")
         for h in ("prompt_sha256", "answer_sha256"):
             if r.get(h) != known[tid][h]:
                 raise SweepBlocked(f"row {tid}: task hash changed")
+        if r.get("task_index") != known[tid]["task_index"]:
+            raise SweepBlocked(f"row {tid}: task_index mismatch")
         kind = r.get("attempt_kind")
-        if kind not in ("official_2048", "pilot_4096", "band_4096"):
+        if kind not in allowed_kinds:
             raise SweepBlocked(f"row {tid}: bad attempt_kind {kind}")
         cap = {"official_2048": CAP_2048, "pilot_4096": CAP_4096,
-               "band_4096": CAP_4096}[kind]
+               "band_4096": CAP_4096,
+               ATTEMPT_KIND_SMOKE: CAP_2048}[kind]
         if r.get("output_cap") != cap:
             raise SweepBlocked(f"row {tid}: cap mismatch for {kind}")
         key = (tid, kind)
@@ -240,7 +271,7 @@ def band_report(final_rows: list[dict], cap: int,
 # -- capture --------------------------------------------------------------
 
 def capture_missing(llm, tasks, existing_keys, kind, cap, ident,
-                    override, sink):
+                    override, sink, run_kind=RUN_KIND_OFFICIAL):
     from m36c_adaptive import timed_generation
     from m38e_families import verdict
 
@@ -252,9 +283,11 @@ def capture_missing(llm, tasks, existing_keys, kind, cap, ident,
         v = verdict(task, record["text"])
         row = {
             **task_identity(task),
+            "run_kind": run_kind,
             "run_id": ident["run_id"],
             "manifest_digest": ident["manifest_digest"],
             "task_set_digest": ident["task_set_digest"],
+            "generator_seed_id": ident["generator_seed_id"],
             "source_commit": ident["provenance"]["source_commit"],
             "revision_pinned": ident["revision_pinned"],
             "override_hash": override,
@@ -298,12 +331,15 @@ def main() -> int:
 
     rows = ([json.loads(l) for l in rows_path.read_text().splitlines()]
             if rows_path.exists() else [])
+    active_run_kind = RUN_KIND_SMOKE if smoke else RUN_KIND_OFFICIAL
     if smoke:
         plan = ident["tasks"][:args.smoke]
+        # An existing smoke ledger must be exact-validated before reuse;
+        # foreign/stale/out-of-subset rows BLOCK, never silently skip.
+        validate_rows(rows, ident, override, run_kind=RUN_KIND_SMOKE,
+                      allowed_kinds=(ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={t["task_id"] for t in plan})
     else:
-        for r in rows:
-            if r.get("attempt_kind", "").startswith("smoke"):
-                raise SweepBlocked("official ledger contains smoke rows")
         validate_rows(rows, ident, override)
         plan = ident["tasks"]
 
@@ -320,21 +356,28 @@ def main() -> int:
             install(llm)
         with rows_path.open("a") as sink:
             n = capture_missing(llm, need, existing, kind, cap, ident,
-                                override, sink)
+                                override, sink,
+                                run_kind=active_run_kind)
         rows.extend([json.loads(l) for l in
                      rows_path.read_text().splitlines()][len(rows):])
         return n
 
     if smoke:
-        ensure(plan, "official_2048", CAP_2048)
+        generated = ensure(plan, ATTEMPT_KIND_SMOKE, CAP_2048)
+        validated = len(plan) - generated   # exact-validated pre-existing
         Path(out_path).write_text(json.dumps({
-            "schema_version": 1, "run_kind": "m38e_driver_smoke",
-            "rows": len(plan), "run_id": ident["run_id"],
-            "ledger": "separate smoke file; zero official interaction",
+            "schema_version": 1, "run_kind": RUN_KIND_SMOKE,
+            "rows_generated": generated,
+            "rows_exact_validated": validated,
+            "subset_exact": True,
+            "run_id": ident["run_id"],
+            "ledger": "separate smoke file; row-content identity boundary "
+                      "(smoke_2048 attempt kind is unacceptable to the "
+                      "official validator)",
             "privacy_check_status": "aggregate smoke note only",
         }, indent=1) + "\n")
-        print(f"[m38e] driver smoke complete ({len(plan)} tasks, "
-              "separate ledger)", flush=True)
+        print(f"[m38e] driver smoke complete (generated={generated}, "
+              f"exact_validated={validated})", flush=True)
         return 0
 
     # ---- official sweep with frozen escalation ------------------------

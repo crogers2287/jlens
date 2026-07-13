@@ -19,13 +19,15 @@ from m38e_dev_sweep import (CAP_2048, CAP_4096, GATES, SweepBlocked,
 
 def make_task(i, family="mod_chain", band="b1"):
     return {"task_id": f"m38e_{family}_{band}_{i:03d}", "family": family,
-            "band": band, "prompt": f"synthetic prompt {i}",
-            "known_answer": str(i)}
+            "band": band, "task_index": i,
+            "generator_seed_id": M.GENERATOR_SEED_ID,
+            "prompt": f"synthetic prompt {i}", "known_answer": str(i)}
 
 
 IDENT_TASKS = [make_task(i) for i in range(24)]
 IDENT = {"run_id": "r" * 16, "manifest_digest": "m" * 64,
          "task_set_digest": task_set_digest(IDENT_TASKS),
+         "generator_seed_id": M.GENERATOR_SEED_ID,
          "provenance": {"source_commit": "c" * 40},
          "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
          "tasks": IDENT_TASKS}
@@ -35,13 +37,17 @@ OVERRIDE = "o" * 16
 def make_row(i, kind="official_2048", verdict="pass", truncated=False,
              **over):
     task = IDENT_TASKS[i]
-    row = {**task_identity(task), "run_id": IDENT["run_id"],
+    row = {**task_identity(task), "run_kind": M.RUN_KIND_OFFICIAL,
+           "run_id": IDENT["run_id"],
            "manifest_digest": IDENT["manifest_digest"],
            "task_set_digest": IDENT["task_set_digest"],
+           "generator_seed_id": M.GENERATOR_SEED_ID,
            "source_commit": "c" * 40,
            "revision_pinned": IDENT["revision_pinned"],
            "override_hash": OVERRIDE, "attempt_kind": kind,
-           "output_cap": CAP_2048 if kind == "official_2048" else CAP_4096,
+           "output_cap": (CAP_2048 if kind in ("official_2048",
+                                               M.ATTEMPT_KIND_SMOKE)
+                          else CAP_4096),
            "verdict": verdict, "truncated": truncated}
     row.update(over)
     return row
@@ -159,3 +165,112 @@ def test_escalation_failed_band_is_ineligible_even_with_good_rates():
 def test_incomplete_band_ineligible():
     r = band_report(band_rows(5, 5, 2), CAP_2048, "not_triggered")
     assert r["n"] == 12 and not r["eligible"]
+
+
+# -- steer a9b91f7 additions ---------------------------------------------------
+
+def smoke_row(i):
+    r = make_row(i, kind=M.ATTEMPT_KIND_SMOKE)
+    r["run_kind"] = M.RUN_KIND_SMOKE
+    return r
+
+
+def test_actual_smoke_row_rejected_by_official_validator():
+    # A genuine smoke row (matching every hash/commit/cap) inserted into
+    # the official ledger must be rejected on the run_kind boundary.
+    with pytest.raises(SweepBlocked, match="run_kind"):
+        validate_rows([smoke_row(0)], IDENT, OVERRIDE)
+
+
+def test_missing_or_unknown_run_kind_blocks():
+    r = make_row(0)
+    del r["run_kind"]
+    with pytest.raises(SweepBlocked, match="run_kind"):
+        validate_rows([r], IDENT, OVERRIDE)
+    r2 = make_row(0)
+    r2["run_kind"] = "m38e_something_else"
+    with pytest.raises(SweepBlocked, match="run_kind"):
+        validate_rows([r2], IDENT, OVERRIDE)
+
+
+def test_official_row_rejected_by_smoke_validator():
+    with pytest.raises(SweepBlocked, match="run_kind"):
+        validate_rows([make_row(0)], IDENT, OVERRIDE,
+                      run_kind=M.RUN_KIND_SMOKE,
+                      allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={IDENT_TASKS[0]["task_id"]})
+
+
+def test_smoke_ledger_exact_validation():
+    ok = smoke_row(0)
+    validate_rows([ok], IDENT, OVERRIDE, run_kind=M.RUN_KIND_SMOKE,
+                  allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                  allowed_task_ids={ok["task_id"]})
+    # out-of-subset smoke row blocks
+    with pytest.raises(SweepBlocked, match="subset"):
+        validate_rows([smoke_row(1)], IDENT, OVERRIDE,
+                      run_kind=M.RUN_KIND_SMOKE,
+                      allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={IDENT_TASKS[0]["task_id"]})
+    # foreign source commit blocks
+    stale = smoke_row(0)
+    stale["source_commit"] = "e" * 40
+    with pytest.raises(SweepBlocked, match="mismatch"):
+        validate_rows([stale], IDENT, OVERRIDE,
+                      run_kind=M.RUN_KIND_SMOKE,
+                      allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={stale["task_id"]})
+    # wrong cap blocks
+    badcap = smoke_row(0)
+    badcap["output_cap"] = CAP_4096
+    with pytest.raises(SweepBlocked, match="cap"):
+        validate_rows([badcap], IDENT, OVERRIDE,
+                      run_kind=M.RUN_KIND_SMOKE,
+                      allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={badcap["task_id"]})
+    # duplicate blocks
+    with pytest.raises(SweepBlocked, match="duplicate"):
+        validate_rows([smoke_row(0), smoke_row(0)], IDENT, OVERRIDE,
+                      run_kind=M.RUN_KIND_SMOKE,
+                      allowed_kinds=(M.ATTEMPT_KIND_SMOKE,),
+                      allowed_task_ids={ok["task_id"]})
+
+
+def test_smoke_then_official_zero_row_reuse():
+    # Official validator sees the smoke row set as foreign; and the
+    # official existing-keys set derived from an EMPTY official ledger
+    # shares nothing with smoke keys (smoke_2048 != official_2048).
+    smoke_keys = {(smoke_row(i)["task_id"], smoke_row(i)["attempt_kind"])
+                  for i in range(2)}
+    official_needed = {(t["task_id"], "official_2048")
+                       for t in IDENT_TASKS[:2]}
+    assert smoke_keys.isdisjoint(official_needed)
+
+
+def test_task_index_and_seed_bound_in_digest_and_rows():
+    base = task_set_digest(IDENT_TASKS)
+    shifted = [dict(t) for t in IDENT_TASKS]
+    shifted[0]["task_index"] = 99
+    assert task_set_digest(shifted) != base
+    reseeded = [dict(t) for t in IDENT_TASKS]
+    reseeded[0]["generator_seed_id"] = "m38e-dev-v2"
+    assert task_set_digest(reseeded) != base
+    # row-level: task_index change blocks resume
+    r = make_row(0)
+    r["task_index"] = 99
+    with pytest.raises(SweepBlocked, match="task_index"):
+        validate_rows([r], IDENT, OVERRIDE)
+    r2 = make_row(0)
+    r2["generator_seed_id"] = "m38e-dev-v2"
+    with pytest.raises(SweepBlocked, match="generator_seed_id"):
+        validate_rows([r2], IDENT, OVERRIDE)
+
+
+def test_expected_tasks_carry_explicit_index_and_seed():
+    tasks = M.expected_tasks()
+    assert len(tasks) == 288
+    assert all(isinstance(t["task_index"], int) for t in tasks)
+    assert all(t["generator_seed_id"] == M.GENERATOR_SEED_ID
+               for t in tasks)
+    ident0 = task_identity(tasks[0])
+    assert "task_index" in ident0 and "generator_seed_id" in ident0

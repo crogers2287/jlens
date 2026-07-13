@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m38e_technical_amendment",
+ "steer": "dfcade7",
+ "nature": "pre-outcome conformance only; no frozen task content, family, band, seed, count, verifier, threshold, or gate weakened",
+ "corrections": {
+  "ledger_separation": "--smoke writes to a distinct private smoke ledger and an m38e_driver_smoke aggregate artifact; the official run refuses smoke markers, foreign run ids, foreign manifest digests, or any row not proven to belong to the exact official run",
+  "provenance_bound_rows": "run identity derived before engine construction (clean tracked tree, full git commit, sha256 of driver/generators/manifest/capture/worker-override/verifier sources, pinned checkpoint+revision, override hash, ordered 288-task-set digest over id/family/band/prompt-hash/answer-hash); every private row carries the full identity; resume requires exact equality on all fields, rejects unknown/duplicate/tampered/cap-mismatched/malformed rows, and completion is exact set equality; --model-ref must repeat the frozen model pointer",
+  "cap_escalation": "frozen 2048->4096 rule implemented: full 24-task band at 2048; if exact truncation > 0.10, the SHA256(m38e-4096-pilot-v1:id)-ordered first eight truncated tasks rerun at 4096 as cap-choice evidence only; material reduction (>= half resolved AND >= 2 resolved) triggers a complete 4096 band rerun whose ledger alone feeds eligibility; pilot failure marks the band ineligible-by-escalation; caps never mix in a primary estimate",
+  "exact_eligibility": "Fraction arithmetic, rounding only in displayed fields; the [0.20, 0.80] gate applies inclusively to raw_verified_pass_rate = completed_correct/n (completed-only rate reported, not gated); completion/truncation gates use the final single-cap ledger; the overall >= 48 completed-incorrect count comes from eligible bands only; frontier-not-found is legal only after every 2048 band and every triggered pilot/full-band path completes",
+  "tool_arm_integrity": "later sealed policy/repair phases must construct real deterministic tool answers and pass them through the same frozen family verifier (machinery pattern established in the M36T evaluator; enforced before any M38E policy arm is authorized)"
+ },
+ "tests": "tests/test_m38e_dev_sweep.py — 16 synthetic tests (provenance mismatches, unknown/duplicate/tampered rows, smoke-marker rejection, deterministic bounded pilot subset, material-reduction rule, raw-denominator inclusive gating, escalation-failure ineligibility, incomplete-band rejection)",
+ "official_rows_captured": 0,
+ "privacy_check_status": "aggregate technical amendment only"
+}

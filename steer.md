@@ -1,199 +1,161 @@
-# steer.md — close M36 completed-error track; run M36T pre-truncation routing; continue M37J-A
+# steer.md — finish M36T, then run M38E hard completed-error benchmark
 
-`CODEX_AUTOSTEER.md` remains the operating contract. This file is the current
-binding directive. Older M36 benchmark instructions are superseded where they
-conflict with this steer.
+`CODEX_AUTOSTEER.md` remains the operating contract. This is the current binding
+directive. The detailed M36T protocol from steer commit `79878ab` remains binding
+except where updated below.
+
+Read and follow:
+
+`docs/M38E_HARD_COMPLETED_ERROR_PROTOCOL.md`
 
 ## Established state
 
-M36V remains complete and sealed on the exact Agents-A1 AWQ checkpoint.
-Do not repeat it.
+- M36V is complete and sealed.
+- M36C is closed: 115 completed correct, 0 completed incorrect, and 81
+  token-budget truncations. The completed-error study was not testable on that
+  population.
+- M36T Phase 0 passed with four candidate families and pooled positive prevalence
+  0.604.
+- M36T Phase 1 commit `97b62c590d9e06593241285719498634362bc4e7`
+  launched 96 fresh tasks with one uninterrupted 2,048-token source run and
+  prefix snapshots at 128, 256, and 384 tokens.
+- M37J produced a finite fitted lens but used 31.18 GiB, exceeding its frozen
+  30.0 GiB memory gate. No semantic result is established.
 
-M36C adaptive calibration completed at 23:03 UTC with the protocol-valid outcome
-`completed_failure_frontier_not_found`:
+## Immediate directive
 
-- 115 completed-correct rows;
-- 0 completed-incorrect rows;
-- 81 `truncated_budget` rows;
-- 145 new captures in the adaptive run;
-- 0 completed-failure families;
-- 0 mixed completed-error cells.
+Do not interrupt a healthy M36T capture. Finish the current atomic task, flush
+private progress, record this steer SHA, and continue using the committed task
+order, feature alignment, labels, and resume rules.
 
-This does **not** establish that Agents-A1 never produces wrong completed answers.
-It establishes only that the frozen M36C task families, strata, checkpoint,
-runtime, and decode policy did not produce the completed-error population needed
-for the planned detector benchmark. Every observed operational failure in M36C
-was decode-budget truncation.
+M36T retains first priority on the dual-3090 host. CPU-only implementation and
+unit tests for M38E may proceed in parallel, but live M38E model sweeps begin only
+at a safe M36T stop or after the M36T result.
 
-M37J Phase 0 passed all seven V100 feasibility gates. Its pre-fit manifest was
-committed before fitting, and the M37J-A fit is allowed to continue on the V100.
-Nothing from M37J is an Agents-A1 result.
+## M36T completion
 
-## Immediate closeout of M36C
+Complete the 96-task development capture and freeze these step-256 comparators:
 
-At the next safe boundary:
+1. metadata only;
+2. metadata plus token confidence;
+3. metadata plus router summaries;
+4. full approved prefix telemetry.
 
-1. fetch the remote default branch and reread this steer;
-2. restore and verify normal Agents-A1 serving;
-3. commit the already-written aggregate M36C result and frontier artifacts;
-4. record the exact scoped finding above in STATE/findings;
-5. preserve all private rows unchanged;
-6. do not fit a completed-error detector from zero positive examples;
-7. do not create or run the superseded M36 raw-vs-jLens completed-error manifest;
-8. do not post-hoc shop for a harder task set under the M36 claim.
+No feature created after token 256 may enter the primary prediction. Token 128
+and 384 remain secondary lead-time analyses.
 
-The old M36-H1/H2/H3 efficacy questions are closed as **not testable on the
-frozen M36C population**, not passed and not falsified. Router/logit telemetry has
-not yet established incremental completed-error prediction on Agents-A1.
+If development contains fewer than 24 positive or 24 negative labels, commit the
+power failure and close M36T. Otherwise freeze the classifier, calibration,
+feature schema, tool-call budget, seeds, metrics, hashes, and claim rules before
+creating the fresh sealed manifest.
 
-# M36T — pre-truncation prediction and budget-aware routing
+Test the existing M36T questions exactly as preregistered:
 
-M36T is a new, narrower operational study. Its question is:
+- full prefix telemetry versus metadata plus confidence;
+- full jLens routing versus metadata routing and count-matched random at the same
+  tool-call count;
+- full jLens versus long 2,048-token decoding for verified success and token use.
 
-> From an early, observation-only prefix of an Agents-A1 generation, can jLens
-> predict whether the run will finish within the normal decode budget and use
-> that prediction to choose `continue` versus `trusted tool` more efficiently
-> than metadata, ordinary confidence signals, or random routing?
+Stop after the M36T result commit and record the scoped conclusion.
 
-This is a truncation/compute-allocation claim only. Do not describe it as
-hallucination detection, hidden error awareness, or completed-answer repair.
+# M38E — completed-error baseline on harder tasks
 
-## Phase 0 — feasibility from existing calibration only
+M38E is a separate reliability track. It must find task families where Agents-A1
+usually completes, but produces both objectively correct and objectively wrong
+answers in meaningful numbers.
 
-Use only aggregate/cell-level M36C results to identify candidate cells. Before
-new capture, require:
+Do not hand-pick individual known failures. Use aggregate development results to
+select a family and difficulty band, then create a fresh disjoint sealed set.
 
-- at least two task families with useful budget variation;
-- primary development label prevalence between .20 and .80 for
-  `needs_more_than_512_tokens`;
-- most long-cap completions verifiable by the existing deterministic verifier;
-- no cell selected solely because it makes jLens look favorable.
+## Phase 0 — implementation
 
-If those conditions cannot be met from the frozen M36C evidence, commit
-`m36t_budget_frontier_not_identifiable` and close M36T. Do not manufacture a
-benchmark.
+Implement and unit-test deterministic generators and verifiers for candidate
+families listed in the M38E protocol. Prefer fresh procedural modular arithmetic,
+symbolic algebra, logical deduction, and constrained-ordering tasks. Executable
+code tasks may be used when an already-local public dataset and deterministic
+unit tests are available. Public MATH/AIME-style material is secondary transfer
+evidence only.
 
-## Phase 1 — prefix capture and development
+Record exact generator/data identity, revision, seed, verifier hash, and usage
+basis. No silent dataset substitution.
 
-Create fresh, disjoint, deterministic tool-checkable tasks. Exclude all M29-M36C
-operands and prompts. Use a committed generator seed and task-family mix.
+## Phase 1 — bounded difficulty sweep
 
-Run one uninterrupted greedy Agents-A1 generation per task with a 2,048-token
-ceiling. From that single run, record private prefix snapshots at fixed decode
-steps 128, 256, and 384 and the final finish state. The **primary decision point
-is step 256**. The 128/384 points are secondary lead-time analyses.
+Commit the development manifest before capture. Run 24–32 fresh tasks per
+family/difficulty band with enough output headroom that primary failures are
+completed wrong answers rather than timeouts.
 
-A single long run defines these outcome classes without rerunning the model:
+Eligible bands require:
 
-1. verified completion by 512 tokens;
-2. verified completion from 513-1,024;
-3. verified completion from 1,025-2,048;
-4. still truncated, malformed, or verifier-failing at 2,048.
+- completion rate >= .90;
+- truncation rate <= .10;
+- raw verified pass rate from .20 through .80;
+- at least 6 completed correct and 6 completed incorrect development examples;
+- an objective verifier;
+- sufficient unseen task space for a sealed holdout.
 
-Do not use any feature computed after the decision checkpoint to predict that
-checkpoint's label. Do not expose prompt text, generated text, token ids, raw
-routes, tensors, or per-task predictions publicly.
+Require at least two eligible families and at least 48 completed incorrect
+examples across development. If the bounded sweep cannot find that population,
+commit `m38e_completed_error_frontier_not_found` and stop. Do not keep expanding
+or choose individual questions for favorability.
 
-Use a bounded development set sufficient to freeze the feature schema,
-checkpoint, detector, tool budget, and label definition. Development tasks are
-never sealed decision data.
+## Phase 2 — frozen sealed benchmark
 
-Freeze these prefix comparators:
+Follow `docs/M38E_HARD_COMPLETED_ERROR_PROTOCOL.md` in full. Commit the sealed
+manifest before generating or opening outcomes. Choose N from 192, 240, or 288
+using the frozen power rule and require at least 24 expected completed errors.
 
-1. `metadata_only` — family/stratum and prompt-length metadata;
-2. `metadata_plus_logprob` — metadata plus prefix token-confidence summaries;
-3. `metadata_plus_router` — metadata plus prefix router summaries;
-4. `full_prefix_telemetry` — all approved prefix logprob and router summaries.
+Primary population: completed, nontruncated answers only.
 
-The full model may be simple: calibrated logistic regression, nearest centroid,
-or another already-used transparent classifier. No large learned head, hidden
-state capture, or post-hoc feature search is authorized.
+Freeze transparent comparators:
 
-## Phase 2 — preregistered paired benchmark
+1. metadata only;
+2. metadata plus output length and finish reason;
+3. metadata plus token-confidence summaries;
+4. metadata plus router summaries;
+5. full approved jLens telemetry.
 
-Commit the decision manifest **before** generating or opening decision outcomes.
-Freeze:
+The correct answer and verifier result are labels only. They may not enter a
+prediction feature.
 
-- exact checkpoint and revision;
-- vLLM and telemetry override hashes;
-- task generators, families, cell mix, and seeds;
-- 2,048-token source-run ceiling;
-- primary 256-token decision point;
-- 512-token normal budget;
-- feature schema and detector hashes;
-- tool-call budget chosen only on development/calibration data;
-- bootstrap seeds, metrics, confidence intervals, and stop rules.
+Test whether full jLens improves completed-error prediction beyond metadata plus
+confidence and router-only signals. On tasks with a trusted deterministic solver,
+also test budget-matched repair routing against metadata and random selection.
 
-Use at least 192 fresh decision tasks if the predeclared power check supports it.
-If expected positive labels are below 24, stop before capture and report the
-power failure.
+Stop after the M38E result commit and request an operator decision.
 
-Every policy arm is evaluated counterfactually from the same single source run:
+# M37J — one refit inside the frozen memory gate
 
-1. `normal_512` — no tool, generation limited to the first 512 tokens;
-2. `metadata_policy` — metadata/logprob baseline routes selected tasks to tool at
-   step 256, otherwise continues to 512;
-3. `full_jlens_policy` — full prefix telemetry routes at the identical frozen
-   tool-call budget;
-4. `count_matched_random` — same number of tool calls;
-5. `long_decode_2048` — no tool, accuracy/compute ceiling;
-6. `tool_all` — deterministic-tool ceiling, reported but not a realistic budgeted
-   comparator.
+Do not retroactively raise the 30.0 GiB gate. Preserve the 31.18-GiB fit as a
+blocked attempt with no semantic claim.
 
-A trusted tool result may replace the model result only when the verifier accepts
-the tool result. No arm may turn a verified-correct answer into a failing one.
+Commit one manifest amendment changing only `dim_batch` from 8 to 4. Keep the
+same pilot model, corpus, sequence length, seeds, source/target layers,
+`skip_first`, checkpoint cadence, and Jacobian-lens revision.
 
-## Confirmatory M36T questions
+Refit once on the V100. If peak reserved memory is <= 30.0 GiB and Jacobians are
+finite, perform the frozen validation and observation-only M37J-A evaluation. If
+memory still exceeds the gate or validation fails, close M37J as blocked. Do not
+continue tuning configurations.
 
-- **T-H1 prefix prediction:** on the sealed set, `full_prefix_telemetry` improves
-  balanced accuracy and average precision for `needs_more_than_512_tokens` over
-  `metadata_plus_logprob`, with both paired 95% lower confidence bounds > 0.
-- **T-H2 budgeted routing:** at the exact same frozen tool-call count,
-  `full_jlens_policy` improves verified success over `metadata_policy` and
-  `count_matched_random`, with both paired lower bounds > 0.
-- **T-H3 compute efficiency:** `full_jlens_policy` is non-inferior to
-  `long_decode_2048` within an absolute verified-success margin of .02 while
-  using significantly fewer model output tokens, with the paired token-saving
-  lower bound > 0.
+## Scheduling and hygiene
 
-Report prediction metrics, completion-by-budget curves, verified success,
-truncation rescues, misses, false alarms, tool fraction, model tokens, model/tool
-latency, total latency, telemetry overhead, and compute per rescued completion.
+Dual-3090 priority:
 
-If T-H1 fails, do not claim internal telemetry adds value; retain only any
-supported metadata policy. If T-H2 fails, close budgeted routing as not
-established. If T-H3 fails, report that long decoding remains the better policy.
-Stop after the M36T result commit and request an operator decision.
+1. finish M36T;
+2. run M38E development and sealed benchmark only if its eligibility gates pass.
 
-# M37J-A — continue observation-only Jacobian-lens pilot
+M37J uses the separate V100 and may run in parallel.
 
-Do not interrupt a healthy checkpointed fit merely to adopt this steer. Finish
-the current atomic fit unit, record the new steer SHA, and continue under the
-already-committed M37J manifest and protocol.
+Continue pushed 30-minute heartbeats while any track is active. Every heartbeat
+must fetch and compare remote `steer.md`, report aggregate progress, and verify
+that its pushed SHA is visible remotely.
 
-After fitting:
+Stop on checkpoint mismatch, sealed-data leakage, feature leakage, invalid
+telemetry alignment, verifier misuse, numerical instability, repeated worker
+failure, privacy failure, or inability to restore serving.
 
-1. validate lens readout and forward invariance;
-2. commit the aggregate fit/validation result;
-3. run the frozen 192-task observation-only semantic-workspace evaluation;
-4. test J-H1/J-H2 exactly as preregistered;
-5. do not begin temporary intervention unless J-H1 or J-H2 passes;
-6. stop on the first negative or blocking branch.
-
-No permanent weight edits, exported altered checkpoints, safety bypasses, or
-production behavior changes are authorized.
-
-# Heartbeats and hygiene
-
-Continue pushed 30-minute heartbeats while M36T or M37J is active. Each heartbeat
-must fetch and compare the remote `steer.md`, report aggregate progress, and
-verify its pushed SHA is visible remotely.
-
-Stop immediately on checkpoint mismatch, sealed-data leakage, invalid prefix
-alignment, post-checkpoint feature leakage, verifier-first violation, numerical
-instability, unbounded memory, privacy failure, or inability to restore serving.
-
-Never commit prompts, outputs, operands, token ids/text, per-task labels or
-predictions, raw logits, router tensors, expert traces, residual activations,
-gradients, Jacobians, lens matrices, steering vectors, weights, caches, or local
-paths. Public artifacts remain aggregate-only. Production remains gated.
+Never commit private prompts, outputs, operands, token text or ids, per-task
+labels or predictions, raw telemetry, activations, gradients, Jacobians, lens
+matrices, model weights, caches, or local paths. Public artifacts remain
+aggregate-only. Production remains gated.

@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T03:35Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass.
+- **M36T:** 67/96 rows; 38 positive / 29 negative; classes
+  {1: 29, 2: 21, 3: 10, 4: 7} — mod_arith's hard strata are
+  producing never-completes rows, and pace has slowed to ~8 rows/h
+  (full 2048-token runs dominate). Revised ETA ~2–3 h. Capture and
+  Monitors alive.
+- **M37J:** dim_batch=4 refit RUNNING; checkpoint 03:26 UTC.
+- **M38E:** dev-sweep driver committed (`8828cdd`); everything staged,
+  sweeps gated on M36T stop.
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T03:05Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

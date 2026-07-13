@@ -4,6 +4,22 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T01:10Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh run this heartbeat):** 52/52 pass (12 telemetry +
+  40 M38E).
+- **M36T:** 20/96 rows; labels 12 positive / 8 negative; outcome
+  classes {1: 8, 2: 9, 3: 3} — real budget variation confirmed in
+  dev; first family (div_exact) nearly complete. Mean 126 s/row →
+  ETA ~2.5–3 h. Supervised, healthy, completion watcher armed.
+- **M37J:** dim_batch=4 refit RUNNING; checkpoint fresh (01:05 UTC);
+  V100 resident memory ~29.96 GiB — near but under the 30.0 gate;
+  the artifact's peak_reserved reading decides at completion.
+- **M38E:** Phase 0 complete (40/40 tests); sweeps gated on M36T stop.
+- **Serving:** unloaded for the capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T00:38Z
 
 - **Steer:** `0497526` adopted in full this cycle; `steer_sha_seen`

@@ -7,9 +7,10 @@ cd "$(dirname "$0")/.."
 
 PY="$HOME/venvs/jlens-m36v/bin/python"
 MODEL="${M36C_MODEL_REF:-$(cat .m36c_model_ref 2>/dev/null)}"
-LOG=logs/m36t_capture.log
-ROWS=reports/shadow/private/m36t_dev_rows.jsonl
-SUPLOG=logs/m36t_supervisor.log
+LOG="${M36T_LOG:-logs/m36t_capture.log}"
+ROWS="${M36T_ROWS:-reports/shadow/private/m36t_dev_rows.jsonl}"
+SUPLOG="${M36T_SUPLOG:-logs/m36t_supervisor.log}"
+EXTRA_ARGS="${M36T_EXTRA_ARGS:-}"
 STALL_SECONDS=900
 export VLLM_USE_FLASHINFER_SAMPLER=0
 
@@ -22,7 +23,7 @@ note "capture START"
 for attempt in 1 2; do
     note "attempt=$attempt START"
     setsid "$PY" src/m36t_prefix_capture.py --model-ref "$MODEL" \
-        >> "$LOG" 2>&1 &
+        $EXTRA_ARGS >> "$LOG" 2>&1 &
     pid=$!
     while kill -0 "$pid" 2>/dev/null; do
         sleep 60

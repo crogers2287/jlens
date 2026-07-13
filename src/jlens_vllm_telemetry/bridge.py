@@ -138,8 +138,13 @@ class SemanticBridgeCollector:
             slots = [self._buf[li, :n]]
             steps = self._slot_step[li, :n].tolist()
             if int(self._decode_step[li]) > 0:
-                slots.append(self._last[li:li + 1])
-                steps = steps + [int(self._decode_step[li]) - 1]
+                final_step = int(self._decode_step[li]) - 1
+                # Final-position rule: append exactly once — if the final
+                # decode step is already a cadence checkpoint, do not
+                # duplicate it (steer 65c76ec item 2).
+                if not steps or steps[-1] != final_step:
+                    slots.append(self._last[li:li + 1])
+                    steps = steps + [final_step]
             residuals = torch.cat(slots, dim=0)
             ids, finite = [], True
             # Fixed chunk walk: identical call count on every rank for

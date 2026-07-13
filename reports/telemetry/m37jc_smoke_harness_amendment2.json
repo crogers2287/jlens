@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37jc_technical_amendment",
+ "steer": "65c76ec",
+ "nature": "conformance only, completed before any live prompt; frozen prompts, model, checkpoint, cap, layers, cadence, top-k, semantic words, envelope, memory and latency limits unchanged",
+ "corrections": {
+  "per_prompt_identity": "dispatch summaries fetched on every rank after EVERY enabled prompt before any subsequent reset; exact rank set {0,1}, zero counters per prompt per rank, full prompt-by-rank coverage; aggregate maxima/sums/failure counts only",
+  "empty_readout_failure": "authoritative readouts are structurally validated: exact frozen layers/cadence/top-k, five counters, decode_steps>0, non-empty steps/ids with top-k width 10, strictly increasing in-range steps, final step recorded exactly once (bridge no longer appends a duplicate final slot when the final decode step is a cadence checkpoint), global-vocabulary ids, finite flags, finite semantic aggregates from the same readout, exact multi-rank agreement incl. semantic aggregates, cross-rank projection/decode/slot/dropped vector equality — any violation blocks",
+  "install_conformance": "bridge and telemetry install results validated on every rank (exact rank set, no errors, identical frozen bridge layers, decoder depth, MoE counts); included in the pending-restore pass calculation as a technical gate",
+  "finalizer": "verifies internal consistency of the technical artifact (schema, run_kind, commits, override + envelope hashes, complete exact gate-key set, all-true booleans, pending outcome, no pre-existing gate 8, privacy status), records its SHA-256 into the final artifact; serving reply must EQUAL SERVING-OK after whitespace normalization (substring forbidden) with the exact model id listed",
+  "lifecycle": "sampler, engine, installs, legs, fetches, and gates run under one guarded lifecycle; every exception path performs ordered per-rank cleanup, stops the sampler, and writes an aggregate-only blocked artifact carrying only exception class, lifecycle stage, cleanup aggregates, and privacy status"
+ },
+ "tests": "tests/test_m37jc_smoke.py rewritten — 22 synthetic tests covering all steer-required cases (prompt-1-mismatch persistence, exact rank sets, empty/malformed/duplicate-final/non-monotone/non-finite readouts, shard-local ids, cross-rank disagreement, install errors, exact-reply finalization, gate-map completeness, technical-SHA recording, aggregate-only blocker artifacts)",
+ "live_prompts_issued": false,
+ "privacy_check_status": "aggregate technical amendment only"
+}

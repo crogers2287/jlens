@@ -17,10 +17,17 @@ Implements reports/telemetry/m36t_sealed_manifest.json exactly:
     success AND paired model-token saving lower bound > 0;
   - bootstrap: task-level, 10,000 resamples, seed 36036.
 
-The trusted tool is the family's deterministic solver; a tool result
-replaces the model result only when the verifier accepts it, so no arm
-can turn a verified-correct answer into a failure. Aggregate-only
-output; per-task predictions stay private.
+The trusted tool is the family's deterministic solver implemented as a
+pure function of the private task; its generated text is passed through
+the same frozen verifier used at capture, and a routed arm records tool
+success ONLY on verifier `pass` — anything else (missing task,
+unsupported family, undecided, fail) is an evaluation blocker that
+aborts before hypotheses are opened (steer cccf40a conformance).
+Preflight verifies the 1:1 task/row join, the manifest-pinned task-file
+sha256, schema integrity, and the 2,048-token ceiling before scoring.
+Count-matched-random routing uses a dedicated frozen RNG
+(RANDOM_POLICY_SEED), independent of bootstrap RNG consumption.
+Aggregate-only output; per-task predictions stay private.
 """
 from __future__ import annotations
 
@@ -38,10 +45,68 @@ from m36v_phase1 import PRIVATE_DIR  # noqa: E402
 
 DEV_ROWS = PRIVATE_DIR / "m36t_dev_rows.jsonl"
 SEALED_ROWS = PRIVATE_DIR / "m36t_sealed_rows.jsonl"
+SEALED_TASKS = PRIVATE_DIR / "m36t_sealed_tasks.jsonl"
+SEALED_TASKS_SHA256 = ("007f52994d90fef3330d7c318a6de482"
+                       "c27bce2cb4a70499afae6a766b746813")
 OUT = "reports/telemetry/m36t_result.json"
 BOOT_N, BOOT_SEED = 10_000, 36036
+RANDOM_POLICY_SEED = 36036   # dedicated RNG for count-matched-random
 PREVALENCE = 0.6989
 STEP = "256"
+CEILING = 2048
+
+
+class EvaluationBlocker(Exception):
+    """Protocol violation detected before/while scoring — abort, do not
+    open hypotheses."""
+
+
+def tool_text(task: dict) -> str:
+    """Deterministic trusted tool: a pure function of the private task."""
+    if task["family"] == "json_digits":
+        return task["known_answer"]          # the exact expected JSON array
+    if task["family"] in ("div_exact", "mod_arith", "sub_mixed"):
+        return f"The final answer is {task['known_answer']}."
+    raise EvaluationBlocker(f"unsupported family {task['family']}")
+
+
+def verified_tool_success(task: dict) -> bool:
+    from m36_calibration import task_verdict  # frozen capture verifier
+
+    verdict = task_verdict(task, tool_text(task))
+    if verdict != "pass":
+        raise EvaluationBlocker(
+            f"tool verdict '{verdict}' for family {task['family']} — "
+            "evaluation blocker, not a model failure")
+    return True
+
+
+def preflight(tasks: list[dict], rows: list[dict],
+              tasks_sha256: str) -> None:
+    task_ids = [t["task_id"] for t in tasks]
+    row_ids = [r["task_id"] for r in rows]
+    if len(set(task_ids)) != 192 or len(task_ids) != 192:
+        raise EvaluationBlocker(f"task ids not 192 unique: {len(task_ids)}")
+    if len(set(row_ids)) != 192 or len(row_ids) != 192:
+        raise EvaluationBlocker(f"row ids not 192 unique: {len(row_ids)}")
+    if set(task_ids) != set(row_ids):
+        raise EvaluationBlocker("task/row id sets differ")
+    if tasks_sha256 != SEALED_TASKS_SHA256:
+        raise EvaluationBlocker("sealed task file sha256 mismatch")
+    for r in rows:
+        if r["output_tokens"] > CEILING:
+            raise EvaluationBlocker(f"{r['task_id']} exceeds ceiling")
+        if "512" not in r.get("verdict_at_cap", {}):
+            raise EvaluationBlocker(f"{r['task_id']} missing cap verdicts")
+        feats = r.get("prefix_features", {})
+        for step, fdict in feats.items():
+            if step not in ("128", "256", "384"):
+                raise EvaluationBlocker(
+                    f"{r['task_id']} unexpected feature step {step}")
+            if fdict is not None and not all(
+                    isinstance(v, (int, float)) for v in fdict.values()):
+                raise EvaluationBlocker(
+                    f"{r['task_id']} malformed features at {step}")
 
 
 def train_and_score(dev_rows, sealed_alive):
@@ -105,6 +170,14 @@ def main() -> int:
     rng = np.random.default_rng(BOOT_SEED)
     dev = [json.loads(l) for l in DEV_ROWS.read_text().splitlines()]
     sealed = [json.loads(l) for l in SEALED_ROWS.read_text().splitlines()]
+
+    # Preflight BEFORE any scoring (steer cccf40a item 2).
+    import hashlib
+    tasks = [json.loads(l)
+             for l in Path(SEALED_TASKS).read_text().splitlines()]
+    tasks_sha = hashlib.sha256(Path(SEALED_TASKS).read_bytes()).hexdigest()
+    preflight(tasks, sealed, tasks_sha)
+
     alive = [r for r in sealed if r["prefix_features"].get(STEP)]
     y = np.asarray([1 if r["needs_more_than_512_tokens"] else 0
                     for r in alive])
@@ -132,33 +205,37 @@ def main() -> int:
                    for name, p in scores.items()}
 
     # ---- policy arms -----------------------------------------------------
+    task_by_id = {t["task_id"]: t for t in tasks}
+
     k = math.ceil(PREVALENCE * len(alive))
     alive_ids = [r["task_id"] for r in alive]
-    by_id = {r["task_id"]: r for r in sealed}
 
     def routed_set(ranking):
         order = np.argsort(-ranking)
         return {alive_ids[i] for i in order[:k]}
 
+    # Dedicated frozen RNG for the random policy, independent of the
+    # bootstrap RNG's consumption order (steer cccf40a item 6).
+    policy_rng = np.random.default_rng(RANDOM_POLICY_SEED)
     random_routed = set(np.asarray(alive_ids)[
-        rng.permutation(len(alive_ids))[:k]].tolist())
+        policy_rng.permutation(len(alive_ids))[:k]].tolist())
 
-    def arm_outcomes(routed: set | None, cap_verdict_key="512",
-                     long_arm=False, tool_all=False):
+    def arm_outcomes(routed: set | None, long_arm=False, tool_all=False):
         succ, tokens = [], []
         for r in sealed:
             if tool_all or (routed is not None
                             and r["task_id"] in routed):
-                succ.append(1.0)             # verifier-accepted tool result
+                task = task_by_id.get(r["task_id"])
+                if task is None:
+                    raise EvaluationBlocker(f"missing task {r['task_id']}")
+                verified_tool_success(task)  # raises unless verifier pass
+                succ.append(1.0)
                 tokens.append(min(r["output_tokens"], 256))
             elif long_arm:
                 succ.append(1.0 if r["verdict"] == "pass" else 0.0)
                 tokens.append(r["output_tokens"])
             else:
-                succ.append(1.0 if r["verdict_at_cap"][cap_verdict_key]
-                            == "pass" and r["output_tokens"] <= 2048
-                            and (r["output_tokens"] <= 512
-                                 or r["verdict_at_cap"]["512"] == "pass")
+                succ.append(1.0 if r["verdict_at_cap"]["512"] == "pass"
                             else 0.0)
                 tokens.append(min(r["output_tokens"], 512))
         return np.asarray(succ), np.asarray(tokens)
@@ -212,6 +289,9 @@ def main() -> int:
         "T_H2": {"pass": bool(h2_pass), **h2},
         "T_H3": {"pass": bool(h3_pass), **h3},
         "bootstrap": {"n": BOOT_N, "seed": BOOT_SEED},
+        "random_policy_seed": RANDOM_POLICY_SEED,
+        "tool_results_verifier_checked": True,
+        "preflight_passed": True,
         "privacy_check_status": "aggregate metrics only",
     }
     Path(args.out).write_text(json.dumps(payload, indent=1) + "\n")
@@ -220,5 +300,22 @@ def main() -> int:
     return 0
 
 
+def run() -> int:
+    try:
+        return main()
+    except EvaluationBlocker as exc:
+        blocker = {
+            "schema_version": 1,
+            "run_kind": "m36t_evaluation_blocker",
+            "blocker": str(exc),
+            "hypotheses_opened": False,
+            "privacy_check_status": "aggregate blocker only",
+        }
+        Path("reports/telemetry/m36t_evaluation_blocker.json").write_text(
+            json.dumps(blocker, indent=1) + "\n")
+        print(f"[jlens] M36T EVALUATION BLOCKER: {exc}", flush=True)
+        return 2
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(run())

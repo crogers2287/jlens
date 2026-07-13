@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_sealed_manifest_amendment",
+ "amends": "reports/telemetry/m36t_sealed_manifest.json",
+ "steer": "cccf40a",
+ "nature": "protocol conformance only, completed before any sealed outcome was inspected; no scientific threshold, feature family, task set, k, ranking, token accounting, counterfactual cap, or hypothesis changed",
+ "corrections": {
+  "tool_verification": "the evaluator previously recorded routed/tool success unconditionally; it now constructs the deterministic tool result as a pure function of the private task and passes it through the same frozen task_verdict used at capture — a routed arm records tool success only on verifier pass, and any missing task, unsupported family, undecided verdict, or verifier failure raises an evaluation blocker that aborts before hypotheses are opened",
+  "preflight": "before scoring: exactly 192 unique task and row ids with identical id sets; sealed task-file sha256 must equal the manifest-pinned value; per-row schema checks (cap verdicts present, prefix-feature steps limited to 128/256/384, finite feature values, output length within the 2048 ceiling)",
+  "random_policy_rng": "count-matched-random routing now uses a dedicated frozen RNG (RANDOM_POLICY_SEED = 36036), independent of bootstrap RNG consumption; bootstrap unchanged at 10000 resamples, seed 36036"
+ },
+ "tests": "tests/test_m36t_evaluate.py — 14 synthetic-only conformance tests covering all four families, verifier acceptance and rejection, duplicate/missing ids, sha mismatch, ceiling breach, deterministic count-matched random routing, and the impossibility of a tool result overwriting a verified-correct answer with failure",
+ "sealed_outcomes_inspected_during_correction": false,
+ "evaluator_run_status": "not yet run; sealed capture still in progress",
+ "privacy_check_status": "aggregate amendment only"
+}

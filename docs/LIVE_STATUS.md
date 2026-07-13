@@ -4,6 +4,24 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T08:43Z (extended for steer 821e430)
+
+- **Steer:** NEW steer `821e430` read and executed in full;
+  `steer_sha_seen` now `1ac1f2c6956a83471be1f71b04e20c74bfefb65f`.
+  All five smoke-harness corrections completed CPU-only before any
+  live prompt (`ed056c0`): boolean restoration gate via a two-phase
+  smoke/finalize split, exception-safe per-rank-verified cleanup,
+  all-rank dispatch identity, the exact frozen envelope (floor 8, not
+  baseline min 13), and multi-rank authoritative readout conformance.
+  Amendment + 17 new tests committed; 313 tests green.
+- **Tests (fresh):** full suite 313/313 + 12 telemetry in the m36v
+  venv; commit-safe clean.
+- **M36T:** sealed capture 63/192, healthy (~26 rows/h, ETA ~5 h).
+- **Execution order (unchanged):** capture end → corrected evaluator
+  once → serving restore+verify → corrected smoke (smoke phase, then
+  finalize) → M38E window.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T08:13Z
 
 - **Steer:** `fe6fcf2` current (`steer_sha_seen ca7c4868…`), no newer.

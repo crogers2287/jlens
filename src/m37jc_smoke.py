@@ -29,13 +29,30 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import statistics
+import subprocess
 import sys
 import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
+
+REPO = ROOT.parent
+PROVENANCE_FILES = (
+    "src/m37jc_smoke.py",
+    "src/jlens_vllm_telemetry/bridge.py",
+    "src/jlens_vllm_telemetry/worker_ext.py",
+    "reports/telemetry/m36v_phase1_router_telemetry.json",
+)
+SEMANTIC_KEYS = frozenset({
+    "group_completion", "group_continuation", "group_verification",
+    "group_error_conflict", "group_uncertainty"})
+FORBIDDEN_KEYS = frozenset({
+    "prompt", "prompts", "text", "output_text", "token_ids", "readout",
+    "hidden", "hidden_states", "weights", "activations", "routes",
+    "trace", "logits", "npz_path"})
 
 ENVELOPE_SRC = "reports/telemetry/m36v_phase1_router_telemetry.json"
 OUT = "reports/telemetry/m37jc_phase0b_smoke.json"
@@ -48,7 +65,6 @@ FROZEN_CADENCE = 32
 FROZEN_TOP_K = 10
 SERVING_URL = "http://localhost:9069/v1"
 SERVING_PROBE = "Reply with exactly: SERVING-OK"
-PROJECTION_COMMIT = "290e7e8"
 
 TECHNICAL_GATE_KEYS = frozenset({
     "disabled_path_within_envelope",
@@ -83,6 +99,64 @@ PROMPTS = [
 
 class SmokeBlocked(Exception):
     pass
+
+
+# -- provenance (steer 04920b0 item 4) ------------------------------------
+
+def source_provenance() -> dict:
+    """Exact git commit (clean tracked tree required) + sha256 of the
+    committed bytes of every provenance-pinned file."""
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+        cwd=REPO, capture_output=True, text=True).stdout.strip()
+    if dirty:
+        raise SmokeBlocked("repository has uncommitted tracked changes")
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=REPO,
+        capture_output=True, text=True).stdout.strip()
+    if len(commit) != 40:
+        raise SmokeBlocked("could not derive full source commit")
+    hashes = {}
+    for rel in PROVENANCE_FILES:
+        blob = subprocess.run(
+            ["git", "show", f"HEAD:{rel}"], cwd=REPO,
+            capture_output=True).stdout
+        disk = (REPO / rel).read_bytes()
+        if blob != disk:
+            raise SmokeBlocked(f"working copy differs from HEAD: {rel}")
+        hashes[rel] = hashlib.sha256(blob).hexdigest()
+    return {"source_commit": commit, "file_sha256": hashes}
+
+
+def verify_provenance(recorded: dict) -> None:
+    """Recompute provenance and require exact equality (finalization)."""
+    current = source_provenance()
+    if recorded != current:
+        raise SmokeBlocked("source provenance mismatch at finalization")
+
+
+def audit_aggregate_only(obj, path="") -> None:
+    """Recursive forbidden-key / private-path audit for public artifacts."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in FORBIDDEN_KEYS:
+                raise SmokeBlocked(f"forbidden key '{k}' at {path}")
+            audit_aggregate_only(v, f"{path}.{k}")
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            audit_aggregate_only(v, f"{path}[{i}]")
+    elif isinstance(obj, str):
+        if "/home/" in obj or "/mnt/" in obj:
+            raise SmokeBlocked(f"private path in artifact at {path}")
+
+
+def expected_steps(n_decode: int, cadence: int = FROZEN_CADENCE) -> list:
+    """The exact frozen schedule: periodic checkpoints 31,63,... < N,
+    then N-1 exactly once when not already periodic."""
+    steps = list(range(cadence - 1, n_decode, cadence))
+    if n_decode > 0 and (not steps or steps[-1] != n_decode - 1):
+        steps.append(n_decode - 1)
+    return steps
 
 
 # -- pure gate logic (unit-tested) ---------------------------------------
@@ -166,26 +240,35 @@ def _validate_auth_readout(f: dict) -> None:
     readout = f.get("readout") or {}
     if set(readout) != {str(l) for l in FROZEN_LAYERS}:
         raise SmokeBlocked("readout missing frozen layers or empty")
+    expected_calls = 0
+    from jlens_vllm_telemetry.bridge import SemanticBridgeCollector
+    chunk = SemanticBridgeCollector.PROJECTION_CHUNK_SLOTS
     for li, layer in enumerate(FROZEN_LAYERS):
         steps_total = int(f["decode_steps"][li])
         if steps_total <= 0:
             raise SmokeBlocked("zero decode steps")
+        want = expected_steps(steps_total)
         data = readout[str(layer)]
         steps, ids = data.get("steps", []), data.get("token_ids", [])
-        if not steps or not ids or len(ids) != len(steps):
-            raise SmokeBlocked("empty or misaligned steps/token_ids")
+        # Exact frozen schedule, not merely monotone-in-range
+        # (steer 04920b0 item 2).
+        if steps != want:
+            raise SmokeBlocked("steps != frozen cadence schedule")
+        if len(ids) != len(steps):
+            raise SmokeBlocked("misaligned steps/token_ids")
         if any(len(row) != FROZEN_TOP_K for row in ids):
             raise SmokeBlocked("top-k row width != 10")
-        if any(b <= a for a, b in zip(steps, steps[1:])):
-            raise SmokeBlocked("steps not strictly increasing")
-        if steps[-1] != steps_total - 1:
-            raise SmokeBlocked("final step missing")
-        if steps.count(steps_total - 1) != 1:
-            raise SmokeBlocked("duplicate final step")
-        if any(s < 0 or s >= steps_total for s in steps):
-            raise SmokeBlocked("step out of range")
         if not data.get("finite"):
             raise SmokeBlocked("non-finite readout")
+        n_periodic = len(list(range(FROZEN_CADENCE - 1, steps_total,
+                                    FROZEN_CADENCE)))
+        if int(f["captured_slots"][li]) != n_periodic:
+            raise SmokeBlocked("captured_slots != periodic checkpoints")
+        if int(f["dropped"][li]) != 0:
+            raise SmokeBlocked("dropped != 0 under smoke capacity")
+        expected_calls += math.ceil(len(want) / chunk)
+    if int(f.get("projection_calls", -1)) != expected_calls:
+        raise SmokeBlocked("projection_calls != frozen schedule sum")
 
 
 def check_authoritative(fetches: list[dict], vocab_size: int,
@@ -208,9 +291,12 @@ def check_authoritative(fetches: list[dict], vocab_size: int,
                     if any(t < 0 or t >= vocab_size for t in row):
                         raise SmokeBlocked("id outside global vocabulary")
         sem = [semantic_fn(f) for f in auth]
-        if any(not all(isinstance(v, float) and v == v for v in s.values())
-               for s in sem):
-            raise SmokeBlocked("non-finite semantic aggregate")
+        for s in sem:
+            if set(s) != SEMANTIC_KEYS:
+                raise SmokeBlocked("semantic key set != frozen five groups")
+            if any(not isinstance(v, float) or not math.isfinite(v)
+                   for v in s.values()):
+                raise SmokeBlocked("non-finite semantic aggregate")
         first = auth[0]
         for f in auth[1:]:
             if (f["readout"] != first["readout"]
@@ -229,25 +315,45 @@ def check_authoritative(fetches: list[dict], vocab_size: int,
     return result
 
 
+BRIDGE_INSTALL_FIELDS = ("bridge_layers", "cadence", "top_k", "n_slots",
+                         "hidden_size", "n_decoder_layers")
+TELEMETRY_INSTALL_FIELDS = ("num_moe_layers", "layer_ids", "num_experts",
+                            "router_top_k", "capacity_tokens",
+                            "raw_sample_tokens")
+
+
 def check_install(bridge_installs: list[dict],
                   telemetry_installs: list[dict]) -> dict:
+    """Complete all-rank install-metadata conformance (04920b0 item 5)."""
     ok, reason = True, None
     try:
-        for name, items in (("bridge", bridge_installs),
-                            ("telemetry", telemetry_installs)):
+        for name, items, fields in (
+                ("bridge", bridge_installs, BRIDGE_INSTALL_FIELDS),
+                ("telemetry", telemetry_installs,
+                 TELEMETRY_INSTALL_FIELDS)):
             if not _rank_set_ok(items):
                 raise SmokeBlocked(f"{name} install rank set != {{0,1}}")
             if any("error" in i for i in items):
                 raise SmokeBlocked(f"{name} install error")
-        if len({json.dumps(i.get("bridge_layers"))
-                for i in bridge_installs}) != 1:
-            raise SmokeBlocked("bridge layer disagreement across ranks")
-        if bridge_installs[0].get("bridge_layers") != FROZEN_LAYERS:
+            for field in fields:
+                values = {json.dumps(i.get(field, "__missing__"))
+                          for i in items}
+                if '"__missing__"' in values:
+                    raise SmokeBlocked(f"{name} missing field {field}")
+                if len(values) != 1:
+                    raise SmokeBlocked(f"{name} cross-rank {field} "
+                                       "disagreement")
+        b0 = bridge_installs[0]
+        if b0["bridge_layers"] != FROZEN_LAYERS:
             raise SmokeBlocked("bridge layers != frozen set")
-        if len({i.get("n_decoder_layers") for i in bridge_installs}) != 1:
-            raise SmokeBlocked("decoder depth disagreement")
-        if len({i.get("num_moe_layers") for i in telemetry_installs}) != 1:
-            raise SmokeBlocked("MoE layer count disagreement")
+        if b0["cadence"] != FROZEN_CADENCE or b0["top_k"] != FROZEN_TOP_K:
+            raise SmokeBlocked("bridge cadence/top_k != frozen")
+        if b0["n_slots"] != 80:
+            raise SmokeBlocked("bridge slot capacity != 80")
+        if b0["n_decoder_layers"] != 40:
+            raise SmokeBlocked("unexpected decoder depth")
+        if telemetry_installs[0]["num_moe_layers"] != 40:
+            raise SmokeBlocked("unexpected MoE layer count")
     except SmokeBlocked as exc:
         ok, reason = False, str(exc)
     return {"ok": bool(ok), "reason": reason}
@@ -262,6 +368,8 @@ CLEANUP_STEPS = (
 
 
 def run_cleanup(llm, expected_ranks: int) -> dict:
+    """Ordered per-rank cleanup + final absent/disabled postcondition
+    verification on every rank (steer 04920b0 item 1)."""
     report, ok = [], True
     for method, rpc_args, expect in CLEANUP_STEPS:
         try:
@@ -272,19 +380,43 @@ def run_cleanup(llm, expected_ranks: int) -> dict:
             results, step_ok = [f"exception: {type(exc).__name__}"], False
         report.append({"step": method, "ok": bool(step_ok)})
         ok &= step_ok
+    try:
+        statuses = llm.collective_rpc("jlens_status")
+        post_ok = (len(statuses) == expected_ranks
+                   and {s.get("rank") for s in statuses}
+                   == set(EXPECTED_RANK_SET)
+                   and all(not s.get("bridge_installed")
+                           and not s.get("bridge_enabled")
+                           and not s.get("telemetry_installed")
+                           and not s.get("telemetry_enabled")
+                           for s in statuses))
+    except Exception:
+        post_ok = False
+    report.append({"step": "postcondition_absent_all_ranks",
+                   "ok": bool(post_ok)})
+    ok &= post_ok
     return {"ok": bool(ok), "steps": report}
 
 
-def verify_technical_artifact(technical: dict) -> str:
-    """Internal-consistency check before finalization; returns sha256."""
+def verify_technical_artifact(technical: dict,
+                              check_sources: bool = True) -> str:
+    """Internal-consistency check before finalization. Returns the
+    CANONICAL-JSON content hash of the technical artifact (sorted-key
+    JSON serialization — explicitly not raw file bytes; labeled as
+    such in the final artifact)."""
     if technical.get("schema_version") != 1:
         raise SmokeBlocked("schema_version mismatch")
     if technical.get("run_kind") != "m37jc_phase0b_smoke":
         raise SmokeBlocked("run_kind mismatch")
-    for field in ("projection_commit", "smoke_driver_commit",
-                  "override_hash"):
-        if not technical.get(field):
-            raise SmokeBlocked(f"missing {field}")
+    prov = technical.get("provenance")
+    if (not isinstance(prov, dict)
+            or len(prov.get("source_commit", "")) != 40
+            or set(prov.get("file_sha256", {})) != set(PROVENANCE_FILES)):
+        raise SmokeBlocked("missing or incomplete source provenance")
+    if check_sources:
+        verify_provenance(prov)      # recompute; exact equality required
+    if not technical.get("override_hash"):
+        raise SmokeBlocked("missing override_hash")
     if not technical.get("envelope", {}).get("sha256"):
         raise SmokeBlocked("missing envelope hash")
     gates = technical.get("gates")
@@ -298,6 +430,7 @@ def verify_technical_artifact(technical: dict) -> str:
         raise SmokeBlocked("gate 8 pre-exists")
     if "aggregate" not in str(technical.get("privacy_check_status", "")):
         raise SmokeBlocked("privacy status missing")
+    audit_aggregate_only(technical)
     blob = json.dumps(technical, sort_keys=True).encode()
     return hashlib.sha256(blob).hexdigest()
 
@@ -308,9 +441,10 @@ def finalize_outcome(technical: dict, restore_ok: bool,
     final["gates"] = dict(technical["gates"])
     final["gates"]["serving_restored_and_verified"] = bool(restore_ok)
     final["restoration_verification"] = restore_record
-    final["technical_artifact_sha256"] = technical_sha
+    final["technical_artifact_canonical_json_sha256"] = technical_sha
     if (technical.get("outcome") == "technical_gates_passed_pending_restore"
             and restore_ok):
+        audit_aggregate_only(final)
         final["outcome"] = "passed"
     else:
         final["outcome"] = "agents_a1_semantic_bridge_feasibility_blocked"
@@ -345,6 +479,8 @@ def phase_smoke(args) -> int:
 
     stage, llm, sampler, installed, cleanup = "init", None, None, False, None
     try:
+        stage = "provenance"
+        prov = source_provenance()   # clean tree + hashes, pre-engine
         env = envelope_from_artifact(json.load(open(ENVELOPE_SRC)))
         stage = "sampler_start"
         sampler = GpuPeakSampler()
@@ -367,6 +503,8 @@ def phase_smoke(args) -> int:
             ids_a.append(list(out.outputs[0].token_ids))
 
         stage = "install"
+        installed = True   # attempted: exception path must clean up even
+        # if only one component or one rank installed (04920b0 item 1)
         bridge_installs = llm.collective_rpc("jlens_bridge_install", args=(
             {"hidden_size": text_cfg.hidden_size},))
         telem_installs = llm.collective_rpc("jlens_install_telemetry",
@@ -377,7 +515,6 @@ def phase_smoke(args) -> int:
                                                    num_experts_per_tok,
                                                    "capacity_tokens": 4096,
                                                    "raw_sample_tokens": 4},))
-        installed = True
         install_conf = check_install(bridge_installs, telem_installs)
 
         stage = "leg_b"
@@ -462,9 +599,8 @@ def phase_smoke(args) -> int:
     payload = {
         "schema_version": 1,
         "run_kind": "m37jc_phase0b_smoke",
-        "steer": "65c76ec",
-        "projection_commit": PROJECTION_COMMIT,
-        "smoke_driver_commit": args.driver_commit,
+        "steer": "04920b0",
+        "provenance": prov,
         "override_hash": override_hash(),
         "envelope": env,
         "n_prompts": len(PROMPTS),
@@ -521,7 +657,18 @@ def phase_finalize(args) -> int:
             model_ids = [m["id"] for m in json.load(resp)["data"]]
         record["reply_exact"] = reply_is_exact(reply)
         record["model_listed_exact"] = "agents-a1" in model_ids
-        restore_ok = record["reply_exact"] and record["model_listed_exact"]
+        # Runbook health check: the service health endpoint must answer.
+        health_ok = False
+        try:
+            with urllib.request.urlopen(
+                    SERVING_URL.rsplit("/v1", 1)[0] + "/health",
+                    timeout=30) as resp:
+                health_ok = resp.status == 200
+        except Exception:
+            health_ok = False
+        record["health_endpoint_ok"] = health_ok
+        restore_ok = (record["reply_exact"]
+                      and record["model_listed_exact"] and health_ok)
     except Exception as exc:
         record["error"] = type(exc).__name__
     final = finalize_outcome(technical, restore_ok, record, technical_sha)
@@ -536,7 +683,6 @@ def main() -> int:
     ap.add_argument("--phase", choices=("smoke", "finalize"),
                     default="smoke")
     ap.add_argument("--model-ref")
-    ap.add_argument("--driver-commit", default="uncommitted")
     ap.add_argument("--out", default=OUT)
     args = ap.parse_args()
     if args.phase == "smoke":

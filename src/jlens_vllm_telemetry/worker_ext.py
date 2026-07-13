@@ -29,6 +29,9 @@ class JlensWorkerExtension:
         return runners
 
     def jlens_install_telemetry(self, cfg: dict) -> dict:
+        """Transactional: hook attachment + buffer allocation succeed or
+        every attached handle is removed and state stays absent
+        (steer 04920b0 item 1)."""
         if getattr(self, "_jlens_state", None) is not None:
             return {"error": "already installed"}
         runners = self._jlens_find_runners()
@@ -39,13 +42,22 @@ class JlensWorkerExtension:
             raw_sample_tokens=cfg.get("raw_sample_tokens", 64),
         )
         handles = install_router_telemetry(runners, collector)
-        # Allocate outside inference mode so reset()/fill_() stay legal.
-        collector.allocate(self.model_runner.device)
+        try:
+            # Allocate outside inference mode so reset()/fill_() stay
+            # legal.
+            collector.allocate(self.model_runner.device)
+        except Exception:
+            uninstall_router_telemetry(handles)
+            raise
         self._jlens_state = (collector, handles)
         return {
             "rank": getattr(self, "rank", -1),
             "num_moe_layers": len(runners),
             "layer_ids": [r.layer_id for r in runners],
+            "num_experts": int(cfg["num_experts"]),
+            "router_top_k": int(cfg["top_k"]),
+            "capacity_tokens": int(cfg.get("capacity_tokens", 2048)),
+            "raw_sample_tokens": int(cfg.get("raw_sample_tokens", 64)),
         }
 
     def jlens_set_telemetry_enabled(self, enabled: bool) -> bool:
@@ -111,13 +123,29 @@ class JlensWorkerExtension:
         return out
 
     def jlens_uninstall_telemetry(self) -> bool:
+        """Idempotent: the postcondition 'component absent' is success
+        whether or not state existed (steer 04920b0 item 1)."""
         state = getattr(self, "_jlens_state", None)
         if state is None:
-            return False
+            return True
         _, handles = state
         uninstall_router_telemetry(handles)
         self._jlens_state = None
         return True
+
+    def jlens_status(self) -> dict:
+        """Bounded status: rank plus installed/enabled booleans only."""
+        telem = getattr(self, "_jlens_state", None)
+        bridge = getattr(self, "_jlens_bridge", None)
+        return {
+            "rank": getattr(self, "rank", -1),
+            "telemetry_installed": telem is not None,
+            "telemetry_enabled": (bool(telem[0].enabled)
+                                  if telem is not None else False),
+            "bridge_installed": bridge is not None,
+            "bridge_enabled": (bool(bridge[0].enabled)
+                               if bridge is not None else False),
+        }
 
     # -- M37J-C semantic bridge (observation-only; steer 8eb2e9e) --------
 
@@ -143,10 +171,19 @@ class JlensWorkerExtension:
             hidden_size=cfg["hidden_size"],
             n_slots=cfg.get("n_slots", 80))
         handles = install_bridge(layers, collector)
-        collector.allocate(self.model_runner.device)
+        try:
+            collector.allocate(self.model_runner.device)
+        except Exception:
+            from jlens_vllm_telemetry.bridge import uninstall_bridge
+            uninstall_bridge(handles)
+            raise
         self._jlens_bridge = (collector, handles, norm, lm_head)
         return {"rank": getattr(self, "rank", -1),
                 "bridge_layers": list(collector.layers),
+                "cadence": collector.cadence,
+                "top_k": 10,
+                "n_slots": collector.n_slots,
+                "hidden_size": collector.hidden_size,
                 "n_decoder_layers": len(layers)}
 
     def jlens_bridge_set_enabled(self, enabled: bool) -> bool:
@@ -185,7 +222,7 @@ class JlensWorkerExtension:
 
         state = getattr(self, "_jlens_bridge", None)
         if state is None:
-            return False
+            return True          # idempotent: absent is the postcondition
         _, handles, _, _ = state
         uninstall_bridge(handles)
         self._jlens_bridge = None

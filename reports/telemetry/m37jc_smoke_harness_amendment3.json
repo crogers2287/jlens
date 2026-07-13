@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37jc_technical_amendment",
+ "steer": "04920b0",
+ "nature": "conformance only, completed before any live prompt; frozen prompts, model, checkpoint, cap, layers, cadence, top-k, semantic words, envelope, chunk size, memory and latency limits unchanged",
+ "corrections": {
+  "transactional_install": "both worker install RPCs treat hook attachment + buffer allocation as one transaction — allocation failure removes every attached handle and re-raises with state absent; both uninstalls are idempotent (absent postcondition is success); a bounded jlens_status RPC exposes rank + installed/enabled booleans only; the driver marks installation attempted before the first install RPC and cleanup now verifies the final absent/disabled postcondition on every rank",
+  "exact_schedule": "readout steps must equal the exact frozen schedule (31,63,... < N plus N-1 once when non-periodic), captured_slots must equal the periodic-checkpoint count, dropped must be 0 under smoke capacity, and projection_calls must equal the exact per-layer ceil(len(steps)/8) sum — on every rank",
+  "true_finiteness_and_schema": "semantic aggregates checked with math.isfinite (rejecting +/-inf, not just NaN), required to carry exactly the five frozen group keys with real float values, and to agree exactly across authoritative ranks",
+  "verifiable_provenance": "clean-tracked-tree requirement; full 40-char source commit derived from git (caller-supplied labels removed); sha256 of the committed bytes of the smoke driver, bridge, worker extension, and the pinned envelope artifact, verified before engine construction and recomputed/re-matched at finalization; the technical-artifact hash is explicitly labeled canonical_json_sha256; a recursive forbidden-key/private-path audit runs on both artifacts before passed can be written",
+  "complete_install_metadata_and_health": "bridge installs must match rank, frozen layers, cadence, top-k, 80-slot capacity, hidden size, and 40-layer decoder depth on every rank; telemetry installs must match MoE count, layer ids, expert count, router top-k, capacity, and raw-sample bound; finalization additionally requires the serving health endpoint to answer"
+ },
+ "tests": "tests/test_m37jc_smoke.py extended to 32 synthetic tests covering all steer-required cases including transactional install rollback, idempotent cleanup, off-cadence schedules, wrong slot/call counts, +/-inf and schema violations, dirty-tree and stale/abbreviated provenance, install-metadata omissions, health-check failure, and the recursive artifact audit",
+ "live_prompts_issued": false,
+ "privacy_check_status": "aggregate technical amendment only"
+}

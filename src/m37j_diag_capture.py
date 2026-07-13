@@ -122,24 +122,33 @@ class RouterTap:
         }
 
 
-def lens_readouts(lens, model, tokenizer, prompt_ids, gen_ids) -> dict:
-    """Teacher-forced re-forward; top-k lens tokens at frozen positions."""
+def lens_readouts(lens, model, hf_model, tokenizer, prompt_ids,
+                  gen_ids) -> dict:
+    """Teacher-forced re-forward on the EXACT token ids (no text
+    round-trip: decode->encode is not length-preserving and drifts the
+    frozen positions); lens.transport + unembed at the frozen
+    layers/positions."""
     import torch
+    from jlens.hooks import ActivationRecorder
 
     n_prompt, n_gen = len(prompt_ids), len(gen_ids)
     positions = sorted({n_prompt + p for p in
                         range(READOUT_EVERY - 1, n_gen, READOUT_EVERY)}
                        | {n_prompt + n_gen - 1})
-    text = tokenizer.decode(prompt_ids + gen_ids)
-    lens_logits, _, input_ids = lens.apply(
-        model, text, layers=list(LENS_LAYERS),
-        positions=[p for p in positions if p < n_prompt + n_gen],
-        max_seq_len=n_prompt + n_gen)
+    ids = torch.tensor([prompt_ids + gen_ids],
+                       device=next(hf_model.parameters()).device)
+    with torch.no_grad(), ActivationRecorder(
+            model.layers, at=list(LENS_LAYERS)) as rec:
+        hf_model(ids)
     readout = {}
-    for layer, ll in lens_logits.items():
+    for layer in LENS_LAYERS:
+        acts = rec.activations[layer][0]  # [seq_len, d_model]
         per_pos = []
-        for row in ll:
-            top = torch.topk(row, TOP_K_TOKENS).indices.tolist()
+        for p in positions:
+            transported = lens.transport(
+                acts[p].float().to("cuda:0"), layer)
+            logits = model.unembed(transported.half())
+            top = torch.topk(logits.float(), TOP_K_TOKENS).indices.tolist()
             per_pos.append([tokenizer.decode([t]).strip().lower()
                             for t in top])
         readout[str(layer)] = per_pos
@@ -254,7 +263,7 @@ def main() -> int:
             v_full = task_verdict(task, text_full)
             cls = outcome_class(eos_pos, v_short, v_full)
 
-            readout = lens_readouts(lens, model, tokenizer,
+            readout = lens_readouts(lens, model, hf_model, tokenizer,
                                     list(prompt_ids), gen_ids[:n_out])
             row = {
                 "task_id": task["task_id"], "family": task["family"],

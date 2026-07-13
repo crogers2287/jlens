@@ -4,6 +4,20 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T02:05Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass.
+- **M36T:** 45/96 rows; 22 positive / 23 negative — both label sides
+  nearly at the ≥24 power floor already; classes {1: 23, 2: 15, 3: 6,
+  4: 1}; div_exact done (24), json_digits 21/24. Throughput improved
+  (~34 rows/h this stretch) → ETA ~1.5 h. Capture + watcher alive.
+- **M37J:** dim_batch=4 refit RUNNING; checkpoint 01:56 UTC.
+- **M38E:** dev manifest frozen and pushed (`1c1b0c9`); sweeps still
+  gated on the M36T safe stop.
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T01:34Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

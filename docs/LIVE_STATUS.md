@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T00:38Z
+
+- **Steer:** `0497526` adopted in full this cycle; `steer_sha_seen`
+  `a084063b4f7426be0153fdaa2a8f4cdca30ba0f7` — current, no newer steer.
+- **M36T (priority):** dev capture RUNNING, 10/96 rows (2 positive /
+  8 negative labels so far; classes {1:8, 2:2}); mean 73.6 s/row →
+  ETA ~1.8–3 h depending on hard-cell mix. Supervised, healthy.
+- **M37J:** dim_batch=4 refit RUNNING on the V100 under manifest
+  amendment 1 (`0a997c2`); the 31.18 GiB dim_batch=8 fit is preserved
+  as a blocked attempt with no semantic claim; one refit only, gate
+  unchanged at 30.0 GiB.
+- **M38E:** Phase 0 implemented CPU-only and committed (`be20e47`):
+  3 procedural families x 4 difficulty bands, deterministic
+  generators + objective verifiers, 40/40 unit tests pass. Live
+  sweeps gated behind the M36T stop per the steer.
+- **Serving:** unloaded for the M36T capture window (standard cycle);
+  restore + verify after capture completes.
+- **Blockers:** none — all three tracks progressing.
+
 ## Heartbeat 2026-07-13T00:06Z
 
 - **Milestone/phase:** M36T Phase 1 build STARTING this cycle (fresh

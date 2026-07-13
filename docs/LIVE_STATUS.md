@@ -4,6 +4,27 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T19:55Z (extended for steer a726b35)
+
+- **Steer:** NEW steer `a726b35` read and executed in full
+  (`steer_sha_seen` now `ae389cee59b889e0fdf298b838dcc4991097c68d`).
+  The active first attempt was left untouched; its launch record
+  proves rows bound to source commit `a527652` (supervisor script
+  committed post-launch; provenance files byte-identical to 4469b10).
+  Only the waiting supervisor shell was terminated (driver group
+  verified alive) — its auto-retry from moving master would have
+  derived a fresh identity and rejected all rows. Immutable-retry
+  architecture landed (`e147de6`): pinned detached execution worktree,
+  explicit exec-dir + full-SHA supervisor with symbolic-ref refusal,
+  deterministic preflight before every launch, 8 control-plane tests;
+  359 green repo-wide.
+- **Tests (fresh):** 52/52 core; official rows spot-check parses with
+  uniform official run_kind.
+- **M38E official attempt 1:** RUNNING (12+ rows at collection);
+  stall detection interim: Monitors + these heartbeats (supervisor
+  watchdog retired with the false-retry controller).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T19:13Z
 
 - **Steer:** `a9b91f7` current (`steer_sha_seen ee579850…`), no newer.

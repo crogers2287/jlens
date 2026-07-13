@@ -1,0 +1,13 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_diag_capture_summary",
+ "manifest": "reports/telemetry/m37j_diagnostic_manifest.json",
+ "rows_captured": 192,
+ "capture_complete": true,
+ "readout_provenance": "single uniform method: exact recorded token ids via ActivationRecorder + lens.transport + unembed (a59ca07); 34 earlier mixed-provenance rows discarded before the clean restart",
+ "discovery_validation_aggregate_outcome_classes": {"completed_incorrect": 125, "completed_correct": 16, "short_cap_truncated_long_cap_correct": 1, "truncated_at_both_caps": 2},
+ "holdout_labels_opened": false,
+ "generation_seconds_mean": 5.9,
+ "h2_population_note": "short-cap truncations are nearly absent in discovery+validation (3 rows) — H2 is expected to be reported underpowered on this pilot; no protocol change",
+ "privacy_check_status": "aggregate split-level counts only; rows, tokens, and readouts private"
+}

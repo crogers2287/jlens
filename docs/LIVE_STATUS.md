@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T18:43Z
+
+- **Steer:** `a9b91f7` current, read and executed in full
+  (`steer_sha_seen` now `ee579850da0a184b546daeaac204b9178a734375`).
+  Both M38E provenance corrections landed pre-outcome (`4469b10`):
+  smoke rows are content-marked (run_kind + smoke_2048 attempt kind,
+  rejected by name in the official validator), smoke ledgers are
+  exact-validated with honest generated-vs-validated accounting, and
+  task_index + generator_seed_id now bind into the digest, run
+  identity, and every row. The forbidden 18f861e smoke was killed and
+  its ledger discarded before reuse. 23 driver tests; 351 green.
+- **Tests (fresh):** 52/52 core suites.
+- **Now:** corrected nonofficial driver smoke running from `4469b10`
+  (2 tasks, separate ledger); on pass → verify smoke-marked rows +
+  untouched official ledger → launch the official 288-task sweep
+  exactly once.
+- **Blockers:** none (M37J-C remains blocked-by-outcome awaiting a
+  fresh directive).
+
 ## Heartbeat 2026-07-13T18:28Z
 
 - **Steer:** `dfcade7` current (`steer_sha_seen 74fa63cc…`); read and

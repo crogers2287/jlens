@@ -1,0 +1,106 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_result",
+ "manifest": "reports/telemetry/m36t_sealed_manifest.json",
+ "sealed_n": 192,
+ "alive_at_256": 187,
+ "sealed_positives": 136,
+ "tool_call_budget_k": 131,
+ "sealed_prediction": {
+  "metadata_only": {
+   "balanced_accuracy": 0.7733,
+   "average_precision": 0.9538
+  },
+  "metadata_plus_logprob": {
+   "balanced_accuracy": 0.7696,
+   "average_precision": 0.9548
+  },
+  "metadata_plus_router": {
+   "balanced_accuracy": 0.8346,
+   "average_precision": 0.9654
+  },
+  "full_prefix_telemetry": {
+   "balanced_accuracy": 0.8358,
+   "average_precision": 0.9655
+  }
+ },
+ "T_H1": {
+  "pass": false,
+  "balanced_accuracy": {
+   "mean_diff": 0.0664,
+   "ci95": [
+    0.004,
+    0.1303
+   ]
+  },
+  "average_precision": {
+   "mean_diff": 0.0106,
+   "ci95": [
+    -0.0026,
+    0.0262
+   ]
+  }
+ },
+ "arms": {
+  "normal_512": {
+   "verified_success": 0.4323,
+   "model_tokens_mean": 476.6
+  },
+  "metadata_policy": {
+   "verified_success": 0.9792,
+   "model_tokens_mean": 304.9
+  },
+  "full_jlens_policy": {
+   "verified_success": 0.9844,
+   "model_tokens_mean": 306.0
+  },
+  "count_matched_random": {
+   "verified_success": 0.8281,
+   "model_tokens_mean": 320.5
+  },
+  "long_decode_2048": {
+   "verified_success": 0.8125,
+   "model_tokens_mean": 1022.2
+  },
+  "tool_all": {
+   "verified_success": 1.0,
+   "model_tokens_mean": 254.5
+  }
+ },
+ "T_H2": {
+  "pass": false,
+  "metadata_policy": {
+   "mean_diff": 0.0052,
+   "ci95": [
+    -0.0208,
+    0.0312
+   ]
+  },
+  "count_matched_random": {
+   "mean_diff": 0.1562,
+   "ci95": [
+    0.099,
+    0.2135
+   ]
+  }
+ },
+ "T_H3": {
+  "pass": true,
+  "noninferiority_margin_0.02": {
+   "mean": 0.1919,
+   "ci95_lower": 0.1346
+  },
+  "token_saving": {
+   "mean": 716.2,
+   "ci95_lower": 618.0
+  }
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 36036
+ },
+ "random_policy_seed": 36036,
+ "tool_results_verifier_checked": true,
+ "preflight_passed": true,
+ "privacy_check_status": "aggregate metrics only"
+}

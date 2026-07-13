@@ -28,10 +28,25 @@ def main() -> None:
 
     os.chdir(exec_dir)
     os.setsid()
+    # FD audit (steer e2d5b5e item 3): beyond std streams, only the
+    # barrier and the run-lock descriptor may be open. Anything else is
+    # a leaked controller descriptor -> exit without exec.
+    allowed = {0, 1, 2, barrier_fd, lock_fd}
+    for entry in os.listdir("/proc/self/fd"):
+        fd = int(entry)
+        try:
+            if os.readlink(f"/proc/self/fd/{entry}").startswith(
+                    "/proc/self/fd"):
+                continue                    # the listdir fd itself
+        except OSError:
+            continue
+        if fd not in allowed:
+            os.write(2, b"[m38e-launch] unexpected descriptor: abort\n")
+            raise SystemExit(4)
     # Barrier: exactly one GO byte authorizes exec. EOF (parent death
     # before durable registration) means exit without exec.
     go = os.read(barrier_fd, 1)
-    os.close(barrier_fd)
+    os.close(barrier_fd)                    # closed before exec
     if go != b"G":
         raise SystemExit(0)                # no exec, no ledger contact
     os.set_inheritable(lock_fd, True)      # driver keeps the flock held

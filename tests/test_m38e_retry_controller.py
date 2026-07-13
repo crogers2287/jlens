@@ -180,11 +180,27 @@ def test_original_attempt_counted_in_live_record():
     assert live["records"][0]["pid"] == live["records"][0]["pgid"]
 
 
-def test_runtime_identity_mismatch_blocks():
-    original = {"python": sys.executable, "vllm_version": "0.0.0-fake",
+def test_runtime_identity_requires_executable_evidence(tmp_path):
+    # missing exe identity blocks
+    with pytest.raises(RetryBlocked, match="executable identity"):
+        C.verify_runtime_identity({"python": sys.executable}, {})
+    # bound exe + wrong version under recorded env blocks
+    import hashlib as H
+    original = {"python": sys.executable,
+                "exe_resolved": sys.executable,
+                "exe_sha256": H.sha256(
+                    open(sys.executable, "rb").read()).hexdigest(),
+                "vllm_version": "0.0.0-fake",
                 "torch_version": "0.0.0-fake"}
-    with pytest.raises(RetryBlocked, match="version differs"):
-        C.verify_runtime_identity(original)
+    env = {"PATH": "/usr/bin"}
+    with pytest.raises(RetryBlocked, match="differs under the recorded"):
+        C.verify_runtime_identity(original, env)
+    # changed executable bytes block
+    fake = tmp_path / "python-fake"
+    fake.write_bytes(b"#!/bin/sh\n")
+    original2 = dict(original, exe_resolved=str(fake))
+    with pytest.raises(RetryBlocked, match="bytes changed"):
+        C.verify_runtime_identity(original2, env)
 
 
 # -- steer 02a483b additions ----------------------------------------------------
@@ -283,17 +299,82 @@ from m38e_retry_controller import (terminate_owned,
                                    verify_control_artifacts)
 
 
+def full_evidence(pid, phases):
+    ev = C.ownership_evidence(pid)
+    return {"starttime": ev["starttime"], "sid": ev["sid"],
+            "cwd": ev["cwd"], "phases": phases}
+
+
 def test_exec_timeout_kill_path_reaps_only_owned(tmp_path):
     proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "60"],
                              release=False)   # stuck pre-exec launcher
     bystander = subprocess.Popen(["/bin/sleep", "60"])
     time.sleep(0.5)
-    outcome = terminate_owned(proc.pid, None)
+    ev = C.ownership_evidence(proc.pid)
+    expected = full_evidence(proc.pid, [ev["cmdline"]])
+    outcome = terminate_owned(proc.pid, expected)
     proc.wait()
     assert outcome == "dead"
     assert bystander.poll() is None
     bystander.kill(); bystander.wait()
     os.close(bw)
+
+
+def test_no_permissive_termination_mode(tmp_path):
+    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
+                             release=False)
+    time.sleep(0.4)
+    assert terminate_owned(proc.pid, None) == "ambiguous"
+    assert terminate_owned(proc.pid, {}) == "ambiguous"
+    # process untouched by the refused calls
+    assert proc.poll() is None
+    os.write(bw, b"X")     # non-GO byte: child exits without exec
+    proc.wait(); os.close(bw)
+
+
+def test_starttime_or_phase_mismatch_blocks_without_signal(tmp_path):
+    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
+                             release=False)
+    time.sleep(0.4)
+    ev = C.ownership_evidence(proc.pid)
+    wrong_start = {"starttime": ev["starttime"] + 999, "sid": ev["sid"],
+                   "cwd": ev["cwd"], "phases": [ev["cmdline"]]}
+    assert terminate_owned(proc.pid, wrong_start) == "ambiguous"
+    wrong_phase = {"starttime": ev["starttime"], "sid": ev["sid"],
+                   "cwd": ev["cwd"],
+                   "phases": [["/bin/other"]]}
+    assert terminate_owned(proc.pid, wrong_phase) == "ambiguous"
+    assert proc.poll() is None            # never signaled
+    os.write(bw, b"X"); proc.wait(); os.close(bw)
+
+
+def test_fd_allowlist_blocks_leaked_descriptor(tmp_path):
+    # A decoy inheritable fd beyond the allowlist aborts pre-exec.
+    canary = tmp_path / "canary.txt"
+    script = tmp_path / "driver.py"
+    script.write_text(f"open({str(canary)!r},'w').write('x')\n")
+    barrier_r, barrier_w = os.pipe()
+    os.set_inheritable(barrier_r, True)
+    lock_r = os.open("/dev/null", os.O_RDONLY)
+    os.set_inheritable(lock_r, True)
+    leak_r, leak_w = os.pipe()            # decoy descriptor
+    os.set_inheritable(leak_r, True)
+    proc = subprocess.Popen(
+        [sys.executable, str(LAUNCHER), str(barrier_r), str(lock_r),
+         str(tmp_path), sys.executable, str(script)],
+        close_fds=True, pass_fds=(barrier_r, lock_r, leak_r))
+    os.close(barrier_r); os.close(lock_r); os.close(leak_r)
+    rc = proc.wait(timeout=10)
+    os.close(leak_w); os.close(barrier_w)
+    assert rc == 4                        # FD audit abort
+    assert not canary.exists()
+
+
+def test_lock_survives_without_explicit_unlock():
+    # Controller finally must not contain LOCK_UN (source assertion).
+    src = Path(C.__file__).read_text()
+    assert "fcntl.flock(lock, fcntl.LOCK_UN)" not in src
+    assert "flock(lock, fcntl.LOCK_UN)" not in src
 
 
 def test_changed_launcher_bytes_block():

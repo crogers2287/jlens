@@ -78,10 +78,18 @@ def main() -> int:
         torch.isfinite(J).all().item() for J in lens.jacobians.values())
 
     # 1+4: finite logits and forward invariance on all 20 val sequences.
+    # Forward invariance per protocol: the observation-only recorder must
+    # not change the model's normal output — same computation, hooks on
+    # vs hooks off. The unembed-path difference (apply()'s model_logits
+    # vs the fused HF head) is a separate numerical diagnostic, reported
+    # but not a gate: it compares two computation paths, not the hooks.
+    from jlens.hooks import ActivationRecorder
+
     probe_layers = sorted({lens.source_layers[0],
                            lens.source_layers[len(lens.source_layers) // 2],
                            lens.source_layers[-1]})
-    finite_ok, invariance_maxdiff, apply_times = True, 0.0, []
+    finite_ok, invariance_maxdiff, unembed_maxdiff = True, 0.0, 0.0
+    apply_times = []
     for text in val_seqs:
         t0 = time.time()
         lens_logits, model_logits, input_ids = lens.apply(
@@ -92,12 +100,17 @@ def main() -> int:
             finite_ok &= bool(torch.isfinite(ll).all().item())
         finite_ok &= bool(torch.isfinite(model_logits).all().item())
         with torch.no_grad():
-            bare = model.forward(input_ids)
-        bare_last = (bare.logits if hasattr(bare, "logits") else bare)[0, -1]
+            bare = hf_model(input_ids).logits[0, -1]
+            with ActivationRecorder(model.layers,
+                                    at=probe_layers) as _rec:
+                hooked = hf_model(input_ids).logits[0, -1]
         invariance_maxdiff = max(
             invariance_maxdiff,
-            float((bare_last.float()
-                   - model_logits[-1].float()).abs().max()))
+            float((bare.float() - hooked.float()).abs().max()))
+        unembed_maxdiff = max(
+            unembed_maxdiff,
+            float((bare.float().cpu()
+                   - model_logits[-1].float().cpu()).abs().max()))
     checks["val_logits_finite"] = finite_ok
     checks["forward_invariance"] = invariance_maxdiff == 0.0
 
@@ -135,6 +148,7 @@ def main() -> int:
         "checks": checks,
         "all_checks_passed": all(checks.values()),
         "forward_invariance_max_abs_diff": invariance_maxdiff,
+        "unembed_path_max_abs_diff_diagnostic": unembed_maxdiff,
         "held_out_sequences": len(val_seqs),
         "probe_layers": probe_layers,
         "concept_mrr_jacobian_lens": mrr_lens,

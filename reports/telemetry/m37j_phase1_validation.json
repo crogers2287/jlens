@@ -1,0 +1,33 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_phase1_validation",
+ "pilot_model": "Qwen1.5-MoE-A2.7B-Chat",
+ "checks": {
+  "jacobians_finite": true,
+  "val_logits_finite": true,
+  "forward_invariance": true,
+  "stable_application": true
+ },
+ "all_checks_passed": true,
+ "forward_invariance_max_abs_diff": 0.0,
+ "unembed_path_max_abs_diff_diagnostic": 0.00390625,
+ "held_out_sequences": 20,
+ "probe_layers": [
+  0,
+  11,
+  22
+ ],
+ "concept_mrr_jacobian_lens": {
+  "early": 0.0166,
+  "middle": 0.084,
+  "late": 0.2367
+ },
+ "concept_mrr_logit_lens_baseline": {
+  "early": 0.0008,
+  "middle": 0.0052,
+  "late": 0.4672
+ },
+ "apply_seconds_mean": 0.134,
+ "validation_peak_reserved_gib": 28.63,
+ "privacy_check_status": "aggregate validation metrics only"
+}

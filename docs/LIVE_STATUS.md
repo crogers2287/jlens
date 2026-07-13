@@ -4,6 +4,15 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T16:43Z
+
+- **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M36T:** sealed capture 187/192 — five rows out; completion
+  imminent. The frozen chain fires on the event: corrected evaluator
+  once → serving restore+verify → two-phase smoke → M38E.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T16:13Z
 
 - **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.

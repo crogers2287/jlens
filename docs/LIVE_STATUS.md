@@ -4,6 +4,19 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T08:13Z
+
+- **Steer:** `fe6fcf2` current (`steer_sha_seen ca7c4868…`), no newer.
+- **Tests (fresh):** 79/79 across suites.
+- **M36T:** sealed capture 49/192, last row 36 s ago; ~26 rows/h →
+  ETA ~5.5 h. Supervised; corrected evaluator staged.
+- **M37J-C:** fully staged this cycle — TP-safe projection
+  (`290e7e8`) + 16-prompt smoke driver with all 8 frozen gates
+  implemented (`90f361d`). Execution gated on post-M36T window.
+- **Pipeline (all pre-built, event-driven):** capture end → corrected
+  evaluator once → serving restore+verify → M37J-C smoke → M38E sweep.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T07:45Z
 
 - **Steer:** NEW steer `fe6fcf2` read and executed in full;

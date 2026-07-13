@@ -136,24 +136,83 @@ def verify_model_identity(original: dict, exec_dir: Path) -> str:
     return exec_ptr.decode().strip()       # verified launch argument
 
 
-def build_retry_environment(original: dict) -> dict:
-    """Clean env from the frozen schema: recorded values set exactly,
-    recorded absences removed; missing schema evidence blocks."""
-    recorded = original.get("env_protocol")
-    if not isinstance(recorded, dict):
-        raise RetryBlocked("original record lacks protocol environment")
-    for key in PROTOCOL_ENV_KEYS:
-        if key not in recorded:
-            raise RetryBlocked(f"protocol schema key missing from "
-                               f"original record: {key}")
-    env = dict(os.environ)
-    for key in PROTOCOL_ENV_KEYS:
-        value = recorded[key]
-        if value is None:
-            env.pop(key, None)             # recorded absent: remove
-        else:
-            env[key] = value               # recorded value: set exactly
+def build_retry_environment(original: dict,
+                            record_dir: Path = None) -> dict:
+    """The retry environment is the COMPLETE recorded attempt-one
+    environment (exact bytes, digest-verified) — never ambient
+    os.environ (steer 0821351 item 3). Missing or non-reconstructable
+    evidence blocks."""
+    record_dir = record_dir or RECORD.parent
+    env_file = original.get("environ_file")
+    want = original.get("environ_sha256")
+    if not env_file or not want:
+        raise RetryBlocked("original record lacks complete environment "
+                           "evidence")
+    path = record_dir / env_file
+    if not path.exists():
+        raise RetryBlocked("recorded environment file missing")
+    blob = path.read_bytes()
+    if hashlib.sha256(blob).hexdigest() != want:
+        raise RetryBlocked("recorded environment digest mismatch")
+    env = {}
+    for kv in blob.decode().split("\0"):
+        if "=" in kv:
+            k, v = kv.split("=", 1)
+            env[k] = v
+    if not env:
+        raise RetryBlocked("recorded environment not reconstructable")
     return env
+
+
+def verify_control_artifacts(record: dict) -> None:
+    """The launcher and preflight used for a retry must match the exact
+    bytes pinned in the private record (steer 0821351 item 2)."""
+    pinned = record.get("control_artifact_sha256")
+    if not isinstance(pinned, dict):
+        raise RetryBlocked("record lacks pinned control-artifact digests")
+    for rel in ("scripts/m38e_launch.py",
+                "scripts/m38e_exec_preflight.py"):
+        want = pinned.get(rel)
+        if not want:
+            raise RetryBlocked(f"no pinned digest for {rel}")
+        got = hashlib.sha256((CONTROL / rel).read_bytes()).hexdigest()
+        if got != want:
+            raise RetryBlocked(f"control artifact bytes changed: {rel}")
+
+
+def terminate_owned(pid: int, expected: dict | None) -> str:
+    """Kill and reap ONLY the exact owned group; 'ambiguous' when
+    ownership cannot be proved (leave PID recorded, block permanently,
+    never signal by name)."""
+    try:
+        ident = proc_identity(pid)
+    except AmbiguousProcess:
+        return "ambiguous"
+    if ident is None:
+        return "dead"
+    if expected is not None and (ident["cmdline"] != expected["cmdline"]
+                                 or ident["cwd"] != expected["cwd"]):
+        # could still be the pre-exec launcher; verify pgid ownership
+        try:
+            if os.getpgid(pid) != pid:
+                return "ambiguous"
+        except ProcessLookupError:
+            return "dead"
+    try:
+        os.killpg(pid, 15)
+        time.sleep(5)
+        os.killpg(pid, 9)
+    except ProcessLookupError:
+        pass
+    try:
+        os.waitpid(pid, os.WNOHANG)
+    except ChildProcessError:
+        pass
+    time.sleep(1)
+    try:
+        return "dead" if proc_identity(pid) is None else "ambiguous"
+    except AmbiguousProcess:
+        return "ambiguous"
 
 
 def verify_runtime_identity(original: dict) -> None:
@@ -201,10 +260,13 @@ def main() -> int:
         return 3
 
     try:
+        # Reload the record UNDER the lock (steer 0821351).
+        record = json.loads(RECORD.read_text())
         budget_available(record)
         if driver_alive(record):
             raise RetryBlocked("a driver for this run identity is alive")
 
+        verify_control_artifacts(record)
         pre = subprocess.run(
             [sys.executable,
              str(CONTROL / "scripts/m38e_exec_preflight.py"),
@@ -216,6 +278,8 @@ def main() -> int:
         verify_runtime_identity(original)
         launch_arg = verify_model_identity(original, exec_dir)
         env = build_retry_environment(original)
+        # Re-verify artifact bytes immediately before process creation.
+        verify_control_artifacts(record)
 
         # Durably consume attempt two BEFORE process creation.
         nonce = secrets.token_hex(16)
@@ -227,12 +291,51 @@ def main() -> int:
             "run_id": run_id})
         atomic_write_record(record)
 
+        # Barrier handshake: the child cannot exec the driver until its
+        # PID/PGID is durably registered and the barrier releases.
+        barrier_r, barrier_w = os.pipe()
+        os.set_inheritable(barrier_r, True)
+        lock_fd = lock.fileno()
+        os.set_inheritable(lock_fd, True)
         log = open(CONTROL / "logs/m38e_official.log", "a")
         proc = subprocess.Popen(
             [sys.executable, str(CONTROL / "scripts/m38e_launch.py"),
-             str(exec_dir), original["python"], "src/m38e_dev_sweep.py",
+             str(barrier_r), str(lock_fd), str(exec_dir),
+             original["python"], "src/m38e_dev_sweep.py",
              "--model-ref", launch_arg],
-            stdout=log, stderr=log, env=env)
+            stdout=log, stderr=log, env=env, close_fds=False)
+        os.close(barrier_r)
+        try:
+            # Durable 'launching' with exact ownership BEFORE exec.
+            record["records"][-1].update({
+                "state": "launching", "pid": proc.pid, "pgid": proc.pid,
+                "expected_cmdline": [original["python"],
+                                     "src/m38e_dev_sweep.py"],
+                "exec_dir": str(exec_dir),
+                "source_commit": expected,
+                "launcher_sha256": record["control_artifact_sha256"][
+                    "scripts/m38e_launch.py"],
+                "preflight_sha256": record["control_artifact_sha256"][
+                    "scripts/m38e_exec_preflight.py"],
+                "environ_sha256": original["environ_sha256"]})
+            atomic_write_record(record)
+            reread = json.loads(RECORD.read_text())
+            latest = reread["records"][-1]
+            if (latest.get("state") != "launching"
+                    or latest.get("pid") != proc.pid
+                    or latest.get("nonce") != nonce):
+                raise RetryBlocked("launching record failed reread "
+                                   "validation")
+            os.write(barrier_w, b"G")     # release barrier -> exec
+        except Exception:
+            os.close(barrier_w)           # EOF: child exits without exec
+            outcome = terminate_owned(proc.pid, None)
+            record["records"][-1]["state"] = (
+                "failed_terminated" if outcome == "dead" else "ambiguous")
+            atomic_write_record(record)
+            raise
+        os.close(barrier_w)
+
         expected_ident = None
         for _ in range(50):
             time.sleep(0.2)
@@ -245,12 +348,15 @@ def main() -> int:
                 expected_ident = ident
                 break
         if expected_ident is None:
-            # Budget stays consumed; record remains 'reserved' (blocks
-            # forever) — never refunded.
-            raise RetryBlocked("launcher did not exec into the driver; "
-                               "retry authorization remains consumed")
+            outcome = terminate_owned(proc.pid, None)
+            record["records"][-1]["state"] = (
+                "failed_terminated" if outcome == "dead" else "ambiguous")
+            atomic_write_record(record)
+            raise RetryBlocked(
+                f"exec recognition failed; owned group {outcome}; retry "
+                "authorization remains consumed")
         record["records"][-1].update({
-            "state": "running", "pid": proc.pid, "pgid": proc.pid,
+            "state": "running",
             "cmdline": expected_ident["cmdline"],
             "cwd": expected_ident["cwd"],
             "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ",

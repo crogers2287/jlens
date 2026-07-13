@@ -4,6 +4,24 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T05:35Z
+
+- **Steer:** NEW steer `8eb2e9e` read in full and adopted;
+  `steer_sha_seen` now `137e734ec769703818a889ebbbadbc14b4b27d7c`.
+  M36T/M38E/M37J-A unchanged and frozen; M37J-C (Agents-A1 semantic
+  portability bridge) newly authorized — Phase 0A official-4B watch,
+  Phase 0B observation-only 35B bridge (CPU build in parallel; live
+  smoke only after M36T completion at a safe service window).
+- **Tests (fresh):** 52/52 pass.
+- **M36T:** 94/96 rows; 63 positive / 31 negative; classes
+  {1: 31, 2: 31, 3: 16, 4: 16}. Two rows out — the staged completion
+  sequence (serving restore → power check → comparator freeze →
+  sealed manifest → frozen evaluation) executes on the event.
+- **M37J:** idle pending M36T stop (V100 priority: diagnostic capture).
+- **M38E:** staged (3090 priority after M36T).
+- **Serving:** unloaded for capture window; restore next event.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T05:05Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

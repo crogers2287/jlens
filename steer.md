@@ -1,145 +1,160 @@
-# steer.md — verify M36T tool arms before sealed evaluation; continue exact-token M37J-A
+# steer.md — fix tensor-parallel Agents-A1 semantic projection before live smoke
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `8eb2e9ee32c004fa3114ea40bf4020092e0776ff` only where explicitly
+steer commit `cccf40aa0b3cea6eda76bb7f7324bd772ab91256` only where explicitly
 amended below. Every sealed-data, verifier, privacy, claim-boundary, resource,
-production, and repository-hygiene gate from that steer remains binding by
-incorporation. No scientific threshold, feature family, task set, model,
-checkpoint, or resource gate is relaxed.
+production, and repository-hygiene gate from steers `8eb2e9e` and `cccf40a`
+remains binding by incorporation. No scientific threshold, feature family, task
+set, model, checkpoint, or resource gate is relaxed.
 
 ## Current established state
 
-- M36T development capture completed 96/96 with 65 positive and 31 negative
-  labels. The frozen power floor passed and the four development comparators
-  were frozen at commit `945830ceca2e02f4940e63f2c3cbe1261b74b359`.
+- M36T development completed 96/96 with 65 positive and 31 negative labels. The
+  frozen comparators and power gate remain pinned at
+  `945830ceca2e02f4940e63f2c3cbe1261b74b359`.
 - The 192-task M36T sealed manifest was committed before outcomes at
-  `12e3af03ef6c01724b38d60a731948987d31f022`; sealed capture is running under
-  the existing supervisor. Do not interrupt it for this steer.
-- M37J-A's first implementation used a decode-to-text-to-encode round trip for
-  lens positions. That path was objectively invalid because token count and
-  absolute positions were not preserved and it produced a CUDA out-of-bounds
-  failure. Commit `a59ca07ccfdd5a0d08da4158e2d106988816b979` correctly replaced it
-  with an exact recorded-token-id forward using `ActivationRecorder`,
-  `lens.transport`, and the model unembedding. The 34 old-provenance rows were
-  set aside and the full 192-task capture restarted from zero after a two-task
-  smoke. Continue this corrected run; never merge the discarded rows.
-- M38E remains queued behind the active 3090 sealed-capture window. M37J-C
-  bridge implementation may continue CPU-only without delaying active primary
-  tracks.
+  `12e3af03ef6c01724b38d60a731948987d31f022`. At pushed heartbeat
+  `243942aa49b4b37cce7961b60a5c4e2b01dbe3c5`, sealed capture was 37/192,
+  healthy, supervised, and producing about 26 rows/hour. Do not interrupt it.
+- The M36T evaluator conformance defect was corrected before sealed outcomes at
+  `0285ec3531d40faac286424661f610ade677d3ec`: tool answers are constructed from
+  the exact private task, checked through the frozen verifier, and blocked on
+  any preflight or verifier failure. The corrected evaluator remains staged and
+  must be the only evaluator used.
+- M37J-A completed its exact-token 192-task evaluation at
+  `df10b69196a35b51cd557dc7c92ec5d3ed8d7197`. H1 was not established: all four
+  completed-error comparators had balanced accuracy 0.500 on a holdout with 41
+  errors and 2 correct answers. H2 had only five short-cap truncation rows and
+  was underpowered. The fitted-Jacobian pilot track is closed; do not run M37J-B
+  or tune on this holdout.
+- The official InternScience collection still has no verified Agents-A1 4B
+  checkpoint. The full-Jacobian Agents-A1 path remains blocked without
+  substitution or a raised memory gate.
+- M37J-C Phase 0B was implemented CPU-only at
+  `8692f69e559682580e719863097e6e6fa1900104` with an inert collector, the frozen
+  five layers `[4,12,20,28,36]`, 32-token cadence plus final position, top-k 10,
+  fixed semantic groups, bounded fp16 buffers, and seven fake-stack tests.
+- M38E remains queued behind the active M36T sealed window. The V100 is idle.
 
-## Binding M36T evaluator correction before any sealed result is opened
+## Binding M37J-C tensor-parallel correction before any live prompt
 
-`src/m36t_evaluate.py` currently assigns success unconditionally to every
-routed/tool task. The comment states that the deterministic tool result is
-verifier-accepted, but the evaluator does not load the private task, construct
-the tool result, or call the verifier. This does not satisfy the frozen
-manifest requirement that a tool result replaces model output only when the
-verifier accepts it.
+The Phase 0B CPU implementation is not yet valid on the real vLLM tensor-
+parallel runtime. `SemanticBridgeCollector.readout` currently calls
+`lm_head(norm(residuals))` directly. On the pinned vLLM architecture this is a
+hard implementation error, not a scientific result:
 
-Do not run the sealed evaluator in its current form. At a row boundary, record
-this steer SHA and complete the following CPU-only correction before sealed
-capture ends. Do not inspect sealed aggregate outcomes while implementing or
-testing it.
+- Qwen3-MoE uses `ParallelLMHead` and exposes the supported projection path as
+  `Qwen3MoeForCausalLM.compute_logits`, which calls the model's
+  `LogitsProcessor`.
+- At vLLM revision `75fe92a3162a68d74581ec324f04684a752e3ad2`,
+  `ParallelLMHead.forward` deliberately raises `RuntimeError("LMHead's weights
+  should be used in the sampler.")`.
+- The vLLM `LogitsProcessor` applies the quantized LM-head method and gathers
+  tensor-parallel vocabulary shards before trimming padding. A direct local
+  head call would either fail or produce shard-local, non-global token ids.
 
-1. Load the exact private sealed task file used by the committed manifest and
-   join it one-to-one with sealed rows by `task_id`.
-2. Preflight before scoring:
-   - exactly 192 unique task ids and 192 unique row ids;
-   - task-id sets exactly equal;
-   - task-file SHA-256 equals
-     `007f52994d90fef3330d7c318a6de482c27bce2cb4a70499afae6a766b746813`;
-   - every row uses the pinned checkpoint/revision and expected feature schema;
-   - no duplicate, missing, malformed, or post-step-256 primary feature;
-   - every output length is within the committed 2,048-token ceiling.
-3. Implement the deterministic tool as a pure function of the private task:
-   - numeric families return the task's exact deterministic computed answer;
-   - `json_digits` returns the exact expected JSON array;
-   - pass the generated tool text through the same frozen `task_verdict`
-     implementation used during capture.
-4. A routed arm may record tool success only when that verifier returns
-   `pass`. A missing task, unsupported family, undecided verdict, or verifier
-   failure is an evaluation blocker, not a model failure and not an assumed
-   success. Commit an aggregate blocker and stop before opening hypotheses.
-5. Preserve the existing decision point and token accounting. The correction
-   verifies the tool result; it does not change `k`, routing rankings, model
-   token accounting, counterfactual caps, or any hypothesis.
-6. Use a dedicated frozen RNG instance for the count-matched-random routed set,
-   independent of bootstrap RNG consumption. Freeze `RANDOM_POLICY_SEED =
-   36036` in the evaluator and aggregate manifest amendment. Keep bootstrap at
-   10,000 resamples with seed 36036 as already committed.
-7. Add synthetic/private-safe tests covering all four families, verifier
-   acceptance and rejection, duplicate/missing ids, task-SHA mismatch, equal
-   routing count, deterministic random routing, and a tool result that must not
-   overwrite a verified-correct model answer with failure.
-8. Commit an aggregate-only technical amendment before running the evaluator.
-   State that this is protocol conformance completed before sealed outcomes
-   were inspected. Run `check_commit_safe.py`, verify all tests, and verify the
-   pushed remote SHA.
+Do not run the 16-prompt live smoke against commit `8692f69` unchanged. Complete
+this CPU-safe correction first without touching M36T:
 
-If the current evaluator has already produced a result, mark that result
-invalid without interpreting it, remove it from the decision path, apply this
-correction, and rerun exactly once from the unchanged sealed rows.
+1. Route residual projection through the live causal model's supported
+   `compute_logits`/`logits_processor` path, never through direct
+   `ParallelLMHead.forward`.
+2. Every tensor-parallel rank must execute the same projection calls in the same
+   order so the gather collective cannot deadlock.
+3. Treat the gathered result as authoritative only on the rank where vLLM
+   returns the full global-vocabulary logits. Non-root ranks may return bounded
+   status/counter metadata but must not emit shard-local top-k ids or semantic
+   scores.
+4. Compute top-k from global, padding-trimmed vocabulary logits. Verify ids are
+   in `[0, config.vocab_size)` and identical to a synthetic gathered-reference
+   calculation. Never add a shard-local index without the exact shard offset.
+5. Project captured slots in a fixed bounded chunk size so a full
+   slots-by-vocabulary tensor cannot create an avoidable peak-memory failure.
+   Chunk size is an implementation resource control, not a task-derived tuning
+   variable; freeze it before the first live prompt.
+6. Compute the already-frozen M37J-A-style semantic-group counts only from the
+   authoritative global top-k ids. Keep the five groups, substring rule, layers,
+   cadence, final-position rule, and top-k unchanged.
+7. Add CPU tests that emulate: direct `ParallelLMHead.forward` raising; root
+   global-logit return plus non-root `None`; two vocabulary shards whose winning
+   token is on the second shard; padded-vocabulary trimming; identical collective
+   call counts; bounded chunking; and disabled-path parity.
+8. Commit the correction and an aggregate-only technical note before any live
+   prompt. Run the full private-safe test suite and `check_commit_safe.py`, then
+   verify the pushed remote SHA.
 
-## M37J-A provenance and completion
+This correction changes only the projection implementation needed to realize the
+already-frozen standard logit-lens baseline. It does not authorize new semantic
+words, layers, positions, cadence, top-k, prompts, labels, comparators, route
+edits, activation intervention, or an IG-Lens comparator without its separately
+required exact-completeness tests.
 
-Continue the exact-token restart unchanged. The final aggregate result must pin
-both the frozen scientific manifest/lens and the corrected capture-code SHA.
-It must state that all 192 accepted rows share the exact-token provenance and
-that zero rows from the failed round-trip implementation entered any fit,
-selection, metric, or holdout analysis.
+## M36T sealed completion remains binding
 
-Do not change semantic words, substring matching, layers, positions, cadence,
-top-k, budgets, families, splits, comparators, or hypothesis rules after the
-observed smoke. Any concern about those frozen choices belongs in limitations
-or a separately preregistered successor study.
+Continue sealed capture unchanged. After all 192 rows are durably present, run
+only the corrected evaluator from `0285ec3`:
 
-## Research scan and scaling implications
+- execute the exact task/row identity, task-file SHA-256, checkpoint, schema,
+  feature-timing, uniqueness, and token-ceiling preflight before scoring;
+- construct deterministic tool output from the private task and require the
+  same frozen verifier to return `pass`;
+- preserve `k`, all six arms, rankings, token accounting, decision step 256,
+  counterfactual caps, hypotheses, 10,000 paired bootstrap resamples, and the
+  dedicated count-matched-random seed;
+- on any preflight or verifier failure, commit only the aggregate blocker and
+  stop before opening hypotheses;
+- do not tune on the sealed result.
 
-The current scan found no verified official Agents-A1 4B checkpoint and no
-actionable r/LocalLLaMA implementation lead. Continue the official
-`InternScience`-only 4B watch from steer `8eb2e9e`; do not substitute a
-community quant.
+## M37J-A closure and claim boundary
 
-Add these papers to the future-work register without changing M36T, M37J-A, or
-M38E:
+M37J-A's negative/underpowered result is final for its frozen pilot population.
+Do not reopen the pilot, merge discarded round-trip rows, add features, or use
+its holdout to choose M37J-C vocabulary, prompts, layers, or thresholds.
 
-- `2603.18353`, *Interpretability without actionability*: strong internal probe
-  discrimination did not reliably translate into safe output correction. This
-  reinforces the existing separation between observation/prediction evidence
-  and any intervention or production claim.
-- `2604.00421`, *Self-Routing: Parameter-Free Expert Routing from Hidden
-  States*: hidden representations can contain routing-sufficient information
-  in small trained systems. This supports comparing hidden-state semantic
-  features with router telemetry in a fresh M37J-C efficacy study, but it is
-  not evidence that Agents-A1 routes should be replaced.
-- `2604.14419`, *Equifinality in Mixture of Experts*: substantially different
-  routing topologies can reach similar language-modeling quality. This further
-  forbids treating router topology or entropy as a causal quality measure and
-  supports retaining metadata/confidence, router, and semantic readout as
-  separate comparators.
+The M37J-C smoke can establish only that bounded semantic readouts are observable
+on the full Agents-A1 inference runtime within parity, identity, memory, latency,
+and privacy gates. It cannot establish a Jacobian lens on Agents-A1, error
+prediction, causal attribution, route quality, safe early exit, self-awareness,
+intervention value, or production utility.
 
-These sources do not authorize route edits, activation steering, early exit,
-or production deployment. Agents-A1 35B scaling remains the observation-only
-semantic bridge defined in steer `8eb2e9e`; a fitted Jacobian path remains
-blocked pending an official smaller differentiable checkpoint that passes the
-unchanged memory gate.
+## Research and implementation scan
 
-## Execution order and safety
+No new official Agents-A1 4B checkpoint and no actionable r/LocalLLaMA
+implementation lead were verified in this scan. Existing paper registrations
+remain future-work evidence only, including counterfactual MoE routing
+`2605.07260`, PUMA `2605.17672`, IG-Lens `2606.29693`, Jacobian Scopes
+`2601.16407`, ReLAR `2606.17524`, interpretability-without-actionability
+`2603.18353`, Self-Routing `2604.00421`, and MoE equifinality `2604.14419`.
+None authorizes route edits, activation steering, early exit, or retroactive
+changes to a frozen study.
 
-- Continue M36T sealed capture uninterrupted.
-- Correct and test the evaluator CPU-only before capture completion.
-- Continue the corrected M37J-A V100 run.
-- Launch M38E only at its already-authorized safe 3090 window.
-- Continue M37J-C CPU build; no live smoke may preempt primary tracks or normal
-  service restoration.
+The steer-worthy new evidence in this run is the primary vLLM implementation
+contract: Qwen3-MoE's global logits must pass through `LogitsProcessor`; direct
+`ParallelLMHead.forward` is explicitly unsupported and tensor-parallel local ids
+are not valid semantic readouts.
+
+## Execution order
+
+1. Continue M36T sealed capture uninterrupted.
+2. Correct and test the M37J-C projection CPU-only while capture runs.
+3. At M36T completion, run the corrected evaluator exactly once and commit the
+   scoped result or aggregate blocker.
+4. Restore and verify normal Agents-A1 serving.
+5. Run the already-bounded 16-prompt M37J-C live smoke only from the corrected
+   projection commit and only if all eight Phase 0B gates remain enforced.
+6. Then release the dual-3090 window to M38E under its frozen protocol.
 
 Stop on checkpoint mismatch, task/row mismatch, task-hash mismatch, feature or
-label leakage, verifier bypass, invalid telemetry alignment, numerical
-instability, repeated worker failure, privacy failure, resource-gate breach,
-or inability to restore normal serving.
+label leakage, verifier bypass, tensor-parallel collective mismatch, shard-local
+readout, invalid telemetry alignment, numerical instability, repeated worker
+failure, privacy failure, resource-gate breach, or inability to restore normal
+serving.
 
 Never commit private prompts, outputs, operands, token text or ids, per-task
 labels or predictions, raw telemetry, hidden states, activations, gradients,
-Jacobians, lens matrices, model weights, caches, or local paths. Public
-artifacts remain aggregate-only and must pass `check_commit_safe.py`.
-Production remains gated.
+Jacobians, lens matrices, model weights, caches, or local paths. Public artifacts
+remain aggregate-only and must pass `check_commit_safe.py`.
+
+Production remains gated. No observation, classifier, tool policy, route edit,
+activation intervention, or early-exit rule may be promoted to production by
+this directive.

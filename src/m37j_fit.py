@@ -14,8 +14,10 @@ import json
 import time
 from pathlib import Path
 
-# Pinned in the pre-fit manifest; do not change without a new manifest.
-DIM_BATCH = 8
+# Pinned in the pre-fit manifest; dim_batch amended 8 -> 4 by the
+# steer-0497526 manifest amendment (sole permitted change) after the
+# dim_batch=8 fit breached the 30.0 GiB gate at 31.18 GiB.
+DIM_BATCH = 4
 MAX_SEQ_LEN = 128
 SKIP_FIRST = 16
 CHECKPOINT_EVERY = 5

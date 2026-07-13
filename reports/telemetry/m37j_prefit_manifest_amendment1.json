@@ -1,0 +1,12 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_prefit_manifest_amendment",
+ "amends": "reports/telemetry/m37j_prefit_manifest.json",
+ "steer": "0497526",
+ "reason": "dim_batch=8 fit completed with finite Jacobians but peak reserved 31.18 GiB exceeded the frozen 30.0 GiB gate; that fit is preserved as a blocked attempt with no semantic claim",
+ "changes": {"estimator.dim_batch": {"from": 8, "to": 4}},
+ "unchanged": "pilot model, corpus (seed 37, sha 4e4a8ed276c4072bd1da659069ded73d6f00521fc676bdce277902ca7c4eac5f), sequence length 128, seeds, source layers 0-22, target layer 23, skip_first 16, checkpoint cadence 5, jacobian-lens revision 581d3986, 30.0 GiB memory gate",
+ "refit_policy": "one refit only; if peak reserved memory still exceeds 30.0 GiB or validation fails, M37J closes as blocked — no further configuration tuning",
+ "blocked_attempt_artifacts": "dim_batch=8 checkpoint and lens retained privately on the V100 host, unclaimed",
+ "privacy_check_status": "aggregate metadata only"
+}

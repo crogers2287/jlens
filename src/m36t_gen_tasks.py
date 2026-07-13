@@ -26,6 +26,7 @@ from m36_calibration import FAMILIES, TASKS_PATH as M36C_TASKS_PATH  # noqa: E40
 from m36v_phase1 import PRIVATE_DIR  # noqa: E402
 
 M36T_SEED = "m36t-dev-v1"
+ID_PREFIX = "m36t"
 DEV_TASKS_PER_CELL = 6          # x 4 strata x 4 families = 96 dev tasks
 CANDIDATE_FAMILIES = ("div_exact", "json_digits", "mod_arith", "sub_mixed")
 DEV_TASKS_OUT = PRIVATE_DIR / "m36t_dev_tasks.jsonl"
@@ -54,7 +55,7 @@ def prior_prompts() -> set[str]:
 
 def build_task(fid: str, family: dict, stratum, rng, s_index: int,
                index: int) -> dict:
-    task = {"task_id": f"m36t_{fid}_s{s_index}_{index:03d}",
+    task = {"task_id": f"{ID_PREFIX}_{fid}_s{s_index}_{index:03d}",
             "family": fid, "stratum": f"s{s_index}"}
     if fid == "mod_arith":
         (alo, ahi), (blo, bhi), (mlo, mhi) = stratum
@@ -86,10 +87,17 @@ def build_task(fid: str, family: dict, stratum, rng, s_index: int,
 
 
 def main() -> int:
+    global M36T_SEED, DEV_TASKS_PER_CELL, ID_PREFIX
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", default=str(DEV_TASKS_OUT))
     ap.add_argument("--manifest-out", default=MANIFEST_OUT)
+    ap.add_argument("--seed", default=M36T_SEED)
+    ap.add_argument("--tasks-per-cell", type=int, default=DEV_TASKS_PER_CELL)
+    ap.add_argument("--id-prefix", default="m36t")
     args = ap.parse_args()
+
+    M36T_SEED, DEV_TASKS_PER_CELL = args.seed, args.tasks_per_cell
+    ID_PREFIX = args.id_prefix
 
     excluded = prior_prompts()
     families = {f["family_id"]: f for f in FAMILIES}

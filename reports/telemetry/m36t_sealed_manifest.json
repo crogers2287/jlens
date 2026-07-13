@@ -1,0 +1,74 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_sealed_manifest",
+ "steer": "8eb2e9e",
+ "committed_before_generating_or_opening_outcomes": true,
+ "checkpoint": "cyankiwi/Agents-A1-AWQ-INT4",
+ "revision_pinned": "3e522d4e46438c782789b73c8ff4503e0edd037c",
+ "telemetry_override_hash": "9f4d46aa99276d07",
+ "runtime": "isolated vLLM 0.24.0 telemetry runtime, TP2, greedy, logprobs 5",
+ "tasks": {
+  "generator": "src/m36t_gen_tasks.py at this commit",
+  "seed": "m36t-sealed-v1",
+  "n": 192,
+  "cell_mix": "12 tasks per cell x 4 strata x 4 families (div_exact, json_digits, mod_arith, sub_mixed)",
+  "disjointness": "prompt-string exclusion vs all prior local task sets including the M36T development tasks",
+  "tasks_sha256": "007f52994d90fef3330d7c318a6de482c27bce2cb4a70499afae6a766b746813",
+  "tasks_public": false
+ },
+ "decode": {
+  "source_run_ceiling_tokens": 2048,
+  "primary_decision_step": 256,
+  "secondary_steps": [
+   128,
+   384
+  ],
+  "normal_budget_tokens": 512,
+  "counterfactual_cap_verdicts": [
+   512,
+   1024
+  ]
+ },
+ "power": {
+  "dev_alive_at_256_positive_prevalence": 0.6989,
+  "expected_positive_labels_at_n192": "well above the 24 floor",
+  "predeclared_rule": "stop before capture if expected positives < 24"
+ },
+ "detector": {
+  "training_data": "the 96-task development rows only (sha256 276fdc93ad037f0cf0e0c5ba0e2021577f5aa20dfe8825a17e00ee59c6859ce2)",
+  "model": "CalibratedClassifierCV(LogisticRegression(max_iter=3000), isotonic, cv=3) on standardized features",
+  "comparators": [
+   "metadata_only",
+   "metadata_plus_logprob",
+   "metadata_plus_router",
+   "full_prefix_telemetry"
+  ],
+  "feature_schema_sha256": "b11e86fc28bcc294806c7e5c4f41f08463c28de0c522ad7f78e49b7cc4c216cf",
+  "label": "needs_more_than_512_tokens := not verified-complete within 512 tokens (outcome class != 1)",
+  "primary_population": "runs alive at decode step 256",
+  "no_post_256_features_in_primary": true
+ },
+ "tool_policy": {
+  "budget_rule": "k = ceil(0.6989 x N_sealed_alive_at_256); identical k for every routed arm",
+  "tool": "deterministic solver (the family generator's exact computation); a tool result replaces the model result only when the verifier accepts the tool result; no arm may turn a verified-correct answer into a failing one",
+  "arms": [
+   "normal_512",
+   "metadata_policy (metadata_plus_logprob ranking)",
+   "full_jlens_policy (full_prefix_telemetry ranking)",
+   "count_matched_random",
+   "long_decode_2048",
+   "tool_all (ceiling, not a budgeted comparator)"
+  ]
+ },
+ "statistics": {
+  "bootstrap": "task-level paired bootstrap, 10000 resamples, seed 36036",
+  "confidence": "95% percentile intervals; hypotheses require lower bounds strictly > 0",
+  "hypotheses": {
+   "T-H1": "full_prefix_telemetry improves balanced accuracy AND average precision over metadata_plus_logprob on the sealed set (both paired 95% lower bounds > 0)",
+   "T-H2": "at identical k, full_jlens_policy improves verified success over metadata_policy AND count_matched_random (both paired lower bounds > 0)",
+   "T-H3": "full_jlens_policy non-inferior to long_decode_2048 within absolute 0.02 verified success AND paired model-output-token saving lower bound > 0"
+  },
+  "stop_rules": "no tuning on sealed outcomes; scoped conclusion committed after the single evaluation; failed hypotheses reported as failed"
+ },
+ "privacy_check_status": "aggregate manifest only; tasks, rows, and per-task predictions private"
+}

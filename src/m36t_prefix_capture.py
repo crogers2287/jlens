@@ -105,7 +105,17 @@ def capture_task(llm, task, save_prefix=None) -> dict:
 
     verdict = task_verdict(task, comp.text)
     cls = outcome_class(comp.finish_reason, n_out, verdict)
+    # Counterfactual budget-boundary verdicts for the policy arms: the
+    # text the model would have produced under a 512/1024 cap is the
+    # decoded token prefix of this same single source run.
+    tok = llm.get_tokenizer()
+    verdict_at = {}
+    for cap in (512, 1024):
+        capped_text = (comp.text if n_out <= cap
+                       else tok.decode(comp.token_ids[:cap]))
+        verdict_at[str(cap)] = task_verdict(task, capped_text)
     return {
+        "verdict_at_cap": verdict_at,
         "task_id": task["task_id"], "family": task["family"],
         "stratum": task["stratum"],
         "prompt_rows": prompt_rows,
@@ -126,6 +136,7 @@ def main() -> int:
     ap.add_argument("--tasks", default=str(TASKS_IN))
     ap.add_argument("--out", default=str(ROWS_OUT))
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--caps-dir-name", default="m36t_dev_caps")
     args = ap.parse_args()
 
     import os
@@ -151,7 +162,7 @@ def main() -> int:
 
     llm = make_llm(args.model_ref)
     install(llm)
-    cap_dir = PRIVATE_DIR / "m36t_dev_caps"
+    cap_dir = PRIVATE_DIR / args.caps_dir_name
     cap_dir.mkdir(parents=True, exist_ok=True)
 
     with out.open("a") as sink:

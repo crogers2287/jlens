@@ -4,6 +4,23 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T04:35Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass. Artifacts verified on disk (M37J
+  refit gate True; validation all_checks True).
+- **M36T:** 83/96 rows; 52 positive / 31 negative; classes
+  {1: 31, 2: 29, 3: 11, 4: 12}; sub_mixed 11/24 — final family.
+  ETA well under 1 h at current pace. Capture + Monitor alive.
+- **M37J (event-driven pushes since last heartbeat):** dim_batch=4
+  refit PASSED the 30.0 gate at 29.58 GiB (`964dbf4`); frozen
+  validation PASSED 4/4 with exact hooks-on/off invariance
+  (`b28f890`); 192-task diagnostic set preregistered 96/48/48 before
+  any labels (`81432ff`). Next: diagnostic capture driver.
+- **M38E:** staged; sweeps gated on M36T stop.
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T03:35Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

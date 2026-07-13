@@ -1,0 +1,23 @@
+{
+ "schema_version": 1,
+ "run_kind": "m38e_ops_record",
+ "steer": "a726b35",
+ "first_attempt": {
+  "driver_pid": 621509,
+  "driver_process_group": 621509,
+  "alive_at_record": true,
+  "execution_working_tree": "the control checkout at launch time (pre-separation)",
+  "row_bound_source_commit": "a527652d0335439a74378265011abf8fcd41cbaf",
+  "run_id": "3c6797c774f82edf",
+  "private_ledger_bytes_at_record": 52673,
+  "provenance_note": "the launch record proves a527652 (not 4469b10): the supervisor script was committed after the driver started; provenance-pinned files are byte-identical between the two commits"
+ },
+ "control_plane_actions": {
+  "supervisor_shell_terminated": "PID 621497 (waiting retry controller only); the setsid driver group was verified alive and untouched",
+  "false_retry_prevented": "the old supervisor's attempt-2 would have derived a fresh identity from moving master and rejected all rows",
+  "stall_detection_interim": "supervisor watchdog is gone until attempt 1 ends; Monitors and 30-min pushed heartbeats carry stall detection",
+  "immutable_retry_architecture": "execution worktree pinned detached at the row-bound commit; control supervisor now requires explicit M38E_EXEC_DIR + full 40-hex M38E_EXPECTED_SHA, refuses symbolic refs and abbreviations, and runs a deterministic preflight (detached-HEAD equality, clean tree, byte-identical provenance files, ledger presence, exact row validation via the driver's own validator) immediately before every launch; no fallback to cwd/branch/latest"
+ },
+ "tests": "tests/test_m38e_control_plane.py — 8 synthetic-git tests (status commits cannot move the execution SHA, newer control master cannot satisfy the expectation, mismatch/symbolic/abbreviated/branch/dirty refusals, supervisor env refusal)",
+ "privacy_check_status": "aggregate operational record only; no row content, prompts, task ids, or paths"
+}

@@ -1,0 +1,134 @@
+{
+ "schema_version": 1,
+ "run_kind": "m36t_freeze",
+ "steer": "0497526",
+ "dev_rows": 96,
+ "labels": {
+  "positive": 65,
+  "negative": 31,
+  "power_floor": 24,
+  "power_ok": true
+ },
+ "primary_step": 256,
+ "per_task_text_persisted_publicly": false,
+ "privacy_check_status": "aggregate metrics only",
+ "classifier": "CalibratedClassifierCV(LogisticRegression(max_iter=3000), isotonic, cv=3) on standardized features",
+ "cv": "StratifiedKFold(5, shuffle, seed=36)",
+ "feature_schema": {
+  "metadata": [
+   "family_onehot_x4",
+   "stratum_ordinal",
+   "prompt_rows"
+  ],
+  "logprob": [
+   "decode_window_entropy",
+   "final_selected_probability",
+   "final_top_k_margin",
+   "mean_selected_probability",
+   "high_entropy_count",
+   "low_confidence_count",
+   "top_k_margin_trend",
+   "decode_step_count"
+  ],
+  "router": [
+   "router_entropy_mean",
+   "expert_concentration_mean",
+   "windowed_expert_shift",
+   "drift_final_window"
+  ]
+ },
+ "feature_schema_sha256": "b11e86fc28bcc294806c7e5c4f41f08463c28de0c522ad7f78e49b7cc4c216cf",
+ "tool_budget_rule": "k = ceil(dev alive-at-256 positive prevalence x N_decision_alive); prevalence = 0.6989",
+ "steps": {
+  "256": {
+   "alive_at_step": 93,
+   "alive_positive": 65,
+   "comparators": {
+    "metadata_only": {
+     "balanced_accuracy": 0.7854,
+     "average_precision": 0.9554,
+     "n": 93,
+     "n_features": 6
+    },
+    "metadata_plus_logprob": {
+     "balanced_accuracy": 0.7777,
+     "average_precision": 0.9463,
+     "n": 93,
+     "n_features": 14
+    },
+    "metadata_plus_router": {
+     "balanced_accuracy": 0.8492,
+     "average_precision": 0.9542,
+     "n": 93,
+     "n_features": 10
+    },
+    "full_prefix_telemetry": {
+     "balanced_accuracy": 0.8313,
+     "average_precision": 0.9437,
+     "n": 93,
+     "n_features": 18
+    }
+   }
+  },
+  "128": {
+   "alive_at_step": 96,
+   "alive_positive": 65,
+   "comparators": {
+    "metadata_only": {
+     "balanced_accuracy": 0.7772,
+     "average_precision": 0.9531,
+     "n": 96,
+     "n_features": 6
+    },
+    "metadata_plus_logprob": {
+     "balanced_accuracy": 0.801,
+     "average_precision": 0.956,
+     "n": 96,
+     "n_features": 14
+    },
+    "metadata_plus_router": {
+     "balanced_accuracy": 0.8501,
+     "average_precision": 0.9674,
+     "n": 96,
+     "n_features": 10
+    },
+    "full_prefix_telemetry": {
+     "balanced_accuracy": 0.8263,
+     "average_precision": 0.9616,
+     "n": 96,
+     "n_features": 18
+    }
+   }
+  },
+  "384": {
+   "alive_at_step": 86,
+   "alive_positive": 65,
+   "comparators": {
+    "metadata_only": {
+     "balanced_accuracy": 0.7473,
+     "average_precision": 0.967,
+     "n": 86,
+     "n_features": 6
+    },
+    "metadata_plus_logprob": {
+     "balanced_accuracy": 0.6758,
+     "average_precision": 0.9407,
+     "n": 86,
+     "n_features": 14
+    },
+    "metadata_plus_router": {
+     "balanced_accuracy": 0.7549,
+     "average_precision": 0.9399,
+     "n": 86,
+     "n_features": 10
+    },
+    "full_prefix_telemetry": {
+     "balanced_accuracy": 0.6919,
+     "average_precision": 0.9309,
+     "n": 86,
+     "n_features": 18
+    }
+   }
+  }
+ }
+}

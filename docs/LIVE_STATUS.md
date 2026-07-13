@@ -4,6 +4,29 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T06:45Z
+
+- **Steer:** `cccf40a` is current (`steer_sha_seen` updated to
+  `e8ab2d225acee23a50ce5f5d9693f5ce5120c95e`); it was read and executed
+  in full this cycle — evaluator conformance correction committed
+  pre-outcome (`0285ec3`: verifier-checked tool, preflight, dedicated
+  routing RNG, 14 synthetic tests). No newer steer.
+- **Tests (fresh):** 66/66 pass across suites (52 + 14 evaluator
+  conformance).
+- **M36T:** sealed capture 27/192 (rows parse OK); supervised, ETA
+  ~6–7 h at current mix. Evaluator corrected and staged; runs once at
+  capture completion.
+- **M37J-A (event-driven pushes):** diagnostic capture COMPLETE with
+  uniform exact-token provenance (`b457095`); frozen evaluation run
+  once — **H1 not established, H2 underpowered; J-space pilot track
+  CLOSED** without holdout tuning (`df10b69`). M37J-B does not run.
+  Non-primary lead recorded: Family-B sparse readout features reached
+  validation AUC 0.77 before holdout class degeneracy.
+- **M38E:** queued for the 3090s post-sealed-capture.
+- **M37J-C:** bridge build is the active CPU-parallel unit; V100 idle.
+- **Serving:** unloaded for the sealed window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T06:13Z
 
 - **Steer:** `8eb2e9e` current (`steer_sha_seen 137e734e…`), no newer.

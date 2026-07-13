@@ -4,6 +4,24 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T06:13Z
+
+- **Steer:** `8eb2e9e` current (`steer_sha_seen 137e734e…`), no newer.
+- **Tests (fresh):** 52/52 pass.
+- **M36T (events since last heartbeat):** capture COMPLETE 96/96 →
+  serving restored+verified → power PASSED 65/31 → comparators frozen
+  (`945830c`) → sealed manifest committed pre-outcomes (`12e3af0`) →
+  **sealed capture RUNNING** since 05:48 (15/192, supervised,
+  watchdog + Monitor armed). ETA ~7 h.
+- **M37J-A:** diagnostic capture RUNNING on the V100 under the frozen
+  81432ff manifest (34/192; driver `e935e96`, one-task smoke verified
+  before launch). ETA ~2.5–3.5 h. Monitor armed.
+- **M38E:** queued for the 3090s after the M36T sealed capture.
+- **M37J-C:** bridge build is the next CPU-parallel unit.
+- **Serving:** unloaded for the sealed-capture window (standard
+  cycle); was restored and verified between windows at 05:44.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T05:35Z
 
 - **Steer:** NEW steer `8eb2e9e` read in full and adopted;

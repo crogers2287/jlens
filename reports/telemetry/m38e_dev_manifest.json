@@ -1,0 +1,42 @@
+{
+ "schema_version": 1,
+ "run_kind": "m38e_dev_manifest",
+ "steer": "0497526",
+ "protocol": "docs/M38E_HARD_COMPLETED_ERROR_PROTOCOL.md",
+ "committed_before_capture": true,
+ "capture_gated_on": "M36T safe stop (dual-3090 priority per steer)",
+ "families": ["mod_chain", "alg_coeff", "order_track"],
+ "generator_module": "src/m38e_families.py",
+ "generator_git_blob": "5eb20b3469e02c5f2d9942ff8c53e9ada5917699",
+ "generator_sha256": "1615a0c4750bafb75a72ce008d0f27695fc5f17e70ee0b505a2ff310e9d634f7",
+ "generator_seed": "m38e-dev-v1",
+ "bands_per_family": 4,
+ "tasks_per_band": 24,
+ "difficulty_bands": "BANDS table frozen in the generator module at the blob above",
+ "verifier": "shared deterministic numeric checker (m36_calibration.task_verdict on exact integer known_answer), unit-tested with independent recomputation (40/40 at be20e47)",
+ "decode_protocol": {
+  "sampling": "greedy (temperature 0), logprobs 5",
+  "output_cap_tokens": 2048,
+  "cap_escalation_rule": "move an entire band to 4096 only if truncation > 0.10 and a bounded pilot shows the larger cap materially reduces it; never mix caps inside a primary band estimate",
+  "checkpoint": "same pinned Agents-A1 AWQ checkpoint and revision as M36C/M36T",
+  "runtime": "isolated vLLM 0.24.0 telemetry runtime, override hash recorded at capture"
+ },
+ "band_eligibility_gates": {
+  "completion_rate_min": 0.90,
+  "truncation_rate_max": 0.10,
+  "verified_pass_rate_range": [0.20, 0.80],
+  "min_completed_correct": 6,
+  "min_completed_incorrect": 6,
+  "objective_verifier_required": true,
+  "unseen_task_space_for_sealed_holdout_required": true
+ },
+ "overall_gates": {
+  "min_eligible_families": 2,
+  "min_completed_incorrect_across_development": 48
+ },
+ "selection_rule": "band eligibility from aggregate development performance only; no individual-task selection; no expansion beyond the frozen sweep",
+ "stop_condition": "if overall gates unmet after the bounded sweep, commit m38e_completed_error_frontier_not_found and stop",
+ "labels_are_not_features": "correct answer and verifier result are labels only and may not enter any prediction feature",
+ "tasks_public": false,
+ "privacy_check_status": "aggregate manifest only; tasks and rows private"
+}

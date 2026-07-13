@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37jc_technical_note",
+ "steer": "fe6fcf2",
+ "nature": "tensor-parallel projection conformance, corrected CPU-only before any live prompt; realizes the already-frozen standard logit-lens baseline — no semantic words, layers, cadence, top-k, prompts, labels, or comparators changed",
+ "corrections": {
+  "projection_path": "residual projection now routes through the live model's supported compute_logits/LogitsProcessor path (final norm applied first); direct ParallelLMHead.forward is never called (vLLM makes it raise, and shard-local outputs are not valid global readouts)",
+  "collective_safety": "every TP rank executes an identical fixed chunk walk over identical capture state, so gather collectives cannot deadlock; call counts are test-asserted equal across simulated ranks",
+  "authority": "token ids and semantic scores come only from the rank receiving full global-vocabulary logits; non-root ranks return bounded status/counters and never emit shard-local ids",
+  "padding_and_range": "logits are trimmed to config vocab_size before top-k; an id-range guard raises on any out-of-vocabulary index",
+  "chunking": "PROJECTION_CHUNK_SLOTS = 8, frozen as a resource control before the first live prompt"
+ },
+ "tests": "tests/test_m37jc_bridge.py — 13 CPU tests including forbidden direct head forward, root/non-root split, second-shard winner global id, poisoned-padding trim, identical cross-rank call counts, bounded chunking, disabled-path parity",
+ "live_prompts_issued": false,
+ "privacy_check_status": "aggregate technical note only"
+}

@@ -101,18 +101,36 @@ class SemanticBridgeCollector:
         self._cursor[dense] = cur + 1
 
     # -- readout ------------------------------------------------------------
+    #
+    # Tensor-parallel contract (steer fe6fcf2): projection must go
+    # through the live model's supported compute_logits/LogitsProcessor
+    # path — NEVER direct ParallelLMHead.forward, which vLLM makes raise
+    # and which would yield shard-local, non-global token ids. Every
+    # rank executes identical projection calls in identical order (the
+    # capture state is token-synchronous across TP ranks), so the gather
+    # collective cannot deadlock; only the rank that receives the full
+    # global-vocabulary logits emits token ids — other ranks return
+    # bounded status/counters only.
+
+    #: Frozen slot-chunk size for projection (resource control, not a
+    #: task-derived tuning variable). Bounds the transient
+    #: [chunk, vocab] logits tensor.
+    PROJECTION_CHUNK_SLOTS = 8
 
     @torch.no_grad()
-    def readout(self, norm, lm_head) -> dict:
-        """Project captured checkpoints (plus the final position) through
-        the model's own norm + unembedding. Returns bounded top-k token
-        ids and logit values per layer/slot — scalars and small int lists
-        only; residuals never leave the device path."""
+    def readout(self, project_fn, vocab_size: int) -> dict:
+        """Bounded top-k readout via ``project_fn`` (the worker's
+        norm + compute_logits path). ``project_fn(residuals)`` returns
+        global-vocabulary logits on the authoritative rank and ``None``
+        elsewhere; padding columns beyond ``vocab_size`` are trimmed
+        before top-k. Small int lists and scalars only."""
         if self._buf is None:
             return {"slots": 0}
         out: dict = {"layers": list(self.layers), "cadence": self.cadence,
                      "top_k": TOP_K, "dropped": self._dropped.tolist(),
+                     "projection_calls": 0, "authoritative": True,
                      "readout": {}}
+        chunk = self.PROJECTION_CHUNK_SLOTS
         for li, layer in enumerate(self.layers):
             n = int(self._cursor[li])
             slots = [self._buf[li, :n]]
@@ -121,19 +139,31 @@ class SemanticBridgeCollector:
                 slots.append(self._last[li:li + 1])
                 steps = steps + [int(self._decode_step[li]) - 1]
             residuals = torch.cat(slots, dim=0)
-            if residuals.shape[0] == 0:
-                out["readout"][str(layer)] = {"steps": [], "token_ids": [],
-                                              "finite": True}
-                continue
-            logits = lm_head(norm(residuals.to(norm.weight.dtype)))
-            if hasattr(logits, "logits"):
-                logits = logits.logits
-            top = torch.topk(logits.float(), TOP_K, dim=-1)
-            out["readout"][str(layer)] = {
-                "steps": steps,
-                "token_ids": top.indices.tolist(),
-                "finite": bool(torch.isfinite(logits).all().item()),
-            }
+            ids, finite = [], True
+            # Fixed chunk walk: identical call count on every rank for
+            # the same capture state, bounded [chunk, vocab] transient.
+            for start in range(0, residuals.shape[0], chunk):
+                piece = residuals[start:start + chunk]
+                logits = project_fn(piece)
+                out["projection_calls"] += 1
+                if logits is None:
+                    out["authoritative"] = False
+                    continue
+                if hasattr(logits, "logits"):
+                    logits = logits.logits
+                logits = logits.float()[..., :vocab_size]  # trim padding
+                finite &= bool(torch.isfinite(logits).all().item())
+                top = torch.topk(logits, TOP_K, dim=-1).indices
+                if int(top.max()) >= vocab_size or int(top.min()) < 0:
+                    raise RuntimeError(
+                        "top-k id outside global vocabulary — shard-local "
+                        "leak or offset error")
+                ids.extend(top.tolist())
+            if out["authoritative"]:
+                out["readout"][str(layer)] = {
+                    "steps": steps, "token_ids": ids, "finite": finite}
+        if not out["authoritative"]:
+            out["readout"] = {}
         return out
 
 

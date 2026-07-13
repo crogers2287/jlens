@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+import pytest
 import torch
 
 from jlens_vllm_telemetry.bridge import (
@@ -88,28 +89,140 @@ def test_bounded_memory_drops_and_counts():
     assert collector._dropped.tolist() == [8] * len(BRIDGE_LAYERS)
 
 
-def test_readout_matches_direct_projection():
+def make_captured_collector(n_steps=8, n_slots=8, cadence=4):
     layers = make_stack()
-    collector = SemanticBridgeCollector(HIDDEN, n_slots=8, cadence=4)
+    collector = SemanticBridgeCollector(HIDDEN, n_slots=n_slots,
+                                        cadence=cadence)
     collector.allocate("cpu")
     handles = install_bridge(layers, collector)
     collector.enabled = True
-    run_decode(layers, 8)
+    run_decode(layers, n_steps)
     uninstall_bridge(handles)
+    return collector
 
+
+def gathered_project(norm, shard_heads, pad_cols=0):
+    """Reference TP projection: per-shard head matmuls gathered along
+    the vocab axis (what vLLM's LogitsProcessor produces on the root)."""
+    def project(residuals):
+        h = norm(residuals.to(norm.weight.dtype))
+        full = torch.cat([head(h) for head in shard_heads], dim=-1)
+        if pad_cols:
+            full = torch.cat(
+                [full, torch.full((*full.shape[:-1], pad_cols),
+                                  1e9)], dim=-1)  # poisoned padding
+        return full
+    return project
+
+
+def test_readout_matches_gathered_reference():
+    collector = make_captured_collector()
     norm = torch.nn.LayerNorm(HIDDEN)
-    head = torch.nn.Linear(HIDDEN, VOCAB, bias=False)
-    result = collector.readout(norm, head)
-    layer0 = collector.layers[0]
-    data = result["readout"][str(layer0)]
-    assert data["finite"]
-    # Direct recomputation for the first captured slot.
+    shard_heads = [torch.nn.Linear(HIDDEN, VOCAB // 2, bias=False)
+                   for _ in range(2)]
+    result = collector.readout(gathered_project(norm, shard_heads), VOCAB)
+    data = result["readout"][str(collector.layers[0])]
+    assert data["finite"] and result["authoritative"]
     residual = collector._buf[0, 0].to(norm.weight.dtype)
-    direct = head(norm(residual)).float()
+    direct = torch.cat([h(norm(residual)) for h in shard_heads]).float()
     expect = torch.topk(direct, result["top_k"]).indices.tolist()
     assert data["token_ids"][0] == expect
-    # Final position appended after cadence slots.
-    assert data["steps"][-1] == 7
+    assert data["steps"][-1] == 7        # final position appended
+
+
+def test_direct_parallel_head_forward_is_never_called():
+    class ForbiddenHead(torch.nn.Module):
+        def forward(self, x):  # mirrors vLLM ParallelLMHead.forward
+            raise RuntimeError(
+                "LMHead's weights should be used in the sampler.")
+
+    collector = make_captured_collector()
+    norm = torch.nn.LayerNorm(HIDDEN)
+    forbidden = ForbiddenHead()
+    safe_head = torch.nn.Linear(HIDDEN, VOCAB, bias=False)
+
+    def compute_logits_path(residuals):
+        # Supported path uses the head's weights via a processor, not
+        # head.forward; forbidden.forward must never fire.
+        return safe_head(norm(residuals.to(norm.weight.dtype)))
+
+    result = collector.readout(compute_logits_path, VOCAB)
+    assert result["authoritative"]
+    # And the forbidden module really does raise if touched directly:
+    with pytest.raises(RuntimeError, match="sampler"):
+        forbidden(torch.randn(1, HIDDEN))
+
+
+def test_nonroot_rank_returns_status_only():
+    collector = make_captured_collector()
+    calls = {"n": 0}
+
+    def nonroot_project(residuals):
+        calls["n"] += 1
+        return None                       # gather returns None off-root
+
+    result = collector.readout(nonroot_project, VOCAB)
+    assert result["authoritative"] is False
+    assert result["readout"] == {}        # no shard-local ids leak
+    assert result["projection_calls"] == calls["n"] > 0
+
+
+def test_winning_token_on_second_shard_gets_global_id():
+    collector = make_captured_collector()
+    norm = torch.nn.LayerNorm(HIDDEN)
+    shard0 = torch.nn.Linear(HIDDEN, VOCAB // 2, bias=False)
+    shard1 = torch.nn.Linear(HIDDEN, VOCAB // 2, bias=False)
+    with torch.no_grad():
+        shard0.weight.mul_(0.0)           # shard 0 can never win
+        shard1.weight.add_(1.0)
+    result = collector.readout(gathered_project(norm, [shard0, shard1]),
+                               VOCAB)
+    for data in result["readout"].values():
+        for ids in data["token_ids"]:
+            assert all(VOCAB // 2 <= t < VOCAB for t in ids), (
+                "winner must carry the global (shard-offset) id")
+
+
+def test_padded_vocab_is_trimmed():
+    collector = make_captured_collector()
+    norm = torch.nn.LayerNorm(HIDDEN)
+    heads = [torch.nn.Linear(HIDDEN, VOCAB // 2, bias=False)
+             for _ in range(2)]
+    # 16 poisoned padding columns with huge logits: if trimming fails,
+    # top-k picks them and the id-range guard trips.
+    result = collector.readout(
+        gathered_project(norm, heads, pad_cols=16), VOCAB)
+    for data in result["readout"].values():
+        for ids in data["token_ids"]:
+            assert all(0 <= t < VOCAB for t in ids)
+
+
+def test_identical_projection_call_counts_across_ranks():
+    root = make_captured_collector(n_steps=20, n_slots=8, cadence=4)
+    other = make_captured_collector(n_steps=20, n_slots=8, cadence=4)
+    norm = torch.nn.LayerNorm(HIDDEN)
+    head = torch.nn.Linear(HIDDEN, VOCAB, bias=False)
+    r_root = root.readout(
+        lambda r: head(norm(r.to(norm.weight.dtype))), VOCAB)
+    r_other = other.readout(lambda r: None, VOCAB)
+    assert r_root["projection_calls"] == r_other["projection_calls"] > 0, (
+        "ranks must issue identical collective call counts")
+
+
+def test_projection_chunking_is_bounded():
+    collector = make_captured_collector(n_steps=64, n_slots=32, cadence=2)
+    norm = torch.nn.LayerNorm(HIDDEN)
+    head = torch.nn.Linear(HIDDEN, VOCAB, bias=False)
+    sizes = []
+
+    def project(residuals):
+        sizes.append(residuals.shape[0])
+        return head(norm(residuals.to(norm.weight.dtype)))
+
+    collector.readout(project, VOCAB)
+    cap = SemanticBridgeCollector.PROJECTION_CHUNK_SLOTS
+    assert sizes and max(sizes) <= cap
+    assert len(sizes) >= len(BRIDGE_LAYERS) * 2  # chunk walk per layer
 
 
 def test_reset_clears_state():

@@ -160,10 +160,23 @@ class JlensWorkerExtension:
         return True
 
     def jlens_bridge_fetch(self) -> dict:
-        """Bounded top-k readout via the model's own norm/unembedding.
-        Small int lists and scalars only over RPC."""
-        collector, _, norm, lm_head = self._jlens_bridge
-        out = collector.readout(norm, lm_head)
+        """Bounded top-k readout via the model's SUPPORTED projection
+        path: final norm then ``compute_logits`` (LogitsProcessor, which
+        applies the quantized head method and gathers TP vocabulary
+        shards). Direct ParallelLMHead.forward is never called. Only the
+        rank receiving full global-vocab logits returns token ids."""
+        collector, _, norm, _ = self._jlens_bridge
+        model = self.model_runner.model
+        text_cfg = getattr(self.model_runner.model_config.hf_config,
+                           "text_config",
+                           self.model_runner.model_config.hf_config)
+        vocab_size = int(text_cfg.vocab_size)
+
+        def project(residuals):
+            hidden = norm(residuals.to(norm.weight.dtype))
+            return model.compute_logits(hidden)
+
+        out = collector.readout(project, vocab_size)
         out["rank"] = getattr(self, "rank", -1)
         return out
 

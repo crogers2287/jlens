@@ -1,199 +1,250 @@
-# steer.md — close M37J-C smoke gate and restoration holes before live run
+# steer.md — close remaining M37J-C false-pass paths before live Agents-A1 smoke
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `fe6fcf2f69a30ad60e4dd7f1a02b31d8a817a153` only where explicitly
+steer commit `821e430e8abf9ee748ae2c0ed91c986ac9e7cce4` only where explicitly
 amended below. Every sealed-data, verifier, privacy, claim-boundary, resource,
-production, and repository-hygiene gate from steers `8eb2e9e`, `cccf40a`, and
-`fe6fcf2` remains binding by incorporation. No scientific threshold, feature
-family, task set, checkpoint, or resource ceiling is relaxed.
+production, and repository-hygiene gate from steers `8eb2e9e`, `cccf40a`,
+`fe6fcf2`, and `821e430` remains binding by incorporation. No scientific
+threshold, feature family, prompt, task, checkpoint, cadence, top-k value,
+resource ceiling, or production gate is relaxed.
 
 ## Current established state
 
-- M36T development completed 96/96 with 65 positive and 31 negative labels. Its
-  comparators, task sets, decision step, tool budget, hypotheses, and power gate
-  remain frozen.
-- The 192-task M36T sealed capture is healthy and must not be interrupted. At
-  pushed heartbeat `e94fb4c30eb831ebbd3c2084fc7107b2c6039066` it was 49/192,
-  producing about 26 rows/hour, with no operational blocker.
-- The corrected M36T evaluator at `0285ec3531d40faac286424661f610ade677d3ec`
-  remains the only authorized evaluator. Tool answers are constructed from the
-  exact private task and accepted only through the frozen verifier.
-- M37J-A is closed. Its frozen holdout did not establish completed-error
-  prediction and its truncation arm was underpowered. Do not reopen or tune it.
-- M37J-C tensor-parallel projection was corrected before live prompts at
-  `290e7e8f7ea86a931dcbdd94069f2256006dbec8`; 79/79 tests were green at the
-  latest heartbeat. The bridge remains observation-only and inert until enabled.
-- The 16-prompt M37J-C smoke driver was staged at
-  `90f361deb08e90516ca78cc5bed8260efdda7010`, but it is not authorized to run
-  unchanged because its gate-finalization logic is incomplete.
-- M38E remains queued behind the M36T sealed window. Do not displace M36T for
-  M37J-C or M38E.
+- M36T development remains frozen at 96/96 with 65 positive and 31 negative
+  labels. Its task sets, comparators, decision step, tool budget, hypotheses,
+  verifier, power gate, and evaluator remain unchanged.
+- At pushed heartbeat `2c119ef74c7e99c55125f158601a2a49e32409f0`,
+  M36T sealed capture was healthy at 78/192, approximately 30 rows/hour, with
+  52/52 fresh core tests and no operational blocker. Do not interrupt, split,
+  migrate, or tune this capture.
+- The only authorized M36T evaluator remains
+  `0285ec3531d40faac286424661f610ade677d3ec`. It may run exactly once after all
+  192 sealed rows are durably present and its full preflight succeeds.
+- M37J-A remains closed: completed-error prediction was not established and the
+  truncation arm was underpowered. Do not reopen or tune it.
+- M37J-C tensor-parallel projection remains pinned to
+  `290e7e8f7ea86a931dcbdd94069f2256006dbec8`. It is observation-only, bounded,
+  and inert until explicitly enabled.
+- Smoke-harness conformance commit
+  `ed056c0b4426124400b6658b12bb91187401dc88` correctly added two-phase
+  finalization, ordered cleanup, all-rank summaries, the frozen divergence
+  floor, and authoritative-readout agreement. No live M37J-C prompt has run.
+- A fresh source audit of that committed implementation found additional paths
+  by which the smoke could miss a failure or accept an empty result. These are
+  implementation blockers, not scientific outcomes.
+- M38E remains queued behind the M36T sealed window and the bounded M37J-C
+  feasibility smoke. Do not displace M36T.
 
-## Binding M37J-C smoke-harness correction before any live prompt
+## Binding corrections before any live M37J-C prompt
 
-The staged smoke driver claims eight mandatory gates, but the implementation can
-currently report `outcome: passed` without actually satisfying all eight. This
-is an implementation blocker, not a scientific result.
+### 1. Dispatch identity must be checked for every prompt, not only the last
 
-### 1. Restoration gate must be a real boolean gate
+The current `run_leg` resets telemetry before each enabled prompt, but
+`phase_smoke` fetches `jlens_fetch_summary` only once after all 16 prompts.
+Therefore the identity gate currently observes only the final prompt; a routing
+mismatch or missed dispatch on prompts 1–15 can be erased by the next reset.
 
-`serving_restored_and_verified` is currently stored as a string and the pass
-calculation includes only boolean values. Therefore the driver can mark the
-smoke passed before normal Agents-A1 serving has been restored or verified.
+Correct this without changing prompts or decoding:
 
-Correct this before execution:
+- After each enabled prompt, fetch `jlens_fetch_summary` on every tensor-parallel
+  rank before any subsequent reset.
+- Require exactly the frozen rank identity set `{0, 1}` for every prompt, not
+  merely two distinct arbitrary values.
+- Require `id_mismatch_total == 0` and `dispatch_missed_total == 0` on every rank
+  for every prompt.
+- Require the expected prompt count, rank count, unique rank identities, and
+  complete prompt-by-rank coverage.
+- Publish only aggregate maxima, sums, and failure counts. Never publish
+  per-prompt counters, routes, ids, weights, or traces.
+- Any missing prompt summary, missing/duplicate/unexpected rank, nonzero counter,
+  or summary exception blocks the smoke.
 
-- The smoke phase may produce only `technical_gates_passed_pending_restore` after
-  gates 1–7 pass.
-- A separate finalization step must restore the stock serving configuration,
-  issue the frozen public-safe verification request, verify normal response and
-  process health, and then write gate 8 as the boolean `true`.
-- Only that finalizer may write final `outcome: passed`.
-- Restore failure, verification failure, or missing finalization must write
-  `agents_a1_semantic_bridge_feasibility_blocked` and keep production gated.
-- The final aggregate artifact must identify the exact projection commit, smoke
-  driver commit, runtime override hash, and restoration verification record.
+### 2. Empty authoritative readouts must fail
 
-### 2. Cleanup must be exception-safe
+`check_authoritative` currently treats an authoritative rank with an empty
+`readout` as finite because Python's `all()` over an empty sequence is true.
+The collector can produce this state when no decoder hook sees a supported
+single-token decode shape. That is precisely a feasibility failure the smoke is
+required to detect.
 
-The driver currently has no guaranteed cleanup path. Wrap installation and
-execution in `try/finally` so every rank is commanded, in order, to:
+For every prompt and every authoritative rank, require all of the following:
 
-1. disable bridge capture;
-2. disable telemetry capture;
-3. uninstall bridge hooks;
-4. uninstall telemetry hooks;
-5. release the temporary engine before the external serving restore.
+- `layers` equals the frozen `[4, 12, 20, 28, 36]` exactly;
+- `cadence == 32` and `top_k == 10` exactly;
+- exactly five `decode_steps`, `captured_slots`, and `dropped` counters;
+- every layer has `decode_steps > 0` and a non-empty readout entry;
+- every layer's `steps` and `token_ids` are non-empty, with
+  `len(token_ids) == len(steps) * 10`;
+- all recorded steps are in range, strictly increasing, and the final recorded
+  step equals `decode_steps - 1`;
+- the final position appears once. If the final decode step is already a cadence
+  checkpoint, do not append a duplicate final slot;
+- every top-k id is a valid global-vocabulary id and every finiteness flag is
+  true;
+- semantic-group aggregates are present, finite, and computed from the same
+  authoritative readout;
+- multiple authoritative ranks agree exactly on metadata, steps, top-k ids,
+  finiteness, and semantic-group aggregates;
+- non-authoritative ranks emit no readout, token ids, or semantic scores;
+- projection-call, decode-step, captured-slot, and dropped-count vectors agree
+  across all ranks.
 
-Cleanup RPC results must be checked across all ranks. Any false result, RPC
-exception, lingering installed state, or inability to release the engine blocks
-the smoke. Cleanup is required even when projection, decoding, telemetry,
-privacy, memory, or parity checks fail.
+Any empty, malformed, duplicate-final, incomplete, non-finite, shard-local, or
+cross-rank-disagreeing result blocks the smoke. This correction preserves the
+frozen layers, cadence, final-position rule, top-k, and semantic groups.
 
-### 3. Dispatch identity must be checked on every tensor-parallel rank
+### 3. Installation conformance must be all-rank and exact
 
-The staged driver currently reads only element `[0]` from
-`jlens_fetch_summary`. That is insufficient because mismatch counters are
-rank-local.
+The current bridge install path selects result `[0]` and does not validate the
+other rank's bridge or telemetry installation metadata.
 
-- Fetch all rank summaries.
-- Require `id_mismatch_total == 0` and `dispatch_missed_total == 0` on every rank.
-- Require the expected rank count and unique rank identities.
-- Record only aggregate maxima/sums and rank-count conformance publicly.
-- Any missing rank or nonzero counter blocks the smoke.
+Before leg B:
 
-### 4. Enforce the exact frozen nondeterminism envelope
+- validate every bridge-install result and every telemetry-install result;
+- require the exact rank set `{0, 1}`;
+- require identical bridge layers, hidden size, decoder-layer count, MoE-layer
+  count, expert count, and top-k metadata where exposed;
+- reject any `error`, already-installed state, missing field, rank disagreement,
+  unexpected decoder depth, or unexpected MoE runner count;
+- record only aggregate conformance booleans and counts.
 
-The M36V artifact freezes both `margin_prompts: 2` and
-`first_divergence_floor: 8`. The staged driver imports the prompt margin but
-ignores the floor and instead compares against the baseline minimum divergence
-of 13. That does not implement the frozen envelope exactly.
+Installation conformance is a technical gate and must be included in the
+pending-restore pass calculation.
 
-- Read and hash the complete parity-envelope object from the pinned M36V
-  artifact.
-- For both A-vs-B and B-vs-C, require differing prompts no greater than baseline
-  plus the frozen margin and first divergence no earlier than the frozen floor.
-- Do not retune the envelope after observing M37J-C outputs.
-- Fail preflight if the expected envelope fields or source artifact hash differ.
+### 4. Finalization must verify an internally consistent technical artifact
 
-### 5. Authoritative global readout conformance must not silently select one rank
+The current finalizer accepts a substring match for the serving reply and can
+promote any artifact whose `outcome` string says pending, even if its gate map is
+missing or inconsistent.
 
-The staged driver takes the first authoritative readout and ignores any others.
-Correct this without changing layers, cadence, top-k, or semantic groups:
+Before issuing the restore probe, require:
 
-- Require at least one authoritative global-vocabulary result for every prompt.
-- If multiple ranks receive global logits, require their bounded top-k readouts,
-  step indices, finiteness flags, and semantic-group scores to be identical.
-- Require non-authoritative ranks to emit no token ids or semantic scores.
-- Require identical projection-call counts and captured-slot counts across all
-  ranks for each prompt.
-- Publish only aggregate conformance booleans and counts, never token ids or
-  per-prompt readouts.
+- exact schema version and `run_kind`;
+- exact projection commit, committed smoke-driver SHA, frozen override hash, and
+  frozen envelope hash fields;
+- a complete, exact gate-key set for the smoke phase;
+- every technical gate is the boolean `true`;
+- `outcome == technical_gates_passed_pending_restore`;
+- no pre-existing gate 8 or final `passed` state;
+- aggregate-only privacy status and no forbidden keys or payload classes;
+- a SHA-256 of the pre-finalization technical artifact recorded in the final
+  aggregate artifact.
 
-### 6. Add tests and commit before execution
+The production reply must equal `SERVING-OK` after only surrounding-whitespace
+normalization. Substring containment is forbidden. Require the exact expected
+model id in the model list and successful process/endpoint health checks. Any
+artifact inconsistency, reply mismatch, model mismatch, timeout, or health
+failure writes the blocked outcome.
 
-Add synthetic tests covering:
+### 5. Every exception path must leave a blocker artifact and complete lifecycle cleanup
 
-- restoration represented as a required boolean and excluded-until-finalized;
-- technical-pass/pending-restore versus final-pass state transitions;
-- exception-path cleanup and all four cleanup RPCs;
-- rank-local dispatch mismatch on a nonzero rank causing failure;
-- missing or duplicate rank summaries causing failure;
-- exact use of `first_divergence_floor: 8` from the pinned envelope;
-- multiple authoritative ranks agreeing and disagreeing;
-- non-authoritative rank leaking ids causing failure;
-- restoration failure preserving the blocked outcome.
+The current smoke can raise before its gate variables are assigned, resulting in
+cleanup but no aggregate blocker artifact. It also starts the GPU sampler and
+constructs the engine outside the protected lifecycle.
 
-Commit the corrected driver, tests, and an aggregate-only technical amendment
-before any live M37J-C prompt. Run the full private-safe test suite and
-`check_commit_safe.py`; verify the pushed remote SHA.
+- Put sampler start, engine construction, installation, all three legs, fetches,
+  gate calculation, engine release, and sampler shutdown under one explicit
+  lifecycle state machine.
+- Continue ordered cleanup through all cleanup errors and record aggregate step
+  status.
+- Stop and join the peak sampler on every path, including engine-construction
+  failure.
+- Avoid references to unassigned locals when a leg or RPC fails.
+- On any exception, write an aggregate-only
+  `agents_a1_semantic_bridge_feasibility_blocked` artifact containing only the
+  exception class, lifecycle stage, cleanup aggregates, and privacy status.
+- Never include prompt text, output text, token ids, readouts, hidden states,
+  routes, local paths, or stack traces in the public blocker.
 
-This correction changes only conformance, cleanup, and finalization needed to
-execute the already-frozen feasibility smoke. It does not authorize new prompts,
-semantic words, layers, positions, cadence, top-k, thresholds, route edits,
-activation interventions, or outcome-driven tuning.
+### 6. Add synthetic tests and commit before execution
 
-## M36T sealed completion remains binding
+Add tests covering at minimum:
 
-Continue capture unchanged. After all 192 rows are durably present, run only the
-corrected evaluator exactly once:
+- a mismatch on enabled prompt 1 followed by a clean prompt 2 still fails;
+- exact rank set enforcement rejects `{0, 2}`, `{None, 0}`, duplicates, and
+  missing ranks;
+- an authoritative empty readout fails rather than passing vacuously;
+- missing one frozen layer, zero decode steps, empty ids, bad id count,
+  non-monotone steps, duplicate final step, or non-finite semantic aggregate
+  fails;
+- cross-rank metadata/counter disagreement fails;
+- a rank-local install error or metadata disagreement fails;
+- finalizer rejects substring replies such as `NOT SERVING-OK`;
+- finalizer rejects pending artifacts with false, missing, extra, non-boolean, or
+  inconsistent gates;
+- finalizer records the technical-artifact SHA-256;
+- engine-construction, leg, fetch, cleanup, and sampler exceptions each produce
+  a blocked aggregate artifact without forbidden content.
 
-- execute task/row identity, task-file SHA-256, checkpoint, schema,
-  feature-timing, uniqueness, and token-ceiling preflight before scoring;
-- construct deterministic tool output from each private task and require the
-  frozen verifier to return `pass`;
-- preserve all six arms, rankings, token accounting, caps, hypotheses, paired
-  bootstrap procedure, and dedicated random-policy seed;
-- on any preflight or verifier failure, commit only the aggregate blocker and
-  stop before opening hypotheses;
-- do not tune on the sealed result.
+Commit the corrected driver, bridge logic if needed, tests, and a new
+aggregate-only technical amendment before any live M37J-C prompt. Run the full
+private-safe suite and `check_commit_safe.py`; verify the pushed remote SHA.
+
+These corrections are conformance-only. They do not authorize changing the
+frozen prompts, model, checkpoint, decoding cap, layers, cadence, top-k,
+semantic words, divergence envelope, memory limit, latency limit, route logic,
+or production configuration.
+
+## Execution order remains unchanged
+
+1. Continue M36T sealed capture unchanged to 192/192.
+2. Land the corrections above while capture continues; issue no live M37J-C
+   prompt.
+3. Run only the corrected M36T evaluator exactly once after its full preflight.
+4. Restore and verify stock Agents-A1 serving.
+5. Run the corrected bounded M37J-C smoke and finalize it only after the
+   post-smoke production restore passes exact verification.
+6. Release the dual-3090 window to M38E under its frozen protocol.
+
+The latest capture pace implies the sealed run is unlikely to finish within the
+remaining short monitoring window. Do not shorten the sealed set, lower the
+2048-token ceiling, parallelize onto a non-identical runtime, or bypass any gate
+to meet a wall-clock target.
 
 ## Research scan and scaling boundary
 
-- The official PUMA repository is now verifiable, but the released code is the
-  offline pipeline; its online early-exit implementation is explicitly not yet
-  released. PUMA also couples semantic redundancy with answer-level
-  verification. It is future comparator evidence, not code to insert into the
-  frozen Agents-A1 smoke or a basis for unverified early stopping.
-- Recent MoE work reports that prompt-level routing does not reliably predict
-  rollout-level routing and that deeper expert activation can look similar for
-  semantically unrelated reasoning inputs. Router statistics remain empirical
-  features, not human-interpretable expert semantics.
-- Recent early-exit evaluation reports lower layer-exit potential for MoEs than
-  dense transformers. This further blocks any production early-exit claim from
-  the current observation-only work.
-- Counterfactual-routing results remain evidence that fragile reasoning tokens
-  may contain router-reachable alternatives, but do not authorize route edits in
-  Agents-A1.
+- `Hallucination Is Linearly Decodable from Mid-Layer Hidden States in Quantized
+  LLMs` reports strong mid-layer linear separability on 4-bit 7B–8B models. This
+  supports the technical plausibility of observing useful signals after
+  quantization, but it does not establish transfer to Agents-A1 AWQ, long-horizon
+  reasoning, or this semantic vocabulary.
+- `Where Does Reasoning Break?` reports that trajectory-geometry features can
+  localize first reasoning errors while a distilled deployable detector can
+  collapse under distribution shift. If M37J-C is technically feasible, a fresh
+  future protocol should compare trajectory dynamics against static semantic
+  counts and must evaluate cross-family and cross-model shift explicitly. Do not
+  add this to the frozen smoke.
+- `IG-Lens` remains a plausible post-smoke attribution comparator because it
+  provides exact additive probability accounting without a backward pass. It is
+  not a Jacobian lens and does not replace the frozen standard logit-lens
+  feasibility baseline.
+- PUMA still requires semantic redundancy plus answer-level verification; its
+  public implementation is not a basis for unverified Agents-A1 early exit.
+- Counterfactual-routing work still shows that router behavior can be weak on
+  fragile reasoning tokens. It supports comparison with hidden-state evidence,
+  not route edits or causal claims.
 - No verified official Agents-A1 4B checkpoint and no actionable r/LocalLLaMA
   implementation lead were found. The full-Jacobian Agents-A1 path remains
-  blocked by checkpoint availability and the unchanged 30 GiB fit gate.
+  blocked by official checkpoint availability and the unchanged 30 GiB fit gate.
 
-The technically credible near-term scale path remains:
-
-1. finish M36T sealed capture and run its corrected evaluator once;
-2. correct the M37J-C smoke harness before any live prompt;
-3. restore normal Agents-A1 serving and verify it;
-4. run the bounded 16-prompt observation-only bridge smoke;
-5. finalize pass only after post-smoke serving restoration succeeds;
-6. release the dual-3090 window to M38E under its frozen protocol.
-
-M37J-C can establish only that bounded semantic readouts are observable on the
-full Agents-A1 runtime within parity, dispatch-identity, numerical, memory,
-latency, privacy, cleanup, and restoration gates. It cannot establish a Jacobian
-lens on Agents-A1, error prediction, causal attribution, expert semantics, route
-quality, safe early exit, intervention value, or production utility.
+M37J-C can establish only that bounded semantic readouts are technically
+observable on the full quantized Agents-A1 runtime while preserving output
+parity, dispatch identity, numerical validity, memory, latency, privacy, cleanup,
+and production restoration. It cannot establish a Jacobian lens on Agents-A1,
+error prediction, semantic correctness, causal attribution, expert meaning,
+route quality, safe early exit, intervention value, or production utility.
 
 Stop on checkpoint mismatch, task/row mismatch, task-hash mismatch, feature or
-label leakage, verifier bypass, tensor-parallel collective mismatch, shard-local
-readout, cross-rank readout disagreement, invalid telemetry alignment, numerical
-instability, cleanup failure, restoration failure, privacy failure, resource-gate
-breach, or repeated worker failure.
+label leakage, verifier bypass, incomplete prompt-by-rank identity coverage,
+empty readout, malformed layer/step metadata, tensor-parallel collective
+mismatch, shard-local id leakage, cross-rank disagreement, numerical instability,
+cleanup failure, sampler/engine lifecycle failure, restoration failure, privacy
+failure, resource-gate breach, or repeated worker failure.
 
 Never commit private prompts, outputs, operands, token text or ids, per-task
 labels or predictions, raw telemetry, hidden states, activations, gradients,
-Jacobians, lens matrices, model weights, caches, or local paths. Public artifacts
-remain aggregate-only and must pass `check_commit_safe.py`.
+Jacobians, lens matrices, model weights, caches, stack traces, or local paths.
+Public artifacts remain aggregate-only and must pass `check_commit_safe.py`.
 
 Production remains gated. No observation, classifier, tool policy, route edit,
 activation intervention, or early-exit rule may be promoted by this directive.

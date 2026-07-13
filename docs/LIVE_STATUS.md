@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T07:13Z
+
+- **Steer:** `cccf40a` current (`steer_sha_seen e8ab2d22…`), no newer.
+- **Tests (fresh):** 52/52 pass (core suites).
+- **M36T:** sealed capture 37/192, last row 53 s ago, GPU 100%;
+  ~26 rows/h → ETA ~6 h. Corrected evaluator staged.
+- **Phase 0A watch (06:5x):** official InternScience collection has
+  NO 4B checkpoint (10 models; 35B variants + Agents-K1 only).
+  Full-Jacobian path remains blocked; no substitution.
+- **M37J-C:** Phase 0B bridge implementation in progress (CPU);
+  live smoke deferred to the post-M36T service window.
+- **M38E:** queued. **V100:** idle (M37J-A closed).
+- **Serving:** unloaded for the sealed window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T06:45Z
 
 - **Steer:** `cccf40a` is current (`steer_sha_seen` updated to

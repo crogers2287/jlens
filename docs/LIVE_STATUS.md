@@ -4,6 +4,20 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T19:13Z
+
+- **Steer:** `a9b91f7` current (`steer_sha_seen ee579850…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official sweep:** RUNNING since 18:46 from `4469b10` after the
+  corrected smoke passed (2 content-marked rows, official ledger
+  untouched). 4 official rows captured so far; supervised with the
+  min(log,rows) watchdog; ETA many hours across 288 tasks + any
+  triggered 4096 escalations.
+- **All other tracks:** M36V/M36C/M36T complete with committed scoped
+  results; M37J-A closed (negative); M37J-C blocked-by-outcome
+  awaiting a fresh directive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T18:43Z
 
 - **Steer:** `a9b91f7` current, read and executed in full

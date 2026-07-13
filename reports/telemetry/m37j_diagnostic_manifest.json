@@ -1,0 +1,51 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_diagnostic_manifest",
+ "steer": "0497526",
+ "preregistered_before_any_labels": true,
+ "pilot_model": "Qwen1.5-MoE-A2.7B-Chat",
+ "seed": "m37j-diag-v1",
+ "families": [
+  "mod_chain",
+  "alg_coeff",
+  "order_track",
+  "json_digits"
+ ],
+ "per_family": 48,
+ "band_mix_per_family": "12 tasks each at bands b1,b1,b2,b2",
+ "splits": {
+  "discovery": 96,
+  "validation": 48,
+  "holdout": 48
+ },
+ "decode_budgets": {
+  "short_cap_tokens": 256,
+  "long_cap_tokens": 1024,
+  "single_source_run": "one greedy run to the long cap; short-cap outcome derived from the prefix (EOS position <= 256); capped outputs are never labeled completed-wrong"
+ },
+ "outcome_classes": [
+  "completed_correct",
+  "completed_incorrect",
+  "short_cap_truncated_long_cap_correct",
+  "truncated_at_both_caps"
+ ],
+ "lens_readout": {
+  "layers": [
+   2,
+   6,
+   11,
+   16,
+   21
+  ],
+  "positions": "every 32 decode tokens plus the final position (teacher-forced re-forward of the recorded generation)",
+  "top_k_tokens": 10,
+  "lens_sha256": "49faf4e926395393acf543d578ad3022d361e373a598921ba4d2ec5afc95378b"
+ },
+ "semantic_groups": "the five fixed groups from the protocol (completion/continuation/verification/error-conflict/uncertainty); no words added after observing holdout outcomes",
+ "feature_freeze": "discovery-derived sparse features fit on discovery only; vocabulary/normalization/sparsity/count frozen on validation before holdout is opened; labels and verifier results never enter features",
+ "disjointness": "prompt-string exclusion vs all prior local task sets + fresh seed",
+ "collisions_skipped": 1,
+ "tasks_sha256": "bb1d95cc71a995c2acc89f47a9cacfd42824771d00c360ea1ce3ef59686d7c06",
+ "tasks_public": false,
+ "privacy_check_status": "aggregate manifest only; tasks private"
+}

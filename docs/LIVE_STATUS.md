@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T10:43Z (extended for steer 04920b0)
+
+- **Steer:** NEW steer `04920b0` read and executed in full;
+  `steer_sha_seen` now `a0b01d579667f35109855ecd1426f78463cf97ec`.
+  All five closures completed CPU-only pre-live-prompt (`29f203a`):
+  transactional worker installs + idempotent uninstalls + status-RPC
+  cleanup postconditions, exact frozen cadence/slot/projection-call
+  schedule validation, math.isfinite + exact five-key semantic schema,
+  derived (never declared) source provenance verified pre-engine and
+  re-verified at finalization with a recursive artifact audit, and
+  complete all-rank install metadata + serving health check.
+  Amendment 3 committed; 32 harness tests; 328 green repo-wide.
+- **M36T:** sealed capture 115/192 at collection; healthy; ETA ~2.5 h.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T10:13Z
 
 - **Steer:** `65c76ec` current (`steer_sha_seen e9b3695d…`), no newer.

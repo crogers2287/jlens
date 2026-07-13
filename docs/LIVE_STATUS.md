@@ -4,6 +4,26 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T17:17Z
+
+- **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M36T COMPLETE (event-driven pushes):** sealed capture finished
+  192/192 at 17:11 after 11.4 h; frozen evaluator ran exactly once
+  (`3f5f131`). **Scoped result: T-H3 ESTABLISHED** (+0.192 verified
+  success over long_decode_2048, LB +0.135; 716 tokens/task saved,
+  LB 618; also +0.156 over random, LB +0.099). **T-H1 not
+  established** (balanced-accuracy LB +0.004 but average-precision
+  LB −0.0026 under the dual-bound rule); **T-H2 not established** vs
+  metadata routing (+0.005, CI spans 0). No sealed tuning.
+- **Serving:** restored and verified post-capture; unloaded again for
+  the authorized M37J-C smoke window.
+- **M37J-C:** 16-prompt smoke RUNNING from the audited harness at the
+  post-M36T service window (engine init 17:16; ~40–60 min; Monitor
+  armed). Finalize restores + verifies serving before any pass.
+- **M38E:** next in the 3090 window after smoke finalization.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T16:43Z
 
 - **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.

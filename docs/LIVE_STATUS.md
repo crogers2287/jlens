@@ -4,6 +4,22 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T03:05Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass.
+- **M36T:** 63/96 rows; 34 positive / 29 negative (power floor held);
+  classes {1: 29, 2: 21, 3: 10, 4: 3}; mod_arith 15/24, sub_mixed
+  remaining. ETA ~1 h. Capture alive.
+- **M37J:** dim_batch=4 refit RUNNING; checkpoint 02:56 UTC.
+- **Watchers:** background-Bash watchers were externally reaped twice
+  this hour; replaced with persistent Monitor watches (supervisor-log
+  tail for M36T; 5-min terminal-state poll for M37J). Event-driven
+  push rule intact throughout — no completion occurred unwatched.
+- **M38E:** staged; sweeps gated on M36T stop.
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T02:35Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

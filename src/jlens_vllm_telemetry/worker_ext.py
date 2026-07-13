@@ -118,3 +118,62 @@ class JlensWorkerExtension:
         uninstall_router_telemetry(handles)
         self._jlens_state = None
         return True
+
+    # -- M37J-C semantic bridge (observation-only; steer 8eb2e9e) --------
+
+    def _jlens_find_decoder_stack(self):
+        """The decoder layer ModuleList and the model's own final norm and
+        LM head. Text stack only; never patched or replaced."""
+        model = self.model_runner.model
+        text = getattr(model, "language_model", model)
+        inner = getattr(text, "model", text)
+        layers = inner.layers
+        norm = inner.norm
+        lm_head = getattr(text, "lm_head", getattr(model, "lm_head", None))
+        return layers, norm, lm_head
+
+    def jlens_bridge_install(self, cfg: dict) -> dict:
+        from jlens_vllm_telemetry.bridge import (
+            SemanticBridgeCollector, install_bridge)
+
+        if getattr(self, "_jlens_bridge", None) is not None:
+            return {"error": "already installed"}
+        layers, norm, lm_head = self._jlens_find_decoder_stack()
+        collector = SemanticBridgeCollector(
+            hidden_size=cfg["hidden_size"],
+            n_slots=cfg.get("n_slots", 80))
+        handles = install_bridge(layers, collector)
+        collector.allocate(self.model_runner.device)
+        self._jlens_bridge = (collector, handles, norm, lm_head)
+        return {"rank": getattr(self, "rank", -1),
+                "bridge_layers": list(collector.layers),
+                "n_decoder_layers": len(layers)}
+
+    def jlens_bridge_set_enabled(self, enabled: bool) -> bool:
+        collector, _, _, _ = self._jlens_bridge
+        collector.enabled = bool(enabled)
+        return collector.enabled
+
+    def jlens_bridge_reset(self) -> bool:
+        collector, _, _, _ = self._jlens_bridge
+        collector.reset()
+        return True
+
+    def jlens_bridge_fetch(self) -> dict:
+        """Bounded top-k readout via the model's own norm/unembedding.
+        Small int lists and scalars only over RPC."""
+        collector, _, norm, lm_head = self._jlens_bridge
+        out = collector.readout(norm, lm_head)
+        out["rank"] = getattr(self, "rank", -1)
+        return out
+
+    def jlens_bridge_uninstall(self) -> bool:
+        from jlens_vllm_telemetry.bridge import uninstall_bridge
+
+        state = getattr(self, "_jlens_bridge", None)
+        if state is None:
+            return False
+        _, handles, _, _ = state
+        uninstall_bridge(handles)
+        self._jlens_bridge = None
+        return True

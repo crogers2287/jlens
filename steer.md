@@ -1,189 +1,174 @@
-# steer.md — close remaining M37J-C false-pass paths before live Agents-A1 smoke
+# steer.md — close transactional-install, cadence, finiteness, and provenance false-pass paths before live Agents-A1 smoke
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `821e430e8abf9ee748ae2c0ed91c986ac9e7cce4` only where explicitly
+steer commit `65c76ecf0cd44fe08f6dc4fa4df1107921c2eda5` only where explicitly
 amended below. Every sealed-data, verifier, privacy, claim-boundary, resource,
 production, and repository-hygiene gate from steers `8eb2e9e`, `cccf40a`,
-`fe6fcf2`, and `821e430` remains binding by incorporation. No scientific
-threshold, feature family, prompt, task, checkpoint, cadence, top-k value,
-resource ceiling, or production gate is relaxed.
+`fe6fcf2`, `821e430`, and `65c76ec` remains binding by incorporation. No
+scientific threshold, feature family, prompt, task, checkpoint, cadence, top-k
+value, resource ceiling, or production gate is relaxed.
 
 ## Current established state
 
 - M36T development remains frozen at 96/96 with 65 positive and 31 negative
   labels. Its task sets, comparators, decision step, tool budget, hypotheses,
   verifier, power gate, and evaluator remain unchanged.
-- At pushed heartbeat `2c119ef74c7e99c55125f158601a2a49e32409f0`,
-  M36T sealed capture was healthy at 78/192, approximately 30 rows/hour, with
-  52/52 fresh core tests and no operational blocker. Do not interrupt, split,
-  migrate, or tune this capture.
+- At pushed heartbeat `c4858641d311602369ea7aed33910cff975ded6e`, M36T
+  sealed capture was healthy at 108/192, with 52/52 fresh core tests and no
+  operational blocker. Do not interrupt, split, migrate, tune, or shorten it.
 - The only authorized M36T evaluator remains
   `0285ec3531d40faac286424661f610ade677d3ec`. It may run exactly once after all
   192 sealed rows are durably present and its full preflight succeeds.
-- M37J-A remains closed: completed-error prediction was not established and the
+- M37J-A remains closed. Completed-error prediction was not established and its
   truncation arm was underpowered. Do not reopen or tune it.
-- M37J-C tensor-parallel projection remains pinned to
-  `290e7e8f7ea86a931dcbdd94069f2256006dbec8`. It is observation-only, bounded,
-  and inert until explicitly enabled.
-- Smoke-harness conformance commit
-  `ed056c0b4426124400b6658b12bb91187401dc88` correctly added two-phase
-  finalization, ordered cleanup, all-rank summaries, the frozen divergence
-  floor, and authoritative-readout agreement. No live M37J-C prompt has run.
-- A fresh source audit of that committed implementation found additional paths
-  by which the smoke could miss a failure or accept an empty result. These are
-  implementation blockers, not scientific outcomes.
-- M38E remains queued behind the M36T sealed window and the bounded M37J-C
-  feasibility smoke. Do not displace M36T.
+- Commit `13b81078b402dfc27b185f6799fd19c33dc6c4f3` executed steer
+  `65c76ec`: per-prompt all-rank identity, nonempty readouts, exact final-slot
+  handling, strict gate maps, exception blocker artifacts, and exact serving
+  reply checks are now staged. Its synthetic suite reported 318 green tests.
+  No live M37J-C prompt has been issued.
+- A fresh source audit found additional implementation paths that can leak hooks
+  after a failed install, accept structurally wrong cadence data or infinite
+  semantic values, and record false source provenance. These are technical
+  blockers, not scientific outcomes.
+- M38E remains queued behind the M36T sealed window and bounded M37J-C smoke.
 
 ## Binding corrections before any live M37J-C prompt
 
-### 1. Dispatch identity must be checked for every prompt, not only the last
+### 1. Make worker installation transactional and cleanup idempotent
 
-The current `run_leg` resets telemetry before each enabled prompt, but
-`phase_smoke` fetches `jlens_fetch_summary` only once after all 16 prompts.
-Therefore the identity gate currently observes only the final prompt; a routing
-mismatch or missed dispatch on prompts 1–15 can be erased by the next reset.
+The current worker installation methods attach hooks before allocation and only
+store worker state after allocation succeeds. If allocation raises, hooks can
+remain attached while the state pointer stays `None`, making normal uninstall
+unable to find them. The driver also sets `installed = True` only after both
+bridge and telemetry installation RPCs return. If bridge installation succeeds
+but telemetry installation raises, the exception path skips cleanup entirely.
 
-Correct this without changing prompts or decoding:
+Correct this without changing the model or capture behavior:
 
-- After each enabled prompt, fetch `jlens_fetch_summary` on every tensor-parallel
-  rank before any subsequent reset.
-- Require exactly the frozen rank identity set `{0, 1}` for every prompt, not
-  merely two distinct arbitrary values.
-- Require `id_mismatch_total == 0` and `dispatch_missed_total == 0` on every rank
-  for every prompt.
-- Require the expected prompt count, rank count, unique rank identities, and
-  complete prompt-by-rank coverage.
-- Publish only aggregate maxima, sums, and failure counts. Never publish
-  per-prompt counters, routes, ids, weights, or traces.
-- Any missing prompt summary, missing/duplicate/unexpected rank, nonzero counter,
-  or summary exception blocks the smoke.
+- In both `jlens_bridge_install` and `jlens_install_telemetry`, treat hook
+  attachment plus buffer allocation as one transaction.
+- Hold local handles immediately after attachment. If any later operation
+  raises, remove every handle already attached, clear provisional state, and
+  re-raise. Never leave a hook installed without discoverable state.
+- Make both uninstall RPCs idempotent: the postcondition "component absent" is
+  success whether or not state existed when cleanup began.
+- Mark installation as attempted before the first install RPC. On any exception
+  after engine construction, run ordered cleanup on every rank even if only one
+  component or one rank may have installed successfully.
+- Continue all cleanup steps after individual errors. Verify the exact rank set
+  and the final absent/disabled postcondition for both bridge and telemetry on
+  every rank.
+- Add a bounded status RPC if needed. It may expose only rank plus booleans for
+  installed/enabled state; no prompts, tokens, routes, activations, paths, or
+  model data.
+- Any rollback, uninstall, rank-coverage, or postcondition failure writes the
+  aggregate blocked outcome and prohibits the live smoke.
 
-### 2. Empty authoritative readouts must fail
+### 2. Validate the actual frozen cadence and projection-call schedule
 
-`check_authoritative` currently treats an authoritative rank with an empty
-`readout` as finite because Python's `all()` over an empty sequence is true.
-The collector can produce this state when no decoder hook sees a supported
-single-token decode shape. That is precisely a feasibility failure the smoke is
-required to detect.
+The staged harness checks that the metadata field says `cadence == 32`, but it
+can still accept arbitrary strictly increasing steps such as `[5, 10, final]`.
+It also checks cross-rank equality of slot and call counts without checking that
+those counts are mathematically implied by the frozen schedule.
 
-For every prompt and every authoritative rank, require all of the following:
+For each frozen layer with `N = decode_steps`:
 
-- `layers` equals the frozen `[4, 12, 20, 28, 36]` exactly;
-- `cadence == 32` and `top_k == 10` exactly;
-- exactly five `decode_steps`, `captured_slots`, and `dropped` counters;
-- every layer has `decode_steps > 0` and a non-empty readout entry;
-- every layer's `steps` and `token_ids` are non-empty, with
-  `len(token_ids) == len(steps) * 10`;
-- all recorded steps are in range, strictly increasing, and the final recorded
-  step equals `decode_steps - 1`;
-- the final position appears once. If the final decode step is already a cadence
-  checkpoint, do not append a duplicate final slot;
-- every top-k id is a valid global-vocabulary id and every finiteness flag is
-  true;
-- semantic-group aggregates are present, finite, and computed from the same
-  authoritative readout;
-- multiple authoritative ranks agree exactly on metadata, steps, top-k ids,
-  finiteness, and semantic-group aggregates;
-- non-authoritative ranks emit no readout, token ids, or semantic scores;
-- projection-call, decode-step, captured-slot, and dropped-count vectors agree
-  across all ranks.
+- Compute periodic checkpoints exactly as `31, 63, 95, ... < N`.
+- Append `N - 1` exactly once only when it is not already a periodic checkpoint.
+- Require the returned `steps` vector to equal that expected vector exactly,
+  not merely be monotone and in range.
+- Require `captured_slots` to equal the number of periodic checkpoints retained.
+- Under this 256-token smoke with 80 slots per layer, require `dropped == 0`.
+- Require `projection_calls` to equal the exact sum of
+  `ceil(len(expected_steps_for_layer) / PROJECTION_CHUNK_SLOTS)` across the five
+  frozen layers.
+- Require these exact vectors and counts on every rank. Any mismatch blocks.
 
-Any empty, malformed, duplicate-final, incomplete, non-finite, shard-local, or
-cross-rank-disagreeing result blocks the smoke. This correction preserves the
-frozen layers, cadence, final-position rule, top-k, and semantic groups.
+This is conformance-only. The frozen cadence, final-position rule, five layers,
+80-slot capacity, chunk size, token cap, and top-k remain unchanged.
 
-### 3. Installation conformance must be all-rank and exact
+### 3. Enforce true numerical finiteness and the exact semantic schema
 
-The current bridge install path selects result `[0]` and does not validate the
-other rank's bridge or telemetry installation metadata.
+The current semantic check rejects NaN via `v == v` but accepts positive or
+negative infinity. It also does not require the complete frozen semantic-group
+key set.
 
-Before leg B:
+- Use `math.isfinite` for every semantic aggregate and every reported numeric
+  scalar used by a gate.
+- Require exactly these five aggregate keys and no others:
+  `group_completion`, `group_continuation`, `group_verification`,
+  `group_error_conflict`, and `group_uncertainty`.
+- Require each value to be a real finite float derived from the same validated
+  authoritative readout.
+- Require exact agreement across multiple authoritative ranks.
+- Add synthetic tests for `+inf`, `-inf`, missing keys, extra keys, non-numeric
+  values, and cross-rank finite-value disagreement.
 
-- validate every bridge-install result and every telemetry-install result;
-- require the exact rank set `{0, 1}`;
-- require identical bridge layers, hidden size, decoder-layer count, MoE-layer
-  count, expert count, and top-k metadata where exposed;
-- reject any `error`, already-installed state, missing field, rank disagreement,
-  unexpected decoder depth, or unexpected MoE runner count;
-- record only aggregate conformance booleans and counts.
+### 4. Replace stale commit labels with verifiable source provenance
 
-Installation conformance is a technical gate and must be included in the
-pending-restore pass calculation.
+The current artifact hard-codes `projection_commit = 290e7e8`, but the bridge
+itself was subsequently changed in commit `13b81078` to correct cadence-aligned
+final-slot duplication. The finalizer only checks that commit/hash fields are
+nonempty, and the smoke-driver SHA can be supplied as an arbitrary CLI string.
+That does not satisfy exact provenance.
 
-### 4. Finalization must verify an internally consistent technical artifact
+Before execution:
 
-The current finalizer accepts a substring match for the serving reply and can
-promote any artifact whose `outcome` string says pending, even if its gate map is
-missing or inconsistent.
+- Require a clean repository and derive the exact full source commit from Git;
+  do not trust a caller-provided commit label.
+- Record SHA-256 hashes for the exact committed bytes of:
+  `src/m37jc_smoke.py`, `src/jlens_vllm_telemetry/bridge.py`,
+  `src/jlens_vllm_telemetry/worker_ext.py`, the frozen parity-envelope artifact,
+  and the frozen override source or canonical override blob.
+- Record the exact model repository/revision already frozen by the existing
+  protocol; do not change it.
+- At smoke start, verify those hashes against committed files before engine
+  construction.
+- At finalization, re-read and recompute every source hash and require exact
+  equality with the technical artifact. Reject missing, abbreviated, stale,
+  caller-supplied, or mismatched provenance.
+- Hash the actual pre-finalization artifact bytes, or explicitly label and test a
+  canonical-JSON content hash. Do not call one the other.
+- Perform the existing recursive aggregate-only privacy/forbidden-key audit on
+  both technical and final artifacts before writing `passed`.
 
-Before issuing the restore probe, require:
+### 5. Complete installation metadata and restoration health checks
 
-- exact schema version and `run_kind`;
-- exact projection commit, committed smoke-driver SHA, frozen override hash, and
-  frozen envelope hash fields;
-- a complete, exact gate-key set for the smoke phase;
-- every technical gate is the boolean `true`;
-- `outcome == technical_gates_passed_pending_restore`;
-- no pre-existing gate 8 or final `passed` state;
-- aggregate-only privacy status and no forbidden keys or payload classes;
-- a SHA-256 of the pre-finalization technical artifact recorded in the final
-  aggregate artifact.
+The all-rank install gate still validates only a subset of the metadata required
+by steer `65c76ec`.
 
-The production reply must equal `SERVING-OK` after only surrounding-whitespace
-normalization. Substring containment is forbidden. Require the exact expected
-model id in the model list and successful process/endpoint health checks. Any
-artifact inconsistency, reply mismatch, model mismatch, timeout, or health
-failure writes the blocked outcome.
+- Bridge installation must report and exactly match rank, frozen layers,
+  cadence, top-k, slot capacity, hidden size, and decoder-layer count.
+- Telemetry installation must report and exactly match rank, MoE-layer count,
+  layer ids, expert count, router top-k, capacity, and raw-sample bound.
+- Reject missing fields, arbitrary extra scientific fields, already-installed
+  state, unexpected decoder depth, unexpected MoE count, or cross-rank mismatch.
+- Finalization must require the exact serving reply and exact model id as
+  already specified, plus the service's normal health endpoint/process check
+  used by the existing serving runbook. Record aggregate booleans only.
 
-### 5. Every exception path must leave a blocker artifact and complete lifecycle cleanup
-
-The current smoke can raise before its gate variables are assigned, resulting in
-cleanup but no aggregate blocker artifact. It also starts the GPU sampler and
-constructs the engine outside the protected lifecycle.
-
-- Put sampler start, engine construction, installation, all three legs, fetches,
-  gate calculation, engine release, and sampler shutdown under one explicit
-  lifecycle state machine.
-- Continue ordered cleanup through all cleanup errors and record aggregate step
-  status.
-- Stop and join the peak sampler on every path, including engine-construction
-  failure.
-- Avoid references to unassigned locals when a leg or RPC fails.
-- On any exception, write an aggregate-only
-  `agents_a1_semantic_bridge_feasibility_blocked` artifact containing only the
-  exception class, lifecycle stage, cleanup aggregates, and privacy status.
-- Never include prompt text, output text, token ids, readouts, hidden states,
-  routes, local paths, or stack traces in the public blocker.
-
-### 6. Add synthetic tests and commit before execution
+## Required synthetic tests and amendment
 
 Add tests covering at minimum:
 
-- a mismatch on enabled prompt 1 followed by a clean prompt 2 still fails;
-- exact rank set enforcement rejects `{0, 2}`, `{None, 0}`, duplicates, and
-  missing ranks;
-- an authoritative empty readout fails rather than passing vacuously;
-- missing one frozen layer, zero decode steps, empty ids, bad id count,
-  non-monotone steps, duplicate final step, or non-finite semantic aggregate
-  fails;
-- cross-rank metadata/counter disagreement fails;
-- a rank-local install error or metadata disagreement fails;
-- finalizer rejects substring replies such as `NOT SERVING-OK`;
-- finalizer rejects pending artifacts with false, missing, extra, non-boolean, or
-  inconsistent gates;
-- finalizer records the technical-artifact SHA-256;
-- engine-construction, leg, fetch, cleanup, and sampler exceptions each produce
-  a blocked aggregate artifact without forbidden content.
+- bridge install succeeds and telemetry install raises: all-rank cleanup still
+  runs and both components end absent;
+- hook attachment succeeds but allocation raises inside either worker install:
+  every attached handle is removed and state is absent;
+- idempotent cleanup succeeds when one or both components were never installed;
+- arbitrary monotone off-cadence steps fail;
+- incorrect captured-slot, dropped, or projection-call counts fail;
+- NaN, positive infinity, negative infinity, missing/extra semantic keys, and
+  nonnumeric values fail;
+- stale/abbreviated/caller-supplied commit labels and changed source bytes fail;
+- finalization rejects a technical artifact whose recorded source hash no
+  longer matches the committed file;
+- all-rank installation metadata omissions or disagreements fail;
+- restoration health failure blocks even if the reply text and model list pass.
 
-Commit the corrected driver, bridge logic if needed, tests, and a new
-aggregate-only technical amendment before any live M37J-C prompt. Run the full
-private-safe suite and `check_commit_safe.py`; verify the pushed remote SHA.
-
-These corrections are conformance-only. They do not authorize changing the
-frozen prompts, model, checkpoint, decoding cap, layers, cadence, top-k,
-semantic words, divergence envelope, memory limit, latency limit, route logic,
-or production configuration.
+Commit the corrected driver, worker extension, tests, and a new aggregate-only
+technical amendment before any live M37J-C prompt. Run the full private-safe
+suite and `check_commit_safe.py`; verify the pushed remote SHA.
 
 ## Execution order remains unchanged
 
@@ -192,54 +177,55 @@ or production configuration.
    prompt.
 3. Run only the corrected M36T evaluator exactly once after its full preflight.
 4. Restore and verify stock Agents-A1 serving.
-5. Run the corrected bounded M37J-C smoke and finalize it only after the
-   post-smoke production restore passes exact verification.
+5. Run the corrected bounded M37J-C smoke; finalize only after verified
+   post-smoke restoration and health checks.
 6. Release the dual-3090 window to M38E under its frozen protocol.
 
-The latest capture pace implies the sealed run is unlikely to finish within the
-remaining short monitoring window. Do not shorten the sealed set, lower the
-2048-token ceiling, parallelize onto a non-identical runtime, or bypass any gate
-to meet a wall-clock target.
+Do not shorten the sealed set, lower the generation ceiling, parallelize onto a
+non-identical runtime, bypass a gate, or weaken provenance to meet a wall-clock
+target.
 
 ## Research scan and scaling boundary
 
-- `Hallucination Is Linearly Decodable from Mid-Layer Hidden States in Quantized
-  LLMs` reports strong mid-layer linear separability on 4-bit 7B–8B models. This
-  supports the technical plausibility of observing useful signals after
-  quantization, but it does not establish transfer to Agents-A1 AWQ, long-horizon
-  reasoning, or this semantic vocabulary.
-- `Where Does Reasoning Break?` reports that trajectory-geometry features can
-  localize first reasoning errors while a distilled deployable detector can
-  collapse under distribution shift. If M37J-C is technically feasible, a fresh
-  future protocol should compare trajectory dynamics against static semantic
-  counts and must evaluate cross-family and cross-model shift explicitly. Do not
-  add this to the frozen smoke.
-- `IG-Lens` remains a plausible post-smoke attribution comparator because it
-  provides exact additive probability accounting without a backward pass. It is
-  not a Jacobian lens and does not replace the frozen standard logit-lens
-  feasibility baseline.
-- PUMA still requires semantic redundancy plus answer-level verification; its
-  public implementation is not a basis for unverified Agents-A1 early exit.
-- Counterfactual-routing work still shows that router behavior can be weak on
-  fragile reasoning tokens. It supports comparison with hidden-state evidence,
-  not route edits or causal claims.
-- No verified official Agents-A1 4B checkpoint and no actionable r/LocalLLaMA
-  implementation lead were found. The full-Jacobian Agents-A1 path remains
-  blocked by official checkpoint availability and the unchanged 30 GiB fit gate.
+- The official InternScience Agents-A1 repository still announces that a 4B
+  model is coming, while the official Hugging Face collection currently lists
+  only 35B variants. The full backward/Jacobian path therefore remains blocked
+  by official smaller-checkpoint availability and the unchanged 30 GiB fitting
+  gate.
+- `Hidden Error Awareness in Chain-of-Thought Reasoning` reports strong
+  hidden-state error discrimination across model families and scales, but its
+  attempted interventions fail. This reinforces the current observation-only,
+  diagnostic-not-causal claim boundary.
+- `Where Does Reasoning Break?` reports useful hidden-state trajectory geometry
+  in-domain and collapse of a deployable student under distribution shift. Any
+  later Agents-A1 detector must use a fresh protocol with cross-task,
+  cross-family, and cross-model shift tests; do not add it to this frozen smoke.
+- `PUMA` combines semantic redundancy with answer-level verification. Its
+  evidence does not authorize semantic-only early exit.
+- `IG-Lens` provides a no-backward additive probability-attribution comparator.
+  It remains a possible post-smoke study, not a replacement for the frozen
+  standard logit-lens feasibility baseline and not evidence of a Jacobian lens
+  on Agents-A1.
+- Counterfactual-routing work continues to show that normal routing can be weak
+  on fragile reasoning tokens. It supports comparative diagnosis only, not
+  route edits or causal claims.
+- No actionable r/LocalLLaMA implementation lead was found.
 
 M37J-C can establish only that bounded semantic readouts are technically
 observable on the full quantized Agents-A1 runtime while preserving output
-parity, dispatch identity, numerical validity, memory, latency, privacy, cleanup,
-and production restoration. It cannot establish a Jacobian lens on Agents-A1,
-error prediction, semantic correctness, causal attribution, expert meaning,
-route quality, safe early exit, intervention value, or production utility.
+parity, dispatch identity, numerical validity, memory, latency, privacy,
+cleanup, provenance, and production restoration. It cannot establish a
+Jacobian lens on Agents-A1, error prediction, semantic correctness, causal
+attribution, expert meaning, route quality, safe early exit, intervention
+value, or production utility.
 
-Stop on checkpoint mismatch, task/row mismatch, task-hash mismatch, feature or
-label leakage, verifier bypass, incomplete prompt-by-rank identity coverage,
-empty readout, malformed layer/step metadata, tensor-parallel collective
-mismatch, shard-local id leakage, cross-rank disagreement, numerical instability,
-cleanup failure, sampler/engine lifecycle failure, restoration failure, privacy
-failure, resource-gate breach, or repeated worker failure.
+Stop on checkpoint mismatch, dirty tree, source-hash mismatch, task/row mismatch,
+task-hash mismatch, verifier bypass, partial installation, leaked hooks,
+incomplete rank coverage, empty or off-cadence readout, malformed counters,
+non-finite values, tensor-parallel collective mismatch, shard-local id leakage,
+cross-rank disagreement, cleanup failure, sampler/engine lifecycle failure,
+restoration failure, privacy failure, resource-gate breach, or repeated worker
+failure.
 
 Never commit private prompts, outputs, operands, token text or ids, per-task
 labels or predictions, raw telemetry, hidden states, activations, gradients,

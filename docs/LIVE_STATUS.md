@@ -4,6 +4,13 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T15:13Z
+
+- **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M36T:** sealed capture 172/192; 20 rows out; ETA ~20–30 min.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T14:43Z
 
 - **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.

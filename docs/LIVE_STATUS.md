@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T05:05Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass.
+- **M36T:** 89/96 rows; 58 positive / 31 negative; classes
+  {1: 31, 2: 31, 3: 14, 4: 13}; sub_mixed 17/24 — 7 rows to go,
+  completion expected within ~30–45 min. On the completion event:
+  restore serving → power check → step-256 comparator freeze →
+  commit — all machinery staged.
+- **M37J:** Phase 1 closed; diagnostic capture driver queued behind
+  the M36T freeze. V100 idle, lens + artifacts preserved.
+- **M38E:** staged; sweep launches at the M36T safe stop.
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none. Monitors alive.
+
 ## Heartbeat 2026-07-13T04:35Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

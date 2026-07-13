@@ -4,6 +4,29 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T18:28Z
+
+- **Steer:** `dfcade7` current (`steer_sha_seen 74fa63cc…`); read and
+  executed in full — recorded as post-start direction during the
+  pinned smoke window, then applied after finalization.
+- **Tests (fresh):** 52/52 core; 344 green repo-wide at `18f861e`.
+- **Events since last heartbeat (all pushed):** M37J-C smoke ran
+  end-to-end at the pinned commit and BLOCKED on the disabled-path
+  parity count gate (7/8 gates passed; 11/16 differing prompts vs the
+  absolute allowance 7 calibrated on an 8-prompt baseline; rate matches
+  baseline; no retuning; serving restored+verified) — `0339c80`.
+  M38E driver hardened per steer dfcade7 (ledger separation,
+  provenance-bound resume, executed 2048→4096 pilot escalation, exact
+  raw-rate eligibility arithmetic) with 16 new tests + amendment —
+  `18f861e`. Zero official M38E rows existed before the corrections.
+- **Now:** M38E 2-task driver smoke running on its separate ledger;
+  official supervised 288-task sweep launches on smoke pass.
+- **M36T interpretation (per steer):** T-H3 is a verifier-backed
+  compute-allocation result on the frozen population — not a
+  telemetry/Jacobian result; M38E is the confirmatory discriminator.
+- **Blockers:** M37J-C awaits a fresh directive (envelope-count
+  question is an operator decision); nothing else.
+
 ## Heartbeat 2026-07-13T17:17Z
 
 - **Steer:** `04920b0` current (`steer_sha_seen a0b01d57…`), no newer.

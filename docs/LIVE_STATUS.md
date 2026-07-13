@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T22:55Z (extended for steer 0821351)
+
+- **Steer:** NEW steer `0821351` read and executed in full
+  (`steer_sha_seen` now `7bcd58ed17312d76adf269a7bfcd4a9bfade8880`).
+  Post-launch ownership gap closed (`fa000fd`): barrier-guarded
+  launcher (no exec until a nonce-bound launching record with exact
+  PID/PGID is durably written, reread, and validated; parent death →
+  child exits without exec), inherited-lock survival through exec,
+  digest-pinned launcher/preflight bytes reverified pre-Popen, and
+  attempt 1's complete 77-variable environment captured privately
+  (exact bytes + digest, while /proc identity was proven) as the sole
+  source for any retry env. failed_terminated/ambiguous states consume
+  the retry permanently. 22 controller tests; 381 green repo-wide.
+  No retry launched.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 43 rows at
+  collection (mod_chain b2 capturing), fresh progress, driver alive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T22:13Z
 
 - **Steer:** `02a483b` current (`steer_sha_seen b76fe17b…`), no newer.

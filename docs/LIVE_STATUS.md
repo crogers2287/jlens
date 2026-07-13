@@ -4,6 +4,20 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T00:06Z
+
+- **Milestone/phase:** M36T Phase 1 build STARTING this cycle (fresh
+  disjoint deterministic task generator, then single-run 2048-token
+  prefix capture at steps 128/256/384). M37J still ON HOLD (operator
+  decision on the 31.18 vs 30.0 GiB gate breach).
+- **Remote head at collection:** `a238ee9`; `steer_sha_seen`
+  `0f131fd1adea036f5253ca542ded085b1c35e0b6` — unchanged.
+- **Process state:** no research workers running; 3090 GPUs free;
+  V100 idle with fit checkpoint + lens preserved; serving verified UP.
+- **Blockers:** M37J operator decision only.
+- **Next unit:** commit the M36T dev-task generator (seeded, operand
+  exclusion vs M29–M36C verified) before any capture.
+
 ## Heartbeat 2026-07-12T23:40Z
 
 - **Milestone/phase:** steer `79878ab` adopted in full — M36C CLOSED

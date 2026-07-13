@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T21:43Z (extended for steer 02a483b)
+
+- **Steer:** NEW steer `02a483b` read and executed in full
+  (`steer_sha_seen` now `b76fe17b5c5fa413a048c488bf93d7823d6b5e2a`).
+  Retry controller made crash-consistent and identity-exact
+  (`71f04c5`): budget durably consumed pre-Popen via atomic fsync'd
+  record replacement (reserved-without-PID blocks permanently, never
+  refunded); model pointer bound to the attempt-1 digest across
+  control/execution/launch-argument; unreadable /proc evidence blocks
+  (AmbiguousProcess) instead of passing as dead; retry environment
+  rebuilt from the frozen five-key schema with recorded absences
+  explicitly removed. Private launch record enriched live (digest +
+  schema + state). 15 controller tests; 374 green repo-wide. No retry
+  launched; attempt 1 untouched.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING — 34 rows at collection,
+  fresh progress, driver alive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T21:13Z
 
 - **Steer:** `3f422ad` current (`steer_sha_seen 86f16c33…`), no newer.

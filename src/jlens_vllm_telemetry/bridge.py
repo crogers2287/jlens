@@ -128,6 +128,8 @@ class SemanticBridgeCollector:
             return {"slots": 0}
         out: dict = {"layers": list(self.layers), "cadence": self.cadence,
                      "top_k": TOP_K, "dropped": self._dropped.tolist(),
+                     "captured_slots": self._cursor.tolist(),
+                     "decode_steps": self._decode_step.tolist(),
                      "projection_calls": 0, "authoritative": True,
                      "readout": {}}
         chunk = self.PROJECTION_CHUNK_SLOTS

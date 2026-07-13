@@ -1,0 +1,16 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37jc_technical_amendment",
+ "steer": "821e430",
+ "nature": "smoke-harness conformance only, completed before any live prompt; no prompts, semantic words, layers, positions, cadence, top-k, or thresholds changed",
+ "corrections": {
+  "restoration_gate": "two-phase execution: the smoke phase can emit at best technical_gates_passed_pending_restore (source-asserted in tests that 'passed' cannot appear in its body); only the finalize phase — after external serving restore, the frozen public-safe verification request, and a model-list check — writes gate 8 as boolean true and outcome passed; any restore or verification failure writes the blocked outcome",
+  "cleanup": "try/finally issues bridge-disable, telemetry-disable, bridge-uninstall, telemetry-uninstall in order, verifies each RPC result on every rank, tolerates and records exceptions while continuing the remaining steps, and releases the engine before external restore; any failure blocks",
+  "dispatch_identity": "all rank summaries fetched; zero id-mismatch and zero missed-dispatch required on every rank with expected rank count and unique identities; only aggregate maxima/sums published",
+  "envelope": "the complete frozen parity envelope (margin_prompts 2, first_divergence_floor 8) is field-checked and hashed from the pinned M36V artifact; both A-vs-B and B-vs-C legs enforce baseline+margin on differing prompts and the frozen floor (not the baseline minimum) on first divergence",
+  "authoritative_conformance": "at least one authoritative global readout per prompt; multiple authoritative ranks must agree exactly; non-authoritative ranks must emit no ids or scores; projection-call and captured-slot counts must match across ranks (bridge fetch now reports per-rank captured_slots/decode_steps counters)"
+ },
+ "tests": "tests/test_m37jc_smoke.py — 17 synthetic tests covering all nine steer-required cases; 30 pass with the bridge suite",
+ "live_prompts_issued": false,
+ "privacy_check_status": "aggregate technical amendment only"
+}

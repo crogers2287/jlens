@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T01:34Z
+
+- **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.
+- **Tests (fresh):** 52/52 pass. Gate artifacts on disk verified
+  (M36T phase0 True; M36C outcome frontier-not-found; M37J db8 fit
+  gate False as preserved-blocked).
+- **M36T:** 28/96 rows; 17 positive / 11 negative; classes
+  {1: 11, 2: 10, 3: 6, 4: 1} — first never-completes row observed;
+  div_exact complete (24), json_digits underway. Mean 146 s/row →
+  ETA ~2.5–3 h. Capture process alive; completion watcher alive.
+- **M37J:** dim_batch=4 refit RUNNING; checkpoint 01:26 UTC.
+- **M38E:** unchanged (Phase 0 done; sweeps gated).
+- **Serving:** unloaded for capture window (standard cycle).
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T01:10Z
 
 - **Steer:** `0497526` current (`steer_sha_seen a084063b…`), no newer.

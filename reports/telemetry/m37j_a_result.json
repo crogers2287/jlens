@@ -1,0 +1,73 @@
+{
+ "schema_version": 1,
+ "run_kind": "m37j_a_result",
+ "manifest": "reports/telemetry/m37j_diagnostic_manifest.json",
+ "capture_code": "a59ca07 (exact-token provenance)",
+ "lens_sha256_prefix": "49faf4e926395393",
+ "provenance": "all 192 accepted rows share the exact-token readout provenance; zero rows from the discarded text-round-trip implementation entered any fit, selection, metric, or holdout analysis",
+ "splits": {
+  "discovery": 96,
+  "validation": 48,
+  "holdout": 48
+ },
+ "family_b_frozen_features": [
+  "late_last_transition",
+  "vocab_we",
+  "vocab_mek",
+  "vocab_th",
+  "vocab_in",
+  "vocab_after",
+  "vocab_modulo"
+ ],
+ "family_b_validation_auc": 0.7727,
+ "holdout_completed_n": 43,
+ "holdout_completed_errors": 41,
+ "holdout_prediction": {
+  "meta": {
+   "accuracy": 0.9535,
+   "balanced_accuracy": 0.5
+  },
+  "telemetry": {
+   "accuracy": 0.9535,
+   "balanced_accuracy": 0.5
+  },
+  "jspace": {
+   "accuracy": 0.9535,
+   "balanced_accuracy": 0.5
+  },
+  "all": {
+   "accuracy": 0.9535,
+   "balanced_accuracy": 0.5
+  }
+ },
+ "J_H1": {
+  "pass": false,
+  "evaluable": true,
+  "failure_prediction_accuracy": {
+   "mean_diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ]
+  },
+  "balanced_accuracy": {
+   "mean_diff": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "J_H2": {
+  "pass": false,
+  "population": 5,
+  "positives": 3,
+  "power_floor": 8,
+  "evaluable": false
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 37037
+ },
+ "privacy_check_status": "aggregate metrics only"
+}

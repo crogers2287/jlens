@@ -4,6 +4,22 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T07:45Z
+
+- **Steer:** NEW steer `fe6fcf2` read and executed in full;
+  `steer_sha_seen` now `ca7c4868a41de139b51eec96e68f16f954a465f5`.
+  Binding TP-projection correction completed CPU-only before any live
+  prompt (`290e7e8`): compute_logits path, rank-uniform chunk walk,
+  root-only authority, padding trim + id-range guard, frozen chunk
+  size, 13 emulation tests. Technical note committed.
+- **Tests (fresh):** 79/79 across suites; commit-safe clean.
+- **M36T:** sealed capture 43/192, healthy, ~26 rows/h, ETA ~5.5 h.
+  Corrected evaluator (0285ec3) remains the only evaluator.
+- **Execution order confirmed:** sealed capture → corrected evaluator
+  once → serving restore+verify → M37J-C 16-prompt smoke from the
+  corrected commit (8 gates) → 3090 window to M38E.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T07:13Z
 
 - **Steer:** `cccf40a` current (`steer_sha_seen e8ab2d22…`), no newer.

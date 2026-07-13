@@ -4,6 +4,18 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-13T22:13Z
+
+- **Steer:** `02a483b` current (`steer_sha_seen b76fe17b…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 38 rows — the frozen cap-escalation
+  rule executed live for the first time: mod_chain b1 completed at
+  2048 over the truncation threshold, ran its deterministic 4096
+  pilot (6 tasks — all truncated ids, fewer than the 8 cap), and the
+  sweep advanced per the rule; mod_chain b2 now 8/24. Driver alive,
+  fresh progress.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T21:43Z (extended for steer 02a483b)
 
 - **Steer:** NEW steer `02a483b` read and executed in full

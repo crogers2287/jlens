@@ -4,6 +4,32 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T22:07Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current (seven): `5f8b0af`,
+  `fa06451`, `M39_CROSS_MILESTONE_OUTCOME_FIREWALL`,
+  `AGENTS_A1_4B_ARTIFACT_ADMISSION`, `AGENTS_A1_4B_IDENTIFIERS_RESOLVED`,
+  `AGENTS_A1_4B_DENSE_CLASSIFICATION`, `MOE_CAUSAL_LOCALIZATION_GATE`;
+  no newer, remote in sync.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress):
+  - `unique_official_tasks_completed`: **199 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track band 1 underway at 7 / 24).
+  - `unique_official_tasks_remaining`: **89** (all in the order_track
+    family, which is 96 official tasks total, 7 done).
+  - `pilot_rows_completed`: 62 (mod_chain 30 + alg_coeff bands 1-4 at
+    8+8+8+8; cap-choice evidence only, never inflates task counts).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 261.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root audit +
+  frozen exact-set/escalation/verifier/privacy/cleanup gates; frozen
+  stop rule (`m38e_completed_error_frontier_not_found`) applies if
+  frontier gates are unmet after the bounded sweep.
+
 ## Heartbeat 2026-07-14T21:37Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

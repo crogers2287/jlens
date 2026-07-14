@@ -4,6 +4,15 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T00:13Z
+
+- **Steer:** `e2d5b5e` current (`steer_sha_seen 6cb5cdcd…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 56 rows — mod_chain b2 complete at
+  2048 and its deterministic 4096 pilot underway (2/…); b1 pilot
+  complete earlier. Uniform official identity; driver alive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-13T23:55Z (extended for steer e2d5b5e)
 
 - **Steer:** NEW steer `e2d5b5e` read and executed in full

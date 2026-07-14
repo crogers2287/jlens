@@ -4,6 +4,39 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T23:07Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current (eight); no newer,
+  remote in sync. (Newest binding: `M38E_FRONTIER_IRREVERSIBLY_UNAVAILABLE`.)
+- **Program-control conclusion (unchanged):** the M38E development
+  completed-error frontier is irreversibly unavailable — the two-family
+  eligibility gate can no longer be satisfied (mod_chain no eligible band;
+  all four alg_coeff bands failed escalation; only order_track remains).
+  Handling obeyed: finish the bounded order_track sweep undisturbed as
+  exact-set/audit evidence only; on completion run all frozen audits and
+  commit `m38e_completed_error_frontier_not_found` (or narrower
+  `provenance-blocked`/`inconclusive` if unverifiable). NOT finalized yet
+  — driver still `in_progress`.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress; continuing undisturbed to bounded completion):
+  - `unique_official_tasks_completed`: **210 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track band 1 underway at 18 / 24).
+  - `unique_official_tasks_remaining`: **78** (all in order_track, 96
+    total, 18 done) — exact-set/audit completion only.
+  - `pilot_rows_completed`: 62 (mod_chain 30 + alg_coeff bands 1-4 at
+    8+8+8+8, all failed escalation; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 272.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal outcome
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen exact-set/escalation/verifier/provenance/
+  execution-root/dependency/privacy/cleanup/commit-safety audits;
+  unverifiable evidence -> `provenance-blocked`/`inconclusive`.
+
 ## Heartbeat 2026-07-14T22:37Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

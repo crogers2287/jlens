@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T04:13Z
+
+- **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 94 rows; mod_chain b1/b2/b3 complete
+  (each with its 4096 pilot); mod_chain b4 next. Uniform official
+  identity; driver (pid 621509) alive, last row ~1 min ago.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
+  proven in launcher; no trustworthy cgroup kill scope.
+- **finalization_blockers:** 1 — fresh import/execution-root +
+  external-root/loader/package audit gates any M38E result
+  (unverifiable → provenance-blocked/inconclusive), with the frozen
+  exact-set/escalation/verifier/privacy/cleanup gates.
+
 ## Heartbeat 2026-07-14T03:31Z (steer 550c27b adopted)
 
 - **Steer:** NEW steer `550c27b` read and adopted (`steer_sha_seen`

@@ -1,7 +1,7 @@
-# steer.md — close remaining M38E retry ownership and source-identity gaps; preserve attempt 1
+# steer.md — close M38E preflight and runtime-identity fail-open paths; preserve attempt one
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `0821351f75d1eff144112b26a75f65ed3b71ed7c` only where explicitly
+steer commit `e2d5b5e92a62259651b1159e50bc7fc22ce535ae` only where explicitly
 amended below. That steer and every predecessor remain incorporated in full,
 including every sealed-data, verifier, privacy, provenance, exact-set,
 cap-escalation, resource, claim-boundary, retry-limit, production-gating,
@@ -13,20 +13,20 @@ limit, or production gate may be weakened.
 ## Current state
 
 - Remote `master` before this steer was
-  `a20870898df6b2939573c2be851c49f5fbb152b6`.
+  `5f70e4172ebc2fdb52b20e2c1e669226e9f31f8f`.
 - M38E official attempt one remains valid and must continue undisturbed. The
-  latest aggregate heartbeat reports 47 rows: 41 official-2048 rows and the
-  frozen six-row 4096 pilot, with `mod_chain` band 2 at 17/24, uniform official
-  identity, a live driver, recent progress, and 52/52 fresh core suites. This is
+  latest aggregate heartbeat reports 56 rows, with `mod_chain` band 2 complete
+  at 2,048 tokens and its deterministic 4,096-token pilot underway, uniform
+  official identity, a live driver, and 52/52 fresh core suites. This remains
   in-progress development capture, not a scientific result.
-- Commit `fa000fd3162dff8d7e6126db5bbf3c5682cb6cc6` correctly added a
-  pre-exec barrier, durable nonce-bound launching record, inherited run lock,
-  pinned launcher/preflight bytes, complete private attempt-one environment
-  capture, and consumed terminal states. It did not launch a retry and did not
-  touch attempt one.
-- Source inspection finds additional fail-open or false-resume paths in the
-  retry control plane and one source-provenance gap that must be audited before
-  M38E finalization. These findings do not authorize interruption of attempt one.
+- Commit `f102e904fa71352dc8afc00c61e4afd629ab0d2b` correctly closed the
+  explicit-unlock, permissive-termination, broad-descriptor-inheritance, and
+  one-time untracked-import-audit findings from the prior steer. It did not
+  launch a retry and did not touch attempt one.
+- Source inspection finds remaining discrepancies between the claimed retry
+  identity envelope and the code that would actually execute. These findings
+  do not invalidate attempt one and do not authorize interruption of it. They
+  block only a possible retry and, where stated, M38E finalization.
 - M36T remains scoped exactly as frozen: T-H3 establishes verifier-backed
   adaptive tool/compute allocation only on its deterministic population. T-H1
   and T-H2 are not established.
@@ -38,107 +38,172 @@ limit, or production gate may be weakened.
 
 ## Remaining control-plane defects
 
-The active first attempt must not be modified. Items 1–4 apply to any possible
-retry. Item 5 is a read-only integrity audit required before finalizing attempt
-one or launching a retry.
+The active first attempt must not be modified. Every item below applies to a
+possible retry. Item 5 also applies to finalization of attempt one.
 
-### 1. Explicit `LOCK_UN` defeats inherited-lock survival
+### 1. The executable preflight still runs under the ambient controller runtime
 
-The child inherits the same open file description that holds the run-ID
-`flock`. Closing the controller's duplicate descriptor preserves the lock while
-the child survives, which the current test covers. The controller's `finally`
-block instead calls `flock(..., LOCK_UN)` before closing. An explicit unlock on
-one duplicate releases the shared lock, including for the inherited child.
+The controller invokes `m38e_exec_preflight.py` through `sys.executable` before
+reconstructing the complete attempt-one environment. The preflight is not a
+pure byte-level shell check: it imports `m38e_dev_sweep`, `m36v_phase1`, task
+generators, verifier code, and their transitive Python dependencies, and it
+executes run-identity and row-validation logic. Running it under the controller
+interpreter and ambient environment can validate different imports and package
+resolution than the retry driver will use.
 
-This is safe only on the narrow normal path where the child has already exited.
-It is unsafe after an exception or ambiguous termination path: a surviving
-launcher or driver can be left alive with an unlocked run identity. The current
-lock-survival test does not exercise explicit unlock semantics.
+The retry order must be:
 
-After the lock descriptor is inherited, the controller must never call
-`LOCK_UN`. It must close only its own descriptor. The lock must remain held by
-the child until the child's last inherited descriptor closes. If the child is
-not proven dead, no cleanup path may unlock the run identity.
+1. load and validate the private attempt-one record under the run lock;
+2. reconstruct and digest-verify the complete attempt-one environment;
+3. establish the exact invoked Python executable identity;
+4. run the pinned preflight with that exact executable and environment;
+5. run package/runtime probes under the same executable and environment;
+6. reverify source, control artifacts, model identity, ledger identity, and
+   executable identity immediately before reservation and process creation.
 
-### 2. `terminate_owned(..., expected=None)` can signal an unrelated process group
+No Python-importing preflight may run through `sys.executable` or ambient
+`os.environ`. A byte-only bootstrap check may use the controller runtime only
+if it imports no execution-tree module and its scope is explicitly limited.
 
-The current failure paths call `terminate_owned(pid, None)`. That permissive
-mode accepts any readable process at the numeric PID and sends group signals
-without proving the expected launcher or driver command, cwd, session, process
-start time, or `PGID == PID`. PID/PGID reuse between checks can therefore target
-an unrelated process group. The second SIGKILL is sent after a five-second sleep
-without re-proving ownership.
+### 2. The hashed executable is not necessarily the executable invoked
 
-There must be no permissive termination mode. Immediately after `Popen`, capture
-and durably bind the child PID, PGID, SID, `/proc/<pid>/stat` start time,
-nonce, exact guarded-launcher command, cwd, and pinned launcher digest while the
-child is still behind the barrier. Use a pidfd for liveness and PID-reuse
-resistance where supported. Before every signal, including escalation from TERM
-to KILL, re-prove the exact start time, session, group, command phase
-(pre-exec launcher or post-exec driver), and cwd. Any mismatch, unreadable
-field, vanished leader with an unproven group, or unavailable required evidence
-is an ambiguous permanent block; do not signal.
+`verify_runtime_identity()` hashes `exe_resolved` but launches probes and the
+scientific driver using `original["python"]`. If `original["python"]` is a
+symlink, wrapper, relative path, or otherwise retargetable pathname, the hashed
+file and the invoked file can differ after validation. The guarded launcher is
+also started with the mutable controller `sys.executable`.
 
-### 3. `close_fds=False` leaks the controller's inheritable descriptor table
+Before any retry:
 
-The guarded launch intentionally needs only the barrier descriptor and run-lock
-descriptor in addition to standard streams. `close_fds=False` allows every other
-inheritable controller descriptor to cross into the launcher and then the
-scientific driver. That violates the claimed complete execution envelope and can
-carry unrelated locks, sockets, pipes, or files into the retry.
+- bind the original executable by canonical resolved path, device, inode, mode,
+  size, and SHA256 in the private record;
+- prove that every configured Python pathname resolves to that exact identity;
+- invoke the preflight, runtime probes, guarded launcher, and scientific driver
+  by the exact bound executable, not by an unchecked alias or mutable symlink;
+- re-prove the executable identity immediately before every subprocess creation
+  and again behind the launch barrier before scientific exec;
+- treat any missing field, resolution change, wrapper insertion, symlink
+  retarget, inode change, or byte change as a permanent block.
 
-Launch with `close_fds=True` and an exact `pass_fds=(barrier_fd, lock_fd)`
-allowlist. Standard streams may be supplied only through explicit
-`stdin`/`stdout`/`stderr` arguments. Before exec, the guarded launcher must verify
-that no unexpected descriptor is open beyond standard streams, the barrier, the
-run lock, and any explicitly documented interpreter-internal descriptor. Close
-the barrier before exec. Commit no descriptor numbers or private paths.
+No private path, inode, device number, or executable digest may be committed.
 
-### 4. Preflight and runtime checks use the wrong interpreter/environment
+### 3. Package origin is read but not compared
 
-The retry environment is reconstructed from attempt one only after the pinned
-preflight has already run. The preflight and `verify_runtime_identity()` are
-invoked through the controller's `sys.executable` and ambient environment.
-`verify_runtime_identity()` imports `vllm` and `torch` without passing the
-recorded retry environment. It can therefore validate one package resolution
-while the retry driver loads another through the exact recorded `PATH`,
-`PYTHONPATH`, library path, or environment prefix.
+The runtime probe prints each module version and `__file__`, but the controller
+currently checks only the version line. Two installations can report the same
+version while resolving different code. The amendment's claim that module
+origin is compared is therefore not established by the implementation.
 
-Reconstruct and digest-verify the complete attempt-one environment before any
-Python or package-dependent preflight. Run the pinned preflight and every runtime
-probe with the original recorded Python executable and that exact environment.
-Bind the original executable by resolved `/proc/<attempt-one-pid>/exe`, file
-identity, and private SHA256 captured read-only while attempt one is alive.
-Missing or conflicting executable evidence blocks. Runtime probes must record
-and compare package version plus resolved module/distribution origin under the
-same interpreter and environment that will launch the retry. The controller's
-ambient interpreter may orchestrate file I/O only; it may not establish
-scientific runtime identity.
+Capture privately and verify, under the exact bound executable and complete
+attempt-one environment, at minimum for `torch`, `vllm`, and every locally
+imported execution package:
 
-### 5. Tracked-clean provenance ignores untracked importable files
+- exact version or distribution identity;
+- canonical module origin;
+- origin file identity and SHA256;
+- distribution metadata origin and a stable digest of the installed-file
+  manifest when available.
 
-Both `source_provenance()` and the immutable retry preflight use
-`git status --porcelain --untracked-files=no`. The scientific driver executes
-with `src/` on `sys.path`; an untracked module or package in an importable path
-can shadow a tracked module or installed dependency while every committed-file
-hash still passes.
+The retry preflight and launch barrier must compare these values exactly.
+Missing metadata, namespace ambiguity, editable-install drift, origin change,
+or equal-version/different-origin resolution blocks. Tests must prove that two
+same-version packages at different origins cannot pass.
 
-Do not mutate the active execution worktree. Perform a read-only audit while
-attempt one runs or immediately after it exits:
+### 4. Recorded-process identity mismatch can authorize a retry
 
-- enumerate all untracked files and symlinks in the execution checkout;
-- resolve every import root supplied by the exact attempt-one environment;
-- prove that no untracked file is importable or executable by the driver;
-- allow only an explicit private operational-data allowlist outside import and
-  execution roots, including the exact official ledger and approved private
-  launch records;
-- publish only an aggregate pass/block result.
+`driver_alive()` currently returns `False` when a readable process exists at a
+recorded PID but its command line or cwd differs from the record. That treats an
+identity mismatch as equivalent to proven death and can authorize attempt two
+without evaluating the recorded start time, session, process group, executable,
+or command phase.
 
-If any untracked importable/executable path exists, preserve it and the ledger
-unchanged, block M38E finalization, and require private forensic review. Do not
-delete or normalize evidence. A retry preflight must use
-`--untracked-files=all` plus a filesystem/import-root audit and fail on every
-unapproved path or symlink.
+For every recorded attempt carrying a PID:
+
+- proven PID nonexistence means dead;
+- a different `/proc/<pid>/stat` start time proves PID reuse and means the
+  recorded process is dead, while the unrelated current process remains
+  untouched;
+- the same start time with any command, cwd, executable, SID, PGID, or phase
+  mismatch is ambiguous and blocks;
+- unreadable or partial evidence blocks;
+- missing original identity fields block rather than being skipped;
+- only exact full identity may count as the recorded process alive.
+
+Add tests for same-PID/same-start-time command mutation, cwd mutation, executable
+mutation, SID/PGID mutation, PID reuse, missing fields, and unreadable evidence.
+No mismatch path may silently fall through to `False`.
+
+### 5. The reusable untracked-import audit was not added to executable preflight
+
+A one-time read-only audit of attempt one's execution tree passed, which is a
+valid aggregate observation. The committed preflight still uses
+`git status --porcelain --untracked-files=no`, and no committed reusable audit
+enumerates all untracked files and symlinks against the exact import and
+execution roots. The one-time observation does not prove that a future retry or
+finalization rerun is protected from later untracked importable content.
+
+Implement a pinned, deterministic, read-only audit used by both retry preflight
+and M38E finalization that:
+
+- enumerates all untracked files, directories, and symlinks;
+- derives import and executable search roots from the exact recorded
+  environment and bound executable;
+- resolves symlinks and rejects traversal into import or execution roots;
+- allows only an explicit private operational-data allowlist outside those
+  roots;
+- rejects Python modules, packages, extension modules, executable scripts,
+  path-configuration files, startup hooks, editable-install pointers, and any
+  artifact capable of changing import or execution resolution;
+- records only an aggregate pass/block publicly.
+
+Run this audit freshly after attempt one exits and immediately before scientific
+finalization. Preserve any blocking file and the ledger byte-for-byte for
+private forensic review; do not delete or normalize evidence.
+
+### 6. The pidfd is opened but does not participate in the safety proof
+
+`terminate_owned()` opens a pidfd but performs liveness checks and both signals
+through numeric PID/PGID operations. Merely holding an unused pidfd does not
+make `killpg()` resistant to leader exit and process-group reuse between proof
+and signal. The code and amendment must not claim pidfd protection that is not
+actually used.
+
+Before any retry, use a termination design with an enforceable ownership
+boundary. Acceptable implementations are:
+
+- a dedicated pinned cgroup/process scope whose membership and identity are
+  recorded before barrier release and whose kill operation is scoped to that
+  identity; or
+- pidfd-based leader signaling and waiting plus a separately proven mechanism
+  for enumerating and terminating only descendants belonging to the recorded
+  session/group without numeric-ID reuse exposure.
+
+If the platform cannot establish that boundary, fail closed and do not
+terminate automatically. Never signal a numeric process group after its leader
+identity is unavailable or ambiguous. Tests must simulate leader exit and
+PID/PGID reuse between proof and escalation and prove that no decoy is touched.
+
+### 7. Ambiguous stall termination can block forever in `wait()`
+
+After a stall, the controller records the return from `terminate_owned()`,
+breaks the supervision loop, and unconditionally calls `proc.wait()`. When the
+termination result is `ambiguous`, the process may still be alive by design;
+waiting indefinitely prevents a durable terminal block from being surfaced and
+retains controller ownership without resolving the condition.
+
+If termination is ambiguous:
+
+- durably record an `ambiguous` terminal block with complete private evidence;
+- do not signal again;
+- do not call an unbounded wait;
+- close only the controller's lock duplicate and exit blocked, leaving any
+  surviving child to retain its inherited run lock;
+- require private operator review before any later action.
+
+Bounded waiting is permitted only after exact owned termination or proven
+natural exit. Add a deterministic test in which termination becomes ambiguous
+and the controller returns blocked without hanging or releasing a surviving
+child's lock.
 
 ## Binding handling of active attempt one
 
@@ -150,130 +215,115 @@ unapproved path or symlink.
 3. Continue aggregate-only heartbeat monitoring. Public status may contain row
    count, aggregate phase, freshness, aggregate process health, test count, and
    aggregate integrity-audit pass/block state only.
-4. Read-only capture of retry identity evidence is permitted only into the
-   existing private operational record. Never commit PIDs, process start times,
-   descriptor numbers, paths, environment values, executable hashes, model
-   pointers, or digest-to-secret mappings.
-5. Before scientific finalization, require exact-set validation, cap-escalation
-   completion, verifier gates, privacy audit, cleanup gates, and the new
-   aggregate untracked-import audit.
+4. Read-only capture of missing retry identity evidence is permitted only into
+   the existing private operational record. Never commit PIDs, process start
+   times, descriptor numbers, paths, environment values, executable or package
+   hashes, model pointers, or digest-to-secret mappings.
+5. Before scientific finalization, require exact-set validation,
+   cap-escalation completion, verifier gates, privacy audit, cleanup gates, and
+   a fresh passing reusable untracked-import audit.
 6. If attempt one exits nonzero, preserve its private ledger byte-for-byte and
    block until every retry correction and test below passes.
 
 ## Required correction and tests before any retry
 
 This work is control-plane-only. It may not alter the scientific driver, task
-generation, private rows, manifest, thresholds, verifier, sampling, output caps,
-cap-escalation logic, eligibility arithmetic, power gate, result gate, or claim
-boundary.
+generation, private rows, manifest, thresholds, verifier, sampling, output
+caps, cap-escalation logic, eligibility arithmetic, power gate, result gate, or
+claim boundary.
 
 Implement and deterministically test all prior requirements plus:
 
-1. explicit `LOCK_UN` is never executed after the lock descriptor has been
-   inherited; injected controller failure after barrier release leaves the lock
-   held while the child survives;
-2. closing the parent's duplicate preserves the lock, while the final child
-   close releases it;
-3. no termination path accepts `expected=None` or equivalent permissive
-   ownership;
-4. PID reuse, PGID reuse, SID mismatch, start-time mismatch, command-phase
-   mismatch, cwd mismatch, and unreadable process evidence all block without a
-   signal;
-5. ownership is re-proved immediately before both TERM and KILL; a decoy process
-   created between the two signals is untouched;
-6. `close_fds=True` with an exact pass-fd allowlist prevents an injected
-   inheritable decoy descriptor from reaching the launcher or driver;
-7. the pinned preflight and package probes execute under the original Python and
-   complete recorded environment, and ambient `PATH`, `PYTHONPATH`, or library
-   injection cannot affect their result;
-8. changing the original Python binary identity, resolved package origin,
-   launcher bytes, preflight bytes, source, ledger, model pointer, override,
-   tensor-parallel setting, worker mode, or sampling identity blocks before
-   scientific exec;
-9. untracked importable files and symlinks block, while only the explicit private
-   non-importable allowlist passes;
-10. two simultaneous controllers cannot reserve, register, release, signal, or
+1. the executable preflight imports execution code only under the exact bound
+   attempt-one executable and complete recorded environment;
+2. ambient `PATH`, `PYTHONPATH`, library paths, sitecustomize/usercustomize,
+   virtual-environment variables, and controller interpreter cannot affect
+   preflight or probes;
+3. mutable aliases, wrappers, relative paths, and symlink retargets cannot cause
+   a different executable to run after the bound executable was hashed;
+4. preflight, probes, launcher, and driver all use the exact bound executable;
+5. same-version packages at different origins or with changed origin bytes
+   block;
+6. process identity mismatch is fail-closed except for PID reuse proven by a
+   different start time;
+7. the reusable all-untracked/import-root audit blocks importable, executable,
+   symlinked, startup-hook, editable-install, and path-configuration artifacts;
+8. the reusable audit passes only the explicit private non-importable
+   operational allowlist and runs freshly before finalization;
+9. leader exit and PID/PGID reuse between TERM and KILL cannot target a decoy;
+10. ambiguous termination records a permanent block and returns without an
+    unbounded wait or explicit lock release;
+11. two simultaneous controllers cannot reserve, register, release, signal, or
     supervise the same run;
-11. every attempt-two state permanently consumes the sole retry and no crash or
+12. every attempt-two state permanently consumes the sole retry and no crash or
     exception permits a third launch;
-12. full repository tests, recursive privacy audit, and
+13. full repository tests, recursive privacy audit, and
     `check_commit_safe.py` remain green.
 
-Commit the corrected controller, guarded launcher, preflight, tests, and an
-aggregate-only amendment. Do not launch a retry merely because the code is
-committed. Verify the exact remote head, then use the retry only if attempt one
-has actually failed and every private identity check passes.
+Commit the corrected controller, preflight, guarded launcher, reusable audit,
+tests, and an aggregate-only amendment. Do not launch a retry merely because
+the code is committed. Verify the exact remote head, then use the retry only if
+attempt one has actually failed and every private identity check passes.
 
 ## Agents-A1 scaling path
 
-The official Agents-A1 repository still reports the released 35B-A3B model and
-its 2026-07-08 notice that a 4B model is forthcoming. The official Hugging Face
-collection still lists only 35B BF16/FP8/GGUF variants. Do not substitute
-Agents-K1 or an unofficial checkpoint under the Agents-A1 name.
+No new primary source in this scan changes the frozen scientific sequence. The
+official Agents-A1 repository still reports only the released 35B-A3B model and
+its 2026-07-08 notice that a 4B model is forthcoming; the official Hugging Face
+organization still lists only 35B variants. Do not substitute Agents-K1 or an
+unofficial checkpoint under the Agents-A1 name.
 
-A newly incorporated primary-source comparator is `Polysemantic Experts,
-Monosemantic Paths: Routing as Control in MoEs` (`arXiv:2604.17837`). It derives
-a parameter-free orthogonal decomposition of each MoE residual state into the
-subspace spanned by router weights, which is causally sufficient for the current
-routing logits, and a router-blind complement. Its evidence suggests that
-multi-layer routing trajectories and rotating control subspaces are more useful
-units than human-labeled individual experts.
-
-This supports a technically cheap, observation-only Agents-A1 comparator before
-full Jacobian fitting, but it establishes no Agents-A1 result and authorizes no
-intervention. After M38E is complete, preregister a separate study that:
-
-1. computes router-visible and router-blind projection summaries at frozen
-   selected layers without backpropagation;
-2. records phase-localized prefill versus autoregressive-decode features;
-3. compares path/transition features, control-subspace energy, adjacent-layer
-   control rotation, router logits, and existing hidden-state baselines;
-4. tests only verifier-labeled predictive increment and calibration under frozen
-   train/validation separation;
-5. retains raw hidden states, routes, paths, token data, and per-example features
-   privately and publishes aggregates only;
-6. prohibits semantic labels for individual experts and treats path semantics as
-   an empirical hypothesis requiring independent validation;
-7. requires parity, finite-value, memory, runtime, privacy, and predictive-
-   increment gates before the feature family can inform the later Jacobian
-   approximation study.
-
-The broader scaling sequence remains:
+The observation-only router-control/path comparator from the prior steer
+remains the cheapest technically credible next scaling step after M38E. The
+sequence remains:
 
 1. finish M38E unchanged;
 2. retain observation-only router and hidden-state telemetry on the pinned 35B
    runtime;
-3. preregister the router-control/path comparator above;
-4. compare full Jacobians, reduced-target VJPs, and bounded finite-difference
-   probes on a smaller comparable MoE or the official Agents-A1 4B checkpoint if
-   released;
-5. require approximation-error, rank-stability, finite-value, phase-localized
+3. preregister the router-visible/router-blind control-subspace and path
+   comparator, separating prefill from autoregressive decode;
+4. test only verifier-labeled predictive increment and calibration over frozen
+   router-logit and hidden-state baselines;
+5. compare full Jacobians, reduced-target VJPs, and bounded finite-difference
+   probes on a smaller comparable MoE or the official Agents-A1 4B checkpoint
+   if released;
+6. require approximation-error, rank-stability, finite-value, phase-localized
    parity, memory, runtime, privacy, and predictive-increment gates;
-6. only then run a one-sequence 35B backward memory smoke on rented high-memory
+7. only then run a one-sequence 35B backward memory smoke on rented high-memory
    hardware with frozen abort thresholds and no scientific claims;
-7. advance only through a separately frozen fit and validation protocol.
+8. advance only through a separately frozen fit and validation protocol.
 
-Jacobian Scopes (`arXiv:2601.16407`) remains the strongest concrete engineering
-lead for reduced-target VJPs and finite-difference Jacobian estimates. Hidden
-Error Awareness (`arXiv:2605.09502`) supports diagnostic prediction but not
-causal repair. When Are Experts Misrouted? (`arXiv:2605.07260`) supports
-counterfactual router analysis, not router confidence as a correctness label.
-The Diminishing Returns of Early-Exit Decoding (`arXiv:2603.23701`) continues to
-require direct verifier-backed stopping evidence for modern MoEs. No actionable
-r/LocalLLaMA implementation lead has been verified against a primary source.
+`Jacobian Scopes` remains the strongest concrete engineering lead for
+reduced-target VJPs and finite-difference Jacobian estimates, but its current
+public implementation remains small-model-oriented and is not a drop-in
+Agents-A1 lens. `Polysemantic Experts, Monosemantic Paths` supports the
+parameter-free router-control/path comparator but establishes no Agents-A1
+result. `Hidden Error Awareness` supports diagnostic prediction but not causal
+repair. `When Are Experts Misrouted?` supports counterfactual router analysis
+while showing that ordinary routing can be uninformative on fragile reasoning
+tokens. `The Diminishing Returns of Early-Exit Decoding in Modern LLMs`
+continues to argue against assuming that a modern MoE is naturally suitable for
+layer truncation. `SoftMoE` is a training-time differentiable-routing result;
+it does not authorize modifying the frozen Agents-A1 router and adds no current
+observation-only or production claim.
 
-## Claim, privacy, and production boundary
+No r/LocalLLaMA item found in this scan produced an actionable technique that
+could be substantiated by a primary source.
 
-GitHub reports this repository as public. Treat every committed byte as
-externally visible. Never commit private prompts, answers, operands, outputs,
-token text or IDs, per-task labels or predictions, raw telemetry, hidden states,
-activations, gradients, Jacobians, lens matrices, model weights, caches, stack
-traces, local paths, private task IDs, pilot membership, PIDs, process start
-times, environment values, descriptor numbers, model pointers, executable
-hashes, or private launch evidence. Public artifacts remain aggregate-only.
+## Claim and stop boundary
 
-The research program is not finished. M38E is in progress, M37J-C remains
-blocked, the official Agents-A1 4B checkpoint is unavailable, and full 35B
-backward/Jacobian feasibility is unproven. No observation, classifier, tool
-policy, route edit, activation intervention, semantic monitor, truncation rule,
-or early-exit rule is authorized for production by this directive.
+- M38E remains in progress and has no result.
+- The retry path is blocked until every correction above is implemented and
+  tested. Attempt one remains valid and must continue.
+- No router, hidden-state, path, semantic, or Jacobian feature has demonstrated
+  incremental completed-error prediction on Agents-A1.
+- No Jacobian Lens has been fitted or validated on Agents-A1.
+- No safe truncation, early exit, semantic correctness, causal repair, routing
+  intervention, activation steering, or production utility is established.
+- Full 35B backward feasibility remains unproven.
+- GitHub reports this repository as public. Treat every committed byte as
+  externally visible and keep all raw tasks, outputs, token data, telemetry,
+  states, routes, paths, per-example predictions, process evidence, environment
+  data, model pointers, and secret-linked digests private.
+- The research program is not complete. Do not mark it complete until every
+  frozen milestone and final stop rule in `CODEX_AUTOSTEER.md` is satisfied.

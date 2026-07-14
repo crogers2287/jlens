@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T01:42Z (extended for steer 4cb5caa)
+
+- **Steer:** NEW steer `4cb5caa` read and executed in full
+  (`steer_sha_seen` now `a68b2b6ae5541e44925ee4c22d2f7adad6ed04fc`).
+  Six deeper retry gaps closed control-plane-only: READY/GO two-way
+  handshake (proven session/cwd/exe before durable registration),
+  behind-barrier interpreter+target re-proof with canonical-path exec,
+  full-identity liveness (exe/SID/PGID/argv/cwd/start-time), pinned
+  NUL-safe git-bound untracked-import audit enumerating ignored files
+  and import+PATH roots, complete 11-module dependency-closure
+  verification, and fail-closed automatic stall termination (no
+  trustworthy pure-Python process-tree scope -> permanent block, no
+  signal/wait/unlock). Attempt-1 closure + git identity bound read-only
+  while alive. 31 controller tests; 390 green. No retry launched.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 70 rows at
+  collection, mod_chain b3 underway, driver alive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-14T01:13Z
 
 - **Steer:** `32d5918` current (`steer_sha_seen 07cff4f6…`), no newer.

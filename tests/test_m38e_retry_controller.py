@@ -581,3 +581,64 @@ def test_live_record_binds_exe_identity_and_origins():
     for mod in ("vllm", "torch"):
         o = r0["package_origins"][mod]
         assert len(o["origin_sha256"]) == 64 and o["origin"]
+
+
+# -- steer 0e812c1 additions ----------------------------------------------------
+
+def test_retry_fail_closed_gate_blocks_automatic_retry():
+    # This runtime lacks fd-bound execveat/fexecve AND a delegated
+    # cgroup kill scope, so automatic retry MUST fail closed.
+    reasons = C.retry_fail_closed_reasons()
+    assert reasons, "expected fail-closed reasons on this platform"
+    assert any("fd-bound" in r for r in reasons)
+    assert any("cgroup" in r for r in reasons)
+
+
+def test_audit_git_identity_binds_and_blocks(tmp_path):
+    import hashlib as H
+    real_git = os.path.realpath("/usr/bin/git")
+    rec = {"records": [{"git_identity": {
+        "canonical": real_git,
+        "sha256": H.sha256(open(real_git, "rb").read()).hexdigest()}}]}
+    assert C.audit_git_identity(rec) == real_git
+    # tampered digest blocks
+    bad = {"records": [{"git_identity": {"canonical": real_git,
+                                         "sha256": "0" * 64}}]}
+    with pytest.raises(RetryBlocked, match="bytes changed"):
+        C.audit_git_identity(bad)
+    # missing identity blocks
+    with pytest.raises(RetryBlocked, match="git executable identity"):
+        C.audit_git_identity({"records": [{}]})
+
+
+def test_audit_invoked_with_git_slot_not_python(tmp_path):
+    # Integration: the audit's 4-arg boundary is <checkout> <env> <exe>
+    # <git>; passing python for git must NOT be how the controller wires
+    # it. Prove the audit runs clean with a real git and blocks a shadow.
+    import subprocess as sp
+    checkout = tmp_path / "co"
+    (checkout / "src").mkdir(parents=True)
+    for a in (["init", "-q"], ["config", "user.email", "t@t"],
+              ["config", "user.name", "t"]):
+        sp.run(["git", "-C", str(checkout), *a])
+    (checkout / "keep.txt").write_text("x")
+    sp.run(["git", "-C", str(checkout), "add", "-A"])
+    sp.run(["git", "-C", str(checkout), "commit", "-qm", "c"])
+    envbin = tmp_path / "e.bin"
+    envbin.write_bytes(b"PATH=/usr/bin\0")
+    AUDIT = REPO / "scripts" / "m38e_untracked_audit.py"
+    git_exe = os.path.realpath("/usr/bin/git")
+    clean = sp.run([sys.executable, str(AUDIT), str(checkout),
+                    str(envbin), sys.executable, git_exe],
+                   capture_output=True, text=True)
+    assert clean.returncode == 0 and "pass" in clean.stdout
+    (checkout / "shadow.py").write_text("x=1\n")
+    dirty = sp.run([sys.executable, str(AUDIT), str(checkout),
+                    str(envbin), sys.executable, git_exe],
+                   capture_output=True, text=True)
+    assert dirty.returncode != 0 and "block" in dirty.stdout
+    # python in the git slot fails closed (python cannot run git args)
+    wrongwire = sp.run([sys.executable, str(AUDIT), str(checkout),
+                        str(envbin), sys.executable, sys.executable],
+                       capture_output=True, text=True)
+    assert wrongwire.returncode != 0

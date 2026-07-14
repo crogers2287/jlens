@@ -417,6 +417,56 @@ def verify_runtime_identity(original: dict, env: dict) -> None:
                 f"dependency closure differs for {m} — blocked")
 
 
+def retry_fail_closed_reasons() -> list[str]:
+    """Kernel primitives required for a proven automatic retry that this
+    runtime cannot supply (steer 0e812c1). Non-empty => block."""
+    reasons = []
+    # The guarded launcher performs pathname os.execv, not an fd-bound
+    # execveat/fexecve with a proven replacement-race boundary. Even
+    # where libc exposes fexecve, the implemented exec path is
+    # pathname-based, so the final-lookup race is not proven closed —
+    # fail closed until an fd-bound launcher and a deterministic
+    # replacement-race test exist (steer 0e812c1 item 1).
+    if not _launcher_uses_fd_bound_exec():
+        reasons.append("no fd-bound execveat/fexecve exec path proven in "
+                       "the guarded launcher")
+    # Dedicated identity-bound process-tree kill scope.
+    if not _has_cgroup_scope():
+        reasons.append("no trustworthy cgroup-v2/systemd kill scope")
+    return reasons
+
+
+def _launcher_uses_fd_bound_exec() -> bool:
+    try:
+        src = (CONTROL / "scripts/m38e_launch.py").read_text()
+    except OSError:
+        return False
+    # Marker set only when the launcher exec's an identity-bound fd.
+    return "FD_BOUND_EXEC = True" in src
+
+
+def _has_cgroup_scope() -> bool:
+    # A usable delegated cgroup-v2 scope needs writable cgroup.procs in a
+    # delegated subtree; unprivileged sessions here do not have one.
+    return False
+
+
+def audit_git_identity(record: dict) -> str:
+    """Return the canonical bound git executable, verified against the
+    identity captured from attempt one (steer 0e812c1 item 3). Blocks on
+    any drift; never falls back to PATH or the Python executable."""
+    gi = record["records"][0].get("git_identity")
+    if not isinstance(gi, dict) or not gi.get("canonical"):
+        raise RetryBlocked("original record lacks git executable identity")
+    real = os.path.realpath(gi["canonical"])
+    if real != gi["canonical"]:
+        raise RetryBlocked("git executable path resolution changed")
+    got = hashlib.sha256(Path(real).read_bytes()).hexdigest()
+    if got != gi.get("sha256"):
+        raise RetryBlocked("git executable bytes changed")
+    return real
+
+
 def budget_available(record: dict) -> None:
     """Any attempt-two trace (reserved/launching/running/exited/counted)
     blocks permanently; a reserved entry without a PID also blocks."""
@@ -456,6 +506,19 @@ def main() -> int:
         if driver_alive(record):
             raise RetryBlocked("a driver for this run identity is alive")
 
+        # FAIL-CLOSED retry gate (steer 0e812c1 items 1 & 7): automatic
+        # retry requires two kernel primitives this pure-Python runtime
+        # cannot provide with a proven replacement-race boundary — an
+        # fd-bound execveat/fexecve exec path, and a dedicated
+        # identity-bound cgroup-v2/systemd scope for complete
+        # process-tree termination after GO. The steer authorizes
+        # failing closed when the platform cannot supply them. Automatic
+        # retry is therefore permanently blocked and requires private
+        # operator review; the honest, safe default for a contingency
+        # this critical.
+        for reason in retry_fail_closed_reasons():
+            raise RetryBlocked(f"fail-closed retry gate: {reason}")
+
         original = record["records"][0]
         # Order per steer 32d5918 item 1: environment, then bound
         # executable, THEN the Python-importing preflight under that
@@ -469,10 +532,12 @@ def main() -> int:
             env=env)
         if pre.returncode != 0:
             raise RetryBlocked(f"preflight: {pre.stdout.strip()}")
+        git_exe = audit_git_identity(record)   # bound git, never PATH
         aud = subprocess.run(
             [invoked, str(CONTROL / "scripts/m38e_untracked_audit.py"),
              str(exec_dir),
-             str(RECORD.parent / original["environ_file"]), invoked],
+             str(RECORD.parent / original["environ_file"]),
+             invoked, git_exe],           # 4-arg boundary: exe THEN git
             capture_output=True, text=True, env=env)
         if aud.returncode != 0:
             raise RetryBlocked(f"untracked-import audit: "

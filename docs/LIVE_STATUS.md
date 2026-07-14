@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T08:37Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current: `5f8b0af`, `fa06451`,
+  and NEW `M39_CROSS_MILESTONE_OUTCOME_FIREWALL` (pulled, read, obeyed).
+  - New addendum is design-time only: bars adaptive reuse of any M38E
+    outcome-bearing material (rows, labels, family/eligibility results,
+    error counts, telemetry) to select the M39 population, layers,
+    features, endpoints, thresholds, or models; requires a fresh
+    outcome-blind population disjoint from M38E with a cross-milestone
+    source-lineage audit. It does NOT change M38E: attempt 1 continues
+    undisturbed; M39 stays design-only and capture-prohibited.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress):
+  - `unique_official_tasks_completed`: **105 / 288** (mod_chain complete
+    at 96; alg_coeff band 1 underway at 9 / 24).
+  - `pilot_rows_completed`: 30 (mod_chain cap-choice evidence only; none
+    met the 4096 material-reduction bar — descriptive execution fact,
+    not a scientific finding).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 135.
+  - Remaining families: alg_coeff (in progress), then order_track.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root audit +
+  frozen exact-set/escalation/verifier/privacy/cleanup gates; frozen
+  stop rule (`m38e_completed_error_frontier_not_found`) applies if
+  frontier gates are unmet after the bounded sweep.
+
 ## Heartbeat 2026-07-14T08:07Z
 
 - **Steer:** `550c27b` + addenda `5f8b0af`, `fa06451` current

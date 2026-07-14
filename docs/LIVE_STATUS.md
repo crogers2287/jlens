@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T02:43Z (extended for steer 0e812c1)
+
+- **Steer:** NEW steer `0e812c1` read and executed in full
+  (`steer_sha_seen` now `30fa563b17346ca805d0dc693e0c111d3a0a9244`).
+  The honest resolution: automatic retry is now permanently
+  FAIL-CLOSED (`a77fede`) — it requires an fd-bound execveat/fexecve
+  exec path and a delegated cgroup kill scope that this pure-Python
+  unprivileged runtime cannot provide with a proven boundary, so the
+  controller blocks and requires operator review rather than
+  auto-launching (the steer's explicit escape hatch). Fixed the real
+  git-slot wiring bug (audit boundary now binds git by digest, never
+  python/PATH; integration-tested). Downgraded the overclaimed
+  "complete dependency closure" to a named-module origin sample.
+  34 controller tests; 381 green repo-wide.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 80 rows,
+  mod_chain b3, driver alive.
+
+### Blocker categories (steer 0e812c1 status correction)
+- **active_attempt_blockers:** none — attempt 1 has no runtime blocker.
+- **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
+  path proven in the launcher; no trustworthy cgroup kill scope.
+  Automatic retry is disabled; an attempt-1 failure requires operator
+  review, not auto-retry.
+- **finalization_blockers:** 1 — the fresh reusable untracked-import +
+  execution-root audit must pass at finalization; external-root binding
+  (distribution manifests, native libs, .pth/editable/entry-point
+  closure) is not yet complete, so finalization is gated on that audit
+  and on the sweep's own exact-set/cap-escalation/verifier gates.
+
 ## Heartbeat 2026-07-14T02:12Z
 
 - **Steer:** `4cb5caa` current (`steer_sha_seen a68b2b6a…`), no newer.

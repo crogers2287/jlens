@@ -7,16 +7,19 @@ satisfies every pre-capture item below. This file is not launch authorization.
 
 The original design commit `b2a76512a8fc92afead667aacc9a39e61639c1f1`
 correctly froze the scope and claim boundary, but it did not yet freeze enough
-statistical, leakage, provenance, and telemetry details to support a
-confirmatory run. This amendment closes the known false-confirmation paths
-before any M39 scientific data exists. It does not weaken M38E, M36V, M36T,
-M37J, sealed-data, verifier, privacy, provenance, or production gates.
+statistical, leakage, provenance, telemetry, and input-ambiguity details to
+support a confirmatory run. The first amendment closed the known
+false-confirmation paths before any M39 scientific data existed. This amendment
+adds a pre-generation ambiguity/aleatoric-uncertainty control required by
+`The Role of Ambiguity in Error Prediction via Uncertainty Quantification`
+(arXiv:2606.02093). It does not weaken M38E, M36V, M36T, M37J, sealed-data,
+verifier, privacy, provenance, or production gates.
 
 Steer basis: `550c27bafec69a9517d33a7524dff031f8ba17d6`
 (incorporates `0e812c1` and predecessors). All raw tasks, answers, outputs,
 tokens, routes, states, expert identities, expert outputs, per-example features,
-predictions, labels, split assignments, and secret-linked provenance remain
-private and uncommitted.
+predictions, labels, split assignments, ambiguity annotations, and secret-linked
+provenance remain private and uncommitted.
 
 ## Question
 
@@ -25,9 +28,9 @@ calibrated, verifier-labeled incremental completed-error prediction on the
 pinned Agents-A1 35B AWQ runtime beyond frozen nuisance and router baselines?
 
 This is a post-completion prediction and measurement study. It is not a
-Jacobian Lens, causal attribution, semantic-expert study, safe-stopping rule,
-early-exit policy, routing intervention, activation-steering result, or
-production authorization.
+Jacobian Lens, causal attribution, semantic-expert study, ambiguity-prediction
+study, safe-stopping rule, early-exit policy, routing intervention,
+activation-steering result, or production authorization.
 
 ## Model and runtime
 
@@ -74,17 +77,22 @@ feature names must be frozen in the launch amendment.
    - latency and fixed route-count summaries;
    - exact preregistered token-logprob/confidence summaries;
    - **verifier family/type assigned from the task manifest before generation
-     only**.
+     only**;
+   - **pre-generation ambiguity/determinacy stratum**, only when assigned by the
+     frozen task manifest and verifier contract before model inference under the
+     rules below.
 
    The following are labels and are absolutely prohibited from every feature,
    preprocessing step, imputation rule, split decision, model input, and feature
    selection procedure: verifier verdict; pass/fail/undecided; verifier
    confidence; evidence hash; failure subtype; whether verification succeeded;
    distance from the known answer; correct answer; expected value; accepted
-   values; post-verification category; manual review outcome; or any quantity
-   derived from output-versus-gold comparison. The ambiguous phrase “verifier
-   category” from the original draft is superseded by the pre-generation
-   verifier-family definition above.
+   values; post-verification category; manual review outcome; ambiguity inferred
+   after generation; ambiguity inferred from the model output, telemetry,
+   verifier result, or output-versus-gold comparison; or any quantity derived
+   from output-versus-gold comparison. The ambiguous phrase “verifier category”
+   from the original draft is superseded by the pre-generation verifier-family
+   definition above.
 
 2. **Router block**
    - router-logit and selected top-k weight summaries;
@@ -124,8 +132,9 @@ outcomes.
 
 Only the minimum preregistered aggregate features may stream to private storage.
 Full expert activation tensors must never be retained. Any expert IDs, route
-paths, hidden summaries, per-task feature vectors, predictions, split labels, or
-verifier labels remain private even when they are lower-dimensional.
+paths, hidden summaries, per-task feature vectors, predictions, split labels,
+ambiguity strata, or verifier labels remain private even when they are
+lower-dimensional.
 
 ## Capture-feasibility and parity gates
 
@@ -163,6 +172,45 @@ features.
   reassigned after inspecting telemetry.
 - Candidate-only or heuristic verdicts may not silently become gold labels.
 
+## Ambiguity and aleatoric-uncertainty control
+
+Error-prediction signals can conflate reducible model error with irreducible
+input ambiguity. M39 must not attribute that confounding to router, hidden-state,
+or expert-contribution telemetry.
+
+The launch amendment must choose and freeze exactly one primary policy before
+any M39 outcome-bearing capture:
+
+1. **Determinate-only primary population:** restrict the confirmatory primary
+   population to tasks whose frozen authoring metadata and verifier contract
+   establish a single determinate interpretation, while reporting all other
+   strata separately as secondary or unsupported; or
+2. **Stratified all-task primary population:** retain all eligible tasks, include
+   the frozen pre-generation ambiguity/determinacy stratum in every nuisance
+   baseline, enforce prospective information requirements within each required
+   stratum, and preregister the exact pooled and stratified decision rules.
+
+The stratum definition must be deterministic, versioned, and assigned before
+model inference from task-construction metadata and the verifier contract only.
+Permitted categories may include `single_determinate`,
+`multiple_valid_or_underspecified`, `conflicting_evidence`, and `unknown`, but
+the exact taxonomy and mapping must be frozen in the launch amendment. The
+mapping may not inspect model outputs, telemetry, verifier outcomes, manual
+post-generation review, or gold-comparison quantities. It may not expose answer
+text, accepted values, or answer-set content to the feature pipeline.
+
+`unknown` or mixed cases may not be silently folded into the most favorable
+stratum after outcomes are observed. Predicted ambiguity derived from model
+states, samples, semantic clusters, or outputs is outside the M39 confirmatory
+feature set unless separately preregistered as a distinct study with its own
+training/held-out boundary and multiplicity accounting.
+
+Source-lineage grouping still controls every split. Split construction must also
+preserve the frozen ambiguity policy, and the launch amendment must specify
+minimum correct/incorrect counts for every stratum required by the primary
+decision. Failure to meet those counts produces `underpowered/inconclusive`, not
+post-hoc pooling or relaxation.
+
 ## Required launch amendment
 
 Before authorization, a committed amendment must freeze all of the following
@@ -176,21 +224,25 @@ without access to M39 outcome-bearing telemetry:
    held-out proportions, and locked held-out digest;
 4. exact feature schema, formulas, layer set, phase treatment, normalization,
    precision, and missingness handling;
-5. one primary endpoint; all secondary metrics and plots must be labeled
+5. exact pre-generation ambiguity/determinacy taxonomy, mapping version, primary
+   population policy, stratum handling, and stratum-specific information gates;
+6. one primary endpoint; all secondary metrics and plots must be labeled
    secondary;
-6. exact classifier definitions, hyperparameter grids, preprocessing,
+7. exact classifier definitions, hyperparameter grids, preprocessing,
    calibration method, nested-CV folds, and train-fold-only feature selection;
-7. exact paired-resampling unit, bootstrap/permutation method, seed, replicate
+8. exact paired-resampling unit, bootstrap/permutation method, seed, replicate
    count, confidence level, and minimum effect-size threshold;
-8. family-wise multiplicity control across all confirmatory blocks,
-   comparisons, phases, and endpoints, or a fully specified hierarchical gate;
-9. prospective power/minimum-information rules, including minimum correct and
-   incorrect counts overall and within required split groups;
-10. failure, interruption, resume, insufficient-class, unsupported-phase, and
-    provenance-blocked outcomes;
-11. private artifact locations, schemas, digests, retention rules, leakage
+9. family-wise multiplicity control across all confirmatory blocks,
+   comparisons, phases, ambiguity strata, and endpoints, or a fully specified
+   hierarchical gate;
+10. prospective power/minimum-information rules, including minimum correct and
+    incorrect counts overall and within required split groups and ambiguity
+    strata;
+11. failure, interruption, resume, insufficient-class, unsupported-phase,
+    ambiguity-unknown, and provenance-blocked outcomes;
+12. private artifact locations, schemas, digests, retention rules, leakage
     audit, and public aggregate reporting template;
-12. exact advance/stop decision table.
+13. exact advance/stop decision table.
 
 If any item remains qualitative, references “mirroring” an earlier study without
 copying the exact rule, or is chosen after outcome-bearing telemetry exists,
@@ -201,6 +253,8 @@ M39 is not confirmatory and must not launch.
 - All preprocessing, imputation, normalization, residualization, calibration,
   feature selection, and hyperparameter selection occur inside training folds.
 - Family/source-lineage grouping applies to every nested-CV and held-out split.
+- The frozen ambiguity policy and required stratum representation apply to every
+  nested-CV, calibration, validation, and held-out split.
 - Confirmatory increment must be evaluated at the task-row level against the
   nuisance baseline and the nuisance-plus-router baseline.
 - A lower confidence bound merely above zero is not sufficient unless the
@@ -210,22 +264,24 @@ M39 is not confirmatory and must not launch.
   not all become co-primary by being listed. Exactly one primary endpoint must
   be named before capture.
 - No sealed or held-out outcomes may influence task selection, feature formulas,
-  layer selection, phase pooling, exclusions, classifier choice, or threshold
-  selection.
+  layer selection, phase pooling, ambiguity mapping, exclusions, classifier
+  choice, or threshold selection.
 - If prospective information or class-balance requirements are not met, report
-  `underpowered/inconclusive`; do not pool families, alter labels, relax the
-  effect threshold, or search extra feature variants after the fact.
+  `underpowered/inconclusive`; do not pool families or ambiguity strata, alter
+  labels, relax the effect threshold, or search extra feature variants after the
+  fact.
 
 ## Confirmatory rule and stop conditions
 
 Advance only if a prespecified forward-only block clears the complete frozen
 decision table: parity, provenance, privacy, power, calibration, minimum-effect,
 multiplicity-adjusted paired lower bound, nuisance increment, router-baseline
-increment, and locked-held-out replication.
+increment, frozen ambiguity-policy requirements, and locked-held-out
+replication.
 
 If no block clears, record the scoped negative and stop. A positive result
 establishes only forward-only completed-error predictive increment on the exact
-frozen population and runtime.
+frozen population, runtime, and ambiguity policy.
 
 Semantic expert labels remain exploratory and sealed. LLM-generated expert
 labels may not be predictors, stopping rules, interventions, or scientific
@@ -235,9 +291,9 @@ project-specific leakage and inversion audit remains mandatory.
 
 ## Boundary and sequence
 
-M39 cannot establish a Jacobian Lens, causal mechanism, expert semantics, route
-quality, safe truncation, early exit, correction, intervention, steering, or
-production value.
+M39 cannot establish a Jacobian Lens, causal mechanism, expert semantics,
+ambiguity prediction, route quality, safe truncation, early exit, correction,
+intervention, steering, or production value.
 
 Only after a forward-only block clears every M39 gate may the program proceed to
 separately preregistered full-Jacobian, reduced-target VJP, or bounded

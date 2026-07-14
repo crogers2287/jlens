@@ -94,17 +94,28 @@ def proc_identity(pid: int) -> dict | None:
 
 
 def driver_alive(record: dict) -> bool:
-    """True when any recorded attempt is provably alive; AmbiguousProcess
-    propagates and blocks."""
+    """Fail-closed liveness (steer 32d5918 item 4): proven nonexistence
+    or a DIFFERENT start time (PID reuse) means the recorded process is
+    dead; the same start time with ANY identity mismatch, unreadable
+    evidence, or missing recorded fields raises AmbiguousProcess."""
     for rec in record["records"]:
         if "pid" not in rec:
             continue
+        for field in ("cmdline", "cwd", "starttime_ticks"):
+            if field not in rec:
+                raise AmbiguousProcess(
+                    f"recorded attempt lacks identity field {field}")
         ident = proc_identity(rec["pid"])
         if ident is None:
-            continue
+            continue                       # proven nonexistent: dead
+        current_start = proc_starttime(rec["pid"])
+        if current_start != rec["starttime_ticks"]:
+            continue                       # PID reuse: recorded is dead
         if (ident["cmdline"] == rec["cmdline"]
                 and ident["cwd"] == rec["cwd"]):
-            return True
+            return True                    # exact full identity: alive
+        raise AmbiguousProcess(
+            "same start time with identity mismatch — blocked")
     return False
 
 
@@ -216,33 +227,79 @@ def _prove(pid: int, expected: dict) -> str:
     return "owned"
 
 
-def terminate_owned(pid: int, expected: dict) -> str:
-    """Strict termination: full expected evidence is mandatory (no
-    permissive mode); ownership is re-proved immediately before EVERY
-    signal. Returns 'dead'; 'ambiguous' means leave the PID recorded,
-    block permanently, and never signal."""
+def _session_descendants(sid: int, leader_start: int) -> list[int]:
+    """PIDs in the recorded session, each individually provable."""
+    out = []
+    for entry in os.listdir("/proc"):
+        if not entry.isdigit():
+            continue
+        pid = int(entry)
+        try:
+            if os.getsid(pid) == sid and proc_starttime(pid) >= leader_start:
+                out.append(pid)
+        except (ProcessLookupError, FileNotFoundError, PermissionError,
+                OSError):
+            continue
+    return out
+
+
+def terminate_owned(pid: int, expected: dict,
+                    pidfd: int | None = None) -> str:
+    """pidfd-enforced termination (steer 32d5918 item 6): the leader is
+    signaled through its pidfd (immune to PID reuse); descendants in the
+    recorded session are each signaled only through their own freshly
+    opened pidfd after per-process proof. Platforms without pidfd fail
+    closed ('ambiguous', no automatic termination). Ownership is
+    re-proved immediately before every signal; ambiguity never
+    signals."""
+    import signal as _signal
+
     if not expected or "starttime" not in expected:
         return "ambiguous"                 # no permissive path exists
-    pidfd = None
-    try:
-        pidfd = os.pidfd_open(pid)         # PID-reuse resistance
-    except (OSError, AttributeError):
-        pidfd = None
-    try:
+    if not hasattr(_signal, "pidfd_send_signal"):
+        return "ambiguous"                 # fail closed without pidfd
+    own_fd = pidfd
+    opened = False
+    if own_fd is None:
         try:
-            state = _prove(pid, expected)
-        except AmbiguousProcess:
-            return "ambiguous"
-        if state == "dead":
-            return "dead"
-        os.killpg(pid, 15)
-        time.sleep(5)
-        try:
-            state = _prove(pid, expected)  # re-prove before KILL
-        except AmbiguousProcess:
-            return "ambiguous"
-        if state == "owned":
-            os.killpg(pid, 9)
+            own_fd = os.pidfd_open(pid)
+            opened = True
+        except OSError:
+            try:
+                return ("dead" if ownership_evidence(pid) is None
+                        else "ambiguous")
+            except AmbiguousProcess:
+                return "ambiguous"
+    try:
+        for sig in (15, 9):
+            try:
+                state = _prove(pid, expected)   # re-prove pre-signal
+            except AmbiguousProcess:
+                return "ambiguous"
+            if state == "dead":
+                break
+            try:
+                _signal.pidfd_send_signal(own_fd, sig)
+            except ProcessLookupError:
+                break
+            # descendants: per-process pidfd proof, never bare killpg
+            for dpid in _session_descendants(expected["sid"],
+                                             expected["starttime"]):
+                if dpid == pid:
+                    continue
+                try:
+                    dfd = os.pidfd_open(dpid)
+                except OSError:
+                    continue
+                try:
+                    if os.getsid(dpid) == expected["sid"]:
+                        _signal.pidfd_send_signal(dfd, sig)
+                except (ProcessLookupError, OSError):
+                    pass
+                finally:
+                    os.close(dfd)
+            if sig == 15:
+                time.sleep(5)
         try:
             os.waitpid(pid, os.WNOHANG)
         except ChildProcessError:
@@ -254,8 +311,31 @@ def terminate_owned(pid: int, expected: dict) -> str:
         except AmbiguousProcess:
             return "ambiguous"
     finally:
-        if pidfd is not None:
-            os.close(pidfd)
+        if opened and own_fd is not None:
+            os.close(own_fd)
+
+
+def bind_executable(original: dict) -> str:
+    """Prove the invoked Python pathname resolves to the exact bound
+    file identity (canonical path, dev, inode, mode, size, sha256).
+    Returns the invoked pathname; any drift blocks (32d5918 item 2)."""
+    invoked = original.get("python")
+    ident = original.get("exe_identity")
+    want_sha = original.get("exe_sha256")
+    if not invoked or not isinstance(ident, dict) or not want_sha:
+        raise RetryBlocked("original record lacks executable identity")
+    resolved = os.path.realpath(invoked)
+    if resolved != ident.get("canonical"):
+        raise RetryBlocked("python pathname resolution changed")
+    st = os.stat(resolved)
+    if (st.st_dev != ident.get("dev") or st.st_ino != ident.get("inode")
+            or st.st_mode != ident.get("mode")
+            or st.st_size != ident.get("size")):
+        raise RetryBlocked("executable file identity changed")
+    got = hashlib.sha256(Path(resolved).read_bytes()).hexdigest()
+    if got != want_sha:
+        raise RetryBlocked("python executable bytes changed")
+    return invoked
 
 
 def verify_runtime_identity(original: dict, env: dict) -> None:
@@ -263,26 +343,28 @@ def verify_runtime_identity(original: dict, env: dict) -> None:
     sha256 captured from /proc/<pid>/exe while attempt one was alive)
     and the complete recorded environment — never the controller's
     ambient interpreter (steer e2d5b5e item 4)."""
-    python = original["python"]
-    exe_resolved = original.get("exe_resolved")
-    want_sha = original.get("exe_sha256")
-    if not exe_resolved or not want_sha:
-        raise RetryBlocked("original record lacks executable identity")
-    if not Path(exe_resolved).exists():
-        raise RetryBlocked("original python executable missing")
-    got = hashlib.sha256(Path(exe_resolved).read_bytes()).hexdigest()
-    if got != want_sha:
-        raise RetryBlocked("python executable bytes changed")
+    invoked = bind_executable(original)
+    recorded_origins = original.get("package_origins")
+    if not isinstance(recorded_origins, dict):
+        raise RetryBlocked("original record lacks package origins")
     for mod in ("vllm", "torch"):
+        want = recorded_origins.get(mod)
+        if not want:
+            raise RetryBlocked(f"no recorded origin for {mod}")
         probe = subprocess.run(
-            [python, "-c",
-             f"import {mod}; print({mod}.__version__); "
-             f"print({mod}.__file__)"],
+            [invoked, "-c",
+             f"import {mod}, hashlib, os; print({mod}.__version__); "
+             f"p=os.path.realpath({mod}.__file__); print(p); "
+             f"print(hashlib.sha256(open(p,'rb').read()).hexdigest())"],
             capture_output=True, text=True, env=env)
         lines = probe.stdout.strip().splitlines()
-        if len(lines) < 2 or lines[0] != original.get(f"{mod}_version"):
-            raise RetryBlocked(f"{mod} version/origin differs under the "
-                               "recorded environment")
+        if len(lines) < 3:
+            raise RetryBlocked(f"{mod} probe failed under recorded env")
+        if (lines[0] != want["version"] or lines[1] != want["origin"]
+                or lines[2] != want["origin_sha256"]):
+            raise RetryBlocked(
+                f"{mod} version/origin/bytes differ from the recorded "
+                "identity (same-version different-origin blocks)")
 
 
 def budget_available(record: dict) -> None:
@@ -324,22 +406,32 @@ def main() -> int:
         if driver_alive(record):
             raise RetryBlocked("a driver for this run identity is alive")
 
+        original = record["records"][0]
+        # Order per steer 32d5918 item 1: environment, then bound
+        # executable, THEN the Python-importing preflight under that
+        # exact executable and environment — never sys.executable.
+        env = build_retry_environment(original)
+        invoked = bind_executable(original)
         verify_control_artifacts(record)
         pre = subprocess.run(
-            [sys.executable,
-             str(CONTROL / "scripts/m38e_exec_preflight.py"),
-             str(exec_dir), expected], capture_output=True, text=True)
+            [invoked, str(CONTROL / "scripts/m38e_exec_preflight.py"),
+             str(exec_dir), expected], capture_output=True, text=True,
+            env=env)
         if pre.returncode != 0:
             raise RetryBlocked(f"preflight: {pre.stdout.strip()}")
-
-        original = record["records"][0]
-        # Reconstruct the complete recorded environment FIRST; every
-        # package-dependent probe runs under it (steer e2d5b5e item 4).
-        env = build_retry_environment(original)
+        aud = subprocess.run(
+            [invoked, str(CONTROL / "scripts/m38e_untracked_audit.py"),
+             str(exec_dir),
+             str(RECORD.parent / original["environ_file"]), invoked],
+            capture_output=True, text=True, env=env)
+        if aud.returncode != 0:
+            raise RetryBlocked(f"untracked-import audit: "
+                               f"{aud.stdout.strip()}")
         verify_runtime_identity(original, env)
         launch_arg = verify_model_identity(original, exec_dir)
-        # Re-verify artifact bytes immediately before process creation.
+        # Re-verify everything immediately before reservation.
         verify_control_artifacts(record)
+        bind_executable(original)
 
         # Durably consume attempt two BEFORE process creation.
         nonce = secrets.token_hex(16)
@@ -359,20 +451,24 @@ def main() -> int:
         os.set_inheritable(lock_fd, True)
         log = open(CONTROL / "logs/m38e_official.log", "a")
         proc = subprocess.Popen(
-            [sys.executable, str(CONTROL / "scripts/m38e_launch.py"),
-             str(barrier_r), str(lock_fd), str(exec_dir),
-             original["python"], "src/m38e_dev_sweep.py",
+            [invoked, str(CONTROL / "scripts/m38e_launch.py"),
+             str(barrier_r), str(lock_fd), original["exe_sha256"],
+             str(exec_dir), invoked, "src/m38e_dev_sweep.py",
              "--model-ref", launch_arg],
             stdout=log, stderr=log, env=env, close_fds=True,
             pass_fds=(barrier_r, lock_fd))
         os.close(barrier_r)
+        try:
+            leader_pidfd = os.pidfd_open(proc.pid)
+        except OSError:
+            leader_pidfd = None
         # Capture full ownership evidence while the child is behind the
         # barrier (pre-exec launcher phase).
         own = ownership_evidence(proc.pid)
         if own is None:
             raise RetryBlocked("child vanished before evidence capture")
         launcher_cmd = own["cmdline"]
-        driver_cmd_prefix = [original["python"], "src/m38e_dev_sweep.py"]
+        driver_cmd_prefix = [invoked, "src/m38e_dev_sweep.py"]
         expected_owner = {"starttime": own["starttime"],
                           "sid": own["sid"], "cwd": str(exec_dir),
                           "phases": []}
@@ -382,8 +478,7 @@ def main() -> int:
                 "state": "launching", "pid": proc.pid, "pgid": proc.pid,
                 "starttime_ticks": own["starttime"], "sid": own["sid"],
                 "launcher_cmdline": launcher_cmd,
-                "expected_cmdline": [original["python"],
-                                     "src/m38e_dev_sweep.py"],
+                "expected_cmdline": [invoked, "src/m38e_dev_sweep.py"],
                 "exec_dir": str(exec_dir),
                 "source_commit": expected,
                 "launcher_sha256": record["control_artifact_sha256"][
@@ -403,7 +498,8 @@ def main() -> int:
         except Exception:
             os.close(barrier_w)           # EOF: child exits without exec
             expected_owner["phases"] = [launcher_cmd]
-            outcome = terminate_owned(proc.pid, expected_owner)
+            outcome = terminate_owned(proc.pid, expected_owner,
+                                      leader_pidfd)
             record["records"][-1]["state"] = (
                 "failed_terminated" if outcome == "dead" else "ambiguous")
             atomic_write_record(record)
@@ -417,14 +513,15 @@ def main() -> int:
                 ident = proc_identity(proc.pid)
             except AmbiguousProcess:
                 continue
-            if ident and ident["cmdline"][:2] == [original["python"],
+            if ident and ident["cmdline"][:2] == [invoked,
                                                   "src/m38e_dev_sweep.py"]:
                 expected_ident = ident
                 break
         if expected_ident is None:
             expected_owner["phases"] = [launcher_cmd,
                                         driver_cmd_prefix]
-            outcome = terminate_owned(proc.pid, expected_owner)
+            outcome = terminate_owned(proc.pid, expected_owner,
+                                      leader_pidfd)
             record["records"][-1]["state"] = (
                 "failed_terminated" if outcome == "dead" else "ambiguous")
             atomic_write_record(record)
@@ -449,8 +546,19 @@ def main() -> int:
                     for p in (rows, logf) if p.exists()]
             if ages and min(ages) > STALL_SECONDS:
                 expected_owner["phases"] = [expected_ident["cmdline"]]
-                outcome = terminate_owned(proc.pid, expected_owner)
+                outcome = terminate_owned(proc.pid, expected_owner,
+                                          leader_pidfd)
                 record["records"][-1]["stall_termination"] = outcome
+                if outcome == "ambiguous":
+                    # Durable permanent block; NO unbounded wait; close
+                    # only our lock duplicate so a surviving child
+                    # retains its inherited hold (32d5918 item 7).
+                    record["records"][-1]["state"] = "ambiguous"
+                    atomic_write_record(record)
+                    print("[m38e-retry] BLOCK: ambiguous stall "
+                          "termination — private review required",
+                          flush=True)
+                    return 3
                 atomic_write_record(record)
                 break
         rc = proc.wait()

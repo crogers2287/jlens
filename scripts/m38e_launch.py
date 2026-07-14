@@ -10,21 +10,24 @@ without touching any ledger. An inherited lock descriptor (kept open
 through exec) keeps the run-ID flock held by the surviving driver even
 if the controller dies afterward.
 
-usage: m38e_launch.py <barrier_fd> <lock_fd> <exec_dir> <python>
-                      <driver_rel> [args...]
+usage: m38e_launch.py <barrier_fd> <lock_fd> <expected_exe_sha256>
+                      <exec_dir> <python> <driver_rel> [args...]
 """
+import hashlib
 import os
 import sys
 
 
 def main() -> None:
-    if len(sys.argv) < 6:
+    if len(sys.argv) < 7:
         raise SystemExit("usage: m38e_launch.py <barrier_fd> <lock_fd> "
-                         "<exec_dir> <python> <driver_rel> [args...]")
+                         "<expected_exe_sha256> <exec_dir> <python> "
+                         "<driver_rel> [args...]")
     barrier_fd = int(sys.argv[1])
     lock_fd = int(sys.argv[2])
-    exec_dir, python, driver = sys.argv[3:6]
-    args = sys.argv[6:]
+    expected_sha = sys.argv[3]
+    exec_dir, python, driver = sys.argv[4:7]
+    args = sys.argv[7:]
 
     os.chdir(exec_dir)
     os.setsid()
@@ -49,6 +52,13 @@ def main() -> None:
     os.close(barrier_fd)                    # closed before exec
     if go != b"G":
         raise SystemExit(0)                # no exec, no ledger contact
+    # Re-prove the executable identity behind the barrier, immediately
+    # before scientific exec (steer 32d5918 item 2).
+    target = os.path.realpath(python)
+    got = hashlib.sha256(open(target, "rb").read()).hexdigest()
+    if got != expected_sha:
+        os.write(2, b"[m38e-launch] executable identity changed: abort\n")
+        raise SystemExit(5)
     os.set_inheritable(lock_fd, True)      # driver keeps the flock held
     os.execv(python, [python, driver, *args])
 

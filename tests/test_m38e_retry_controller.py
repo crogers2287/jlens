@@ -14,20 +14,29 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 
 import m38e_retry_controller as C
-from m38e_retry_controller import (RetryBlocked, driver_alive,
+from m38e_retry_controller import (AmbiguousProcess, RetryBlocked, driver_alive,
                                    proc_identity, verify_owned_pgid)
 
 LAUNCHER = REPO / "scripts" / "m38e_launch.py"
 
 
-def spawn_guarded(tmp_path, argv, release=True):
+import hashlib as _H
+
+
+def _sha(path):
+    return _H.sha256(open(os.path.realpath(path), "rb").read()).hexdigest()
+
+
+def spawn_guarded(tmp_path, argv, release=True, sha=None):
     barrier_r, barrier_w = os.pipe()
     os.set_inheritable(barrier_r, True)
     lock_r = os.open("/dev/null", os.O_RDONLY)
     os.set_inheritable(lock_r, True)
+    exe_sha = sha if sha is not None else _sha(argv[0])
     proc = subprocess.Popen([sys.executable, str(LAUNCHER),
-                             str(barrier_r), str(lock_r),
-                             str(tmp_path), *argv], close_fds=False)
+                             str(barrier_r), str(lock_r), exe_sha,
+                             str(tmp_path), *argv], close_fds=True,
+                            pass_fds=(barrier_r, lock_r))
     os.close(barrier_r)
     os.close(lock_r)
     if release:
@@ -85,8 +94,10 @@ def test_lock_survives_controller_death_via_inherited_fd(tmp_path):
     os.set_inheritable(barrier_r, True)
     proc = subprocess.Popen([sys.executable, str(LAUNCHER),
                              str(barrier_r), str(holder.fileno()),
+                             _sha("/bin/sleep"),
                              str(tmp_path), "/bin/sleep", "5"],
-                            close_fds=False)
+                            close_fds=True,
+                            pass_fds=(barrier_r, holder.fileno()))
     os.close(barrier_r)
     os.write(barrier_w, b"G")
     os.close(barrier_w)
@@ -101,28 +112,44 @@ def test_lock_survives_controller_death_via_inherited_fd(tmp_path):
     F.flock(probe, F.LOCK_EX | F.LOCK_NB)       # released with child
 
 
-def make_record(pid, cmdline, cwd, attempts=1):
+def make_record(pid, cmdline, cwd, attempts=1, starttime=None):
+    import m38e_retry_controller as _R
+    if starttime is None:
+        try:
+            starttime = _R.proc_starttime(pid)
+        except Exception:
+            starttime = 0
     return {"attempts_launched": attempts,
             "records": [{"attempt": 1, "pid": pid, "pgid": pid,
                          "run_id": "testrun",
                          "cmdline": cmdline, "cwd": cwd,
+                         "starttime_ticks": starttime,
                          "python": sys.executable,
                          "env_protocol": {}}]}
 
 
-def test_decoy_process_is_never_treated_as_the_driver(tmp_path):
-    # A live decoy at the recorded PID with a DIFFERENT cmdline/cwd must
-    # not count as the driver being alive, and must never be signaled.
+def test_decoy_same_start_time_identity_mismatch_blocks(tmp_path):
+    # A live process at the recorded PID with the SAME start time but a
+    # different cmdline/cwd is ambiguous -> blocks (never 'dead').
     decoy = subprocess.Popen(["/bin/sleep", "5"], cwd=str(tmp_path))
     time.sleep(0.2)
     rec = make_record(decoy.pid, ["python", "src/m38e_dev_sweep.py"],
-                      "/somewhere/else")
-    assert driver_alive(rec) is False
-    with pytest.raises(RetryBlocked, match="identity changed"):
-        verify_owned_pgid(decoy.pid,
-                          {"cmdline": ["python", "src/m38e_dev_sweep.py"],
-                           "cwd": "/somewhere/else"})
+                      "/somewhere/else")   # real start time, wrong ident
+    with pytest.raises(AmbiguousProcess):
+        driver_alive(rec)
     assert decoy.poll() is None            # decoy untouched
+    decoy.kill()
+    decoy.wait()
+
+
+def test_pid_reuse_different_start_time_is_dead(tmp_path):
+    decoy = subprocess.Popen(["/bin/sleep", "5"], cwd=str(tmp_path))
+    time.sleep(0.2)
+    rec = make_record(decoy.pid, ["python", "src/m38e_dev_sweep.py"],
+                      "/somewhere/else",
+                      starttime=1)         # different start time = reuse
+    assert driver_alive(rec) is False      # recorded process is dead
+    assert decoy.poll() is None            # unrelated current untouched
     decoy.kill()
     decoy.wait()
 
@@ -132,7 +159,7 @@ def test_live_original_blocks_and_matching_identity_detected(tmp_path):
     time.sleep(0.2)
     ident = proc_identity(live.pid)
     rec = make_record(live.pid, ident["cmdline"], ident["cwd"])
-    assert driver_alive(rec) is True       # would block a retry
+    assert driver_alive(rec) is True       # exact full identity: alive
     live.kill()
     live.wait()
     time.sleep(0.2)
@@ -180,27 +207,42 @@ def test_original_attempt_counted_in_live_record():
     assert live["records"][0]["pid"] == live["records"][0]["pgid"]
 
 
-def test_runtime_identity_requires_executable_evidence(tmp_path):
-    # missing exe identity blocks
-    with pytest.raises(RetryBlocked, match="executable identity"):
-        C.verify_runtime_identity({"python": sys.executable}, {})
-    # bound exe + wrong version under recorded env blocks
+def bound_exe_record():
     import hashlib as H
-    original = {"python": sys.executable,
-                "exe_resolved": sys.executable,
-                "exe_sha256": H.sha256(
-                    open(sys.executable, "rb").read()).hexdigest(),
-                "vllm_version": "0.0.0-fake",
-                "torch_version": "0.0.0-fake"}
-    env = {"PATH": "/usr/bin"}
-    with pytest.raises(RetryBlocked, match="differs under the recorded"):
-        C.verify_runtime_identity(original, env)
-    # changed executable bytes block
+    exe = os.path.realpath(sys.executable)
+    st = os.stat(exe)
+    return {"python": sys.executable, "exe_resolved": exe,
+            "exe_sha256": H.sha256(open(exe, "rb").read()).hexdigest(),
+            "exe_identity": {"canonical": exe, "dev": st.st_dev,
+                             "inode": st.st_ino, "mode": st.st_mode,
+                             "size": st.st_size}}
+
+
+def test_bind_executable_blocks_on_missing_or_changed(tmp_path):
+    with pytest.raises(RetryBlocked, match="executable identity"):
+        C.bind_executable({"python": sys.executable})
+    rec = bound_exe_record()
+    assert C.bind_executable(rec) == sys.executable
+    # inode change (different file at a copied path) blocks
     fake = tmp_path / "python-fake"
-    fake.write_bytes(b"#!/bin/sh\n")
-    original2 = dict(original, exe_resolved=str(fake))
-    with pytest.raises(RetryBlocked, match="bytes changed"):
-        C.verify_runtime_identity(original2, env)
+    fake.write_bytes(open(os.path.realpath(sys.executable), "rb").read())
+    bad = dict(rec, python=str(fake),
+               exe_identity=dict(rec["exe_identity"],
+                                 canonical=str(fake)))
+    with pytest.raises(RetryBlocked, match="file identity changed"):
+        C.bind_executable(bad)
+
+
+def test_runtime_identity_same_version_diff_origin_blocks():
+    rec = bound_exe_record()
+    rec["package_origins"] = {
+        "vllm": {"version": "9.9", "origin": "/nowhere/vllm.py",
+                 "origin_sha256": "0" * 64},
+        "torch": {"version": "9.9", "origin": "/nowhere/torch.py",
+                  "origin_sha256": "0" * 64}}
+    env = {"PATH": "/usr/bin"}
+    with pytest.raises(RetryBlocked):
+        C.verify_runtime_identity(rec, env)
 
 
 # -- steer 02a483b additions ----------------------------------------------------
@@ -361,7 +403,7 @@ def test_fd_allowlist_blocks_leaked_descriptor(tmp_path):
     os.set_inheritable(leak_r, True)
     proc = subprocess.Popen(
         [sys.executable, str(LAUNCHER), str(barrier_r), str(lock_r),
-         str(tmp_path), sys.executable, str(script)],
+         _sha(sys.executable), str(tmp_path), sys.executable, str(script)],
         close_fds=True, pass_fds=(barrier_r, lock_r, leak_r))
     os.close(barrier_r); os.close(lock_r); os.close(leak_r)
     rc = proc.wait(timeout=10)
@@ -431,3 +473,52 @@ def test_live_record_pins_environment_and_artifacts():
     for rel in ("scripts/m38e_launch.py",
                 "scripts/m38e_exec_preflight.py"):
         assert len(pinned[rel]) == 64
+
+
+# -- steer 32d5918 additions ----------------------------------------------------
+
+def test_untracked_audit_blocks_importable(tmp_path):
+    import subprocess as sp
+    checkout = tmp_path / "co"
+    (checkout / "src").mkdir(parents=True)
+    sp.run(["git", "-C", str(checkout), "init", "-q"])
+    sp.run(["git", "-C", str(checkout), "config", "user.email", "t@t"])
+    sp.run(["git", "-C", str(checkout), "config", "user.name", "t"])
+    (checkout / "tracked.txt").write_text("x")
+    sp.run(["git", "-C", str(checkout), "add", "-A"])
+    sp.run(["git", "-C", str(checkout), "commit", "-qm", "c"])
+    envbin = tmp_path / "env.bin"
+    envbin.write_bytes(b"PATH=/usr/bin\0")
+    AUDIT = REPO / "scripts" / "m38e_untracked_audit.py"
+    # clean: passes
+    r = sp.run([sys.executable, str(AUDIT), str(checkout), str(envbin),
+                sys.executable], capture_output=True, text=True)
+    assert r.returncode == 0 and "pass" in r.stdout
+    # untracked importable module in src root: blocks
+    (checkout / "src" / "evil.py").write_text("x=1\n")
+    r = sp.run([sys.executable, str(AUDIT), str(checkout), str(envbin),
+                sys.executable], capture_output=True, text=True)
+    assert r.returncode != 0 and "block" in r.stdout
+
+
+def test_stall_ambiguous_returns_blocked_without_hang(monkeypatch):
+    # terminate_owned -> 'ambiguous' must NOT lead to an unbounded wait;
+    # verified structurally: the ambiguous branch returns before wait().
+    src = Path(C.__file__).read_text()
+    loop = src.split("while proc.poll() is None:")[1].split(
+        "rc = proc.wait()")[0]
+    assert 'outcome == "ambiguous"' in loop
+    assert "return 3" in loop
+
+
+def test_live_record_binds_exe_identity_and_origins():
+    live = json.loads(
+        (REPO / "reports/shadow/private/m38e_launch_record.json")
+        .read_text())
+    r0 = live["records"][0]
+    ei = r0["exe_identity"]
+    assert all(k in ei for k in ("canonical", "dev", "inode", "mode",
+                                 "size"))
+    for mod in ("vllm", "torch"):
+        o = r0["package_origins"][mod]
+        assert len(o["origin_sha256"]) == 64 and o["origin"]

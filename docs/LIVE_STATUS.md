@@ -4,6 +4,27 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T00:43Z (extended for steer 32d5918)
+
+- **Steer:** NEW steer `32d5918` read and executed in full
+  (`steer_sha_seen` now `07cff4f65e23046c78254e0558508cc9bb7a843e`).
+  Seven remaining retry fail-open paths closed control-plane-only
+  (`19bbdaa`): preflight+probes under the bound executable and complete
+  recorded environment (never sys.executable/ambient), full executable
+  file-identity binding re-proven behind the launch barrier, exact
+  package-origin comparison (same-version/different-origin blocks),
+  fail-closed liveness (PID-reuse-by-start-time vs ambiguous mismatch),
+  a reusable untracked-import audit script used at preflight and
+  finalization, pidfd-enforced termination (leader + per-descendant,
+  fail-closed without pidfd), and ambiguous-stall permanent block with
+  no unbounded wait. Attempt 1's exe identity + package origins bound
+  read-only while alive. 31 controller tests; 390 green. No retry
+  launched.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** RUNNING undisturbed — 61 rows at
+  collection, fresh progress, driver alive.
+- **Blockers:** none.
+
 ## Heartbeat 2026-07-14T00:13Z
 
 - **Steer:** `e2d5b5e` current (`steer_sha_seen 6cb5cdcd…`), no newer.

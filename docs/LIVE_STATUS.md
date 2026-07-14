@@ -4,6 +4,25 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T05:43Z
+
+- **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.
+  Operator revised M39 prereg again (`616afab`, pulled/adopted): adds a
+  pre-generation ambiguity/aleatoric-uncertainty control stratum (a
+  nuisance covariate, assigned before generation only) so input-
+  ambiguity confounding isn't misattributed to router/hidden-state/
+  contribution features, plus family-wise multiplicity control across
+  blocks/phases/strata/endpoints. Ambiguity inferred from output or
+  telemetry is barred from features.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 108 rows, mod_chain family (b4 4096
+  escalation); driver (pid 621509) alive, last row ~4 min ago.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root +
+  external-root/loader/package audit + frozen exact-set/escalation/
+  verifier/privacy/cleanup gates.
+
 ## Heartbeat 2026-07-14T05:13Z
 
 - **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.

@@ -4,6 +4,57 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T22:37Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current (EIGHT): `5f8b0af`,
+  `fa06451`, `M39_CROSS_MILESTONE_OUTCOME_FIREWALL`,
+  `AGENTS_A1_4B_ARTIFACT_ADMISSION`, `AGENTS_A1_4B_IDENTIFIERS_RESOLVED`,
+  `AGENTS_A1_4B_DENSE_CLASSIFICATION`, `MOE_CAUSAL_LOCALIZATION_GATE`,
+  and NEW `M38E_FRONTIER_IRREVERSIBLY_UNAVAILABLE` (pulled, read, obeyed).
+- **Program-control conclusion (deterministic, from aggregate control-flow
+  only — no private rows opened):** the M38E development completed-error
+  frontier is now **irreversibly unavailable** under the frozen protocol.
+  The gate requires >=2 eligible families; mod_chain produced no eligible
+  band, and all four alg_coeff bands ran their bounded 4096 pilots and
+  FAILED the frozen material-reduction escalation, so neither is eligible.
+  Only order_track remains -> at most one eligible family is now possible,
+  and the two-family gate can no longer be satisfied.
+  - This is NOT a finalized result and NOT a reason to stop: the frozen
+    driver reports `in_progress` until every bounded path completes.
+    Required handling (obeyed): leave the healthy attempt undisturbed;
+    finish the exact bounded order_track sweep as exact-set + audit
+    evidence only (it cannot rescue the frontier); add no families/tasks/
+    reruns/caps/verifiers/seeds/gates; launch no sealed benchmark. On
+    normal completion, run all frozen audits, then commit the frozen
+    outcome `m38e_completed_error_frontier_not_found` (or the narrower
+    `provenance-blocked`/`inconclusive` if evidence is unverifiable).
+  - Claim boundary preserved: this does NOT prove router/hidden-state/
+    expert/geometry/semantic/Jacobian features lack predictive value —
+    only that the frozen M38E dev sweep did not yield the required
+    two-family frontier. M39 stays design-only, capture-prohibited, no
+    M38E reuse.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress; continuing undisturbed to bounded completion):
+  - `unique_official_tasks_completed`: **204 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track band 1 underway at 12 / 24).
+  - `unique_official_tasks_remaining`: **84** (all in order_track, 96
+    total, 12 done) — exact-set/audit completion only.
+  - `pilot_rows_completed`: 62 (mod_chain 30 + alg_coeff bands 1-4 at
+    8+8+8+8; all four alg_coeff pilots failed escalation — cap-choice
+    evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 266.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal outcome is
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen exact-set/escalation/verifier/provenance/
+  execution-root/dependency/privacy/cleanup/commit-safety audits;
+  unverifiable evidence -> `provenance-blocked`/`inconclusive` (never a
+  stronger result).
+
 ## Heartbeat 2026-07-14T22:07Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

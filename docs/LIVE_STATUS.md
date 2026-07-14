@@ -4,6 +4,21 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T03:01Z
+
+- **Steer:** `0e812c1` current (`steer_sha_seen 30fa563b…`), no newer.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 83 rows (69 official-2048 + 14
+  pilot-4096); mod_chain b3 21/24; uniform official identity; driver
+  (pid 621509) alive, last row ~1 min ago.
+- **active_attempt_blockers:** none — attempt 1 has no runtime blocker.
+- **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
+  path proven in the launcher; no trustworthy cgroup kill scope.
+  A nonzero attempt-1 exit requires operator review, not auto-retry.
+- **finalization_blockers:** 1 — the fresh reusable import/execution-
+  root audit + external-root binding must pass before finalization,
+  alongside the sweep's exact-set/cap-escalation/verifier gates.
+
 ## Heartbeat 2026-07-14T02:43Z (extended for steer 0e812c1)
 
 - **Steer:** NEW steer `0e812c1` read and executed in full

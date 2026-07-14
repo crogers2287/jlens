@@ -4,6 +4,27 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T04:43Z
+
+- **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.
+  Operator hardened the M39 prereg directly (`0c4b79f`, pulled and
+  adopted): task-row unit of analysis, source-lineage split groups
+  (no leakage across train/cal/val/holdout), explicit label
+  prohibitions (verifier verdict + all gold-comparison quantities
+  banned from features; ambiguous "verifier category" replaced with a
+  pre-generation verifier-family definition), exact expert_output
+  tensor-definition requirements, and non-outcome-bearing fixture/smoke
+  gates + a separate launch amendment required before any M39 row.
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 99 rows; mod_chain family nearly
+  complete (b4 finishing); driver (pid 621509) alive, last row seconds
+  ago.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root +
+  external-root/loader/package audit + frozen exact-set/escalation/
+  verifier/privacy/cleanup gates.
+
 ## Heartbeat 2026-07-14T04:13Z
 
 - **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.

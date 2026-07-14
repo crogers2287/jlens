@@ -4,6 +4,30 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T06:43Z (steer addendum 5f8b0af adopted)
+
+- **Steer:** `550c27b` + addendum `5f8b0af` (public-status privacy +
+  future global-stopping safety gate) adopted; `steer_sha_seen`
+  unchanged (`bc7302f4…`, addendum is a separate doc). This tip is
+  sanitized: process identifiers removed; future heartbeats are
+  aggregate-only (no PIDs/hosts/paths/ports/session-or-lock ids/
+  executable-or-env identities/model pointers/private digests). Public
+  commit + blob SHAs may still be reported (already-public objects).
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 118 rows; mod_chain b1-b3 complete
+  (+ 4096 pilots), b4 finishing; alg_coeff/order_track/json_digits
+  ahead. Uniform official identity; driver alive, recent progress.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root audit +
+  frozen exact-set/escalation/verifier/privacy/cleanup gates.
+- **M39:** design-only, capture prohibited until M38E finalizes + a
+  complete launch amendment; verifier-family (pre-generation only) and
+  ambiguity controls enforced. A future early-abort/stopping policy is
+  gated behind an M39 forward-only increment AND a separate
+  preregistration with a global successful-episode survival bound
+  (per the addendum) — no stopping in M38E/M39.
+
 ## Heartbeat 2026-07-14T06:13Z
 
 - **Steer:** `550c27b` current (`steer_sha_seen bc7302f4…`), no newer.
@@ -11,7 +35,7 @@ weights, or per-task predictions. Newest heartbeat at top.
 - **M38E official attempt 1:** 113 rows; mod_chain b1-b3 complete
   (each + 4096 pilot), b4 at 19/24 official (its 8-step modular
   generations are the slowest cells). alg_coeff/order_track/json_digits
-  still ahead. Driver (pid 621509) alive, last row ~2 min ago.
+  still ahead. Driver alive, last row ~2 min ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed).
 - **finalization_blockers:** 1 — fresh import/execution-root +
@@ -30,7 +54,7 @@ weights, or per-task predictions. Newest heartbeat at top.
   telemetry is barred from features.
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 108 rows, mod_chain family (b4 4096
-  escalation); driver (pid 621509) alive, last row ~4 min ago.
+  escalation); driver alive, last row ~4 min ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed).
 - **finalization_blockers:** 1 — fresh import/execution-root +
@@ -43,7 +67,7 @@ weights, or per-task predictions. Newest heartbeat at top.
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 103 rows, still in the mod_chain family
   (its hard b4 band drives heavy 4096 escalation — the slowest
-  family). Uniform official identity; driver (pid 621509) alive, last
+  family). Uniform official identity; driver alive, last
   row ~5 min ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed).
@@ -64,7 +88,7 @@ weights, or per-task predictions. Newest heartbeat at top.
   gates + a separate launch amendment required before any M39 row.
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 99 rows; mod_chain family nearly
-  complete (b4 finishing); driver (pid 621509) alive, last row seconds
+  complete (b4 finishing); driver alive, last row seconds
   ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed).
@@ -78,7 +102,7 @@ weights, or per-task predictions. Newest heartbeat at top.
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 94 rows; mod_chain b1/b2/b3 complete
   (each with its 4096 pilot); mod_chain b4 next. Uniform official
-  identity; driver (pid 621509) alive, last row ~1 min ago.
+  identity; driver alive, last row ~1 min ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
   proven in launcher; no trustworthy cgroup kill scope.
@@ -101,7 +125,7 @@ weights, or per-task predictions. Newest heartbeat at top.
   prefill/decode separation, verifier-labeled increment rule).
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 87 rows; mod_chain b3 25/24-plus (b3
-  complete + pilot); driver (pid 621509) alive, last row ~5 min ago.
+  complete + pilot); driver alive, last row ~5 min ago.
 - **active_attempt_blockers:** none.
 - **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
   proven in launcher; no trustworthy cgroup kill scope.
@@ -117,7 +141,7 @@ weights, or per-task predictions. Newest heartbeat at top.
 - **Tests (fresh):** 52/52 core suites.
 - **M38E official attempt 1:** 83 rows (69 official-2048 + 14
   pilot-4096); mod_chain b3 21/24; uniform official identity; driver
-  (pid 621509) alive, last row ~1 min ago.
+  alive, last row ~1 min ago.
 - **active_attempt_blockers:** none — attempt 1 has no runtime blocker.
 - **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
   path proven in the launcher; no trustworthy cgroup kill scope.

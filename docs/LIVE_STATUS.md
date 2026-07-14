@@ -4,6 +4,45 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T15:37Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current: `5f8b0af`, `fa06451`,
+  `M39_CROSS_MILESTONE_OUTCOME_FIREWALL`, `AGENTS_A1_4B_ARTIFACT_ADMISSION`,
+  `AGENTS_A1_4B_IDENTIFIERS_RESOLVED`, and NEW
+  `AGENTS_A1_4B_DENSE_CLASSIFICATION` (pulled, read, obeyed).
+  - New addendum is a program-control claim-boundary correction only:
+    the official Agents-A1-4B model card classifies the checkpoint as a
+    DENSE model (status ->
+    `official-identifiers-resolved / architecture-class-resolved-dense /
+    artifact-admission-incomplete`). Consequence: the dense 4B is NOT an
+    architecture-matched small MoE; after admission + the M39 gate it may
+    serve only as a generic dense-tooling platform (Gate A: autograd/VJP/
+    finite-diff correctness, resource fixtures), never for router/expert/
+    MoE-transfer claims. The old "smaller-model approximation gate" splits
+    into Gate A (dense 4B tooling) + Gate B (a separately-admitted open
+    MoE for router/expert instrumentation; OLMoE a lead only), both
+    required before the 35B backward smoke. 4B-vs-5B param discrepancy
+    unresolved; no 4B capture; no MoE surrogate selected. Does NOT change
+    M38E or M39.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress):
+  - `unique_official_tasks_completed`: **155 / 288** (mod_chain complete
+    at 96; alg_coeff bands 1-2 complete at 48; alg_coeff band 3 underway
+    at 11 / 24).
+  - `pilot_rows_completed`: 46 (mod_chain 30 + alg_coeff band 1 8 +
+    alg_coeff band 2 8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 201.
+  - Remaining: alg_coeff bands 3-4, then order_track.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root audit +
+  frozen exact-set/escalation/verifier/privacy/cleanup gates; frozen
+  stop rule (`m38e_completed_error_frontier_not_found`) applies if
+  frontier gates are unmet after the bounded sweep.
+
 ## Heartbeat 2026-07-14T15:07Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

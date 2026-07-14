@@ -4,6 +4,35 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T07:35Z (addendum fa06451 adopted: task-identity correction)
+
+- **Steer:** `550c27b` + addenda `5f8b0af`, `fa06451` current
+  (`steer_sha_seen bc7302f4…`), no newer.
+- **Status corrections (prospective, per fa06451):** M38E is exactly
+  THREE families — mod_chain, alg_coeff, order_track — 4 bands x 24 =
+  **288 unique official tasks**. `json_digits` is NOT an M38E family;
+  my earlier "json_digits next" lines were a status-only error, not
+  task-set expansion. Official-task progress is now reported separately
+  from execution rows (pilot rows are cap-choice evidence only and
+  never inflate task/power/eligibility counts).
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1:**
+  - `unique_official_tasks_completed`: **96 / 288** (mod_chain family
+    complete: 4 bands x 24).
+  - `pilot_rows_completed`: 30 (all four mod_chain bands triggered a
+    4096 pilot; none met the material-reduction bar — descriptive
+    execution fact only, not a scientific finding).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 126.
+  - Next families: alg_coeff, then order_track. Uniform official
+    identity; driver alive, recent progress.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — fresh import/execution-root audit +
+  frozen exact-set/escalation/verifier/privacy/cleanup gates; the
+  frozen stop rule (`m38e_completed_error_frontier_not_found`) applies
+  if the frontier gates are unmet after the bounded sweep.
+
 ## Heartbeat 2026-07-14T07:05Z
 
 - **Steer:** `550c27b` + addendum `5f8b0af` current

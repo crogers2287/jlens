@@ -27,38 +27,73 @@ def _sha(path):
     return _H.sha256(open(os.path.realpath(path), "rb").read()).hexdigest()
 
 
-def spawn_guarded(tmp_path, argv, release=True, sha=None):
-    barrier_r, barrier_w = os.pipe()
-    os.set_inheritable(barrier_r, True)
+def _ident_json(path):
+    real = os.path.realpath(path)
+    st = os.stat(real)
+    return json.dumps({"canonical": real, "dev": st.st_dev,
+                       "inode": st.st_ino, "mode": st.st_mode,
+                       "size": st.st_size, "sha256": _sha(real)})
+
+
+SLEEPER = None
+
+
+def _sleeper(tmp_path):
+    global SLEEPER
+    SLEEPER = tmp_path / "sleeper.py"
+    SLEEPER.write_text("import time\ntime.sleep(30)\n")
+    return "sleeper.py"
+
+
+def spawn_guarded(tmp_path, argv=None, release=True, read_ready=True,
+                  driver=None):
+    # Bound interpreter == target == sys.executable; the driver is a
+    # python script (mirrors the real python-launcher -> python-driver
+    # flow). argv (legacy) is ignored except to pick a sleeper driver.
+    drv = driver or _sleeper(tmp_path)
+    ready_r, ready_w = os.pipe()
+    go_r, go_w = os.pipe()
+    os.set_inheritable(ready_w, True)
+    os.set_inheritable(go_r, True)
     lock_r = os.open("/dev/null", os.O_RDONLY)
     os.set_inheritable(lock_r, True)
-    exe_sha = sha if sha is not None else _sha(argv[0])
+    ej = _ident_json(sys.executable)
     proc = subprocess.Popen([sys.executable, str(LAUNCHER),
-                             str(barrier_r), str(lock_r), exe_sha,
-                             str(tmp_path), *argv], close_fds=True,
-                            pass_fds=(barrier_r, lock_r))
-    os.close(barrier_r)
+                             str(ready_w), str(go_r), str(lock_r), ej,
+                             str(tmp_path), sys.executable, drv],
+                            close_fds=True,
+                            pass_fds=(ready_w, go_r, lock_r))
+    os.close(ready_w)
+    os.close(go_r)
     os.close(lock_r)
+    ready = None
+    if read_ready:
+        import select
+        rl, _, _ = select.select([ready_r], [], [], 5)
+        if rl:
+            ready = json.loads(os.read(ready_r, 4096).decode()
+                               .splitlines()[0])
     if release:
-        os.write(barrier_w, b"G")
-    return proc, barrier_w
+        os.write(go_w, b"G")
+    return proc, go_w, ready_r, ready
 
 
 def test_launcher_pid_is_pgid_and_survives_exec(tmp_path):
-    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "5"])
+    proc, bw, _rr, ready = spawn_guarded(tmp_path)
     time.sleep(0.8)
     ident = proc_identity(proc.pid)
     assert ident is not None
-    assert ident["cmdline"][0] == "/bin/sleep"     # exec replaced image
-    assert ident["cwd"] == str(tmp_path)           # chdir applied
-    assert os.getpgid(proc.pid) == proc.pid        # setsid: PID == PGID
+    assert ident["cmdline"][:2] == [os.path.realpath(sys.executable), "sleeper.py"]  # exec'd
+    assert ident["cwd"] == str(tmp_path.resolve())  # chdir applied
+    assert os.getpgid(proc.pid) == proc.pid         # setsid: PID == PGID
+    assert ready["pid"] == proc.pid and ready["sid"] == proc.pid
     os.close(bw)
     os.killpg(proc.pid, 9)
     proc.wait()
 
 
 def test_child_blocks_at_barrier_until_go(tmp_path):
-    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "5"], release=False)
+    proc, bw, _rr, _rd = spawn_guarded(tmp_path, ["/bin/sleep", "5"], release=False)
     time.sleep(0.8)
     ident = proc_identity(proc.pid)
     assert ident is not None
@@ -66,7 +101,7 @@ def test_child_blocks_at_barrier_until_go(tmp_path):
     os.write(bw, b"G")
     time.sleep(0.8)
     ident = proc_identity(proc.pid)
-    assert ident["cmdline"][0] == "/bin/sleep"             # exec'd now
+    assert ident["cmdline"][:2] == [os.path.realpath(sys.executable), "sleeper.py"]  # exec'd
     os.close(bw)
     os.killpg(proc.pid, 9)
     proc.wait()
@@ -76,7 +111,7 @@ def test_parent_death_before_registration_child_never_execs(tmp_path):
     canary = tmp_path / "canary.txt"
     script = tmp_path / "driver.py"
     script.write_text(f"open({str(canary)!r},'w').write('x')\n")
-    proc, bw = spawn_guarded(tmp_path,
+    proc, bw, _rr, _rd = spawn_guarded(tmp_path,
                              [sys.executable, str(script)], release=False)
     os.close(bw)              # simulate parent death: EOF, no GO byte
     rc = proc.wait(timeout=10)
@@ -86,21 +121,23 @@ def test_parent_death_before_registration_child_never_execs(tmp_path):
 
 def test_lock_survives_controller_death_via_inherited_fd(tmp_path):
     import fcntl as F
+    import select as _sel
     lock_path = tmp_path / "run.lock"
     holder = open(lock_path, "w")
     F.flock(holder, F.LOCK_EX | F.LOCK_NB)
     os.set_inheritable(holder.fileno(), True)
-    barrier_r, barrier_w = os.pipe()
-    os.set_inheritable(barrier_r, True)
-    proc = subprocess.Popen([sys.executable, str(LAUNCHER),
-                             str(barrier_r), str(holder.fileno()),
-                             _sha("/bin/sleep"),
-                             str(tmp_path), "/bin/sleep", "5"],
-                            close_fds=True,
-                            pass_fds=(barrier_r, holder.fileno()))
-    os.close(barrier_r)
-    os.write(barrier_w, b"G")
-    os.close(barrier_w)
+    (tmp_path / "sleeper.py").write_text("import time\ntime.sleep(30)\n")
+    ready_r, ready_w = os.pipe(); go_r, go_w = os.pipe()
+    os.set_inheritable(ready_w, True); os.set_inheritable(go_r, True)
+    proc = subprocess.Popen(
+        [sys.executable, str(LAUNCHER), str(ready_w), str(go_r),
+         str(holder.fileno()), _ident_json(sys.executable),
+         str(tmp_path), sys.executable, "sleeper.py"],
+        close_fds=True, pass_fds=(ready_w, go_r, holder.fileno()))
+    os.close(ready_w); os.close(go_r)
+    _sel.select([ready_r], [], [], 5); os.read(ready_r, 4096)
+    os.write(go_w, b"G")
+    os.close(go_w); os.close(ready_r)
     time.sleep(0.8)
     holder.close()            # controller "dies": drops ITS descriptor
     probe = open(lock_path, "w")
@@ -112,18 +149,25 @@ def test_lock_survives_controller_death_via_inherited_fd(tmp_path):
     F.flock(probe, F.LOCK_EX | F.LOCK_NB)       # released with child
 
 
-def make_record(pid, cmdline, cwd, attempts=1, starttime=None):
+def make_record(pid, cmdline, cwd, attempts=1, starttime=None, sid=None,
+                exe=None):
     import m38e_retry_controller as _R
     if starttime is None:
         try:
             starttime = _R.proc_starttime(pid)
         except Exception:
             starttime = 0
+    if sid is None:
+        try:
+            sid = os.getsid(pid)
+        except Exception:
+            sid = 0
     return {"attempts_launched": attempts,
             "records": [{"attempt": 1, "pid": pid, "pgid": pid,
                          "run_id": "testrun",
                          "cmdline": cmdline, "cwd": cwd,
-                         "starttime_ticks": starttime,
+                         "starttime_ticks": starttime, "sid": sid,
+                         "exe_identity": {"canonical": exe or "/x"},
                          "python": sys.executable,
                          "env_protocol": {}}]}
 
@@ -155,10 +199,13 @@ def test_pid_reuse_different_start_time_is_dead(tmp_path):
 
 
 def test_live_original_blocks_and_matching_identity_detected(tmp_path):
-    live = subprocess.Popen(["/bin/sleep", "5"], cwd=str(tmp_path))
+    live = subprocess.Popen(["/bin/sleep", "5"], cwd=str(tmp_path),
+                            start_new_session=True)   # pid==pgid==sid
     time.sleep(0.2)
     ident = proc_identity(live.pid)
-    rec = make_record(live.pid, ident["cmdline"], ident["cwd"])
+    rec = make_record(live.pid, ident["cmdline"], ident["cwd"],
+                      sid=os.getsid(live.pid),
+                      exe=os.path.realpath(f"/proc/{live.pid}/exe"))
     assert driver_alive(rec) is True       # exact full identity: alive
     live.kill()
     live.wait()
@@ -167,7 +214,7 @@ def test_live_original_blocks_and_matching_identity_detected(tmp_path):
 
 
 def test_stall_signal_hits_only_owned_group(tmp_path):
-    owned, bw = spawn_guarded(tmp_path, ["/bin/sleep", "30"])
+    owned, bw, _rr, _rd = spawn_guarded(tmp_path, ["/bin/sleep", "30"])
     bystander = subprocess.Popen(["/bin/sleep", "30"])
     time.sleep(0.8)
     ident = proc_identity(owned.pid)
@@ -347,8 +394,17 @@ def full_evidence(pid, phases):
             "cwd": ev["cwd"], "phases": phases}
 
 
+def _drain_ready(rr):
+    import select as _sel
+    _sel.select([rr], [], [], 5)
+    try:
+        os.read(rr, 4096)
+    except OSError:
+        pass
+
+
 def test_exec_timeout_kill_path_reaps_only_owned(tmp_path):
-    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "60"],
+    proc, bw, _rr, _rd = spawn_guarded(tmp_path, ["/bin/sleep", "60"],
                              release=False)   # stuck pre-exec launcher
     bystander = subprocess.Popen(["/bin/sleep", "60"])
     time.sleep(0.5)
@@ -363,7 +419,7 @@ def test_exec_timeout_kill_path_reaps_only_owned(tmp_path):
 
 
 def test_no_permissive_termination_mode(tmp_path):
-    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
+    proc, bw, _rr, _rd = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
                              release=False)
     time.sleep(0.4)
     assert terminate_owned(proc.pid, None) == "ambiguous"
@@ -375,7 +431,7 @@ def test_no_permissive_termination_mode(tmp_path):
 
 
 def test_starttime_or_phase_mismatch_blocks_without_signal(tmp_path):
-    proc, bw = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
+    proc, bw, _rr, _rd = spawn_guarded(tmp_path, ["/bin/sleep", "10"],
                              release=False)
     time.sleep(0.4)
     ev = C.ownership_evidence(proc.pid)
@@ -395,19 +451,20 @@ def test_fd_allowlist_blocks_leaked_descriptor(tmp_path):
     canary = tmp_path / "canary.txt"
     script = tmp_path / "driver.py"
     script.write_text(f"open({str(canary)!r},'w').write('x')\n")
-    barrier_r, barrier_w = os.pipe()
-    os.set_inheritable(barrier_r, True)
+    ready_r, ready_w = os.pipe(); go_r, go_w = os.pipe()
+    os.set_inheritable(ready_w, True); os.set_inheritable(go_r, True)
     lock_r = os.open("/dev/null", os.O_RDONLY)
     os.set_inheritable(lock_r, True)
     leak_r, leak_w = os.pipe()            # decoy descriptor
     os.set_inheritable(leak_r, True)
     proc = subprocess.Popen(
-        [sys.executable, str(LAUNCHER), str(barrier_r), str(lock_r),
-         _sha(sys.executable), str(tmp_path), sys.executable, str(script)],
-        close_fds=True, pass_fds=(barrier_r, lock_r, leak_r))
-    os.close(barrier_r); os.close(lock_r); os.close(leak_r)
+        [sys.executable, str(LAUNCHER), str(ready_w), str(go_r),
+         str(lock_r), _ident_json(sys.executable), str(tmp_path),
+         sys.executable, str(script)],
+        close_fds=True, pass_fds=(ready_w, go_r, lock_r, leak_r))
+    os.close(ready_w); os.close(go_r); os.close(lock_r); os.close(leak_r)
     rc = proc.wait(timeout=10)
-    os.close(leak_w); os.close(barrier_w)
+    os.close(leak_w); os.close(go_w); os.close(ready_r)
     assert rc == 4                        # FD audit abort
     assert not canary.exists()
 
@@ -491,13 +548,15 @@ def test_untracked_audit_blocks_importable(tmp_path):
     envbin.write_bytes(b"PATH=/usr/bin\0")
     AUDIT = REPO / "scripts" / "m38e_untracked_audit.py"
     # clean: passes
+    git_exe = os.path.realpath(sp.run(["bash", "-lc", "command -v git"],
+                              capture_output=True, text=True).stdout.strip())
     r = sp.run([sys.executable, str(AUDIT), str(checkout), str(envbin),
-                sys.executable], capture_output=True, text=True)
-    assert r.returncode == 0 and "pass" in r.stdout
-    # untracked importable module in src root: blocks
-    (checkout / "src" / "evil.py").write_text("x=1\n")
+                sys.executable, git_exe], capture_output=True, text=True)
+    assert r.returncode == 0 and "pass" in r.stdout, r.stdout
+    # untracked importable module at repo root (an import/exec candidate)
+    (checkout / "evil.py").write_text("x=1\n")
     r = sp.run([sys.executable, str(AUDIT), str(checkout), str(envbin),
-                sys.executable], capture_output=True, text=True)
+                sys.executable, git_exe], capture_output=True, text=True)
     assert r.returncode != 0 and "block" in r.stdout
 
 
@@ -507,7 +566,7 @@ def test_stall_ambiguous_returns_blocked_without_hang(monkeypatch):
     src = Path(C.__file__).read_text()
     loop = src.split("while proc.poll() is None:")[1].split(
         "rc = proc.wait()")[0]
-    assert 'outcome == "ambiguous"' in loop
+    assert "stall_ambiguous" in loop
     assert "return 3" in loop
 
 

@@ -101,7 +101,7 @@ def driver_alive(record: dict) -> bool:
     for rec in record["records"]:
         if "pid" not in rec:
             continue
-        for field in ("cmdline", "cwd", "starttime_ticks"):
+        for field in ("cmdline", "cwd", "starttime_ticks", "sid"):
             if field not in rec:
                 raise AmbiguousProcess(
                     f"recorded attempt lacks identity field {field}")
@@ -111,11 +111,27 @@ def driver_alive(record: dict) -> bool:
         current_start = proc_starttime(rec["pid"])
         if current_start != rec["starttime_ticks"]:
             continue                       # PID reuse: recorded is dead
-        if (ident["cmdline"] == rec["cmdline"]
-                and ident["cwd"] == rec["cwd"]):
-            return True                    # exact full identity: alive
-        raise AmbiguousProcess(
-            "same start time with identity mismatch — blocked")
+        # Same start time -> the recorded process. Full identity must
+        # match exactly or it is ambiguous (steer 4cb5caa item 3).
+        pid = rec["pid"]
+        try:
+            cur_sid = os.getsid(pid)
+            cur_pgid = os.getpgid(pid)
+            cur_exe = os.path.realpath(f"/proc/{pid}/exe")
+        except (ProcessLookupError, PermissionError, OSError) as exc:
+            raise AmbiguousProcess(f"unreadable liveness field: "
+                                   f"{type(exc).__name__}")
+        want_exe = (rec.get("exe_identity") or {}).get("canonical")
+        mism = (ident["cmdline"] != rec["cmdline"]
+                or ident["cwd"] != rec["cwd"]
+                or cur_sid != rec["sid"]
+                or (rec.get("pgid") is not None
+                    and cur_pgid != rec["pgid"])
+                or (want_exe is not None and cur_exe != want_exe))
+        if mism:
+            raise AmbiguousProcess(
+                "same start time with full-identity mismatch — blocked")
+        return True                        # exact full identity: alive
     return False
 
 
@@ -182,7 +198,8 @@ def verify_control_artifacts(record: dict) -> None:
     if not isinstance(pinned, dict):
         raise RetryBlocked("record lacks pinned control-artifact digests")
     for rel in ("scripts/m38e_launch.py",
-                "scripts/m38e_exec_preflight.py"):
+                "scripts/m38e_exec_preflight.py",
+                "scripts/m38e_untracked_audit.py"):
         want = pinned.get(rel)
         if not want:
             raise RetryBlocked(f"no pinned digest for {rel}")
@@ -365,6 +382,39 @@ def verify_runtime_identity(original: dict, env: dict) -> None:
             raise RetryBlocked(
                 f"{mod} version/origin/bytes differ from the recorded "
                 "identity (same-version different-origin blocks)")
+    # Complete dependency-closure verification: every module origin +
+    # sha256 recorded from attempt one must match under the bound
+    # executable and recorded environment (steer 4cb5caa item 5).
+    closure = original.get("dependency_closure")
+    if not isinstance(closure, dict) or not closure:
+        raise RetryBlocked("original record lacks dependency closure")
+    mods = [m for m in closure if "origin" in closure[m]]
+    probe = subprocess.run(
+        [invoked, "-c",
+         "import importlib, hashlib, os, json, sys\n"
+         "sys.path.insert(0, 'src')\n"
+         "mods = " + json.dumps(mods) + "\n"
+         "out = {}\n"
+         "for m in mods:\n"
+         "    try:\n"
+         "        mod = importlib.import_module(m)\n"
+         "        p = os.path.realpath(mod.__file__)\n"
+         "        out[m] = [p, hashlib.sha256(open(p,'rb').read())"
+         ".hexdigest()]\n"
+         "    except Exception as e:\n"
+         "        out[m] = ['err', type(e).__name__]\n"
+         "print(json.dumps(out))"],
+        capture_output=True, text=True, env=env, cwd=str(CONTROL))
+    if probe.returncode != 0:
+        raise RetryBlocked("closure probe failed under recorded env")
+    got = json.loads(probe.stdout.strip().splitlines()[-1])
+    for m in mods:
+        want_c = closure[m]
+        cur = got.get(m)
+        if (not cur or cur[0] != want_c["origin"]
+                or cur[1] != want_c["sha256"]):
+            raise RetryBlocked(
+                f"dependency closure differs for {m} — blocked")
 
 
 def budget_available(record: dict) -> None:
@@ -443,68 +493,101 @@ def main() -> int:
             "run_id": run_id})
         atomic_write_record(record)
 
-        # Barrier handshake: the child cannot exec the driver until its
-        # PID/PGID is durably registered and the barrier releases.
-        barrier_r, barrier_w = os.pipe()
-        os.set_inheritable(barrier_r, True)
+        # Two-way handshake (steer 4cb5caa item 1): READY pipe proves the
+        # child established its owned session/cwd post-setsid/post-chdir
+        # BEFORE the parent durably registers ownership and sends GO.
+        ready_r, ready_w = os.pipe()
+        go_r, go_w = os.pipe()
+        os.set_inheritable(ready_w, True)
+        os.set_inheritable(go_r, True)
         lock_fd = lock.fileno()
         os.set_inheritable(lock_fd, True)
+        exe_ident_json = json.dumps(original["exe_identity"])
         log = open(CONTROL / "logs/m38e_official.log", "a")
         proc = subprocess.Popen(
             [invoked, str(CONTROL / "scripts/m38e_launch.py"),
-             str(barrier_r), str(lock_fd), original["exe_sha256"],
+             str(ready_w), str(go_r), str(lock_fd), exe_ident_json,
              str(exec_dir), invoked, "src/m38e_dev_sweep.py",
              "--model-ref", launch_arg],
             stdout=log, stderr=log, env=env, close_fds=True,
-            pass_fds=(barrier_r, lock_fd))
-        os.close(barrier_r)
+            pass_fds=(ready_w, go_r, lock_fd))
+        os.close(ready_w)
+        os.close(go_r)
         try:
             leader_pidfd = os.pidfd_open(proc.pid)
         except OSError:
             leader_pidfd = None
-        # Capture full ownership evidence while the child is behind the
-        # barrier (pre-exec launcher phase).
-        own = ownership_evidence(proc.pid)
-        if own is None:
-            raise RetryBlocked("child vanished before evidence capture")
-        launcher_cmd = own["cmdline"]
         driver_cmd_prefix = [invoked, "src/m38e_dev_sweep.py"]
-        expected_owner = {"starttime": own["starttime"],
-                          "sid": own["sid"], "cwd": str(exec_dir),
-                          "phases": []}
         try:
-            # Durable 'launching' with exact ownership BEFORE exec.
+            # Read READY with a bounded timeout.
+            import select
+            rlist, _, _ = select.select([ready_r], [], [], 30)
+            if not rlist:
+                raise RetryBlocked("READY handshake timed out")
+            raw = os.read(ready_r, 4096)
+            if not raw:
+                raise RetryBlocked("child closed READY without a record")
+            ready = json.loads(raw.decode().splitlines()[0])
+            # Verify the child's self-proof against the kernel's view.
+            own = ownership_evidence(proc.pid)
+            if own is None:
+                raise RetryBlocked("child vanished before READY proof")
+            want_exe = original["exe_identity"]
+            if (ready["pid"] != proc.pid
+                    or ready["pgid"] != proc.pid
+                    or ready["sid"] != proc.pid
+                    or own["pgid"] != proc.pid
+                    or own["sid"] != proc.pid
+                    or ready["cwd"] != str(Path(exec_dir).resolve())
+                    or own["cwd"] != str(Path(exec_dir).resolve())
+                    or own["cmdline"][:2] != [invoked,
+                                              str(CONTROL /
+                                                  "scripts/m38e_launch.py")]
+                    or ready["self_exe"].get("canonical")
+                    != want_exe["canonical"]
+                    or ready["self_exe"].get("sha256")
+                    != want_exe["sha256"]):
+                raise RetryBlocked("READY proof mismatch")
+            launcher_cmd = own["cmdline"]
+            expected_owner = {"starttime": own["starttime"],
+                              "sid": proc.pid, "cwd": str(exec_dir),
+                              "phases": []}
+            # Durable 'launching' with exact proven ownership BEFORE GO.
             record["records"][-1].update({
                 "state": "launching", "pid": proc.pid, "pgid": proc.pid,
-                "starttime_ticks": own["starttime"], "sid": own["sid"],
+                "sid": proc.pid,
+                "starttime_ticks": own["starttime"],
                 "launcher_cmdline": launcher_cmd,
-                "expected_cmdline": [invoked, "src/m38e_dev_sweep.py"],
-                "exec_dir": str(exec_dir),
-                "source_commit": expected,
-                "launcher_sha256": record["control_artifact_sha256"][
-                    "scripts/m38e_launch.py"],
-                "preflight_sha256": record["control_artifact_sha256"][
-                    "scripts/m38e_exec_preflight.py"],
+                "expected_cmdline": driver_cmd_prefix,
+                "exec_dir": str(exec_dir), "source_commit": expected,
+                "exe_identity": original["exe_identity"],
                 "environ_sha256": original["environ_sha256"]})
             atomic_write_record(record)
-            reread = json.loads(RECORD.read_text())
-            latest = reread["records"][-1]
-            if (latest.get("state") != "launching"
-                    or latest.get("pid") != proc.pid
-                    or latest.get("nonce") != nonce):
-                raise RetryBlocked("launching record failed reread "
-                                   "validation")
-            os.write(barrier_w, b"G")     # release barrier -> exec
+            reread = json.loads(RECORD.read_text())["records"][-1]
+            if (reread.get("state") != "launching"
+                    or reread.get("pid") != proc.pid
+                    or reread.get("nonce") != nonce):
+                raise RetryBlocked("launching record failed reread")
+            os.write(go_w, b"G")          # release barrier -> exec
         except Exception:
-            os.close(barrier_w)           # EOF: child exits without exec
-            expected_owner["phases"] = [launcher_cmd]
-            outcome = terminate_owned(proc.pid, expected_owner,
-                                      leader_pidfd)
+            os.close(go_w)                # EOF: child exits without exec
+            os.close(ready_r)
+            try:
+                ev = ownership_evidence(proc.pid)
+                phases = [ev["cmdline"]] if ev else []
+                outcome = terminate_owned(
+                    proc.pid,
+                    {"starttime": ev["starttime"], "sid": proc.pid,
+                     "cwd": str(exec_dir), "phases": phases}
+                    if ev else {}, leader_pidfd)
+            except AmbiguousProcess:
+                outcome = "ambiguous"
             record["records"][-1]["state"] = (
                 "failed_terminated" if outcome == "dead" else "ambiguous")
             atomic_write_record(record)
             raise
-        os.close(barrier_w)
+        os.close(go_w)
+        os.close(ready_r)
 
         expected_ident = None
         for _ in range(50):
@@ -545,22 +628,21 @@ def main() -> int:
             ages = [time.time() - p.stat().st_mtime
                     for p in (rows, logf) if p.exists()]
             if ages and min(ages) > STALL_SECONDS:
-                expected_owner["phases"] = [expected_ident["cmdline"]]
-                outcome = terminate_owned(proc.pid, expected_owner,
-                                          leader_pidfd)
-                record["records"][-1]["stall_termination"] = outcome
-                if outcome == "ambiguous":
-                    # Durable permanent block; NO unbounded wait; close
-                    # only our lock duplicate so a surviving child
-                    # retains its inherited hold (32d5918 item 7).
-                    record["records"][-1]["state"] = "ambiguous"
-                    atomic_write_record(record)
-                    print("[m38e-retry] BLOCK: ambiguous stall "
-                          "termination — private review required",
-                          flush=True)
-                    return 3
+                # No trustworthy cgroup/systemd scope is bound from pure
+                # Python, so complete process-tree termination cannot be
+                # proven (steer 4cb5caa item 6). Fail closed: do NOT
+                # auto-terminate; record a durable ambiguous permanent
+                # block and return without an unbounded wait or an
+                # explicit unlock, leaving any surviving child its
+                # inherited run lock for private operator review.
+                record["records"][-1]["state"] = "stall_ambiguous"
+                record["records"][-1]["stall_termination"] = (
+                    "disabled_fail_closed")
                 atomic_write_record(record)
-                break
+                print("[m38e-retry] BLOCK: stall with no trustworthy "
+                      "termination scope — auto-termination disabled, "
+                      "private review required", flush=True)
+                return 3
         rc = proc.wait()
         record["records"][-1].update({"state": "exited", "rc": rc})
         atomic_write_record(record)

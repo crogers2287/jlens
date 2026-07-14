@@ -4,6 +4,30 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-14T03:31Z (steer 550c27b adopted)
+
+- **Steer:** NEW steer `550c27b` read and adopted (`steer_sha_seen`
+  now `bc7302f48b1f883ddc06dcc1d6661c60d0d06b7d`). It **closes the
+  automatic-retry engineering loop** — fail-closed is confirmed the
+  correct operational conclusion; no more retry-controller expansion.
+  A nonzero attempt-1 exit → preserve ledger byte-for-byte, record
+  M38E interrupted+blocked, operator review (no auto-retry, no
+  refund). New forward-only 35B comparator sequence preregistered as
+  the next study AFTER M38E finalizes (expert-contribution norms +
+  RouteScan aggregate load features, nested CV, family-aware splits,
+  prefill/decode separation, verifier-labeled increment rule).
+- **Tests (fresh):** 52/52 core suites.
+- **M38E official attempt 1:** 87 rows; mod_chain b3 25/24-plus (b3
+  complete + pilot); driver (pid 621509) alive, last row ~5 min ago.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed) — no fd-bound exec
+  proven in launcher; no trustworthy cgroup kill scope.
+- **finalization_blockers:** 1 — fresh import/execution-root +
+  external-root/loader/package audit must pass before any M38E result
+  (unverifiable evidence → provenance-blocked/inconclusive, not pass),
+  alongside exact-set, escalation-accounting, verifier, privacy,
+  cleanup, and commit-safety gates.
+
 ## Heartbeat 2026-07-14T03:01Z
 
 - **Steer:** `0e812c1` current (`steer_sha_seen 30fa563b…`), no newer.

@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T05:05Z
+
+- **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);
+  Q35Q priority + M39 + Q35Q route-regime/exact-sharding amendments (all
+  design-only); no newer, remote in sync.
+- **Tests (fresh):** 320/320 pre-commit (core + Q35Q phase0/admission/
+  loader_plan/cost); status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  undisturbed; two-family frontier irreversibly unavailable — finishing
+  bounded order_track then frozen audits then
+  `m38e_completed_error_frontier_not_found`):
+  - `unique_official_tasks_completed`: **253 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track bands 1-2 complete; band 3 at 13/24).
+  - `unique_official_tasks_remaining`: **35** (order_track bands 3-4) —
+    exact-set/audit completion only.
+  - `pilot_rows_completed`: 78 (mod_chain 30 + alg_coeff 8x4 + order_track
+    bands 1-2 at 8+8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 331.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen audits.
+- **q35q_blockers:** Phase 0 CPU-only surface complete (admission,
+  architecture, layers, device-map/placement, loader spec, exact-cost
+  projection, fp32 weighted-merge, route-regime schema, deterministic
+  tokenization fixtures); GPU gated until M38E releases the dual-3090
+  window; admission amendment + route-regime artifact required before any
+  backward call.
+
 ## Heartbeat 2026-07-15T04:35Z
 
 - **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);

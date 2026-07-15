@@ -4,6 +4,46 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T03:28Z (steer amended: Q35Q route-regime + exact sharding)
+
+- **Steer UPDATED:** steer.md blob `0c258735…` (was `2510548596…`);
+  `steer_sha_seen` advanced. Adds a binding section pointing at
+  `docs/STEER_ADDENDUM_2026-07-15_Q35Q_ROUTE_REGIME_AND_EXACT_SHARDING.md`
+  (commit `e609fa5`). Read and obeyed.
+  - Q35Q DESIGN amendment (CPU-only impact; does NOT change M38E, authorize
+    GPU contention, or alter the GPTQ-then-NF4 order): a passing sparse-MoE
+    VJP is exact only at the EXECUTED top-k route regime (not counterfactual/
+    optimal/route-boundary-portable); a mandatory aggregate-only route-regime
+    diagnostic artifact (router identities, top-k/bias/softmax conventions,
+    repeated-forward route parity, selected-boundary margin quantiles, a
+    PRE-registered near-boundary threshold, load/transition summaries) must
+    be committed before the Phase-2 micro-fit; an exact-cost + wall-time +
+    storage projection is required after Phase 1; Phase 3 sharding only via a
+    preregistered horizontal prompt-shard manifest with deterministic fp32
+    weighted merge and cross-worker agreement smoke; no STE/soft-router/
+    finite-diff route search/router update.
+- **Q35Q Phase 0 progress (CPU-only):** exact-cost projection module landed
+  (`a737e47`) — `src/q35q_cost.py` + 21 tests: backward passes =
+  ceil(d_model/dim_batch), Phase-1 timing -> per-prompt/wall-time/storage
+  projection, per-worker 24h ceiling gate (`single_worker_feasible`) so an
+  impossible single-worker Phase-3 fit is never started. Collaborator (Codex)
+  concurrently hardened the shared phase0/admission/loader_plan validators;
+  merged via rebase.
+- **Tests (fresh):** full local q35q+core suite 311 green; commit-safe clean.
+- **M38E official attempt 1** (driver alive, undisturbed; frontier
+  irreversibly unavailable, finishing bounded order_track toward
+  `m38e_completed_error_frontier_not_found`): **240 / 288** official
+  (mod_chain 96 + alg_coeff 96; order_track bands 1-2 complete) · 48
+  official remaining (bands 3-4) · pilot 70 · full_band_4096 0 ·
+  total_execution 314.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal
+  `m38e_completed_error_frontier_not_found`, pending completion + audits.
+- **q35q_blockers:** GPU gated until M38E releases the dual-3090 window;
+  admission amendment + route-regime artifact schema must be committed
+  before any backward call.
+
 ## Heartbeat 2026-07-15T03:03Z
 
 - **Steer:** blob `2510548596…` unchanged (`steer_sha_seen 2510548596…`);

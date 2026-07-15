@@ -4,6 +4,49 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T02:05Z (STEER CHANGE: Q35Q adopted)
+
+- **Steer UPDATED:** new steer.md blob `f5c95903…` (was `bc7302f4…`),
+  remote head `1aeaab3`; `steer_sha_seen` advanced to `f5c95903…`. Read
+  and obeyed. New protocol `docs/Q35Q_QUANTIZED_QWEN35_JACOBIAN_PROTOCOL.md`
+  (commit `35ea8ab`) is binding. All prior addenda/rules remain in force by
+  incorporation; no frozen result/task/threshold weakened.
+- **What the steer changed:** prioritize an architecture-matched **Q35Q**
+  engineering surrogate — quantized Qwen3.5-35B-A3B MoE (same structure as
+  the Agents-A1 lineage: hidden 2048, 40 layers, 256 routed experts, 8+1,
+  expert-intermediate 512, vocab 248320). Candidate order: official
+  GPTQ-Int4 via a genuine Transformers/PyTorch autograd path, then BF16
+  base + bitsandbytes NF4. Exact-VJP only — no STE/detached/finite-diff/
+  fake gradients called exact. Quantized lens != BF16 lens != Agents-A1
+  lens; no cross-quant pooling.
+- **M38E unchanged and undisturbed:** the steer explicitly requires attempt
+  one to continue untouched; its two-family frontier remains irreversibly
+  unavailable; finish the bounded order_track sweep, then the frozen audits,
+  then commit `m38e_completed_error_frontier_not_found`. No Q35Q GPU process
+  may contend for the dual-3090 window while M38E runs.
+- **Q35Q Phase 0 STARTED (CPU-only, authorized to begin now):** committed
+  `076b77d` — `src/q35q_phase0.py` + 45 tests. Fail-closed, stdlib-only, no
+  GPU/network/model-load/private-data: immutable-revision + file-manifest
+  verification, frozen architecture check (vision encoder rejected),
+  source/target layer validation, explicit device-map validation (rejects
+  `auto` and cpu/disk/meta offload), canonical quant-config equality,
+  inference-only kernel detection, aggregate-only privacy scan, VJP/resource
+  gate schema (23.0/46.0 GiB ceilings, scoped `q35q_*_exact_vjp_passed`
+  outcomes), atomic resumable checkpoint. No model-generated row produced.
+- **Tests (fresh):** 97/97 (52 core + 45 Q35Q Phase 0); commit-safe clean.
+- **M38E official attempt 1** (driver alive, undisturbed): **229 / 288**
+  official (mod_chain 96 + alg_coeff 96; order_track band 2 in progress) ·
+  59 official remaining · pilot 70 · full_band_4096 0 · total_execution 299.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — M38E known-terminal
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen audits.
+- **q35q_blockers:** GPU execution gated until M38E releases the dual-3090
+  window or a proven independent host; artifact-admission amendment (exact
+  revisions, digests, quant/device identities) must be committed before any
+  backward call — else `q35q_artifact_admission_blocked`.
+
 ## Heartbeat 2026-07-15T01:37Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

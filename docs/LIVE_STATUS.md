@@ -4,6 +4,49 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T05:35Z
+
+- **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`); no
+  steer change (the fixture-privacy correction explicitly warrants none);
+  remote in sync (rebased forward).
+- **Q35Q fixture-privacy correction adopted** (`Q35Q_STATUS_2026-07-15_
+  FIXTURE_PRIVACY_CORRECTION.md`): a defect in my `q35q_fixtures.py`
+  (29b4168) committed a public seed alongside the public derivation, making
+  synthetic token ids reconstructible from the public artifact, and
+  over-labeled a synthetic sequence as a tokenization/text-load fixture.
+  Corrected (collaborator, rebased into tree): HMAC-SHA256 keyed by a
+  >=32-byte PRIVATE ledger-only key; committed record carries only
+  domain-separated commitments + aggregate shape and marks
+  tokenizer-roundtrip / text-only-load UNestablished; a separate real
+  tokenizer-admission schema (exact tokenizer identity, >=2 deterministic
+  repeats, 32-token/248320-vocab, use_cache=False, HMAC commitment) is now
+  required by `build_admission_record` before any backward call. No private
+  key/text/token-id committed.
+- **Tests (fresh):** 409/409 full q35q + core suite (post-correction);
+  status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  undisturbed; two-family frontier irreversibly unavailable — finishing
+  bounded order_track then frozen audits then
+  `m38e_completed_error_frontier_not_found`):
+  - `unique_official_tasks_completed`: **258 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track bands 1-2 complete; band 3 at 18/24).
+  - `unique_official_tasks_remaining`: **30** (order_track bands 3-4) —
+    exact-set/audit completion only.
+  - `pilot_rows_completed`: 78 (mod_chain 30 + alg_coeff 8x4 + order_track
+    bands 1-2 at 8+8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 336.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen audits. (A Monitor is armed on the driver exit to
+  start finalization promptly.)
+- **q35q_blockers:** admission now correctly requires a REAL
+  tokenizer-roundtrip / text-only-load record; until it exists the outcome
+  is `q35q_artifact_admission_blocked`. GPU gated until M38E releases the
+  dual-3090 window.
+
 ## Heartbeat 2026-07-15T05:05Z
 
 - **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);

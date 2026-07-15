@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import re
 import tempfile
@@ -52,7 +53,14 @@ FORBIDDEN_ARTIFACT_KEYS = (
     "env", "environ", "secret",
 )
 
+_BOOL_GATE_FIELDS = (
+    "vjp_non_none", "vjp_nonzero", "vjp_finite", "repeat_stable",
+    "weight_grads_absent", "token_parity_exact", "logit_parity_within_tol",
+    "no_offload", "identities_match",
+)
+
 _IMMUTABLE_REV = re.compile(r"^[0-9a-f]{40}$")
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
 class Q35QBlock(Exception):
@@ -63,7 +71,7 @@ class Q35QBlock(Exception):
 
 def validate_revision(revision: str) -> str:
     """A pinned revision must be an immutable 40-hex commit, not a branch."""
-    if not isinstance(revision, str) or not _IMMUTABLE_REV.match(revision):
+    if not isinstance(revision, str) or not _IMMUTABLE_REV.fullmatch(revision):
         raise Q35QBlock("revision is not an immutable 40-hex commit sha")
     return revision
 
@@ -76,15 +84,44 @@ def sha256_file(path: str) -> str:
     return h.hexdigest()
 
 
+def _resolve_manifest_path(root_real: str, rel: str) -> str:
+    """Resolve one manifest key while preventing absolute paths and root escape."""
+    if not isinstance(rel, str) or not rel or os.path.isabs(rel):
+        raise Q35QBlock("manifest path must be a non-empty relative path")
+    normalized = os.path.normpath(rel)
+    if normalized in ("", ".", "..") or normalized.startswith(".." + os.sep):
+        raise Q35QBlock("manifest path escapes artifact root")
+    candidate = os.path.realpath(os.path.join(root_real, normalized))
+    try:
+        inside = os.path.commonpath((root_real, candidate)) == root_real
+    except ValueError as exc:
+        raise Q35QBlock("manifest path is not comparable to artifact root") from exc
+    if not inside:
+        raise Q35QBlock("manifest path escapes artifact root")
+    return candidate
+
+
 def verify_file_manifest(root: str, manifest: dict) -> dict:
-    """manifest: {relpath: sha256}. Every listed file must exist and match.
-    Fails closed on empty manifest or any missing/mismatched file."""
-    if not manifest:
-        raise Q35QBlock("empty file manifest")
+    """Verify every listed artifact file by a strict lowercase SHA-256 digest.
+
+    Paths must be relative and remain inside ``root`` after symlink resolution.
+    Fails closed on an invalid root, empty manifest, malformed digest, missing
+    file, path escape, or digest mismatch.
+    """
+    if not isinstance(root, str) or not root:
+        raise Q35QBlock("artifact root must be a non-empty path")
+    root_real = os.path.realpath(root)
+    if not os.path.isdir(root_real):
+        raise Q35QBlock("artifact root is not a directory")
+    if not isinstance(manifest, dict) or not manifest:
+        raise Q35QBlock("empty or invalid file manifest")
+
     bad = []
     for rel, want in sorted(manifest.items()):
-        p = os.path.join(root, rel)
-        if not os.path.isfile(p) or sha256_file(p) != want:
+        if not isinstance(want, str) or not _SHA256.fullmatch(want):
+            raise Q35QBlock(f"malformed sha256 for manifest entry: {rel!r}")
+        path = _resolve_manifest_path(root_real, rel)
+        if not os.path.isfile(path) or sha256_file(path) != want:
             bad.append(rel)
     if bad:
         raise Q35QBlock(f"manifest mismatch: {len(bad)} file(s)")
@@ -96,6 +133,8 @@ def verify_file_manifest(root: str, manifest: dict) -> dict:
 def validate_architecture(config: dict, expected: dict = QWEN35_35B_A3B_ARCH) -> dict:
     """config: model-config fields. Must match the frozen structure exactly on
     every expected key; the vision encoder must not be present."""
+    if not isinstance(config, dict):
+        raise Q35QBlock("architecture config must be a dict")
     bad = [k for k, v in expected.items() if config.get(k) != v]
     if config.get("vision_config") or config.get("has_vision"):
         bad.append("vision_encoder_present")
@@ -108,8 +147,8 @@ def validate_architecture(config: dict, expected: dict = QWEN35_35B_A3B_ARCH) ->
 
 def validate_layers(source_layer: int, target_layer: int = FINAL_RESIDUAL_LAYER,
                     num_layers: int = QWEN35_35B_A3B_ARCH["num_hidden_layers"]) -> dict:
-    for name, v in (("source", source_layer), ("target", target_layer)):
-        if not isinstance(v, int) or isinstance(v, bool) or not (0 <= v < num_layers):
+    for name, value in (("source", source_layer), ("target", target_layer)):
+        if not isinstance(value, int) or isinstance(value, bool) or not (0 <= value < num_layers):
             raise Q35QBlock(f"{name} layer out of range")
     if target_layer != FINAL_RESIDUAL_LAYER:
         raise Q35QBlock("target must be the final residual layer")
@@ -120,34 +159,78 @@ def validate_layers(source_layer: int, target_layer: int = FINAL_RESIDUAL_LAYER,
 
 # ---------- device placement ----------
 
-def validate_device_map(device_map, allowed_devices=(0, 1)) -> dict:
-    """Reject "auto"; require an explicit non-empty module->device dict placing
-    every module on an allowed GPU; reject cpu/disk/meta offload."""
+def validate_device_map(device_map, allowed_devices=(0, 1), required_modules=None) -> dict:
+    """Validate explicit, complete module placement on the admitted GPUs.
+
+    ``required_modules`` is mandatory and must enumerate every module whose
+    placement the admission amendment binds. Every required module must have an
+    explicit map entry. ``auto`` and cpu/disk/meta offload fail closed.
+    """
     if device_map == "auto" or not isinstance(device_map, dict) or not device_map:
-        raise Q35QBlock('device_map must be an explicit non-empty module->device dict')
+        raise Q35QBlock("device_map must be an explicit non-empty module->device dict")
+
+    if (
+        not isinstance(allowed_devices, (tuple, list, set))
+        or not allowed_devices
+        or any(type(device) is not int for device in allowed_devices)
+    ):
+        raise Q35QBlock("allowed_devices must be a non-empty collection of integer GPU ids")
+    allowed = set(allowed_devices)
+
+    if (
+        not isinstance(required_modules, (tuple, list, set))
+        or not required_modules
+        or any(not isinstance(module, str) or not module for module in required_modules)
+    ):
+        raise Q35QBlock("required module inventory is missing or invalid")
+    required = set(required_modules)
+    if len(required) != len(required_modules):
+        raise Q35QBlock("required module inventory contains duplicates")
+
+    invalid_modules = [
+        module for module in device_map
+        if not isinstance(module, str) or not module
+    ]
+    if invalid_modules:
+        raise Q35QBlock(f"invalid module key on {len(invalid_modules)} entry/entries")
+
+    missing = sorted(required.difference(device_map))
+    if missing:
+        raise Q35QBlock(f"device_map missing {len(missing)} required module(s)")
+
     offloaded, misplaced = [], []
-    for mod, dev in device_map.items():
-        if isinstance(dev, str) and dev.strip().lower() in OFFLOAD_TARGETS:
-            offloaded.append(mod)
-        elif isinstance(dev, int) and not isinstance(dev, bool):
-            if dev not in allowed_devices:
-                misplaced.append(mod)
+    for module, device in device_map.items():
+        if isinstance(device, str) and device.strip().lower() in OFFLOAD_TARGETS:
+            offloaded.append(module)
+        elif type(device) is int:
+            if device not in allowed:
+                misplaced.append(module)
         else:
-            misplaced.append(mod)
+            misplaced.append(module)
     if offloaded:
         raise Q35QBlock(f"cpu/disk/meta offload on {len(offloaded)} module(s)")
     if misplaced:
         raise Q35QBlock(f"disallowed device placement on {len(misplaced)} module(s)")
-    return {"modules": len(device_map),
-            "devices": sorted({v for v in device_map.values()}),
-            "result": "pass"}
+    return {
+        "modules": len(device_map),
+        "required_modules_checked": len(required),
+        "devices": sorted(set(device_map.values())),
+        "result": "pass",
+    }
 
 
 # ---------- quantization config ----------
 
 def canonical_quant_config(cfg: dict) -> str:
-    """Deterministic canonical serialization for equality/hashing."""
-    return json.dumps(cfg, sort_keys=True, separators=(",", ":"))
+    """Deterministic canonical serialization for strict equality and hashing."""
+    if not isinstance(cfg, dict):
+        raise Q35QBlock("quantization config must be a dict")
+    try:
+        return json.dumps(
+            cfg, sort_keys=True, separators=(",", ":"), allow_nan=False
+        )
+    except (TypeError, ValueError) as exc:
+        raise Q35QBlock("quantization config is not canonical JSON") from exc
 
 
 def quant_configs_equal(a: dict, b: dict) -> bool:
@@ -155,29 +238,43 @@ def quant_configs_equal(a: dict, b: dict) -> bool:
 
 
 def detect_inference_only(markers) -> list:
-    """markers: iterable of strings from serving/kernel config. Returns the
-    sorted set of inference-only markers found (non-empty => not autograd)."""
-    return sorted({m for token in markers if isinstance(token, str)
-                   for m in INFERENCE_ONLY_MARKERS if m in token.lower()})
+    """Return inference-only serving/kernel markers found in an iterable."""
+    if isinstance(markers, (str, bytes)) or markers is None:
+        raise Q35QBlock("kernel markers must be an iterable of strings")
+    try:
+        values = list(markers)
+    except TypeError as exc:
+        raise Q35QBlock("kernel markers must be an iterable of strings") from exc
+    if any(not isinstance(token, str) for token in values):
+        raise Q35QBlock("kernel markers must contain strings only")
+    return sorted({
+        marker
+        for token in values
+        for marker in INFERENCE_ONLY_MARKERS
+        if marker in token.lower()
+    })
 
 
 # ---------- aggregate-only privacy scan ----------
 
 def scan_aggregate_only(artifact) -> bool:
-    """Fail closed if an artifact carries any forbidden private key or a large
-    numeric array (a proxy for a raw tensor/VJP/lens leak)."""
+    """Fail closed on forbidden private keys, raw arrays, or nonfinite scalars."""
     def walk(obj, path=""):
         if isinstance(obj, dict):
-            for k, v in obj.items():
-                if isinstance(k, str) and k.lower() in FORBIDDEN_ARTIFACT_KEYS:
-                    raise Q35QBlock(f"forbidden artifact key: {k}")
-                walk(v, f"{path}.{k}")
+            for key, value in obj.items():
+                if isinstance(key, str) and key.lower() in FORBIDDEN_ARTIFACT_KEYS:
+                    raise Q35QBlock(f"forbidden artifact key: {key}")
+                walk(value, f"{path}.{key}")
         elif isinstance(obj, (list, tuple)):
-            if len(obj) > 64 and all(isinstance(x, (int, float))
-                                     and not isinstance(x, bool) for x in obj):
+            if len(obj) > 64 and all(
+                isinstance(value, (int, float)) and not isinstance(value, bool)
+                for value in obj
+            ):
                 raise Q35QBlock(f"raw numeric array at {path or '<root>'}")
-            for i, v in enumerate(obj):
-                walk(v, f"{path}[{i}]")
+            for index, value in enumerate(obj):
+                walk(value, f"{path}[{index}]")
+        elif isinstance(obj, float) and not math.isfinite(obj):
+            raise Q35QBlock(f"nonfinite scalar at {path or '<root>'}")
     walk(artifact)
     return True
 
@@ -187,7 +284,10 @@ def scan_aggregate_only(artifact) -> bool:
 @dataclass
 class VJPGateArtifact:
     """Aggregate booleans/scalars for a one-sequence exact-VJP feasibility gate.
-    Holds no tensors, tokens, or per-example data."""
+
+    Holds no tensors, tokens, or per-example data. Field types are checked
+    strictly so truthy strings, negative memory, and NaN/Inf cannot pass.
+    """
     path_name: str            # "gptq" | "nf4"
     vjp_non_none: bool
     vjp_nonzero: bool
@@ -201,17 +301,33 @@ class VJPGateArtifact:
     peak_gib_per_gpu: float
     peak_gib_total: float
 
+    def __post_init__(self) -> None:
+        if self.path_name not in ("gptq", "nf4"):
+            raise Q35QBlock("unknown path_name")
+        for field_name in _BOOL_GATE_FIELDS:
+            if type(getattr(self, field_name)) is not bool:
+                raise Q35QBlock(f"{field_name} must be a strict boolean")
+        for field_name in ("peak_gib_per_gpu", "peak_gib_total"):
+            value = getattr(self, field_name)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+                or value < 0
+            ):
+                raise Q35QBlock(f"{field_name} must be finite and nonnegative")
+
     def gates(self) -> dict:
         return {
-            "vjp_non_none": bool(self.vjp_non_none),
-            "vjp_nonzero": bool(self.vjp_nonzero),
-            "vjp_finite": bool(self.vjp_finite),
-            "repeat_stable": bool(self.repeat_stable),
-            "weight_grads_absent": bool(self.weight_grads_absent),
-            "token_parity_exact": bool(self.token_parity_exact),
-            "logit_parity_within_tol": bool(self.logit_parity_within_tol),
-            "no_offload": bool(self.no_offload),
-            "identities_match": bool(self.identities_match),
+            "vjp_non_none": self.vjp_non_none,
+            "vjp_nonzero": self.vjp_nonzero,
+            "vjp_finite": self.vjp_finite,
+            "repeat_stable": self.repeat_stable,
+            "weight_grads_absent": self.weight_grads_absent,
+            "token_parity_exact": self.token_parity_exact,
+            "logit_parity_within_tol": self.logit_parity_within_tol,
+            "no_offload": self.no_offload,
+            "identities_match": self.identities_match,
             "mem_per_gpu_ok": self.peak_gib_per_gpu <= MEM_GIB_PER_GPU,
             "mem_total_ok": self.peak_gib_total <= MEM_GIB_TOTAL,
         }
@@ -220,27 +336,23 @@ class VJPGateArtifact:
         return all(self.gates().values())
 
     def outcome(self):
-        """Scoped Q35Q outcome for a passing gate, else None (caller escalates
-        to q35q_gptq_autograd_unsupported / q35q_local_exact_vjp_blocked)."""
-        if self.path_name not in ("gptq", "nf4"):
-            raise Q35QBlock("unknown path_name")
+        """Scoped Q35Q outcome for a passing gate, else None."""
         return f"q35q_{self.path_name}_exact_vjp_passed" if self.passed() else None
 
 
-# ---------- atomic, resumable private checkpoint ----------
+# ---------- atomic, resumable aggregate checkpoint ----------
 
 def atomic_write_json(path: str, obj) -> str:
-    """Write JSON atomically (temp + fsync + rename). Enforces aggregate-only
-    content so a checkpoint can never leak a raw tensor into a public artifact."""
+    """Write JSON atomically after aggregate-only validation."""
     scan_aggregate_only(obj)
-    d = os.path.dirname(os.path.abspath(path)) or "."
-    os.makedirs(d, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=d, suffix=".tmp")
+    directory = os.path.dirname(os.path.abspath(path)) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=directory, suffix=".tmp")
     try:
-        with os.fdopen(fd, "w") as f:
-            json.dump(obj, f, sort_keys=True)
-            f.flush()
-            os.fsync(f.fileno())
+        with os.fdopen(fd, "w") as handle:
+            json.dump(obj, handle, sort_keys=True, allow_nan=False)
+            handle.flush()
+            os.fsync(handle.fileno())
         os.replace(tmp, path)
     finally:
         if os.path.exists(tmp):

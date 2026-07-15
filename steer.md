@@ -1,223 +1,204 @@
-# steer.md — freeze M38E retry fail-closed; finish the active sweep; prioritize forward-only Agents-A1 scaling
+# steer.md — prioritize an architecture-matched quantized Qwen3.5 MoE Jacobian path without disturbing M38E
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This directive supersedes
-steer commit `0e812c16616251a9326207fa8e7191b8d92284cd` only where explicitly
-amended below. Every predecessor remains incorporated in full, including all
-sealed-data, verifier, privacy, provenance, exact-set, cap-escalation, resource,
-claim-boundary, retry-limit, production-gating, repository-hygiene, and stop
-rules. No frozen scientific result may be re-evaluated or tuned. No M38E task,
-family, band, seed, count, threshold, verifier, sampling setting, output-cap
-rule, power gate, comparator gate, or production gate may be weakened.
+prior steer only where explicitly amended below. Every predecessor remains
+binding by incorporation, including all sealed-data, verifier, privacy,
+provenance, exact-set, cap-escalation, resource, claim-boundary, retry,
+production-gating, repository-hygiene, and stop rules. No frozen scientific
+result, task, family, seed, threshold, verifier, sampling setting, token cap,
+power gate, comparator, or production gate may be weakened or retuned.
 
-## Current state
+## Current established state
 
-- Remote `master` before this steer was
-  `66698439beca24a41e7aeef52e2f2f3a6a376ce7`.
-- M38E official attempt one remains valid and must continue undisturbed. The
-  latest aggregate heartbeat reports 83 rows: 69 official-2048 plus 14
-  pilot-4096; `mod_chain` band 3 at 21/24; uniform official identity; a live
-  driver with fresh progress; and 52/52 fresh core suites. This is incomplete
-  development capture, not a scientific result.
-- Commit `a77fede0d605376f04852b6db842e10385755ffd` correctly fixed the audit
-  git-slot wiring and honestly made automatic retry permanently fail-closed on
-  the current runtime because the required fd-bound execution and trustworthy
-  process-tree kill scope are unavailable. It launched no retry and did not
-  touch attempt one.
-- The active attempt has no runtime blocker. Retry and finalization blockers
-  remain separate and must continue to be reported separately.
-- M36T remains scoped exactly as frozen: T-H3 establishes verifier-backed
-  adaptive tool/compute allocation only on its deterministic population. T-H1
-  and T-H2 are not established.
-- M37J-C remains blocked by its frozen disabled-path parity result. Its memory,
-  runtime, and observability measurements are descriptive technical facts only.
-- M38E has no outcome. No completed-error predictor, safe truncation rule,
-  early-exit rule, semantic monitor, causal repair, activation steering, route
-  intervention, or production utility is established.
+- The latest pre-steer heartbeat was
+  `15b880bcbaa272c1ceeed5c6d1d1eb99b8f2ef94`: M38E attempt one was healthy at
+  226/288 official tasks, `order_track` band 2 at 10/24, 62 official tasks
+  remaining, and 52/52 fresh core tests passing.
+- Do not interrupt, inspect private rows from, signal, restart, reconfigure,
+  contend with, or otherwise disturb the active M38E process, environment,
+  worktree, cache, or ledger.
+- The M38E two-family completed-error frontier is already irreversibly
+  unavailable under the frozen protocol. Remaining execution and finalization
+  are still mandatory for exact-set, escalation, verifier, provenance, privacy,
+  dependency, resource, cleanup, and commit-safety evidence.
+- The prospective M38E terminal outcome remains
+  `m38e_completed_error_frontier_not_found` after successful completion and
+  audits, or the narrower `provenance-blocked` / `inconclusive` outcome if an
+  original finalization requirement cannot be verified.
+- M36T T-H3 remains established only as verifier-backed adaptive tool and compute
+  allocation on its frozen deterministic population. It does not establish a
+  router, hidden-state, semantic, or Jacobian mechanism.
+- M37J-C remains blocked by its frozen disabled-path parity gate. Its memory,
+  runtime, and observability measurements remain descriptive technical facts.
+- M39 remains the independently preregistered forward-only test of incremental
+  completed-error prediction on Agents-A1 35B. Scientific M39 capture remains
+  prohibited until M38E is formally finalized and the complete launch amendment
+  is committed.
+- No Jacobian Lens has been fitted or validated on Agents-A1. No safe truncation,
+  early exit, causal repair, activation steering, route intervention, or
+  production utility is established.
 
-## Binding decision: stop retry-controller expansion for this run
+## Binding decision: adopt Q35Q as the primary architecture-matched engineering surrogate
 
-The retry-control investigation has reached the correct operational conclusion:
-automatic retry is unavailable under the current execution boundary and must
-remain fail-closed. Do not continue adding increasingly complex automatic retry
-machinery while attempt one is healthy.
+Commit `35ea8ab80880466534e4e2f33d00312067637ef1` added
+`docs/Q35Q_QUANTIZED_QWEN35_JACOBIAN_PROTOCOL.md`. That protocol is now binding.
 
-1. Do not invoke the retry controller or any superseded supervisor while attempt
-   one is alive.
-2. Do not stop, signal, restart, reparent, attach to, mutate, or otherwise disturb
-   attempt one, its process tree, worktree, model cache, environment, or private
-   ledger.
-3. Preserve the permanent two-attempt ceiling. The fail-closed controller does
-   not authorize attempt two; it blocks it.
-4. If attempt one exits nonzero, preserve the private ledger byte-for-byte,
-   record M38E as interrupted and blocked, and require private operator review.
-   Do not infer that a retry is safe, do not refund the retry authorization, and
-   do not launch a replacement automatically.
-5. Any future rerun after a failed attempt one must be treated as a separately
-   authorized execution under a fresh immutable execution environment and an
-   explicit amendment. It may not be presented as a continuation merely because
-   some rows are reusable.
-6. Public status may describe the two aggregate retry blockers, but must not
-   expose PIDs, paths, executable identities, environment values, model pointers,
-   private hashes, or other secret-linked evidence.
+The official `Qwen/Qwen3.5-35B-A3B-Base` and
+`Qwen/Qwen3.5-35B-A3B-GPTQ-Int4` checkpoints provide a substantially closer
+engineering surrogate than an unrelated MoE because the official model cards
+identify the same Qwen3.5 MoE structure used by the Agents-A1 lineage:
 
-This decision closes the automatic-retry engineering loop for the active M38E
-run. It does not weaken any scientific gate.
+- hidden dimension 2048;
+- 40 language-model layers;
+- 256 routed experts;
+- 8 routed plus 1 shared expert per token;
+- expert intermediate dimension 512;
+- hybrid Gated DeltaNet / Gated Attention layout;
+- padded vocabulary and language-model output dimension 248320.
 
-## M38E completion and finalization
+The official GPTQ artifact is an INT4 Safetensors checkpoint intended primarily
+for inference. Its recommended vLLM/SGLang path uses `moe_wna16` quantized serving
+kernels. A successful load or generation is not evidence that exact input
+Jacobians are available.
 
-Continue aggregate-only heartbeat monitoring until attempt one exits normally or
-fails.
+The official bitsandbytes documentation states that 8-bit and 4-bit training is
+supported only for extra parameters. QLoRA demonstrates useful gradient flow
+through quantized frozen weights, but it does not prove that every Qwen3.5 hybrid
+attention and MoE kernel exposes the exact residual-input VJPs required by
+Jacobian Lens. Therefore the exact one-sequence VJP smoke in Q35Q is mandatory
+and may not be skipped by analogy to LoRA training.
 
-A normal process exit is not by itself a scientific pass. Before any result is
-reported, require all frozen M38E finalization checks:
+## What may begin immediately
 
-1. exact expected task and row set;
-2. exact run, source, model, task-set, seed, index, cap, and run-kind identities;
-3. deterministic 2048-to-4096 escalation accounting and complete eligible-band
-   arithmetic;
-4. verifier, privacy, cleanup, resource, and commit-safety gates;
-5. fresh reusable import/execution-root audit;
-6. fresh external-root, virtual-environment, loader, package, native-library,
-   `.pth`, editable-install, namespace, entry-point, and command-origin audit;
-7. proof that no private task text, operands, outputs, tokens, telemetry arrays,
-   states, routes, per-example predictions, paths, environment data, model
-   pointers, or secret-linked digests entered committed artifacts.
+While M38E continues, authorize only CPU-side and storage-side Q35Q work:
 
-Do not manufacture stronger launch provenance after the fact. If the required
-original evidence for a finalization gate is absent or cannot be verified, the
-correct outcome is `provenance-blocked` or `inconclusive`, not pass. Preserve the
-rows privately for audit and report only the aggregate block reason.
+1. pin exact immutable model revisions;
+2. download/stage official artifacts without changing the M38E cache or host;
+3. build artifact-admission, architecture, quantization, device-placement,
+   provenance, privacy, and commit-safety checks;
+4. implement synthetic tests and aggregate artifact schemas;
+5. stage a Transformers/eager GPTQ path and a runtime-NF4 fallback path;
+6. build explicit training-compatible multi-GPU placement rather than relying on
+   inference-only `device_map="auto"` behavior;
+7. commit the aggregate-only admission amendment before any backward call.
 
-## New external evidence and the next forward-only comparator
+No Q35Q GPU process may run on the active M38E resources. GPU execution is
+permitted only after M38E releases the dual-3090 window or on a proven independent
+host.
 
-External review on 2026-07-14 found two useful primary-source methods that refine
-the technically credible path without changing M38E.
+## Mandatory candidate order and exact-gradient boundary
 
-### Expert contribution, not router selection alone
+Q35Q must test candidates in this order:
 
-`The Expert Strikes Back: Interpreting Mixture-of-Experts Language Models at
-Expert Level` (arXiv:2604.02178; code `jerryy33/MoE_analysis`) distinguishes
-router selection from actual expert impact. Its useful measurement is the norm
-of the routed residual write:
+1. official `Qwen/Qwen3.5-35B-A3B-GPTQ-Int4` through a genuine
+   Transformers/PyTorch autograd path;
+2. the exact admitted BF16 base checkpoint loaded at runtime with bitsandbytes
+   NF4 under an explicit training-compatible shard plan.
 
-`contribution_i(l,t) = router_weight_i(l,t) * ||expert_output_i(l,t)||_2`.
+For the passing path:
 
-Router weight means an expert was selected; it does not prove that the expert
-made a large residual-stream contribution. The paper also uses expert-output
-logit projections and sparse probes, but its semantic labels are not evidence of
-completed-error prediction on Agents-A1.
+- all weights remain frozen;
+- weight gradients remain absent;
+- the residual-to-target VJP must be non-`None`, nonzero, finite, repeatable, and
+  connected through genuine autograd;
+- straight-through estimators, detached dequantize/requantize approximations,
+  finite differences, fake gradients, or manually substituted derivatives may
+  not be called an exact Jacobian;
+- no hidden CPU or disk offload may occur in the primary passing fit path;
+- observation hooks must preserve token outputs and the frozen logit-parity
+  tolerance;
+- peak memory must remain at or below 23.0 GiB per RTX 3090 and 46.0 GiB total;
+- exact model, quantization, package, kernel, source, layer, and placement
+  identities must match the committed admission amendment.
 
-The next separately preregistered forward-only Agents-A1 study must therefore
-include, where technically observable without changing outputs:
+If GPTQ lacks exact backward support, record
+`q35q_gptq_autograd_unsupported` and proceed to NF4. Do not patch an approximate
+gradient into the GPTQ path and call it exact. If NF4 also fails, record
+`q35q_local_exact_vjp_blocked`. That blocks the local quantized path only; it does
+not reject a later BF16 fit on rented high-memory hardware.
 
-- router weights and margins;
-- selected-expert output norms;
-- router-weight times expert-output-norm contribution;
-- layer-level sums, maxima, dispersion, entropy, and concentration of those
-  contributions;
-- contribution changes and route transitions across layers;
-- separate prefill and autoregressive-decode summaries;
-- contribution-path features across multiple layers.
+## Scientific claim boundary for quantized lenses
 
-Measure router weight, output norm, and their product separately so predictive
-increment cannot be attributed to the wrong component. Do not retain unnecessary
-full expert activations when aggregate features suffice.
+A lens fitted under GPTQ, NF4, AWQ, FP8, or another quantization is a lens for
+that exact quantized mathematical model. Quantization changes weights, routing
+margins, expert writes, and local derivatives.
 
-### Privacy-minimal aggregated routing-load baseline
+Therefore:
 
-`RouteScan: A Non-Intrusive Approach to Auditing MoE LLMs Safety via Expert
-Routing Telemetry` (arXiv:2605.24817) shows that prefill expert-load patterns can
-be represented using normalized per-expert load, active-expert coverage,
-entropy-derived effective expert count, coverage gap, and concentration. Its
-published result concerns harmful-input auditing on other MoEs, not answer-error
-prediction or Agents-A1.
+- do not describe a quantized Qwen3.5 lens as a BF16 lens;
+- do not describe a transferred Qwen3.5 lens as an Agents-A1-native lens;
+- do not pool rows, calibration, power, or validation across quantizations;
+- use each target checkpoint's own final normalization and output head;
+- compare transfer against target-native identity transport and standard logit
+  lens at identical tokens and layers;
+- keep raw Jacobians, VJPs, states, routes, lens matrices, prompts, outputs, and
+  per-example readouts private and uncommitted.
 
-Use its aggregate feature construction only as a low-cost, privacy-minimal
-baseline in the next study:
+A successful native quantized Agents-A1 fit may establish a Jacobian Lens for the
+exact quantized Agents-A1 checkpoint. Native BF16 Agents-A1 fitting remains the
+reference target.
 
-- normalized expert-load distribution by layer;
-- active expert fraction;
-- entropy and effective expert count;
-- coverage gap and concentration;
-- prefill-only and decode-only variants where the runtime permits exact phase
-  separation.
+## Program order
 
-Do not claim prompt non-invertibility or privacy safety from the paper alone.
-Run a project-specific leakage and inversion audit under the frozen privacy
-threat model before any such claim.
+The binding execution order is:
 
-No r/LocalLLaMA item in this scan produced an actionable method that survived
-primary-source verification.
+1. finish M38E unchanged and complete every frozen finalization audit;
+2. stage Q35Q Phase 0 while M38E runs, without GPU contention or scientific
+   capture;
+3. after M38E releases the dual-3090 window, run only the Q35Q one-sequence VJP
+   gate and, if it passes, the frozen eight-sequence micro-fit;
+4. commit and review aggregate technical outcomes before any larger fit;
+5. if the micro-fit passes, preregister the selected-layer quantized
+   Qwen3.5-35B-A3B-Base lens fit before capture;
+6. use the validated base-model lens for separately preregistered transfer tests
+   onto post-trained Qwen3.5 derivatives and Agents-A1;
+7. fit a native quantized Agents-A1 lens only after exact target artifact and
+   quantization admission and a separate pre-outcome manifest;
+8. independently launch M39 only through its existing fresh-population,
+   leakage, nuisance, power, parity, provenance, and privacy gates;
+9. do not evaluate Q35Q correctness prediction, stopping, or intervention value
+   until M39's confirmatory program permits an independent outcome-bearing study;
+10. use an unrelated open MoE only for a specific expert/dispatch operation that
+    remains technically impossible on the admitted Qwen3.5 quantized paths;
+11. retain native BF16 Agents-A1 exact VJPs and fitting on rented high-memory
+    hardware as the final reference comparison under a separate frozen protocol.
 
-## Preregistered sequence toward Agents-A1 scaling
+Q35Q engineering feasibility may run before M39 because it uses a neutral corpus
+and no correctness labels. It does not replace M39 and cannot borrow M38E/M39
+rows, outcomes, families, difficulty observations, feature discoveries, layers,
+or thresholds.
 
-The official Agents-A1 repository still lists only the released 35B-A3B model
-and retains its 2026-07-08 statement that a 4B model is coming. The official
-Hugging Face collection still contains only 35B variants. Do not substitute
-Agents-K1 or an unofficial checkpoint under the Agents-A1 name.
+## Required stop outcomes
 
-The required sequence is now:
+Use only the scoped outcomes defined by the Q35Q protocol, including:
 
-1. finish and finalize M38E unchanged, or record it honestly as blocked;
-2. before collecting any new scientific rows, create and commit a separate
-   preregistration for a forward-only 35B comparator;
-3. use the exact pinned Agents-A1 35B runtime and observation-only capture;
-4. compare frozen nuisance baselines against incremental blocks for:
-   - router logits, margins, loads, and route-count summaries;
-   - hidden-state summaries and router-visible/router-blind energy;
-   - router-expert geometry and multi-layer route paths;
-   - expert-output norms and router-weighted contribution norms;
-   - RouteScan-style aggregate load/coverage/entropy features;
-5. separate prefill from autoregressive decode;
-6. stream only preregistered aggregate features to private storage unless a
-   stronger raw signal is explicitly necessary and privacy-approved;
-7. use leakage-free nested cross-validation, train-fold-only preprocessing and
-   feature selection, frozen nuisance covariates, family-aware splits, and a
-   locked held-out evaluation set;
-8. report raw and nuisance-residualized predictive increment over confidence,
-   prompt/completion length, task family, difficulty, cap, truncation status,
-   latency, verifier category, and route count;
-9. treat semantic expert labels as exploratory and sealed. Do not use LLM-made
-   expert labels as scientific predictors, stopping rules, or interventions
-   without a separate preregistration and held-out validation;
-10. advance only if a forward-only feature block adds stable, calibrated,
-    verifier-labeled completed-error prediction beyond all frozen baselines;
-11. then compare full Jacobians, reduced-target VJPs, and bounded
-    finite-difference probes on a smaller comparable MoE or the official
-    Agents-A1 4B checkpoint if released;
-12. require approximation-error, rank-stability, finite-value, phase-localized
-    parity, memory, runtime, privacy, and predictive-increment gates;
-13. only then run a frozen one-sequence 35B backward memory smoke on rented
-    high-memory hardware with no scientific claim;
-14. advance to fitting only through a separately frozen fit and validation
-    protocol.
+- `q35q_gptq_exact_vjp_passed`;
+- `q35q_gptq_autograd_unsupported`;
+- `q35q_nf4_exact_vjp_passed`;
+- `q35q_local_exact_vjp_blocked`;
+- `q35q_microfit_passed` / `q35q_microfit_blocked`;
+- `q35q_quantized_base_lens_validated`;
+- `q35q_transfer_feasible` / `q35q_transfer_not_established`;
+- `q35q_native_quantized_agents_lens_validated`;
+- `q35q_artifact_admission_blocked`;
+- `q35q_provenance_blocked`.
 
-`Jacobian Scopes` remains the strongest concrete engineering lead for
-reduced-target VJPs and finite-difference Jacobian estimates. `When Are Experts
-Misrouted?` continues to support counterfactual routing analysis while warning
-that ordinary router scores can be uninformative on fragile reasoning tokens.
-Current hidden-state error-prediction work supports diagnostic probing but not
-causal repair, and current early-exit evidence remains unfavorable for modern
-MoEs without direct verifier-backed validation.
+None authorizes production use.
 
-## Claim and stop boundary
+## Privacy, production, and completion boundary
 
-- M38E remains in progress and has no result.
-- Automatic retry is permanently fail-closed for the current runtime. This is a
-  safety decision, not a scientific failure and not authorization for a manual
-  retry.
-- M38E finalization remains blocked until every frozen scientific and provenance
-  audit passes; unverifiable evidence produces a blocked or inconclusive result.
-- No router, hidden-state, geometry, expert-contribution, load, path, semantic,
-  or Jacobian feature has demonstrated incremental completed-error prediction on
-  Agents-A1.
-- No Jacobian Lens has been fitted or validated on Agents-A1.
-- No safe truncation, early exit, semantic correctness, causal repair, routing
-  intervention, activation steering, or production utility is established.
-- Full 35B backward feasibility remains unproven.
-- GitHub reports this repository as public. Treat every committed byte as
-  externally visible and keep all raw tasks, outputs, token data, telemetry,
-  states, routes, expert outputs, paths, per-example predictions, process
-  evidence, environment data, model pointers, and secret-linked digests private.
-- The research program is not complete. Do not mark it complete until every
-  frozen milestone and final stop rule in `CODEX_AUTOSTEER.md` is satisfied.
+Stop on model or revision mismatch, dirty source provenance, unsupported
+backward, detached/zero/nonfinite gradients, approximate gradients represented as
+exact, parity failure, hidden offload, model substitution, quantization mismatch,
+device-placement mismatch, kernel mismatch, OOM, resource breach, instability,
+checkpoint corruption, cleanup failure, privacy failure, or commit-safety
+failure.
+
+Treat the repository as publicly visible. Never commit raw tasks, corpus text,
+prompts, outputs, token IDs or text, hidden states, activations, expert outputs,
+routes, Jacobians, VJPs, lens matrices, per-example scores, model weights, caches,
+local paths, environment values, process evidence, or secret-linked provenance.
+
+Production remains gated. The research program is not complete. Do not mark it
+complete until every frozen milestone and final stop rule in
+`CODEX_AUTOSTEER.md` is satisfied.

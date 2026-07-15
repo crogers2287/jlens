@@ -168,6 +168,35 @@ and no correctness labels. It does not replace M39 and cannot borrow M38E/M39
 rows, outcomes, families, difficulty observations, feature discoveries, layers,
 or thresholds.
 
+## Binding M39 metacognition and temporal-state amendment
+
+Commit `ced86a9e3b0a23eced18aa82490936541b341dd8` added
+`docs/STEER_ADDENDUM_2026-07-15_M39_METACOGNITION_TEMPORAL_AND_EARLY_EXIT_BOUNDARY.md`.
+That addendum is now binding and amends the M39 design before capture.
+
+In particular:
+
+- M39 must preserve a strict separation between monitoring and control;
+- the launch amendment must include an isolated pre-solve/post-solve behavioral
+  metacognition comparator or record it unsupported through a pre-capture gate;
+- internal telemetry must be tested against nuisance, router, and behavioral
+  self-assessment comparators under a frozen hierarchical multiplicity rule;
+- nuisance residualization or an equivalent conditional comparison must be fit
+  inside training folds only;
+- one separately identifiable aggregate temporal hidden-state dynamics block may
+  be admitted only after parity, privacy, phase-attribution, and resource smokes;
+- counterfactual routing, router updates, retries, tool invocation, truncation,
+  and early exit remain outside M39;
+- do not prioritize a TIDE-style early-exit integration for Agents-A1 before
+  observation-only monitoring and model-specific intrinsic-exit feasibility are
+  established;
+- every borrowed external method must pin the exact paper version, immutable code
+  commit, formula, deviations, license, dependencies, and synthetic tests.
+
+This amendment strengthens comparators and confound controls. It does not
+establish an Agents-A1 predictor, metacognitive controller, causal router result,
+or safe early exit.
+
 ## Required stop outcomes
 
 Use only the scoped outcomes defined by the Q35Q protocol, including:

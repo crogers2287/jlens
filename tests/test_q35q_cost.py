@@ -26,12 +26,10 @@ def timing(**over):
     return Phase1Timing(**base)
 
 
-# ---------- backward passes ----------
-
 def test_backward_passes_exact_model():
-    assert backward_passes_per_prompt() == D_MODEL          # dim_batch=1 -> 2048
+    assert backward_passes_per_prompt() == D_MODEL
     assert backward_passes_per_prompt(2048, 8) == 256
-    assert backward_passes_per_prompt(2050, 8) == 257       # ceil, not floor
+    assert backward_passes_per_prompt(2050, 8) == 257
 
 
 @pytest.mark.parametrize("d,db", [(0, 1), (-1, 1), (2048, 0), (2048, -2),
@@ -40,8 +38,6 @@ def test_backward_passes_bad_args_blocked(d, db):
     with pytest.raises(Q35QBlock):
         backward_passes_per_prompt(d, db)
 
-
-# ---------- timing validation ----------
 
 @pytest.mark.parametrize("field", ["forward_s", "first_backward_s",
                                     "steady_backward_s", "cleanup_s"])
@@ -52,61 +48,80 @@ def test_timing_rejects_negative_and_nonfinite(field):
         timing(**{field: float("inf")}).validate()
 
 
-def test_timing_rejects_bool():
+def test_timing_rejects_bool_and_wrong_object():
     with pytest.raises(Q35QBlock):
         timing(forward_s=True).validate()
+    with pytest.raises(Q35QBlock):
+        project_prompt_seconds(object())
 
-
-# ---------- prompt-seconds ----------
 
 def test_project_prompt_seconds_formula():
-    # dim_batch=8 -> 256 passes: 1.0 + 0.5 + 255*0.4 + 0.1 = 103.6
     got = project_prompt_seconds(timing(), dim_batch=8)
     assert abs(got - (1.0 + 0.5 + 255 * 0.4 + 0.1)) < 1e-9
 
 
-# ---------- storage ----------
+def test_project_storage_counts_every_source_layer():
+    out = project_storage_bytes(d_model=2048, n_source_layers=5,
+                                bytes_per_elem=4, n_checkpoints=1)
+    matrix = 2048 * 2048 * 4
+    assert out["matrix_bytes"] == matrix
+    assert out["lens_set_bytes"] == matrix * 5
+    assert out["projected_storage_bytes"] == matrix * 5 * 3
+    scan_aggregate_only(out)
 
-def test_project_storage_bytes():
-    out = project_storage_bytes(d_model=2048, bytes_per_elem=4, n_checkpoints=1)
-    assert out["matrix_bytes"] == 2048 * 2048 * 4
-    assert out["projected_peak_bytes"] == out["matrix_bytes"] * 3
 
-
-def test_project_storage_bad_args_blocked():
+@pytest.mark.parametrize("kwargs", [
+    {"d_model": 0},
+    {"n_source_layers": 0},
+    {"n_source_layers": True},
+    {"bytes_per_elem": 0},
+    {"n_checkpoints": -1},
+    {"n_checkpoints": True},
+])
+def test_project_storage_bad_args_blocked(kwargs):
     with pytest.raises(Q35QBlock):
-        project_storage_bytes(d_model=0)
-    with pytest.raises(Q35QBlock):
-        project_storage_bytes(n_checkpoints=-1)
+        project_storage_bytes(**kwargs)
 
-
-# ---------- fit projection + ceiling ----------
 
 def test_project_fit_aggregate_and_ceiling():
     proj = project_fit(120, timing(), dim_batch=8, workers=1, uncertainty=0.2)
-    # per-prompt 103.6s * 120 = 12432s; *1.2 = 14918.4s < 86400 -> feasible
     assert proj["backward_passes_per_prompt"] == 256
+    assert proj["max_prompts_per_worker"] == 120
+    assert proj["projected_total_compute_seconds"] == proj["projected_wall_seconds"]
     assert proj["within_ceiling_per_worker"] is True
     assert proj["single_worker"] is True
     assert proj["ceiling_seconds"] == WALL_CLOCK_CEILING_S
-    scan_aggregate_only(proj)  # public-safe
+    scan_aggregate_only(proj)
 
 
 def test_project_fit_exceeds_ceiling():
-    # dim_batch=1 -> 2048 passes: per-prompt ~ 1.0+0.5+2047*0.4+0.1 = 820.4s
-    # * 120 prompts = 98448s > 86400 even before margin -> not feasible
     assert single_worker_feasible(120, timing(), dim_batch=1) is False
 
 
+def test_project_fit_sharding_uses_most_loaded_worker_not_average():
+    proj = project_fit(10, timing(), dim_batch=8, workers=3, uncertainty=0.0)
+    per = project_prompt_seconds(timing(), dim_batch=8)
+    assert proj["max_prompts_per_worker"] == 4
+    assert proj["idle_prompt_slots"] == 2
+    assert proj["projected_wall_seconds"] == per * 4
+    assert proj["projected_total_compute_seconds"] == per * 10
+    assert proj["projected_wall_seconds"] > per * (10 / 3)
+
+
 def test_project_fit_sharding_helps():
-    # same heavy case across 4 workers should come under the ceiling
     proj = project_fit(120, timing(), dim_batch=1, workers=4, uncertainty=0.2)
     assert proj["within_ceiling_per_worker"] is True
     assert proj["single_worker"] is False
 
 
-@pytest.mark.parametrize("over", [{"n_prompts": 0}, {"workers": 0},
-                                   {"uncertainty": -0.1}])
+@pytest.mark.parametrize("over", [
+    {"n_prompts": 0},
+    {"workers": 0},
+    {"workers": 121},
+    {"workers": True},
+    {"uncertainty": -0.1},
+    {"uncertainty": float("nan")},
+])
 def test_project_fit_bad_args_blocked(over):
     kw = dict(n_prompts=120, workers=1, uncertainty=0.2)
     kw.update(over)

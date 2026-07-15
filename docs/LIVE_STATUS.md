@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T01:37Z
+
+- **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged
+  (`steer_sha_seen bc7302f4…`). Addenda current (eight); no newer,
+  remote in sync. (Newest binding: `M38E_FRONTIER_IRREVERSIBLY_UNAVAILABLE`.)
+- **Program-control conclusion (unchanged):** M38E development
+  completed-error frontier irreversibly unavailable — two-family gate
+  unreachable. Finishing bounded order_track undisturbed as exact-set/
+  audit evidence only; on completion run all frozen audits then commit
+  `m38e_completed_error_frontier_not_found` (or `provenance-blocked`/
+  `inconclusive` if unverifiable). NOT finalized — driver `in_progress`.
+- **Tests (fresh):** 52/52 core; status file commit-safe clean.
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  recent progress; continuing undisturbed to bounded completion):
+  - `unique_official_tasks_completed`: **226 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track band 1 complete; band 2 underway
+    at 10 / 24).
+  - `unique_official_tasks_remaining`: **62** (order_track bands 2-4) —
+    exact-set/audit completion only.
+  - `pilot_rows_completed`: 70 (mod_chain 30 + alg_coeff bands 1-4 at
+    8+8+8+8 + order_track band 1 8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 296.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal outcome
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen exact-set/escalation/verifier/provenance/
+  execution-root/dependency/privacy/cleanup/commit-safety audits;
+  unverifiable evidence -> `provenance-blocked`/`inconclusive`.
+
 ## Heartbeat 2026-07-15T01:07Z
 
 - **Steer:** `550c27b`; steer.md blob `bc7302f4…` unchanged

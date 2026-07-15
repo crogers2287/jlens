@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T04:05Z
+
+- **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);
+  Q35Q priority + M39 metacognition/temporal/early-exit + Q35Q route-regime/
+  exact-sharding amendments (all design-only); no newer, remote in sync.
+- **Tests (fresh):** 311/311 pre-commit (core + Q35Q phase0/admission/
+  loader_plan/cost); status file commit-safe clean. (Q35Q merge module also
+  present; full local suite 323 green.)
+- **M38E official attempt 1** (uniform official identity; driver alive,
+  undisturbed; two-family frontier irreversibly unavailable — finishing
+  bounded order_track then frozen audits then
+  `m38e_completed_error_frontier_not_found`):
+  - `unique_official_tasks_completed`: **242 / 288** (mod_chain 96 +
+    alg_coeff 96 complete; order_track bands 1-2 complete; band 3 at 2/24).
+  - `unique_official_tasks_remaining`: **46** (order_track bands 3-4) —
+    exact-set/audit completion only.
+  - `pilot_rows_completed`: 78 (mod_chain 30 + alg_coeff 8x4 + order_track
+    bands 1-2 at 8+8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: 0.
+  - `total_execution_rows`: 320.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal
+  `m38e_completed_error_frontier_not_found`, pending bounded order_track
+  completion + all frozen audits.
+- **q35q_blockers:** Phase 0 CPU-only advancing (admission builder, explicit
+  placement planner, exact-cost projection, deterministic fp32 weighted-merge
+  primitive landed; collaborator concurrently hardening shared validators);
+  GPU gated until M38E releases the dual-3090 window; admission amendment +
+  route-regime artifact schema required before any backward call.
+
 ## Heartbeat 2026-07-15T03:28Z (steer amended: Q35Q route-regime + exact sharding)
 
 - **Steer UPDATED:** steer.md blob `0c258735…` (was `2510548596…`);

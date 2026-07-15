@@ -197,6 +197,37 @@ This amendment strengthens comparators and confound controls. It does not
 establish an Agents-A1 predictor, metacognitive controller, causal router result,
 or safe early exit.
 
+## Binding Q35Q route-regime and exact-sharding amendment
+
+Commit `e609fa547b4505a64e3adc38131f3ce6faff3daf` added
+`docs/STEER_ADDENDUM_2026-07-15_Q35Q_ROUTE_REGIME_AND_EXACT_SHARDING.md`.
+That addendum is now binding before any Q35Q live backward call.
+
+In particular:
+
+- an exact sparse-MoE VJP is claimed only as the local autograd derivative through
+  the executed top-k route regime, not across counterfactual expert assignments;
+- the Phase-1-passing path must produce an aggregate-only route-regime artifact
+  covering route parity, selected-boundary margins, load/transition summaries,
+  hook parity, resource use, cleanup, provenance, and privacy before micro-fitting;
+- cross-checkpoint transfer must report aggregate route overlap, route-change
+  frequency, and source/target margin distributions; architecture compatibility
+  alone is not sufficient for a route-conditioned portability claim;
+- Phase 1 must produce an exact backward-cost, wall-time, and storage projection
+  before Phase 2 or Phase 3 begins;
+- Phase 3 and a later native Agents-A1 fit may use only preregistered horizontal
+  prompt sharding across identically admitted workers with deterministic fp32
+  weighted merging and cross-worker agreement smokes;
+- sharding may change wall-clock parallelism only. It may not reduce the frozen
+  corpus, omit dimensions, replace exact VJPs with sketches, adapt shards after
+  outcomes, pool quantizations, or weaken any existing gate;
+- counterfactual routing, straight-through route estimators, route updates, and
+  production use remain prohibited.
+
+This amendment creates a scalable exact-fitting path and a stricter MoE claim
+boundary. It does not establish a passing VJP, route mechanism, fitted lens,
+Agents-A1 transfer, correctness predictor, stopping policy, or production utility.
+
 ## Required stop outcomes
 
 Use only the scoped outcomes defined by the Q35Q protocol, including:

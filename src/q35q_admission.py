@@ -27,11 +27,11 @@ from q35q_phase0 import (
     validate_device_map,
     validate_revision,
 )
+from q35q_fixtures import validate_tokenization_admission_fixture
 
 ADMISSION_BLOCKED = "q35q_artifact_admission_blocked"
 ADMISSION_READY = "q35q_admission_ready"
 
-# Required top-level identity fields the amendment must bind.
 REQUIRED_FIELDS = (
     "repo_id", "revision", "license", "lineage", "config", "tokenizer_id",
     "generation_id", "custom_code_id", "weight_manifest",
@@ -111,12 +111,14 @@ def build_admission_record(meta: dict) -> dict:
         if not isinstance(meta[field], str) or not meta[field].strip():
             raise Q35QAdmissionBlock(f"{field} must be a non-empty string")
 
-    # Surface every Phase-0 failure as the single scoped admission failure.
     try:
         validate_revision(meta["revision"])
         validate_architecture(meta["config"])
         placement = validate_device_map(
             meta["device_map"], required_modules=meta["required_modules"]
+        )
+        tokenization_fixture = validate_tokenization_admission_fixture(
+            meta["tokenization_fixture"], meta["tokenizer_id"]
         )
     except Q35QBlock as exc:
         raise Q35QAdmissionBlock(str(exc)) from exc
@@ -181,8 +183,9 @@ def build_admission_record(meta: dict) -> dict:
         "required_module_count": placement["required_modules_checked"],
         "device_set": placement["devices"],
         "transport": meta["transport"],
+        "tokenization_fixture_kind": tokenization_fixture["fixture_kind"],
         "tokenization_fixture_digest": _canonical_digest(
-            meta["tokenization_fixture"], "tokenization fixture"
+            tokenization_fixture, "tokenization fixture"
         ),
         "driver_file_count": len(meta["driver_files"]),
         "driver_manifest_digest": _digest_manifest(meta["driver_files"]),

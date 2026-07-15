@@ -2,6 +2,7 @@
 
 Synthetic metadata only; no model, GPU, network, or private data.
 """
+import hashlib
 import math
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import pytest
 
 from q35q_phase0 import QWEN35_35B_A3B_ARCH, scan_aggregate_only
+from q35q_fixtures import TOKENIZER_FIXTURE_KIND, build_tokenization_fixture
 from q35q_admission import (
     ADMISSION_BLOCKED,
     ADMISSION_READY,
@@ -22,12 +24,32 @@ from q35q_admission import (
 
 H = "a" * 64
 GOOD_REV = "b" * 40
+TOKENIZER_ID = "tok:" + H
 REQUIRED_MODULES = (
     "model.embed_tokens",
     "model.layers.0",
     "model.layers.39",
     "lm_head",
 )
+
+
+def good_tokenization_fixture(**over):
+    fixture = {
+        "fixture_kind": TOKENIZER_FIXTURE_KIND,
+        "length": 32,
+        "batch_size": 1,
+        "vocab_size": QWEN35_35B_A3B_ARCH["vocab_size"],
+        "use_cache": False,
+        "tokenizer_roundtrip_established": True,
+        "text_only_load_established": True,
+        "determinism_repeats": 2,
+        "tokenizer_identity_sha256": hashlib.sha256(TOKENIZER_ID.encode()).hexdigest(),
+        "private_input_commitment_kind": "hmac-sha256",
+        "private_input_commitment_sha256": "e" * 64,
+        "sequence_sha256": "f" * 64,
+    }
+    fixture.update(over)
+    return fixture
 
 
 def good_meta(**over):
@@ -37,7 +59,7 @@ def good_meta(**over):
         license="apache-2.0",
         lineage="qwen3.5-35b-a3b-base",
         config=dict(QWEN35_35B_A3B_ARCH),
-        tokenizer_id="tok:" + H,
+        tokenizer_id=TOKENIZER_ID,
         generation_id="gen:" + H,
         custom_code_id="code:" + H,
         weight_manifest={
@@ -69,7 +91,7 @@ def good_meta(**over):
         },
         required_modules=REQUIRED_MODULES,
         transport="explicit-nccl-p2p",
-        tokenization_fixture={"seq": [1, 2, 3], "len": 32},
+        tokenization_fixture=good_tokenization_fixture(),
         driver_files={
             "src/q35q_phase0.py": H,
             "src/q35q_admission.py": "d" * 64,
@@ -87,6 +109,7 @@ def test_admission_pass():
     assert record["weight_file_count"] == 2
     assert record["device_set"] == [0, 1]
     assert record["required_module_count"] == len(REQUIRED_MODULES)
+    assert record["tokenization_fixture_kind"] == TOKENIZER_FIXTURE_KIND
     assert "vision" not in record
     scan_aggregate_only(record)
 
@@ -146,9 +169,7 @@ def test_device_map_auto_blocked():
 
 def test_incomplete_device_map_blocked():
     with pytest.raises(Q35QAdmissionBlock):
-        build_admission_record(
-            good_meta(device_map={"model.layers.0": 0})
-        )
+        build_admission_record(good_meta(device_map={"model.layers.0": 0}))
 
 
 def test_required_module_inventory_mismatch_blocked():
@@ -226,9 +247,40 @@ def test_bad_manifest_blocked(manifest):
 
 def test_noncanonical_tokenization_fixture_blocked():
     with pytest.raises(Q35QAdmissionBlock):
+        build_admission_record(good_meta(tokenization_fixture={"value": math.nan}))
+
+
+def test_legacy_reconstructible_seed_fixture_blocked():
+    with pytest.raises(Q35QAdmissionBlock):
         build_admission_record(
-            good_meta(tokenization_fixture={"value": math.nan})
+            good_meta(tokenization_fixture={
+                "seed": 42,
+                "length": 32,
+                "batch_size": 1,
+                "vocab_size": QWEN35_35B_A3B_ARCH["vocab_size"],
+                "use_cache": False,
+                "sequence_sha256": H,
+            })
         )
+
+
+def test_synthetic_vjp_smoke_fixture_does_not_satisfy_admission():
+    synthetic = build_tokenization_fixture(bytes(range(32)), "phase1-gptq-v1")
+    with pytest.raises(Q35QAdmissionBlock):
+        build_admission_record(good_meta(tokenization_fixture=synthetic))
+
+
+def test_tokenizer_identity_mismatch_blocked():
+    fixture = good_tokenization_fixture(tokenizer_identity_sha256="d" * 64)
+    with pytest.raises(Q35QAdmissionBlock):
+        build_admission_record(good_meta(tokenization_fixture=fixture))
+
+
+def test_tokenization_claims_must_be_exact_booleans():
+    for field in ("tokenizer_roundtrip_established", "text_only_load_established"):
+        fixture = good_tokenization_fixture(**{field: 1})
+        with pytest.raises(Q35QAdmissionBlock):
+            build_admission_record(good_meta(tokenization_fixture=fixture))
 
 
 def test_manifest_digest_verifiable():

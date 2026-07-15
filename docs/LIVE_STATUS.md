@@ -4,6 +4,49 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-15T02:28Z (steer amended: M39 metacognition/temporal/early-exit)
+
+- **Steer UPDATED:** steer.md blob `2510548596…` (was `f5c95903…`);
+  `steer_sha_seen` advanced. The Q35Q body is unchanged; the update appends
+  a "Binding M39 metacognition and temporal-state amendment" section
+  pointing at NEW `docs/STEER_ADDENDUM_2026-07-15_M39_METACOGNITION_
+  TEMPORAL_AND_EARLY_EXIT_BOUNDARY.md` (commit `ced86a9`). Read and obeyed.
+  - This amendment is DESIGN-TIME ONLY for M39: strict monitoring/control
+    separation; a frozen behavioral pre-solve/post-solve metacognition
+    comparator (or pre-capture `m39_behavioral_metacognition_unsupported`);
+    an incremental comparison hierarchy vs nuisance + behavioral + router;
+    train-fold-only nuisance residualization; one smoke-gated temporal
+    hidden-state block (`m39_temporal_block_(un)supported`); counterfactual
+    routing and early-exit kept OUT of M39; do NOT adopt TIDE-style
+    early-exit next; pin exact paper+code provenance for any borrowed
+    method. It does NOT change M38E or Q35Q, and M39 stays design-only /
+    capture-prohibited. Program order reaffirmed: M39 observation-only
+    monitoring, then Q35Q exact-VJP/lens feasibility, then (only later) a
+    separate control study.
+- **Q35Q Phase 0 progress (CPU-only):** admission-amendment builder landed
+  (`cae78b7`) — `src/q35q_admission.py` + 26 tests. Fail-closed binding of
+  repo+immutable-revision, license/lineage, frozen architecture, tokenizer/
+  generation/custom-code, complete toolchain, quantization config, explicit
+  device placement, text-only param count, omitted vision/MTP, weight +
+  driver manifest digests, tokenization-fixture digest, commit-safety; any
+  missing/mutable/contradictory field -> `q35q_artifact_admission_blocked`.
+  Output is public-safe aggregate only (counts + digests). No GPU, no model
+  load, no capture.
+- **Tests (fresh):** 123/123 (52 core + 45 Q35Q Phase 0 + 26 Q35Q
+  admission); commit-safe clean.
+- **M38E official attempt 1** (driver alive, undisturbed; frontier
+  irreversibly unavailable, finishing bounded order_track toward
+  `m38e_completed_error_frontier_not_found`): **234 / 288** official
+  (mod_chain 96 + alg_coeff 96; order_track band 2 in progress) · 54
+  official remaining · pilot 70 · full_band_4096 0 · total_execution 304.
+- **active_attempt_blockers:** none.
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — known-terminal
+  `m38e_completed_error_frontier_not_found`, pending completion + audits.
+- **q35q_blockers:** GPU gated until M38E releases the dual-3090 window;
+  the aggregate-only admission amendment must be committed before any
+  backward call, else `q35q_artifact_admission_blocked`.
+
 ## Heartbeat 2026-07-15T02:07Z
 
 - **Steer:** blob `f5c95903…` unchanged (`steer_sha_seen f5c95903…`);

@@ -40,6 +40,25 @@ AUCs of `0.955 / 0.940 / 0.720` and a repair-success direction surviving its
 reported conditional residualization. The source repository therefore changed
 materially after the paper version now cited by M39.
 
+## Follow-up audit 2026-07-15T23:16:10Z
+
+The external repository advanced by two commits after the original audit:
+
+- `1c96602489af1b2332bbfd13d59f3453d095d3b7` refined README terminology;
+- `5925dc6a7a3fa6242479ecf30fb7f13eac40bd6f` refined abstract and probe-section
+  terminology and formatting.
+
+The new external head remains numerically and scientifically aligned with the
+repository state audited above: raw/residualized/prompt-length AUCs remain
+`0.881 / 0.842 / 0.657`, and self-repair geometry remains unsupported because
+successful repairs are too sparse. The two commits do not reconcile the
+repository with arXiv `2606.14530v2`, do not publish a matched immutable paper
+revision, and do not supply an independently reproduced implementation.
+
+The provenance block therefore remains fully in force. Continued upstream
+wording edits are not evidence for changing an M39 feature, layer, comparator,
+threshold, power prior, or launch gate.
+
 ## Binding consequence
 
 Until a matched immutable paper/code pair is published and reproduced, this

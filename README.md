@@ -1,37 +1,68 @@
 # jlens
 
-Router-logit interpretability sidecar experiments for **Qwen3.6-35B-A3B** (MoE),
-captured on 3090-class hardware with bf16 + CPU offload, prefill-only.
+Public research repository for observation-only interpretability and
+completed-error monitoring in large Qwen-family mixture-of-experts models.
 
-## What's here
-- `src/capture_router_logits.py` — capture per-layer router logits + hidden
-  states for a prompt set (40 router layers × 256 experts).
-- `src/expert_overlap.py` — per-domain expert usage, pairwise Jaccard overlap,
-  depth-tercile analysis, exclusive-expert counts.
-- `src/routing_probe.py` — sequence-level domain probes / cosine NN retrieval.
-- `src/token_probe.py` — token-level domain probe with **prompt-grouped CV**
-  (no token leakage across train/test prompts).
-- `data/prompts.jsonl` — 32 prompts, 4 per domain × 8 domains
-  (code_py, code_rust, creative, fact, json_tool, lang, math, reason).
-- `reports/` — JSON reports per run; `FINDINGS.md` — numbered findings log.
-- `ROADMAP.md` — router-first ("routerguard") decision record and next steps.
+The repository contains several generations of work. Historical router-logit
+and hidden-state experiments on Qwen3.6-35B-A3B remain descriptive technical
+artifacts. They do not establish a correctness predictor, causal router
+mechanism, safe intervention, early exit, or production utility.
 
-## Headline results so far
-- Routing signatures carry domain identity: cosine NN retrieval 6/8 (r2);
-  intra-domain cosine > inter-domain.
-- Token-level signal survives prompt-held-out splits: 0.578 grouped-CV
-  accuracy vs 0.208 chance (r2, all-layer top-8 multi-hot).
-- Expert pools overlap heavily across domains (mean pairwise Jaccard
-  ~0.29–0.51) → naive expert ablation/surgery would cause collateral damage.
-- Specialization is spread across depth (terciles near-flat, mid-stack
-  slightly most exclusive) → sidecar should tap a spread of layers.
+## Binding program state
 
-## Not in the repo
-Raw capture tensors (`data/captures/*.pt`, ~250MB/run) and logs are
-gitignored. Reproduce with `src/capture_router_logits.py` — see `STATE.md`
-for exact invocations.
+`steer.md` is the operating directive. `docs/LIVE_STATUS.md` is the newest
+aggregate-only heartbeat. When an older roadmap, status file, report, or README
+statement conflicts with either, the binding steer and newest live status take
+precedence.
 
-## Status
-Active research. See `ROADMAP.md` for the routerguard build order:
-schema freeze → sidecar head bakeoff → retrieval-need labels →
-decode-step capture → learned+calibrated risk head → hidden-state phase 2.
+The current gated program is:
+
+1. **M38E** — finish the frozen exact task set and all finalization audits
+   without disturbing the active run. The two-family completed-error frontier
+   is already unavailable under the frozen design; the expected terminal result
+   remains `m38e_completed_error_frontier_not_found` after successful audits.
+2. **Q35Q** — test an architecture-matched quantized Qwen3.5-35B-A3B Jacobian
+   path. GPU work remains blocked until M38E releases the dual-RTX-3090 window.
+   Before any backward call, artifact admission must bind a real tokenizer
+   roundtrip, text-only model load, immutable model and toolchain identities,
+   exact quantization, explicit placement, privacy, provenance, and
+   commit-safety evidence.
+3. **M39** — independently test forward-only incremental completed-error
+   prediction against nuisance, behavioral self-assessment, router, and
+   hidden-state comparators. Outcome-bearing capture remains prohibited until
+   M38E is formally finalized and the complete launch amendment is committed.
+4. **Agents-A1 scaling** — proceed only through exact executed-route VJPs,
+   measured cost and memory gates, a passing frozen micro-fit, and deterministic
+   prompt-level horizontal sharding with complete per-layer fp32 weighted merge.
+
+## Established
+
+- Historical router telemetry carries descriptive domain and routing-structure
+  information on the previously studied model and prompt set.
+- M38E's frozen two-family completed-error frontier is unavailable.
+- Q35Q has fail-closed CPU-side admission, placement, cost, merge, route-regime,
+  and privacy-validation infrastructure.
+- Monitoring and control are separate research questions.
+
+## Not established
+
+- Exact GPTQ or NF4 residual-input VJPs on Qwen3.5-35B-A3B.
+- A validated quantized or BF16 Jacobian Lens on Qwen3.5 or Agents-A1.
+- Transfer from a Qwen3.5 base lens to Agents-A1.
+- Incremental correctness prediction beyond nuisance, self-assessment, router,
+  and hidden-state baselines.
+- Safe truncation, early exit, retries, tool routing, route intervention,
+  activation steering, or production use.
+
+## Privacy and claim boundary
+
+Treat every repository file as publicly visible. Do not commit raw tasks,
+corpus text, prompts, outputs, token IDs, hidden states, activations, expert
+outputs, routes, Jacobians, VJPs, lens matrices, per-example scores, model
+weights, caches, local paths, environment values, process evidence, or
+secret-linked provenance.
+
+Only aggregate, privacy-reviewed, provenance-bound evidence may be committed.
+A successful load, generation, descriptive telemetry capture, or synthetic test
+is not evidence that an exact Jacobian, Agents-A1 predictor, control policy, or
+production system exists.

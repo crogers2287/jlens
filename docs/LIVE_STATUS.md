@@ -4,6 +4,47 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T19:15Z — Q35Q Phase-0 admission REPAIRED (honest rerun)
+
+- **Steer UPDATED:** blob `2553634…` (was `52227ac…`), commit `ac5d246`
+  "repair Q35Q artifact admission before weights or GPU execution" +
+  addendum `Q35Q_PHASE0_ADMISSION_CORRECTION_AND_TP_RUNTIME` (`8fecb7a`) —
+  read, obeyed; `steer_sha_seen` advanced. It correctly classified my prior
+  staging (`1123561`) as `q35q_admission_staging_partial` (false-positive
+  architecture boolean, weak tokenizer check, cache-contaminated manifest,
+  base repo unpinned).
+- **Phase-0 admission REPAIR committed (`86538d4`, CPU/storage/network only;
+  no GPU, no weights, no model instantiation):**
+  - `src/q35q_stage.py` (pure, tested): per-field architecture admission over
+    ALL 15 frozen fields (outer/text model classes, hidden 2048, 40 layers,
+    vocab 248320, 256 routed experts, top-8, MoE-intermediate 512,
+    shared-expert width 512, exact hybrid `layer_types` [lin x3, full] x10,
+    untied head, vision present, MTP present) with an overall conjunction;
+    per-field GPTQ admission (bits 4 / group 128 / gptq / sym / skip rules);
+    cache-excluding deterministic public-file manifest (fail-closed on
+    missing/extra/mismatch/path-escape); real deterministic tokenizer
+    roundtrip (decode/re-encode exact, NOT substring). 32 synthetic
+    fail-closed tests.
+  - Honest rerun record `reports/telemetry/q35q_phase0_admission_corrected.json`:
+    both repos pinned (Base `0f081307`, GPTQ-Int4 `3af5ca29`); architecture
+    ALL-pass, GPTQ ALL-pass, tokenizer roundtrip PASS; storage projection
+    GPTQ ~22.7 GiB / base ~67 GiB. `phase0_admission_prerequisites_pass=true`
+    but `artifact_admission_status` stays **`q35q_artifact_admission_blocked`**
+    (weight staging + full artifact admission + runtime-TP source pin remain).
+  - Raw fixture text / token IDs private (digests only).
+- **TP runtime requirement noted (not yet met):** the dual-GPU runtime must
+  pin an immutable Transformers source containing the Qwen3.5-MoE
+  linear-attention TP-plan entries (upstream `259711a0…`) before any GPU
+  load; `device_map="auto"` is not proof; 23.0/46.0 GiB gates unchanged.
+- **M38E:** CLOSED — terminal `inconclusive` (unchanged); do not reopen.
+- **gpu_boundary:** operator granted GPU use at will / may pause llama-swap;
+  no GPU work run this cycle (mandated CPU-only admission repair first). Next
+  authorized GPU-adjacent steps: storage/checksum gate + weight staging, then
+  the frozen one-sequence exact-VJP gate under a pinned TP-correct runtime.
+- **q35q_blockers:** `q35q_artifact_admission_blocked` until weight staging +
+  full admission + pinned TP-correct Transformers runtime; then Phase-1 VJP.
+- **Tests (fresh):** full q35q+core suite 441 green; commit-safe clean.
+
 ## Heartbeat 2026-07-16T18:35Z — M38E CLOSED; Q35Q Phase-0 GPTQ admission staging landed
 
 - **Steer:** blob `52227ac…` unchanged (`steer_sha_seen 52227ac…`); binding

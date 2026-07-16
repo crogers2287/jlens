@@ -4,6 +4,33 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T18:05Z — M38E CLOSED (`inconclusive`); Q35Q Phase 0 gated
+
+- **Steer:** blob `52227ac…` unchanged (`steer_sha_seen 52227ac…`); no
+  newer, remote in sync.
+- **M38E: CLOSED — terminal `inconclusive`** (blocker
+  `serving_restoration_unavailable_due_unrelated_gpu_tenant`), committed
+  `3debb97`. Integrity reconfirmed this cycle: ledger byte-stable (288
+  official / 94 pilot / 0 full-band 4096 / 382 total, all 12 cells), no live
+  M38E driver, no M38E-attributable GPU kernel. No restart/rerun/repair —
+  the frozen ledger is the sole execution record. All other frozen
+  finalization audits passed; `frontier_not_found` was withheld only because
+  serving-restoration could not pass without evicting an unrelated workload.
+- **gpu_boundary:** the dual-RTX-3090 remains owned by an **unrelated**
+  `llama-server`/llama-swap + MCP workload (~87% util); the window is **NOT**
+  released and Agents-A1 serving is **NOT** claimed restored. The unrelated
+  tenant is left untouched.
+- **active_attempt_blockers:** none (M38E closed). **retry_blockers:** 2
+  (permanent, fail-closed). **finalization_blockers:** none — M38E is
+  terminally closed at `inconclusive`.
+- **q35q_blockers:** active milestone is Q35Q Phase 0 but **CPU/storage/
+  repo-side ONLY** until the dual-3090 is legitimately free. No GPU load /
+  backward / VJP smoke / micro-fit / capture. Admission stays
+  `q35q_artifact_admission_blocked` until a genuine tokenizer-roundtrip +
+  text-only-load record exists (requires the pinned tokenizer to be staged;
+  model/tokenizer download not yet authorized).
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T17:35Z — TERMINAL: `inconclusive` (M38E CLOSED)
 
 - **Steer:** blob `52227ac…` (was `fedb4741…`), commit `7092032`

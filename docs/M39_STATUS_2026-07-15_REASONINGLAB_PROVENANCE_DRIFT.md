@@ -59,6 +59,37 @@ The provenance block therefore remains fully in force. Continued upstream
 wording edits are not evidence for changing an M39 feature, layer, comparator,
 threshold, power prior, or launch gate.
 
+## Follow-up audit 2026-07-16T00:21:54Z
+
+The external repository advanced by two additional commits:
+
+- `1a520c5a1b16785ffca90492e26013e0dfccefda` clarified that
+  `prepare_livecodebench.py` downloads LiveCodeBench and builds the task file
+  consumed by the generation path;
+- `648d8e6de504742a447d6ecc03ba94676365b215` renamed task-file references from
+  `data/lcb_all_FIXED.jsonl` to `data/lcb_all_tiers.jsonl` in the README,
+  generation configuration, committed run summary, and `.gitignore`.
+
+These commits change reproducibility-path naming and documentation only. The
+committed run summary retains the same task count, attempt count, pass rate,
+model identity, generation settings, and verifier timeout. The repository README
+continues to report raw/residualized/prompt-length AUCs of
+`0.881 / 0.842 / 0.657` and continues to treat the repair-geometry question as
+unsupported because successful repairs are too sparse.
+
+A second provenance inconsistency is visible within the current arXiv v2
+presentation itself. The canonical arXiv abstract page still reports
+`0.955 / 0.940 / 0.720` and says the repair-success direction survives
+conditional residualization. The experimental HTML rendering exposes lead text
+reporting `0.931 / 0.911 / 0.754` and saying the direction does not survive,
+while later sections in that same rendering still report
+`0.955 / 0.940 / 0.720` and survival. No v3 submission is listed.
+
+The latest audited external head is therefore
+`648d8e6de504742a447d6ecc03ba94676365b215`, but neither the new commits nor the
+arXiv presentation reconcile a single immutable method-and-results identity.
+The provenance block remains fully in force.
+
 ## Binding consequence
 
 Until a matched immutable paper/code pair is published and reproduced, this

@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T22:35Z — new correction; Q35Q source-binding re-corrected (CPU)
+
+- **New binding addendum** `..._Q35Q_SOURCE_BINDING_AND_LOAD_MANIFEST_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my defect-4 work `q35q_source_admission_repair_partial`
+  — correctly: source hash was shape-checked not equality-bound; qualname
+  non-empty not bound; shapes optional; substring matching allowed decoys;
+  expert checks global not per-layer; deny-list not a positive allow-list.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU.
+- **Correction executed (CPU-only):** source identity now bound to an
+  independently derived EXPECTED identity by equality (class, exact qualname,
+  immutable source hash); the admitted module set must EQUAL a frozen positive
+  allow-list exactly; per-layer projection + shared/routed-expert coverage uses
+  exact dot-delimited segment admission (decoys fail; unpacked+packed layouts);
+  parameter shapes MANDATORY; vision/MTP deny-list kept only as defense in depth.
+  20 tests incl. valid-shape-wrong-hash, wrong-qualname, omitted-shapes,
+  decoy-substring, one-layer-missing-expert, unapproved-alias, vision/MTP-leak.
+- **q35q_blockers (remaining):** live production composition — a CLI entrypoint
+  must independently DERIVE the expected allow-list/source-identity/shapes/
+  tokenizer digests from the pinned source + weight index and compose the four
+  validators into one final Phase-0 conjunction with integration tests through
+  that path; then weight staging. Overall outcome remains
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 422/422 (6 pre-commit + stage + orchestration + tokenizer +
+  source); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T22:05Z — Q35Q defect-4 source/load-manifest admission closed (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

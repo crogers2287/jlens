@@ -31,14 +31,16 @@
     "remaining": "defect-5 point-5 live production composition: the live orchestration must DERIVE the expected values independently (immutable tokenizer manifest digest, fresh chat-template rendering digest, fresh private-fixture encoding digest, expected special-token ids from pinned files) and feed both observed+expected here."
   },
   "defect_4_source_and_load_manifest_admission": {
-    "status": "addressed_in_logic_and_tests",
-    "how": "validate_source_identity binds the outer Qwen3_5MoeForConditionalGeneration + admitted text-only Qwen3_5MoeForCausalLM class, module qualname, and immutable source hash; validate_load_manifest binds the admitted module set: embed/final-norm/untied-lm-head/shared-expert/routed-experts present, Gated DeltaNet projections on each linear-attention layer + standard attention projections on each full-attention layer, optional embed/head/expert width binding, and — the checks config cannot make — vision AND MTP modules omitted from the admitted load manifest. Each field fails closed (21 tests)."
+    "status": "binding_strengthened_logic_addressed_live_derivation_open",
+    "reclassified_by_addendum": "q35q_source_admission_repair_partial",
+    "how": "validate_source_identity now binds observed source identity to an independently derived EXPECTED identity by equality (outer/text-only class, exact module qualname, immutable source hash) rather than shape-only; validate_load_manifest requires the admitted module set to EQUAL a frozen positive allow-list exactly (no missing, no unapproved extra), verifies per-layer projection + shared/routed-expert coverage via exact dot-delimited segment admission (decoys fail, unpacked+packed layouts), makes parameter shapes MANDATORY, and keeps vision/MTP as deny-list defense in depth. 20 tests incl. valid-shape-wrong-hash, wrong-qualname, omitted-shapes, decoy-substring, one-layer-missing-expert, unapproved-alias, and vision/MTP-even-if-allowlisted failures.",
+    "remaining": "the complete expected allow-list, expected source identity, and parameter shapes must be DERIVED by the live orchestration from the pinned implementation source + model.safetensors.index.json weight map (the open live-composition step)."
   },
   "remaining_blockers": {
-    "live_production_composition": "the sole remaining gate: a live CLI entrypoint must independently DERIVE all expected values (remote LFS identities; model.safetensors.index.json weight-map -> admitted module set + param shapes; pinned implementation-source class mapping; tokenizer manifest/chat-render/id-sequence digests + special-token ids) and compose run_staging_orchestration + validate_source_identity + validate_load_manifest + complete_tokenizer_admission into ONE final Phase-0 conjunction, with orchestration-level integration tests through that same path",
+    "live_production_composition": "a live CLI entrypoint must independently DERIVE all expected values (remote LFS identities; model.safetensors.index.json weight-map -> admitted module set + param shapes + expert layout; pinned implementation-source class mapping + qualname + source hash; tokenizer manifest/chat-render/id-sequence digests + special-token ids) and compose run_staging_orchestration + validate_source_identity + validate_load_manifest + complete_tokenizer_admission into ONE final Phase-0 conjunction, with orchestration-level integration tests through that same path",
     "weight_staging": "not attempted; not authorized before a genuine Phase-0 pass"
   },
-  "tests": {"orchestration_integration": 18, "tokenizer_admission": 28, "source_load_manifest": 21, "stage_validators": 32, "full_precommit_plus_new": 423, "result": "passed"},
+  "tests": {"orchestration_integration": 18, "tokenizer_admission": 28, "source_load_manifest": 20, "stage_validators": 32, "full_precommit_plus_new": 422, "result": "passed"},
   "boundary": {
     "gpu_used": false, "weights_loaded": false, "model_instantiated": false,
     "generation": false, "hidden_state_capture": false, "jvp_vjp": false,

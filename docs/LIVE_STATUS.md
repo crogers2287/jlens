@@ -4,6 +4,51 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T04:05Z (M38E OFFICIAL SWEEP COMPLETE — finalization pending)
+
+- **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);
+  rebased forward onto 3 collaborator M39-status commits (ReasoningLab
+  provenance/arXiv drift quarantine — no steer change, M39 still
+  design-only/capture-prohibited).
+- **MAJOR — M38E official attempt 1 completed its full bounded sweep:**
+  - `unique_official_tasks_completed`: **288 / 288** — all three families
+    (mod_chain, alg_coeff, order_track) x 4 bands x 24 complete; every one
+    of the 12 (family,band) cells has exactly 24 official rows; uniform
+    `run_kind=m38e_official_dev`.
+  - `pilot_rows_completed`: **94** (every band ran its 4096 pilot;
+    mod_chain b1 = 6, all others 8; cap-choice evidence only).
+  - `full_band_4096_rows_completed`: **0** (no band met the frozen 4096
+    material-reduction rule — descriptive execution fact).
+  - `total_execution_rows`: **382**.
+  - Last row was `order_track b4 pilot_4096`; the ledger has been unchanged
+    for ~18.5h. The completion monitor reported `M38E_ATTEMPT1_FINISHED`.
+- **Driver state (ambiguous — flagged for operator):** a process matching
+  the sweep driver still shows as present, but it produced no rows for
+  ~18.5h and the terminal-state monitor fired FINISHED. Per steer the
+  process is NOT signalled, killed, inspected, or disturbed. This
+  lingering-but-idle state needs operator/collaborator confirmation before
+  a clean-exit finalization.
+- **Finalization NOT auto-performed** (steer: "never auto-finalize a normal
+  exit"). The frozen finalization gates (exact 288-task/row set + identities,
+  escalation accounting, eligible-band arithmetic on official rows only,
+  verifier/privacy/cleanup/commit-safety, fresh import/execution-root +
+  loader/dependency audit, and restore+verify Agents-A1 serving) remain to
+  be run deliberately. The two-family completed-error frontier is
+  irreversibly unavailable, so the terminal outcome is
+  `m38e_completed_error_frontier_not_found` pending those audits (or the
+  narrower `provenance-blocked`/`inconclusive` if any requirement is
+  unverifiable).
+- **Tests (fresh):** 324/324 pre-commit; exact-set arithmetic confirmed
+  (288 official = 12 cells x 24, uniform identity); status commit-safe clean.
+- **active_attempt_blockers:** none (sweep complete).
+- **retry_blockers:** 2 (permanent, fail-closed).
+- **finalization_blockers:** 1 — run the frozen finalization gates on the
+  completed sweep, then record the terminal outcome; driver-process
+  ambiguity to be confirmed first.
+- **q35q_blockers:** GPU window releases once M38E finalization confirms the
+  dual-3090 is free; admission still requires a REAL tokenizer-roundtrip /
+  text-only-load record (`q35q_artifact_admission_blocked` until then).
+
 ## Heartbeat 2026-07-15T06:35Z
 
 - **Steer:** blob `0c258735…` unchanged (`steer_sha_seen 0c258735…`);

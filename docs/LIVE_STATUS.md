@@ -4,6 +4,34 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T23:05Z — FIRST live Phase-0 composition; 4/5 validators pass on real artifact (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights loaded, no model instantiated.
+- **Live composition executed (CPU/storage/network only):** staged the small
+  admission files for the pinned GPTQ repo into an isolated cache and composed
+  the validators against the REAL artifact. Results: architecture-config PASS,
+  GPTQ-config PASS, source-identity PASS, tokenizer-admission PASS; load-manifest
+  correctly BLOCKED on mandatory parameter shapes (require safetensors headers /
+  weight-side staging). Real structure discovered: 32285 modules, unpacked expert
+  layout, 40 layers (counts only; no module names committed).
+- **Evidence-driven correction:** the real Qwen tokenizer has `bos_token_id=None`
+  (no BOS); fixed the tokenizer conjunction to bind BOS/EOS/PAD to the expected
+  id by EQUALITY (None==None admits a legitimately-absent token; substitution
+  still fails; a sentinel default still forces the caller to supply each expected).
+- **q35q_blockers (remaining):** independent source-derived allow-list vs the
+  weight-index admitted set (currently self-compared); mandatory shapes need
+  safetensors headers; weight staging + checksum reconciliation of the 14 shards
+  (22.74 GiB); one final overall conjunction wired through integration tests.
+  Overall outcome remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 424/424 (6 pre-commit + stage + orchestration + tokenizer +
+  source); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T22:35Z — new correction; Q35Q source-binding re-corrected (CPU)
 
 - **New binding addendum** `..._Q35Q_SOURCE_BINDING_AND_LOAD_MANIFEST_CORRECTION`

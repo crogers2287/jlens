@@ -32,6 +32,9 @@ from q35q_stage import Q35QStageBlock
 
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
+# Distinguishes "expected value not supplied by caller" from a genuine None
+# expectation (a legitimately-absent special token such as Qwen's null BOS).
+_SENTINEL = object()
 
 
 def _digest_matches(observed, expected) -> bool:
@@ -61,9 +64,9 @@ def complete_tokenizer_admission(
     bos_token_id,
     eos_token_id,
     pad_token_id,
-    expected_bos_token_id,
-    expected_eos_token_id,
-    expected_pad_token_id,
+    expected_bos_token_id=_SENTINEL,
+    expected_eos_token_id=_SENTINEL,
+    expected_pad_token_id=_SENTINEL,
     encoded_length: int,
     id_sequence_sha256: str | None,
     expected_id_sequence_sha256: str | None,
@@ -87,10 +90,15 @@ def complete_tokenizer_admission(
         raise Q35QStageBlock("model/tokenizer repo identity missing")
     if expected_cleanup_setting is None:
         raise Q35QStageBlock("expected_cleanup_setting must be an independently derived value")
+    # Special-token ids are bound to the independently-derived expected value by
+    # EQUALITY. A legitimately-absent token (e.g. Qwen defines bos_token_id=None)
+    # is admitted only when the expected identity is also None — a substituted or
+    # dropped id still fails. `_SENTINEL` distinguishes "not supplied" from a
+    # genuine None expectation, so the caller must pass every expected value.
     for name, exp in (("bos", expected_bos_token_id), ("eos", expected_eos_token_id),
                       ("pad", expected_pad_token_id)):
-        if exp is None:
-            raise Q35QStageBlock(f"expected {name} token id must be independently derived")
+        if exp is _SENTINEL:
+            raise Q35QStageBlock(f"expected {name} token id must be independently supplied")
 
     checks = {
         "tokenizer_class_admitted":
@@ -105,9 +113,11 @@ def complete_tokenizer_admission(
         "deterministic_encode": roundtrip_verdict.get("deterministic_encode") is True,
         "exact_decode_reencode": roundtrip_verdict.get("exact_decode_reencode") is True,
         "special_token_behavior_ok": special_token_behavior_ok is True,
-        "bos_identity_bound": bos_token_id is not None and bos_token_id == expected_bos_token_id,
-        "eos_identity_bound": eos_token_id is not None and eos_token_id == expected_eos_token_id,
-        "pad_identity_bound": pad_token_id is not None and pad_token_id == expected_pad_token_id,
+        # equality to the independently-derived expected id; None==None admits a
+        # legitimately-absent token, a substituted/dropped id still fails
+        "bos_identity_bound": bos_token_id == expected_bos_token_id,
+        "eos_identity_bound": eos_token_id == expected_eos_token_id,
+        "pad_identity_bound": pad_token_id == expected_pad_token_id,
         "encoded_length_strict_positive_int": _strict_positive_int(encoded_length),
         "id_sequence_digest_bound":
             _digest_matches(id_sequence_sha256, expected_id_sequence_sha256),

@@ -80,14 +80,28 @@ def test_substituted_special_token_id_fails(field, exp_field):
 
 
 @pytest.mark.parametrize("null_field", ["bos_token_id", "eos_token_id", "pad_token_id"])
-def test_null_special_token_id_fails(null_field):
+def test_null_observed_vs_nonnull_expected_fails(null_field):
+    # a dropped/absent observed id against a non-null expected identity fails
     out = complete_tokenizer_admission(**good(**{null_field: None}))
     assert out["all_required_pass"] is False
 
 
+def test_legitimately_absent_token_admitted_when_expected_null():
+    # real Qwen case: bos_token_id is None; admitted only because expected is None
+    out = complete_tokenizer_admission(**good(bos_token_id=None, expected_bos_token_id=None))
+    assert out["bos_identity_bound"] is True and out["all_required_pass"] is True
+
+
+def test_nonnull_observed_vs_null_expected_fails():
+    out = complete_tokenizer_admission(**good(bos_token_id=5, expected_bos_token_id=None))
+    assert out["bos_identity_bound"] is False and out["all_required_pass"] is False
+
+
 def test_missing_expected_special_token_identity_raises():
-    with pytest.raises(Q35QStageBlock, match="token id must be independently derived"):
-        complete_tokenizer_admission(**good(expected_eos_token_id=None))
+    kw = good()
+    del kw["expected_eos_token_id"]  # not supplied at all -> sentinel -> raise
+    with pytest.raises(Q35QStageBlock, match="must be independently supplied"):
+        complete_tokenizer_admission(**kw)
 
 
 # ---------- defect 3: boolean encoded length rejected ----------

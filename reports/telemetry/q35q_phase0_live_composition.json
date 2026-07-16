@@ -1,0 +1,33 @@
+{
+  "outcome": "q35q_phase0_live_composition_probe",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "First live composition of the Phase-0 validators against the real pinned GPTQ artifact (small admission files staged into an isolated cache; no GPU, no weights loaded, no model instantiated). Aggregate-only: booleans, counts, layout label; no raw config values, token IDs, fixture text, module names, or local paths.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "live_results": {
+    "architecture_config_all_required_pass": true,
+    "gptq_config_all_required_pass": true,
+    "source_identity_all_required_pass": true,
+    "tokenizer_admission_all_required_pass": true,
+    "load_manifest_all_required_pass": null,
+    "load_manifest_blocked_reason": "parameter-shape evidence is mandatory; shapes require safetensors headers (weight-side staging), not present at small-file stage"
+  },
+  "artifact_structure_discovered": {
+    "admitted_module_count": 32285,
+    "expert_layout_detected": "unpacked",
+    "num_hidden_layers": 40,
+    "full_attention_interval": 4,
+    "note": "real weight-index-derived module set; counts only, no module names committed"
+  },
+  "evidence_driven_correction_this_cycle": {
+    "finding": "the real pinned Qwen tokenizer defines bos_token_id=None (no BOS)",
+    "fix": "complete_tokenizer_admission now binds BOS/EOS/PAD to the independently-derived expected id by equality (None==None admits a legitimately-absent token); a substituted or dropped id still fails; a _SENTINEL default distinguishes 'not supplied' (raises) from a genuine null expectation"
+  },
+  "open_gates": [
+    "independent source-derived allow-list vs weight-index admitted set (currently self-compared; needs meta-device module enumeration of the text-only class)",
+    "mandatory parameter shapes require reading safetensors headers (weight-side staging)",
+    "weight staging + immutable checksum reconciliation of the 14 large shards (22.74 GiB)",
+    "wire the composition + integration tests through one final overall conjunction"
+  ],
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; no raw config values, token IDs, fixture text, module names, weights, caches, or local paths"
+}

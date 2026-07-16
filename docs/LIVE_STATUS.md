@@ -4,6 +4,38 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T19:35Z — Q35Q admission repaired; TP runtime requirement verified
+
+- **Steer:** blob `2553634…` unchanged (`steer_sha_seen 2553634…`); no
+  newer, remote in sync.
+- **M38E:** CLOSED — terminal `inconclusive` (unchanged); ledger byte-stable,
+  no live driver, no M38E GPU kernel. Not reopened.
+- **gpu_boundary:** operator authorized GPU use at will (may pause
+  llama-swap). The dual-3090 currently still holds the unrelated
+  `llama-server`/llama-swap + MCP tenant (memory resident, ~0% util); not
+  signalled/displaced this cycle. No GPU work run.
+- **Q35Q Phase-0:** corrected admission (`86538d4`) stands — per-field
+  architecture (15 fields) + GPTQ ALL-pass, deterministic tokenizer
+  roundtrip PASS, both repos pinned, storage projections (GPTQ ~22.7 GiB /
+  base ~67 GiB). `phase0_admission_prerequisites_pass=true`;
+  `q35q_artifact_admission_blocked` remains (weight staging + full
+  runtime-admission remain).
+- **TP runtime requirement VERIFIED (CPU-only source inspection):** the
+  installed Transformers 5.13.1 source contains all five Qwen3.5-MoE
+  linear-attention TP-plan entries (`in_proj_qkv/z/b/a`, `out_proj` with
+  `colwise_gather_output`; upstream `259711a0…`). The dual-GPU TP-plan
+  requirement is met by the current runtime; full runtime admission still
+  needs an exact immutable source-commit + package/PyTorch/CUDA identity pin.
+- **Next steps HELD to avoid dual-execution:** weight staging (~22.7 GiB)
+  and the GPU one-sequence exact-VJP gate are high-contention with the
+  active collaborator (Codex authored the TP-runtime addendum). Holding them
+  for coordination; available to drive if the operator assigns the GPU run
+  to this agent. 23.0/46.0 GiB gates + exact-VJP-only boundary unchanged.
+- **q35q_blockers:** `q35q_artifact_admission_blocked` until weight staging +
+  full runtime admission; GPU VJP gate follows.
+- **Tests (fresh):** 356/356 pre-commit (core + q35q incl. stage); commit-safe
+  clean.
+
 ## Heartbeat 2026-07-16T19:15Z — Q35Q Phase-0 admission REPAIRED (honest rerun)
 
 - **Steer UPDATED:** blob `2553634…` (was `52227ac…`), commit `ac5d246`

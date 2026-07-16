@@ -1,0 +1,40 @@
+{
+  "outcome": "q35q_artifact_admission_blocked",
+  "milestone": "q35q_phase0_second_repair",
+  "supersedes_gate_field": {
+    "commit_86538d4_phase0_admission_prerequisites_pass": "superseded_for_gate_purposes",
+    "commit_86538d4_class": "q35q_phase0_admission_repair_partial",
+    "commit_1123561_class": "q35q_admission_staging_partial"
+  },
+  "second_repair_defects_addressed": {
+    "defect_1_missing_file_unreachable": {
+      "status": "addressed_in_logic_and_integration_tests",
+      "how": "expected admitted-name set built from remote manifest before local inspection; every expected name required present; missing name reported, never dropped"
+    },
+    "defect_2_self_referential_checksums": {
+      "status": "addressed_in_logic_and_integration_tests",
+      "how": "expected checksums bound from remote immutable metadata (lfs/blob sha256) and reconciled against locally computed sha256; missing immutable identity fails closed"
+    },
+    "defect_3_storage_resume_absent_from_conjunction": {
+      "status": "addressed_in_logic_and_integration_tests",
+      "how": "free-space/expected-bytes/temp-overhead/safety-margin/partial-cleanup/deterministic-resume/final-reconciliation/cache-isolation conjunction; gpu ceilings excluded as non-storage evidence"
+    },
+    "defect_6_tests_not_exercising_orchestration": {
+      "status": "addressed_at_composition_level",
+      "how": "run_staging_orchestration composes remote-manifest->download->discover->presence->checksum->storage; integration tests force missing/partial/extra/cache/wrong-checksum/insufficient-space/cleanup/resume/mutable-revision/path-escape through that same path"
+    }
+  },
+  "remaining_blockers": {
+    "defect_4_source_and_load_manifest_admission": "pinned model-implementation-source proofs (text-only Qwen3_5MoeForCausalLM class/source mapping, shared-expert construction, Gated DeltaNet projections, final RMS norm, untied 248320 head, vision/MTP omission from admitted load manifest) not yet bound; configuration metadata alone is insufficient",
+    "defect_5_complete_tokenizer_conjunction": "tokenizer verdict not yet bound to tokenizer-file manifest identity, normalization/cleanup settings, admitted special-token behavior, chat-template identity, and exact model/tokenizer revision pairing",
+    "live_cli_wiring": "run_staging_orchestration not yet wired into the live HfApi/snapshot_download CLI entrypoint with a fresh end-to-end rerun binding real remote LFS identities",
+    "weight_staging": "not attempted; not authorized before a genuine Phase-0 pass"
+  },
+  "tests": {"orchestration_integration": 18, "stage_validators": 32, "full_precommit_plus_new": 374, "result": "passed"},
+  "boundary": {
+    "gpu_used": false, "weights_loaded": false, "model_instantiated": false,
+    "generation": false, "hidden_state_capture": false, "jvp_vjp": false,
+    "unrelated_gpu_tenant": "preserved"
+  },
+  "privacy": "aggregate-only; no raw fixture text, token IDs, weights, caches, local paths, or private digests"
+}

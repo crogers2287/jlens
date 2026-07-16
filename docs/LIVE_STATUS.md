@@ -4,6 +4,38 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T20:35Z — steer advanced; Q35Q Phase-0 SECOND repair executed (CPU)
+
+- **Steer CHANGED:** blob `2553634…` -> `37b082ad…` (rebased onto remote,
+  never merged; `steer_sha_seen` now `37b082ad…`). New binding addendum
+  `..._2026-07-17_Q35Q_PHASE0_SECOND_CORRECTION_AND_M39_PREGEN_PROBE` read+obeyed.
+- **Admission status correction (per steer):** commit `86538d4…` reclassified
+  `q35q_phase0_admission_repair_partial` (NOT a Phase-0 pass); its
+  `phase0_admission_prerequisites_pass=true` superseded for gate purposes.
+  `q35q_artifact_admission_blocked` remains.
+- **M38E:** CLOSED — terminal `inconclusive` at the frozen commit; ledger
+  byte-stable, no driver, no M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant; window NOT released, serving NOT claimed restored; tenant not
+  signalled/displaced. No GPU work. Low utilization is not inferred as free.
+- **Second-repair progress (CPU-only, NEW files):** built an injectable staging
+  orchestration + integration harness fixing four flagged defects at the
+  logic/composition level — (1) expected manifest built from the remote set
+  first so a missing/interrupted file is reachable, never dropped; (2) checksums
+  bound from remote immutable identities vs local hashes (not self-referential);
+  (3) storage/free-space/overhead/margin/partial-cleanup/deterministic-resume/
+  cache-isolation conjunction; (6) integration tests force each failure through
+  the same orchestration path. Emitted honest aggregate outcome
+  `q35q_artifact_admission_blocked`.
+- **q35q_blockers (narrow, evidence-backed):** defect-4 pinned-source/load-
+  manifest admission and defect-5 complete tokenizer conjunction not yet bound;
+  orchestration not yet wired into the live HfApi/snapshot_download CLI with a
+  fresh end-to-end rerun; weight staging not attempted (unauthorized before a
+  genuine pass). GPU exact-VJP gate remains gated on a legitimate dual-3090
+  transition + a pinned TP-correct runtime.
+- **Tests (fresh):** 374/374 (6 pre-commit modules + stage validators + 18 new
+  orchestration integration tests); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T20:05Z — steady state; all boundaries held
 
 - **Steer:** blob `2553634…` unchanged; no newer, remote in sync.

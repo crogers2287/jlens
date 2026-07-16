@@ -1,14 +1,11 @@
-# steer.md — repair Q35Q artifact admission before weights or GPU execution
+# steer.md — repair the Q35Q Phase-0 orchestration before weights or GPU execution
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This file is the current
 source of truth for milestone selection. It incorporates the complete prior
-`steer.md` blob `52227ac18f3f1712b0909e2b8c282d12cf7dfc91` and every protocol or
-steer addendum incorporated by that blob, including:
+`steer.md` blob `2553634e1b67eca72e8f4c0d9f763a8cfb620b88`, every protocol and
+addendum incorporated by that blob, and:
 
-- `docs/Q35Q_QUANTIZED_QWEN35_JACOBIAN_PROTOCOL.md`;
-- `docs/STEER_ADDENDUM_2026-07-15_Q35Q_ROUTE_REGIME_AND_EXACT_SHARDING.md`;
-- `docs/STEER_ADDENDUM_2026-07-16_Q35Q_PHASE0_STAGING_AND_EXACT_JVP_CROSSCHECK.md`;
-- `docs/STEER_ADDENDUM_2026-07-16_Q35Q_PHASE0_ADMISSION_CORRECTION_AND_TP_RUNTIME.md`.
+- `docs/STEER_ADDENDUM_2026-07-17_Q35Q_PHASE0_SECOND_CORRECTION_AND_M39_PREGEN_PROBE.md`.
 
 This directive supersedes prior steer only where explicitly stated below. Every
 sealed-data, verifier, privacy, provenance, exact-set, exact-gradient, parity,
@@ -40,155 +37,178 @@ The frozen M38E record remains the sole admissible execution record:
 Do not restart, rerun, repair, extend, reinterpret, or replace any M38E task,
 row, family, attempt, cap, seed, threshold, verifier, outcome, or audit.
 
-### Q35Q Phase-0 staging
+### Q35Q Phase-0 evidence
 
-Commit `1123561ed4f360c14cf424bc0156842d2947b353` produced useful partial
-CPU/storage/network-only staging for
-`Qwen/Qwen3.5-35B-A3B-GPTQ-Int4` at immutable revision
-`3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b`.
+Commit `1123561ed4f360c14cf424bc0156842d2947b353` remains
+`q35q_admission_staging_partial` only.
 
-Established from that commit only:
+Commit `86538d44e133e6ae2b21c441d7c6dcfb3bab139f` is now classified as
+`q35q_phase0_admission_repair_partial`, not a Phase-0 prerequisite pass.
 
-- the pinned GPTQ tokenizer genuinely loaded with `trust_remote_code=False`;
-- deterministic token IDs were observed for one neutral private fixture;
-- small public admission files were staged;
-- no weights were loaded;
-- no model was instantiated;
-- no GPU, generation, hidden-state, router, JVP, VJP, backward, fitting, transfer,
-  or scientific outcome capture occurred.
+Useful evidence retained from `86538d4...`:
 
-Commit `8fecb7a9463508af6beb7da14e94dd7949a25abf` correctly supersedes the
-stronger admission labels from that staging run. The prior architecture boolean
-was incomplete, the tokenizer test was too weak, the manifest boundary was not
-proven deterministic, and the base repository plus storage/checksum requirements
-were absent.
+- immutable revisions were resolved for the Qwen3.5-35B-A3B base and GPTQ
+  repositories;
+- selected public configuration and GPTQ fields match the expected values;
+- the pinned GPTQ tokenizer loaded with `trust_remote_code=False`;
+- deterministic IDs and an exact decode/re-encode result were observed on one
+  neutral fixture;
+- no weights, model instantiation, GPU execution, generation, hidden-state,
+  router, JVP, VJP, fitting, or scientific capture occurred.
 
-Therefore:
+The committed `phase0_admission_prerequisites_pass=true` field is superseded for
+gate purposes. `q35q_artifact_admission_blocked` remains active.
 
-- classify `1123561…` only as `q35q_admission_staging_partial`;
-- do not treat its architecture or tokenizer labels as a binding Phase-0 pass;
-- keep `q35q_artifact_admission_blocked` active;
-- do not stage weights until the corrected prerequisite record below passes.
+### Why the current Phase-0 pass is invalid
+
+The binding second-correction addendum establishes six defects:
+
+1. The actual staging path derives `admitted` only from files already present
+   locally, so an expected remote file omitted by an interrupted download cannot
+   reach the missing-file validator.
+2. Expected and observed runtime checksums are both derived from the same local
+   bytes, so artifact checksum reconciliation is self-referential.
+3. Actual free space, temporary overhead, safety margin, partial cleanup,
+   deterministic resume, and final reconciliation are absent from the overall
+   conjunction.
+4. Required pinned-source and admitted-load-manifest proofs remain absent for the
+   text-only class, shared expert, Gated DeltaNet projections, final RMS norm,
+   output head, vision omission, and MTP omission.
+5. The tokenizer conjunction does not require chat-template identity, tokenizer
+   manifest identity, normalization and cleanup settings, admitted special-token
+   behavior, or model/tokenizer pairing.
+6. Pure validator tests do not exercise the real orchestration path through
+   remote enumeration, download, local discovery, checksum reconciliation,
+   cleanup, resume, tokenizer admission, and final conjunction.
+
+No scientific result is invalidated because no Q35Q scientific execution has
+occurred.
 
 ### Resource boundary
 
-The dual RTX 3090s remain assigned to an unrelated llama.cpp/llama-swap and MCP
-workload. The Q35Q GPU window is not released. Do not signal, inspect,
-reconfigure, pause, or displace that workload. No Agents-A1 serving restoration
-or Q35Q GPU availability may be inferred from M38E closure.
+The dual RTX 3090 resource boundary remains binding. Do not infer a free GPU
+window from M38E closure or low utilization. Any transition away from an
+unrelated tenant must be separately authorized and verified under the existing
+resource and cleanup rules.
 
-## Active milestone — corrected Q35Q Phase-0 admission
+No Q35Q GPU work is permitted before complete artifact and runtime admission.
 
-The next host-capable cycle must repair the Phase-0 implementation and synthetic
-tests, then produce one honest aggregate rerun. No additional operator ruling is
-required for the CPU-, storage-, network-, and repository-side work below.
+## Active milestone — Q35Q Phase-0 second repair
 
-### 1. Immutable repository identity
+The next host-capable cycle must repair the orchestration, integration tests, and
+aggregate record. CPU, storage, network, and repository-side work already
+covered by the prior authorization may proceed. Weight staging and GPU work may
+not proceed.
 
-Pin immutable revisions for both:
+### 1. Independent expected manifest
 
-- `Qwen/Qwen3.5-35B-A3B-Base`;
-- `Qwen/Qwen3.5-35B-A3B-GPTQ-Int4`.
+Construct the expected admitted-name set from the pinned remote public manifest
+before inspecting local presence. Require every expected admitted file to exist
+locally. Never remove a missing name from the expected set merely because the
+local file is absent.
 
-Reject mutable refs, unresolved identities, repository mismatch, tokenizer/model
-mismatch, or unreviewed remote code.
+Exclude only preregistered cache, lock, downloader metadata, timestamp,
+temporary, partial, and host-specific paths. Reject unexpected public files,
+path escapes, symlinks outside the staging root, and mutable identities.
 
-### 2. Deterministic public-file manifests
+### 2. Immutable checksum reconciliation
 
-Enumerate admitted files from the pinned public repository manifests. Hash only
-explicitly admitted public files. Exclude caches, lock files, downloader
-metadata, timestamps, temporary or partial files, host-specific paths, and
-symlinks or path escapes outside the staging root.
+Bind expected checksums from immutable public repository metadata where
+available, including LFS object identities. Compare them with locally computed
+hashes. A missing, unsupported, ambiguous, or contradictory required checksum
+identity records `q35q_provenance_blocked` or
+`q35q_artifact_admission_blocked`; it is not a pass.
 
-Synthetic tests must prove fail-closed behavior for:
+### 3. Storage and resumability gate
 
-- cache or downloader metadata contamination;
-- extra unapproved files;
-- missing files;
-- mutable revisions;
-- path escapes;
-- hash mismatch;
-- interrupted or partial downloads.
+Before weight staging, record aggregate-only evidence for:
 
-Commit only public repository identities, aggregate counts, public relative-path
-manifest digests, total public byte counts, and pass/fail.
+- actual free bytes at the isolated staging root;
+- expected weight bytes for both repositories;
+- temporary download overhead;
+- a declared safety margin;
+- partial-file detection and cleanup;
+- deterministic interrupted-download resume;
+- final immutable manifest and checksum reconciliation;
+- cache and runtime isolation from unrelated workloads.
 
-### 3. Exact text-only architecture admission
+GPU memory ceilings are not storage-headroom evidence.
 
-The overall architecture conjunction must fail unless every required field in
-`Q35Q_PHASE0_ADMISSION_CORRECTION_AND_TP_RUNTIME.md` passes independently,
-including:
+### 4. Exact source and load-manifest admission
 
-- exact Qwen3.5 MoE text model classes and model types;
-- hidden size 2048 and 40 text layers;
-- padded language-model output width 248320;
-- 256 routed experts, top-8 routing, and MoE intermediate size 512;
-- the shared-expert path and its width verified from pinned implementation
-  source, not inferred from a missing configuration field;
-- the exact 40-layer hybrid linear-attention/full-attention schedule and Gated
-  DeltaNet projection identities;
-- final RMS normalization and untied output head;
-- vision modules present in the repository but omitted from the admitted
-  text-only path;
-- MTP metadata present but MTP modules excluded from the admitted execution path;
-- exact GPTQ identity, bit width, group size, and skipped/dynamic module rules.
+Pin and review the exact model implementation source. The overall architecture
+conjunction must include independent proof of:
 
-Do not collapse this into a small subset boolean. Missing, contradictory,
-inferred, or source-unverified fields record `q35q_artifact_admission_blocked`.
+- the admitted text-only `Qwen3_5MoeForCausalLM` class and source mapping;
+- hidden size 2048, 40 layers, output width 248320, 256 routed experts, top-8,
+  routed-expert width 512, and shared-expert width 512;
+- shared-expert construction from pinned implementation source;
+- exact hybrid linear-attention/full-attention schedule;
+- Gated DeltaNet projection identities;
+- final RMS normalization and untied language-model head;
+- vision modules present in the repository but omitted from the admitted load
+  manifest;
+- MTP metadata present but MTP modules omitted from the admitted execution and
+  load manifests;
+- exact GPTQ identity, bit width, group size, and dynamic skip rules.
 
-### 4. Binding tokenizer admission
+Configuration metadata alone is not source or load-manifest proof.
 
-Using the immutable tokenizer files and neutral private fixture, bind:
+### 5. Complete tokenizer admission
 
-- repository revision and tokenizer-file manifest digest;
+Bind the tokenizer verdict to the immutable tokenizer-file manifest and model
+identity. The final conjunction must require:
+
 - tokenizer class and `trust_remote_code` setting;
 - normalization and cleanup settings;
-- explicit no-special-token encoding plus separately tested admitted special-token
-  behavior;
-- BOS, EOS, PAD, and chat-template identities;
-- deterministic encoded length and private token-ID-sequence digest;
-- exact deterministic decode/re-encode behavior under the preregistered
-  normalization rule;
-- deterministic chat-template rendering digest.
-
-Substring reconstruction is not a roundtrip pass. Synthetic tests must reject
-changed normalization, special-token behavior, chat templates, repository
-identity, model/tokenizer pairing, or nondeterministic IDs.
+- explicit no-special-token encoding;
+- separately tested admitted BOS, EOS, PAD, and special-token behavior;
+- deterministic encoded length and private ID-sequence digest;
+- exact deterministic decode/re-encode behavior;
+- deterministic chat-template identity and rendering digest;
+- exact model/tokenizer repository and revision pairing.
 
 Raw fixture text, rendered chat text, and token IDs remain private and
 uncommitted.
 
-### 5. Storage, checksum, and resumability gate
+### 6. Orchestration-level tests
 
-Before weight staging, produce honest aggregate projections for:
+Add deterministic integration tests using a fake pinned repository and fake
+downloader. Force each condition through the same orchestration used by the CLI:
 
-- expected public weight bytes for both repositories;
-- required free space and temporary download overhead;
-- checksum procedures and immutable manifest reconciliation;
-- interrupted-download cleanup and deterministic resume behavior;
-- isolated cache placement that cannot modify or depend on the unrelated GPU
-  tenant's runtime state.
+- missing expected file;
+- partial or interrupted download;
+- stale cache metadata;
+- extra unapproved file;
+- wrong checksum;
+- mutable or mismatched revision;
+- path escape or external symlink;
+- insufficient free space;
+- cleanup failure;
+- resume mismatch;
+- missing chat template or special-token mismatch;
+- architecture source or load-manifest mismatch.
 
-Do not stage weight files until corrected Phase-0 steps 1 through 5 pass.
+A pure unit test of a validator is not proof that the production orchestration
+can reach and enforce that validator.
 
-### 6. Tests and required operational outcome
+### 7. Required operational outcome
 
 Run fresh repository tests, privacy scans, artifact no-text checks, provenance
 checks, and commit-safety checks.
 
 The next Q35Q operational commit must record exactly one of:
 
-1. `q35q_phase0_admission_corrected_passed` with every required field and
-   prerequisite passing, after which storage-only weight staging may begin;
-2. `q35q_artifact_admission_blocked` with one narrow evidence-backed blocker
-   class;
-3. `q35q_provenance_blocked` when immutable source or artifact identity cannot be
-   established;
-4. `host_execution_authority_unavailable` once if the executing agent genuinely
-   lacks the already-authorized CPU/storage/network access.
+1. `q35q_phase0_admission_corrected_passed`, with every binding prerequisite in
+   the final overall conjunction;
+2. `q35q_artifact_admission_blocked`, with one narrow evidence-backed blocker;
+3. `q35q_provenance_blocked`, when immutable source or artifact identity cannot
+   be established;
+4. `host_execution_authority_unavailable`, once, only if the executing agent
+   genuinely lacks the already-authorized CPU/storage/network path.
 
-Do not repeat the superseded architecture or tokenizer admission pass. Do not
-publish unchanged status-only heartbeats in place of executing this milestone.
+Do not publish unchanged status-only heartbeats in place of executing this
+milestone. Do not stage weights before a genuine pass.
 
 ## Tensor-parallel runtime gate
 
@@ -203,38 +223,37 @@ Gated DeltaNet tensor-parallel plan entries:
 - `in_proj_a`;
 - `out_proj`.
 
-The eventual runtime must also pin exact Transformers, PyTorch, CUDA, package,
-model-source, quantization, kernel, and generated-configuration identities. The
-explicit dual-3090 plan must account for the required full-channel all-gather
+The eventual runtime must pin exact Transformers source, package build, PyTorch,
+CUDA, model-source, quantization, kernel, and generated-configuration identities.
+The explicit dual-3090 plan must account for the required full-channel all-gather
 before depthwise convolution and remain within 23.0 GiB per GPU and 46.0 GiB
 total.
 
-A missing TP entry, source mismatch, hidden offload, model or kernel
-substitution, OOM, placement mismatch, or resource breach is a hard stop. Do not
-use `device_map="auto"`, approximation, or a weaker memory gate as proof.
+A missing TP entry, source mismatch, hidden offload, model or kernel substitution,
+OOM, placement mismatch, or resource breach is a hard stop. Do not use
+`device_map="auto"`, approximation, or a weaker memory gate as proof.
 
-## Program order after corrected Phase 0
+## Program order after a genuine Phase-0 pass
 
-1. Correct and pass Phase-0 admission.
-2. Stage and verify weight artifacts using CPU, storage, and network only.
-3. Wait until the dual-3090 window is legitimately available and the resource
-   transition is verified without displacing an unrelated workload.
+1. Stage and verify weight artifacts using CPU, storage, and network only.
+2. Admit the exact immutable runtime and text-only load manifest.
+3. Wait for a legitimate, verified dual-3090 resource transition.
 4. Run only the frozen one-sequence exact residual-input VJP gate on the admitted
    GPTQ path.
-5. Record `q35q_gptq_autograd_unsupported` honestly before attempting the admitted
-   NF4 fallback.
+5. Record `q35q_gptq_autograd_unsupported` honestly before attempting the
+   admitted NF4 fallback.
 6. Require genuine autograd, non-`None`, nonzero, finite, repeatable VJPs, frozen
    weights, no hidden offload, output/hook parity, admitted routing regime,
-   admitted runtime, and the existing memory ceilings.
-7. After a reverse-mode VJP passes, the separately preregistered exact JVP/VJP
-   adjoint cross-check may run. Finite differences and approximate fallbacks are
+   admitted runtime, and existing memory ceilings.
+7. After a reverse-mode VJP passes, run only the separately preregistered exact
+   JVP/VJP adjoint cross-check. Finite differences and approximate fallbacks are
    prohibited.
 8. Produce aggregate route-regime, backward-cost, wall-time, storage, cleanup,
    provenance, privacy, and commit-safety evidence before the frozen
    eight-sequence micro-fit.
 9. Preregister any larger selected-layer quantized Qwen3.5 base-model fit before
-   capture and use only deterministic horizontal prompt sharding with fp32
-   weighted merging and cross-worker agreement smokes.
+   capture and use deterministic horizontal prompt sharding with fp32 weighted
+   merging and cross-worker agreement smokes.
 10. Test transfer separately against identity transport and standard logit-lens
     comparators, including route overlap, route changes, and margin distributions.
 11. Admit and fit a native quantized Agents-A1 lens only under a separate frozen
@@ -245,44 +264,66 @@ use `device_map="auto"`, approximation, or a weaker memory gate as proof.
 Every quantized checkpoint is its own mathematical model. A quantized Qwen3.5
 lens is not a BF16 lens and a transferred Qwen3.5 lens is not Agents-A1-native.
 
-## M39 and control boundary
+## M39 research-design boundary
 
 M39 remains independent and may not borrow M38E or Q35Q rows, outcomes,
-difficulty observations, selected examples, features, layers, or thresholds.
-M39 scientific capture requires its complete committed launch amendment, fresh
-population, admitted serving path, and every power, nuisance, multiplicity,
-parity, provenance, privacy, resource, verifier, and leakage gate.
+difficulty observations, selected examples, fitted directions, features, layers,
+or thresholds. Scientific capture requires a complete committed launch amendment,
+a fresh population, an admitted serving path, and every power, nuisance,
+multiplicity, parity, provenance, privacy, resource, verifier, and leakage gate.
 
-M39 remains observation-only. Executed-route margins, loads, transitions,
-entropy, confidence, hidden-state dynamics, behavioral self-assessment, and
-possible hardware routing footprints remain candidate comparators. No
-counterfactual routing, router update, retry policy, tool invocation, truncation,
-early exit, intervention, activation steering, or production control is
-permitted.
+Current external evidence supports adding a future observation-only comparator,
+not launching capture:
 
-## Privacy, claims, and completion boundary
+- arXiv:2606.14530 v2 and `CarloDiCicco/ReasoningLab` report strong nested-CV
+  prediction of subsequent code correctness from a prompt-final hidden state in
+  Qwen3-4B-Instruct, including train-fold-only prompt-length residualization;
+- arXiv:2606.02628 reports strong mid-layer linear hallucination decodability in
+  several 4-bit 7B-8B models;
+- arXiv:2605.07260 supports executed-route margins and route utility as MoE
+  observation leads, not intervention authority;
+- arXiv:2603.23701 continues to disfavor prioritizing layer-wise early exit in
+  large modern MoE models before model-specific intrinsic-exit and parity gates.
 
-Treat the repository as publicly visible. Never commit raw tasks, corpus or
-fixture text, prompts, answers, outputs, retrieved context, token IDs or text,
-hidden states, activations, expert identities or outputs, routes, router logits,
-telemetry arrays, Jacobians, JVPs, VJPs, lens matrices, per-example scores or
-predictions, process evidence, model weights or artifacts, caches, local paths,
-environment values, credentials, or secret-linked provenance.
+The future M39 launch amendment should preregister a **prompt-final
+pre-generation hidden-state comparator** alongside frozen metadata, confidence,
+route, and trajectory comparators. It must use train-fold-only preprocessing,
+nested layer and regularization selection, task/family-disjoint outer evaluation,
+and explicit residualization or matched controls for prompt length, task family,
+difficulty metadata, and other frozen nuisance variables.
 
-Stop on identity mismatch, dirty source provenance, exact-set failure,
-unsupported backward, detached/zero/nonfinite gradients, approximate gradients
-represented as exact, parity failure, hidden offload, model or quantization
-substitution, device-placement mismatch, kernel mismatch, OOM, resource breach,
-instability, artifact corruption, cleanup failure, privacy failure, or
-commit-safety failure.
+No paper-supplied layer, threshold, direction, or performance claim transfers to
+Agents-A1. Reddit remains lead-only and produced no primary-source-backed change
+in this cycle.
 
-Established now: M38E is closed, one genuine GPTQ tokenizer load occurred, and
-partial public metadata staging exists.
+M39 remains observation-only. No counterfactual routing, router update, retry,
+repair, tool invocation, truncation, early exit, intervention, activation
+steering, or production control is permitted.
 
-Not established: corrected Q35Q artifact admission, weight admission, an
-admissible GPU runtime, any exact GPTQ or NF4 JVP/VJP, any fitted Qwen3.5 or
-Agents-A1 Jacobian Lens, transfer, completed-error prediction, semantic-workspace
-monitoring, safe truncation, early exit, routing intervention, privacy, or
-production utility.
+## Claims and privacy boundary
 
-The research program is not complete.
+Established:
+
+- M38E is terminally closed at `inconclusive`;
+- the current Q35Q Phase-0 record is partial evidence, not an admission pass;
+- the TP-plan source requirement is a credible engineering gate;
+- prompt-final and mid-layer hidden-state probes are credible future comparators
+  requiring independent validation.
+
+Not established:
+
+- Q35Q artifact or runtime admission;
+- GPTQ or NF4 exact VJPs or JVPs;
+- quantized Qwen3.5 or Agents-A1 Jacobian Lens validity;
+- transfer from Qwen3.5 to Agents-A1;
+- completed-error prediction or semantic-workspace monitoring;
+- causal expert localization;
+- safe truncation or early exit;
+- routing intervention, correction policy, activation steering, privacy, or
+  production utility.
+
+Treat the repository as publicly visible. Never commit raw prompts, fixture text,
+token IDs or text, outputs, hidden states, activations, expert identities, routes,
+router logits, telemetry arrays, Jacobians, JVPs, VJPs, lens matrices, per-example
+scores, process evidence, weights, caches, local paths, environment values,
+credentials, or secret-linked provenance.

@@ -4,6 +4,50 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T17:05Z — outcome: `m38e_finalization_audits_in_progress`
+
+- **Steer UPDATED:** steer.md blob `fedb4741…` (was `0c258735…`), commit
+  `6aa548d` "finalize completed M38E, then resume the Agents-A1 path" —
+  read, obeyed; `steer_sha_seen` advanced. Finalization is the active
+  milestone.
+- **Superseding attribution (new relative to the steer's stated basis):**
+  the steer's decision basis cites an "M38E-driver-attributable process
+  candidate + sustained GPU activity" (from heartbeat `c970d7a`). My later
+  metadata-only attribution (`119610a`) established, and re-confirms now,
+  that this is **NOT** M38E: the ~100% GPU compute is an **unrelated
+  homelab `llama-server` (llama.cpp / llama-swap) + an MCP process**, with
+  process groups unrelated to M38E. There is **no live Python M38E driver**
+  (prior matches were shell wrappers, incl. this session's own monitor, now
+  stopped). Classification condition 6 (GPU attributable to the M38E driver)
+  therefore **fails** — there is no orphaned M38E compute to terminate and
+  no M38E-owned GPU to free. The M38E driver exited cleanly ~30.5h ago.
+- **Finalization audits vs the frozen ledger — PASS:** exact-set (288 =
+  12x24, no extra keys); escalation (all bands piloted, 0 full-band 4096 ->
+  escalation_failed everywhere, consistent with frontier-not-found);
+  provenance internal-consistency (uniform run_id / source_commit / model
+  `revision_pinned` / manifest_digest / task_set_digest / override_hash /
+  seed across all 382 rows); verifier (382/382 verdicts); zero duplicates;
+  frozen suite 52/52; privacy/commit-safety; M38E process + GPU-memory
+  cleanup (driver holds nothing). Ledger byte-stable (unchanged >30.5h, no
+  write fd).
+- **Sole remaining gate — serving-restoration (unmet, not manufactured):**
+  Agents-A1 is not currently served; the dual-RTX-3090 is held by the
+  operator's unrelated `llama-server`. Restoring/verifying Agents-A1 serving
+  requires that GPU, which I may not reclaim by displacing an unrelated
+  workload. The terminal commit is therefore held for an operator ruling:
+  (a) free the dual-3090 for Agents-A1 -> serving-restoration passes ->
+  commit `m38e_completed_error_frontier_not_found` + release the window; or
+  (b) rule serving-restoration waived/unverifiable given the M38E driver
+  exited holding no GPU -> commit `m38e_completed_error_frontier_not_found`
+  or `inconclusive` per the ruling. Committing an irreversible terminal now
+  on a pre-attribution basis is deliberately avoided.
+- **M38E blockers:** active_attempt none (driver exited; no M38E compute);
+  retry 2 (permanent, fail-closed); finalization 1 — serving-restoration,
+  blocked by an unrelated GPU tenant, operator ruling required.
+- **q35q_blockers:** GPU window NOT released; admission
+  `q35q_artifact_admission_blocked` until a real tokenizer record exists.
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T16:37Z — outcome: `m38e_finalization_audits_in_progress`
 
 - **Steer:** blob `0c258735…` unchanged; NEW binding addendum

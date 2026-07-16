@@ -4,6 +4,34 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T22:05Z — Q35Q defect-4 source/load-manifest admission closed (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU.
+- **Second-repair progress (CPU-only, NEW files):** defect-4 (pinned-source +
+  text-only load-manifest admission) now closed at the logic level — bind the
+  admitted `Qwen3_5MoeForCausalLM` class/source-hash, the admitted module set
+  (embed / final-norm / untied-lm-head / shared-expert / routed-experts / Gated
+  DeltaNet projections on linear layers / attention projections on full layers /
+  optional width binding), and the checks config cannot make: vision AND MTP
+  omitted from the admitted load manifest. 21 new tests fail closed on class
+  mismatch, vision/MTP leak, missing projection, tied head, missing modules.
+- **All logic-level defects addressed:** orchestration (1/2/3/6), tokenizer
+  binding (1-4), source/load-manifest (4). The second repair now reduces to ONE
+  remaining gate.
+- **q35q_blockers (single remaining):** live production composition — a CLI
+  entrypoint must independently DERIVE all expected values (remote LFS ids;
+  index weight-map -> module set + shapes; pinned source class map; tokenizer
+  digests + special-token ids) and compose the four validators into one final
+  Phase-0 conjunction with integration tests through that path; then weight
+  staging. Overall outcome remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 423/423 (6 pre-commit + stage + orchestration + tokenizer +
+  source); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T21:35Z — new addendum; tokenizer-binding defects 1-4 corrected (CPU)
 
 - **New binding addendum** `..._Q35Q_TOKENIZER_BINDING_CORRECTION_AND_DECISION_POINT_COMPARATORS`

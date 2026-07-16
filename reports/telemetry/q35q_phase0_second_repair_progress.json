@@ -30,13 +30,15 @@
     "how": "complete_tokenizer_admission now binds every observed value to an independently derived expected value by EQUALITY (not non-null/hex-shape): exact cleanup equality (defect 1); BOS/EOS/PAD bound to expected identities (defect 2); strict positive int rejecting booleans for encoded length (defect 3); manifest/chat-render/id-sequence digest equality vs independent recomputation, not shape (defect 4). Expected special-token identities and expected cleanup are required inputs (raise if absent).",
     "remaining": "defect-5 point-5 live production composition: the live orchestration must DERIVE the expected values independently (immutable tokenizer manifest digest, fresh chat-template rendering digest, fresh private-fixture encoding digest, expected special-token ids from pinned files) and feed both observed+expected here."
   },
+  "defect_4_source_and_load_manifest_admission": {
+    "status": "addressed_in_logic_and_tests",
+    "how": "validate_source_identity binds the outer Qwen3_5MoeForConditionalGeneration + admitted text-only Qwen3_5MoeForCausalLM class, module qualname, and immutable source hash; validate_load_manifest binds the admitted module set: embed/final-norm/untied-lm-head/shared-expert/routed-experts present, Gated DeltaNet projections on each linear-attention layer + standard attention projections on each full-attention layer, optional embed/head/expert width binding, and — the checks config cannot make — vision AND MTP modules omitted from the admitted load manifest. Each field fails closed (21 tests)."
+  },
   "remaining_blockers": {
-    "defect_4_source_and_load_manifest_admission": "pinned model-implementation-source proofs (text-only Qwen3_5MoeForCausalLM class/source mapping, shared-expert construction, Gated DeltaNet projections, final RMS norm, untied 248320 head, vision/MTP omission from admitted load manifest) not yet bound; configuration metadata alone is insufficient",
-    "tokenizer_defect5_point5_live_derivation": "expected tokenizer values must be independently recomputed in the live production path, not supplied by a caller",
-    "live_cli_wiring": "run_staging_orchestration + complete_tokenizer_admission not yet wired into the live HfApi/snapshot_download CLI entrypoint with a fresh end-to-end rerun binding real remote LFS identities",
+    "live_production_composition": "the sole remaining gate: a live CLI entrypoint must independently DERIVE all expected values (remote LFS identities; model.safetensors.index.json weight-map -> admitted module set + param shapes; pinned implementation-source class mapping; tokenizer manifest/chat-render/id-sequence digests + special-token ids) and compose run_staging_orchestration + validate_source_identity + validate_load_manifest + complete_tokenizer_admission into ONE final Phase-0 conjunction, with orchestration-level integration tests through that same path",
     "weight_staging": "not attempted; not authorized before a genuine Phase-0 pass"
   },
-  "tests": {"orchestration_integration": 18, "tokenizer_admission": 28, "stage_validators": 32, "full_precommit_plus_new": 402, "result": "passed"},
+  "tests": {"orchestration_integration": 18, "tokenizer_admission": 28, "source_load_manifest": 21, "stage_validators": 32, "full_precommit_plus_new": 423, "result": "passed"},
   "boundary": {
     "gpu_used": false, "weights_loaded": false, "model_instantiated": false,
     "generation": false, "hidden_state_capture": false, "jvp_vjp": false,

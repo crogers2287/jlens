@@ -4,6 +4,27 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T20:05Z — steady state; all boundaries held
+
+- **Steer:** blob `2553634…` unchanged; no newer, remote in sync.
+- **M38E:** CLOSED — terminal `inconclusive` (unchanged); ledger byte-stable,
+  no live driver, no M38E-attributable GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util); not signalled/displaced. GPU
+  window NOT released; Agents-A1 serving NOT claimed restored. No GPU work.
+- **Q35Q Phase-0:** corrected admission (`86538d4`) stands — per-field
+  architecture (15 fields) + GPTQ ALL-pass, deterministic tokenizer roundtrip
+  PASS, both repos pinned. `phase0_admission_prerequisites_pass=true`;
+  TP-runtime requirement verified present in installed Transformers 5.13.1
+  (all five Qwen3.5-MoE linear-attention TP-plan entries). Full runtime
+  admission (exact immutable source/package/PyTorch/CUDA pin) + weight staging
+  remain; `q35q_artifact_admission_blocked` persists.
+- **q35q_blockers:** GPU-gated (exact-VJP gate awaits legitimate dual-3090
+  availability + pinned TP-correct runtime); weight staging + full artifact
+  admission outstanding. Weight staging + GPU VJP held to avoid dual-execution
+  with the active collaborator.
+- **Tests (fresh):** 324/324 pre-commit; commit-safe clean.
+
 ## Heartbeat 2026-07-16T19:35Z — Q35Q admission repaired; TP runtime requirement verified
 
 - **Steer:** blob `2553634…` unchanged (`steer_sha_seen 2553634…`); no

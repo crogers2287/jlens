@@ -1,0 +1,41 @@
+{
+  "architecture": {
+    "experts_per_tok": true,
+    "hidden_size": true,
+    "model_type": "qwen3_5_moe",
+    "moe_intermediate_size": true,
+    "num_hidden_layers": true,
+    "routed_experts": true,
+    "shared_experts": false,
+    "vocab_size": true
+  },
+  "architecture_match": {
+    "experts_per_tok": true,
+    "hidden_size": true,
+    "moe_intermediate_size": true,
+    "num_hidden_layers": true,
+    "routed_experts": true,
+    "vocab_size": true
+  },
+  "architecture_text_only_admitted": true,
+  "custom_code_count": 0,
+  "custom_code_sha256": {},
+  "gpu_used": false,
+  "has_vision_modules_present": true,
+  "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b",
+  "license_present": true,
+  "manifest_sha256": "b06970e9ff658f770e71969aa8d86135267320309ed50b8a12528b9c71ae2a4b",
+  "outcome": "q35q_admission_staging",
+  "repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4",
+  "small_file_count": 39,
+  "tokenizer_roundtrip": {
+    "deterministic": true,
+    "encoded_length": 44,
+    "id_sequence_sha256": "ce3c6f90ff314577ca74d4431e2be93de2f94b0b7ae12a2969e97eb50956d20b",
+    "loaded": true,
+    "roundtrip_substring_ok": true,
+    "trust_remote_code": false,
+    "vocab_size_reported": 248044
+  },
+  "weights_loaded": false
+}

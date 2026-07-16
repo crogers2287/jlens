@@ -4,6 +4,33 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T21:35Z — new addendum; tokenizer-binding defects 1-4 corrected (CPU)
+
+- **New binding addendum** `..._Q35Q_TOKENIZER_BINDING_CORRECTION_AND_DECISION_POINT_COMPARATORS`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my prior tokenizer conjunction
+  `q35q_tokenizer_admission_repair_partial` — correctly: cleanup was non-null
+  not equality; BOS/EOS/PAD non-null not identity-bound; `isinstance(int)`
+  accepts booleans; digests were shape-checked not equality-bound.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU.
+- **Correction executed (CPU-only):** `complete_tokenizer_admission` now binds
+  every observed value to an independently derived expected value by EQUALITY —
+  exact cleanup equality (d1); BOS/EOS/PAD expected-identity binding (d2); strict
+  positive int rejecting booleans (d3); manifest/chat-render/id-sequence digest
+  equality vs independent recomputation, not shape (d4). 28 tests incl. wrong-
+  cleanup, substituted-id, boolean-length, and fake-valid-shape-digest failures.
+- **q35q_blockers (narrow, remaining):** tokenizer defect-5 point-5 (expected
+  values must be independently recomputed in the LIVE production path, not caller-
+  supplied); defect-4 pinned-source/load-manifest admission; live HfApi/
+  snapshot_download CLI wiring + end-to-end rerun; weight staging unauthorized
+  before a genuine pass. Overall outcome remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 402/402 (6 pre-commit + stage + orchestration + tokenizer);
+  commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T21:05Z — Q35Q second repair: defect-5 tokenizer conjunction closed (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

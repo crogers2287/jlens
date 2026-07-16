@@ -1,8 +1,9 @@
 """Q35Q Phase-0 complete tokenizer-admission tests (CPU-only, no model/network).
 
-Proves the tokenizer conjunction fails closed when any bound field is missing or
-wrong — the gap flagged as second-repair defect 5 (the prior overall boolean
-required only roundtrip_pass).
+Proves the tokenizer conjunction binds every observed value to an independently
+derived expected value by equality — the gaps flagged as tokenizer-binding
+defects 1-4 (wrong cleanup, substituted special-token IDs, boolean encoded
+length, and caller-supplied fake-but-valid-shape digests must all fail closed).
 """
 import sys
 from pathlib import Path
@@ -15,7 +16,9 @@ from q35q_stage import Q35QStageBlock
 from q35q_tokenizer_admission import complete_tokenizer_admission
 
 REV = "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"
-H = "a" * 64
+IDD = "a" * 64   # id-sequence digest
+CTD = "b" * 64   # chat-template render digest
+TMD = "c" * 64   # tokenizer manifest digest
 
 
 def good_roundtrip(**over):
@@ -29,10 +32,15 @@ def good(**over):
     kw = dict(
         tokenizer_class="Qwen2TokenizerFast", expected_tokenizer_class="Qwen2TokenizerFast",
         trust_remote_code=False, normalization="nfc", expected_normalization="nfc",
-        cleanup_setting=False, roundtrip_verdict=good_roundtrip(),
-        special_token_behavior_ok=True, bos_token_id=1, eos_token_id=2, pad_token_id=0,
-        encoded_length=44, id_sequence_sha256=H, chat_template_present=True,
-        chat_template_render_sha256="b" * 64, tokenizer_manifest_sha256="c" * 64,
+        cleanup_setting=False, expected_cleanup_setting=False,
+        roundtrip_verdict=good_roundtrip(), special_token_behavior_ok=True,
+        bos_token_id=1, eos_token_id=2, pad_token_id=0,
+        expected_bos_token_id=1, expected_eos_token_id=2, expected_pad_token_id=0,
+        encoded_length=44,
+        id_sequence_sha256=IDD, expected_id_sequence_sha256=IDD,
+        chat_template_present=True,
+        chat_template_render_sha256=CTD, expected_chat_template_render_sha256=CTD,
+        tokenizer_manifest_sha256=TMD, expected_tokenizer_manifest_sha256=TMD,
         model_repo="Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", model_revision=REV,
         tokenizer_repo="Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", tokenizer_revision=REV)
     kw.update(over)
@@ -45,22 +53,88 @@ def test_full_pass():
     assert all(v for k, v in out.items() if k != "all_required_pass")
 
 
+# ---------- defect 1: cleanup must be exact equality, not merely non-null ----------
+
+def test_present_but_wrong_cleanup_fails():
+    out = complete_tokenizer_admission(**good(cleanup_setting=True, expected_cleanup_setting=False))
+    assert out["cleanup_setting_admitted"] is False and out["all_required_pass"] is False
+
+
+def test_missing_expected_cleanup_raises():
+    with pytest.raises(Q35QStageBlock, match="expected_cleanup_setting"):
+        complete_tokenizer_admission(**good(expected_cleanup_setting=None))
+
+
+# ---------- defect 2: BOS/EOS/PAD bound to expected identities ----------
+
+@pytest.mark.parametrize("field,exp_field", [
+    ("bos_token_id", "expected_bos_token_id"),
+    ("eos_token_id", "expected_eos_token_id"),
+    ("pad_token_id", "expected_pad_token_id"),
+])
+def test_substituted_special_token_id_fails(field, exp_field):
+    out = complete_tokenizer_admission(**good(**{field: 999}))
+    key = {"bos_token_id": "bos_identity_bound", "eos_token_id": "eos_identity_bound",
+           "pad_token_id": "pad_identity_bound"}[field]
+    assert out[key] is False and out["all_required_pass"] is False
+
+
+@pytest.mark.parametrize("null_field", ["bos_token_id", "eos_token_id", "pad_token_id"])
+def test_null_special_token_id_fails(null_field):
+    out = complete_tokenizer_admission(**good(**{null_field: None}))
+    assert out["all_required_pass"] is False
+
+
+def test_missing_expected_special_token_identity_raises():
+    with pytest.raises(Q35QStageBlock, match="token id must be independently derived"):
+        complete_tokenizer_admission(**good(expected_eos_token_id=None))
+
+
+# ---------- defect 3: boolean encoded length rejected ----------
+
+def test_boolean_encoded_length_fails():
+    out = complete_tokenizer_admission(**good(encoded_length=True))
+    assert out["encoded_length_strict_positive_int"] is False and out["all_required_pass"] is False
+
+
+def test_zero_encoded_length_fails():
+    out = complete_tokenizer_admission(**good(encoded_length=0))
+    assert out["encoded_length_strict_positive_int"] is False and out["all_required_pass"] is False
+
+
+# ---------- defect 4: digest equality, not just hex shape ----------
+
+def test_caller_fake_but_valid_shape_id_digest_fails():
+    out = complete_tokenizer_admission(**good(id_sequence_sha256="d" * 64))  # valid hex, wrong value
+    assert out["id_sequence_digest_bound"] is False and out["all_required_pass"] is False
+
+
+def test_caller_fake_chat_render_digest_fails():
+    out = complete_tokenizer_admission(**good(chat_template_render_sha256="e" * 64))
+    assert out["chat_template_render_digest_bound"] is False and out["all_required_pass"] is False
+
+
+def test_caller_fake_manifest_digest_fails():
+    out = complete_tokenizer_admission(**good(tokenizer_manifest_sha256="f" * 64))
+    assert out["tokenizer_manifest_identity_bound"] is False and out["all_required_pass"] is False
+
+
+def test_non_hex_digest_fails():
+    out = complete_tokenizer_admission(
+        **good(id_sequence_sha256="not-hex", expected_id_sequence_sha256="not-hex"))
+    assert out["id_sequence_digest_bound"] is False and out["all_required_pass"] is False
+
+
+# ---------- remaining conjunction fields ----------
+
 @pytest.mark.parametrize("field,bad", [
     ("tokenizer_class", "WrongTokenizer"),
     ("trust_remote_code", True),
     ("normalization", "nfkc"),
-    ("cleanup_setting", None),
     ("special_token_behavior_ok", False),
-    ("bos_token_id", None),
-    ("eos_token_id", None),
-    ("pad_token_id", None),
-    ("encoded_length", 0),
-    ("id_sequence_sha256", None),
     ("chat_template_present", False),
-    ("chat_template_render_sha256", None),
-    ("tokenizer_manifest_sha256", None),
 ])
-def test_each_field_can_fail(field, bad):
+def test_each_remaining_field_can_fail(field, bad):
     out = complete_tokenizer_admission(**good(**{field: bad}))
     assert out["all_required_pass"] is False
 
@@ -89,11 +163,6 @@ def test_model_tokenizer_revision_mismatch_blocks():
 def test_mutable_revision_not_paired():
     out = complete_tokenizer_admission(**good(model_revision="main", tokenizer_revision="main"))
     assert out["model_tokenizer_revision_paired"] is False and out["all_required_pass"] is False
-
-
-def test_non_hex_digests_block():
-    out = complete_tokenizer_admission(**good(chat_template_render_sha256="not-hex"))
-    assert out["chat_template_render_digest_bound"] is False and out["all_required_pass"] is False
 
 
 def test_missing_repo_identity_raises():

@@ -4,6 +4,38 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T16:07Z — outcome: `m38e_postcompletion_activity_detected`
+
+- **Steer:** blob `0c258735…` unchanged; NEW binding executive addendum
+  `M38E_POSTCOMPLETION_SHUTDOWN_AND_FINALIZATION` (commit `7594cf4`) pulled,
+  read, obeyed. It authorizes ONE bounded post-completion cleanup +
+  finalization and forbids further "awaiting operator" heartbeats.
+- **Cleanup Step 1-2 executed (metadata only; nothing private committed):**
+  - Official ledger is **byte-stable**: unchanged ~30.5h, no write fd open,
+    288/288 official (12 cells x 24), 94 pilot, 0 full-band 4096, 382 total,
+    uniform `run_kind=m38e_official_dev`.
+  - **BUT active compute was detected**: one RTX 3090 sustained at ~98-99%
+    utilization across repeated samples with a two-GPU model resident
+    (~22-23 GiB each), and an active driver-named process is present and
+    persisting. I therefore **cannot** confirm "no generation call, verifier
+    call, or GPU kernel attributable to M38E is active."
+  - Per Step 2, the bounded cleanup sequence is **HALTED**: no process was
+    signalled, nothing was terminated, nothing was rerun. Recorded aggregate
+    outcome **`m38e_postcompletion_activity_detected`**.
+- **Finalization audits deferred**: not run this cycle because active GPU
+  work is present; graceful/forced termination is explicitly not permitted
+  while generation work may be active. Terminal outcome
+  `m38e_completed_error_frontier_not_found` remains pending a genuinely
+  write-idle AND GPU-idle state, then the full frozen audit set.
+- **active_attempt_blockers:** `m38e_postcompletion_activity_detected`
+  (active GPU compute + active driver-named process; cleanup halted, not
+  signalled). **retry_blockers:** 2 (permanent, fail-closed).
+  **finalization_blockers:** 1 (frozen gates deferred until activity clears).
+- **q35q_blockers:** GPU window NOT released (active compute present);
+  admission `q35q_artifact_admission_blocked` until a real tokenizer record
+  exists.
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T15:35Z
 
 - **Steer:** blob `0c258735…` unchanged; no newer, remote in sync.

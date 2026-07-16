@@ -1,8 +1,8 @@
-# steer.md — finalize completed M38E, then resume the architecture-matched Agents-A1 path
+# steer.md — terminalize M38E honestly, preserve the GPU boundary, and stage the architecture-matched Agents-A1 path
 
 `CODEX_AUTOSTEER.md` remains the operating contract. This file is the current
 source of truth for milestone selection. It incorporates the complete prior
-`steer.md` blob `0c2587359ffc952e44270d5abfe4a3f730a19fd1` and every protocol or
+`steer.md` blob `fedb47413c465fd11efcf399d3bb6ca33e6469c8` and every protocol or
 steer addendum incorporated by that blob.
 
 This directive supersedes prior steer only where explicitly stated below. Every
@@ -16,136 +16,108 @@ retuned, substituted, or inferred.
 
 ## Current established state
 
-- Remote head `9050252b3eda9c751e7ba5094c5ffd7c0ad573c1` committed the binding
-  addendum
-  `docs/STEER_ADDENDUM_2026-07-16_M38E_ORPHANED_POSTCOMPLETION_COMPUTE.md`.
-- The latest committed operational observation remains heartbeat
-  `c970d7add7c88f019f8eb739cedd9926d5126c5e`: the M38E ledger was
-  byte-stable for approximately 30.5 hours, had no open writer, contained
-  288/288 official rows, 94 required pilot rows, zero full-band 4096 rows, and
-  382 total rows across all 12 frozen cells.
-- That heartbeat also reported an M38E-driver-attributable process candidate and
-  sustained GPU activity. It halted cleanup under an earlier conservative rule
-  rather than signalling any process.
-- The old pre-completion instruction in blob `0c258735…` to leave an active M38E
-  process untouched is now superseded only for the exact bounded classification
-  and cleanup sequence below. It remains binding if any identity, exact-set,
-  writer, attribution, or artifact-activity condition cannot be verified.
-- M38E is not formally finalized. The outcome
-  `m38e_completed_error_frontier_not_found` remains pending the frozen
-  finalization audit set. `provenance-blocked` or `inconclusive` remain the only
-  narrower admissible terminal alternatives when required evidence cannot be
-  verified.
-- The dual-RTX-3090 window is not released. Q35Q GPU execution and M39 scientific
-  capture remain prohibited until M38E cleanup, finalization, and serving
-  restoration pass.
-- No Jacobian Lens has been fitted or validated on Agents-A1. No completed-error
-  predictor, safe truncation, early exit, causal repair, activation steering,
-  route intervention, semantic controller, or production utility is
-  established.
+Remote head `61dd3bbc19d67c43402f07eead4d942ec990d350` records the latest
+aggregate-only host observation:
 
-## Active milestone — M38E post-completion classification and finalization
+- the M38E driver exited cleanly approximately 30.5 hours earlier and holds no
+  GPU memory;
+- the sustained dual-RTX-3090 activity is attributable to an unrelated
+  `llama-server` / llama-swap workload and an unrelated MCP process, not M38E;
+- no orphaned M38E process exists and no unrelated process may be signalled;
+- the frozen M38E ledger is byte-stable, has no open writer, and contains the
+  complete expected aggregate set: 288 official rows, 94 pilot rows, zero
+  full-band 4096 rows, and 382 total rows across all 12 frozen cells;
+- exact-set, escalation, provenance internal-consistency, verifier coverage,
+  duplicate, frozen-test, privacy, commit-safety, M38E process-cleanup, and
+  M38E GPU-memory-cleanup audits passed;
+- Agents-A1 serving restoration is the sole unmet finalization audit because
+  the unrelated workload currently owns the dual-3090 resources;
+- 324/324 fresh pre-commit tests pass and the repository is commit-safe clean.
 
-The next host-capable cycle must read and execute, in order:
+The prior steer assumed an M38E-attributable GPU process candidate. That premise
+was disproved by the later metadata-only attribution. The orphaned-compute
+classification and termination branch is therefore closed. Nothing may be
+terminated, displaced, or reclassified as M38E merely to manufacture resource
+availability.
 
-1. `docs/STEER_ADDENDUM_2026-07-16_M38E_ORPHANED_POSTCOMPLETION_COMPUTE.md`;
-2. `docs/STEER_ADDENDUM_2026-07-16_M38E_POSTCOMPLETION_SHUTDOWN_AND_FINALIZATION.md`;
-3. the frozen M38E protocols, validators, manifests, escalation rules, and
-   finalization audit definitions named by those documents.
+## Executive terminal decision for M38E
 
-A process may be classified as `m38e_orphaned_postcompletion_compute` only when
-all of the following are verified privately and simultaneously:
+The binding post-completion addenda already require a narrow terminal outcome
+when any required finalization evidence is missing, contradictory, or
+unverifiable. Serving restoration is required, is currently unavailable, and
+may not be manufactured by evicting an unrelated workload.
 
-1. every ledger row validates against the frozen run identity, task-set digest,
-   manifest digest, source commit, model revision, override hash, attempt kind,
-   cap, task hash, and duplicate constraints;
-2. exact set equality proves that all 288 official keys and every
-   deterministically required pilot or full-band escalation key are present,
-   with no unknown or extra attempt keys;
-3. aggregate counts remain 288 official, 94 pilot, zero full-band 4096, and 382
-   total, with all 12 frozen cell paths complete;
-4. the ledger has no open writer and is byte-for-byte unchanged during a fresh
-   bounded observation interval of at least ten minutes;
-5. no authorized M38E task key remains missing under the frozen identities and
-   escalation rules; row-count inference alone is insufficient;
-6. the active GPU process group is privately attributable by parent-child or
-   process-group identity to the top-level M38E driver, not to an unrelated
-   server, finalizer, restoration process, or workload;
-7. no authorized finalization, artifact, or serving-restoration write is active.
+Therefore the next host-capable control cycle must:
 
-If any condition fails, signal nothing and commit only the narrow aggregate
-state `m38e_postcompletion_classification_blocked` plus a public-safe blocker
-class. Never commit process identifiers, command lines, host details, paths,
-environment values, row evidence, or telemetry.
+1. re-read the frozen M38E finalization requirements and the latest committed
+   aggregate status;
+2. privately reconfirm only that no M38E process, writer, generation call,
+   verifier call, finalization writer, or M38E-attributable GPU kernel is active;
+3. make no change to the unrelated GPU tenant;
+4. commit the permitted narrow terminal outcome `inconclusive`, with the
+   aggregate blocker class `serving_restoration_unavailable_due_unrelated_gpu_tenant`;
+5. explicitly record that every other listed frozen finalization audit passed,
+   but that `m38e_completed_error_frontier_not_found` was not committed because
+   the serving-restoration gate did not pass;
+6. close M38E after that terminal commit; do not restart, rerun, repair, extend,
+   reinterpret, or replace any M38E task, row, family, attempt, cap, seed,
+   threshold, verifier, or audit;
+7. do not release the dual-RTX-3090 window and do not claim Agents-A1 serving is
+   restored.
 
-When every condition passes, the following one-shot sequence is mandatory:
+This decision does not waive serving restoration and does not convert an unmet
+gate into a pass. It applies the already-authorized fail-closed terminal outcome
+instead of leaving the program in an indefinite status loop.
 
-1. record aggregate state `m38e_orphaned_postcompletion_compute`;
-2. request graceful termination of the attributable M38E process group once;
-3. allow a bounded 120-second teardown interval;
-4. reconfirm privately that the ledger remains unchanged and has no writer;
-5. if the attributable process group remains, terminate that process group
-   forcibly once and record only `m38e_postcompletion_forced_cleanup`;
-6. do not restart, resume, repair, retry, extend, or recover uncommitted
-   in-memory output; the frozen validated ledger is the sole admissible record;
-7. run the complete frozen finalization audit set: exact-set, escalation,
-   verifier, provenance, execution-root, dependency/import/loader/native-library,
-   model/revision, privacy, resource, cleanup, serving-restoration, and
-   commit-safety;
-8. commit `m38e_completed_error_frontier_not_found` only if every required audit
-   passes;
-9. otherwise commit only `provenance-blocked` or `inconclusive`, with the narrow
-   aggregate blocker and no fabricated evidence;
-10. release the dual-RTX-3090 window only after process cleanup, GPU-memory
-    cleanup, Agents-A1 serving restoration, privacy checks, and commit-safety
-    all pass.
+After this steer is visible, `awaiting operator`, repeated
+`m38e_finalization_audits_in_progress`, and repeated unchanged heartbeat commits
+are not admissible steady states. The next M38E-related operational commit must
+be exactly one of:
 
-After this steer is visible, the next operational commit must report exactly one
-of these public-safe states:
+- `inconclusive` with the blocker class above; or
+- `host_execution_authority_unavailable` once, if the executing agent genuinely
+  cannot perform the private metadata reconfirmation.
 
-- `m38e_postcompletion_classification_in_progress`;
-- `m38e_postcompletion_classification_blocked`;
-- `m38e_orphaned_postcompletion_compute`;
-- `m38e_postcompletion_cleanup_in_progress`;
-- `m38e_finalization_audits_in_progress`;
-- `m38e_completed_error_frontier_not_found`;
-- `provenance-blocked`;
-- `inconclusive`;
-- `host_execution_authority_unavailable`.
+`host_execution_authority_unavailable` does not authorize repeated status-only
+commits. It requires assignment of a host-capable agent.
 
-Do not return to `m38e_postcompletion_activity_detected`, `awaiting operator`, or
-repeated unchanged status-only heartbeats after this source-of-truth update.
-`host_execution_authority_unavailable` may be committed once by an agent that
-cannot inspect or signal host processes; it does not authorize an indefinite
-status loop.
-
-## Program order after M38E closes
+## Program order after the M38E terminal commit
 
 The primary technically credible scaling path remains architecture-matched,
 exact-gradient feasibility before scientific outcome prediction:
 
-1. finish and formally close M38E without changing its frozen program;
-2. complete Q35Q artifact admission using exact immutable revisions and a real
-   tokenizer record;
-3. run only the frozen one-sequence exact residual-input VJP gate on the official
-   Qwen3.5-35B-A3B GPTQ path, then the admitted NF4 fallback if GPTQ backward is
-   unsupported;
-4. require non-`None`, nonzero, finite, repeatable genuine-autograd VJPs, frozen
+1. finish the narrow M38E terminal commit described above;
+2. while the unrelated GPU tenant remains active, perform only CPU-side,
+   storage-side, and repository-side Q35Q Phase-0 work that cannot contend with
+   serving or reveal private artifacts;
+3. complete Q35Q artifact admission using exact immutable model and tokenizer
+   revisions, including a genuine tokenizer roundtrip record, text-only model
+   metadata admission, dependency identities, package and kernel projections,
+   synthetic tests, privacy scan, and regenerated admission/driver manifests;
+4. do not run a Q35Q GPU load, backward call, VJP smoke, micro-fit, hidden-state
+   capture, or M39 scientific capture until the dual-3090 resources are
+   legitimately available and the applicable serving/resource transition is
+   verified;
+5. when resources are legitimately available, run only the frozen one-sequence
+   exact residual-input VJP gate on the official Qwen3.5-35B-A3B GPTQ path;
+6. proceed to the admitted NF4 fallback only after an honest
+   `q35q_gptq_autograd_unsupported` outcome;
+7. require non-`None`, nonzero, finite, repeatable genuine-autograd VJPs, frozen
    weights, no hidden offload, exact hook/logit parity, admitted kernels and
    placement, and the existing 23.0 GiB-per-3090 / 46.0 GiB-total resource gate;
-5. if a path passes, produce the aggregate-only route-regime, backward-cost,
+8. if a path passes, produce the aggregate-only route-regime, backward-cost,
    wall-time, storage, cleanup, provenance, privacy, and commit-safety artifact
    before the frozen eight-sequence micro-fit;
-6. preregister any larger selected-layer quantized Qwen3.5 base-model fit before
+9. preregister any larger selected-layer quantized Qwen3.5 base-model fit before
    capture and use only deterministic horizontal prompt sharding with fp32
    weighted merging and cross-worker agreement smokes;
-7. treat each quantized checkpoint as its own mathematical model; never call a
-   quantized lens BF16 or call a transferred Qwen3.5 lens Agents-A1-native;
-8. test transfer separately with route overlap, route-change frequency, margin
-   distributions, identity transport, and standard logit-lens comparators;
-9. admit and fit a native quantized Agents-A1 lens only under a separate frozen
-   target-artifact and quantization protocol;
-10. retain native BF16 Agents-A1 exact VJPs and fitting on admitted high-memory
+10. treat every quantized checkpoint as its own mathematical model; never call a
+    quantized lens BF16 or call a transferred Qwen3.5 lens Agents-A1-native;
+11. test transfer separately with route overlap, route-change frequency, margin
+    distributions, identity transport, and standard logit-lens comparators;
+12. admit and fit a native quantized Agents-A1 lens only under a separate frozen
+    target-artifact and quantization protocol;
+13. retain native BF16 Agents-A1 exact VJPs and fitting on admitted high-memory
     hardware as the final reference comparison.
 
 The binding Q35Q documents remain:
@@ -153,14 +125,18 @@ The binding Q35Q documents remain:
 - `docs/Q35Q_QUANTIZED_QWEN35_JACOBIAN_PROTOCOL.md`;
 - `docs/STEER_ADDENDUM_2026-07-15_Q35Q_ROUTE_REGIME_AND_EXACT_SHARDING.md`.
 
-The binding M39 monitoring design remains independent of Q35Q engineering and
-must not borrow M38E or Q35Q outcomes, rows, difficulty observations, selected
-features, layers, or thresholds. M39 may launch only after M38E is formally
-closed and its complete launch amendment is committed. It must preserve:
+## M39 monitoring boundary
+
+M39 remains independent of Q35Q engineering and may not borrow M38E or Q35Q
+rows, outcomes, difficulty observations, selected examples, features, layers, or
+thresholds. M39 scientific capture requires its own complete committed launch
+amendment, fresh population, restored admitted serving path, and every existing
+power, nuisance, multiplicity, parity, provenance, privacy, resource, verifier,
+and leakage gate.
+
+M39 must preserve:
 
 - strict monitoring/control separation;
-- fresh forward-only populations and preregistered power, nuisance,
-  multiplicity, parity, provenance, privacy, and resource gates;
 - train-fold-only nuisance residualization or an equivalent nested conditional
   comparison;
 - behavioral self-assessment, router, confidence, and non-telemetry comparators;
@@ -174,6 +150,47 @@ The binding M39 document remains:
 
 - `docs/STEER_ADDENDUM_2026-07-15_M39_METACOGNITION_TEMPORAL_AND_EARLY_EXIT_BOUNDARY.md`.
 
+## Research-scan disposition
+
+Current external evidence supports the existing order and adds one bounded
+engineering lead; it does not authorize a new scientific claim or intervention.
+
+- `RouteScan: A Non-Intrusive Approach to Auditing MoE LLMs Safety via Expert
+  Routing Telemetry` (arXiv:2605.24817v1) reports that low-level GPU thread-count
+  telemetry during MoE prefill can carry routing-related signal with limited
+  prompt-reconstruction performance in its evaluated setting. This is evidence
+  that hardware-level routing footprints may be a scalable privacy-oriented
+  engineering fallback when direct router hooks are unavailable or too costly.
+  It is not evidence of completed-error prediction, semantic monitoring,
+  Agents-A1 transfer, causal routing, or production privacy.
+- A future non-outcome-bearing feasibility smoke may compare hardware-level
+  telemetry against direct executed-route aggregates on a neutral synthetic
+  corpus only. It must pin exact kernels, runtime, batch shape, quantization,
+  device placement, sampling phase, telemetry source, reduction formulas, and
+  immutable source identities; prove output parity; control for sequence length,
+  batch occupancy, kernel scheduling, and unrelated GPU activity; perform its
+  own inversion/privacy tests; persist no raw telemetry; and commit only
+  aggregate results. Failure records `hardware_route_telemetry_unsupported` and
+  does not weaken M39.
+- `Self-Routing: Parameter-Free Expert Routing from Hidden States`
+  (arXiv:2604.00421v2) supports the general proposition that hidden
+  representations can contain routing information in the small models studied.
+  It does not justify replacing, retraining, or modifying the fixed Agents-A1
+  router, and it adds no executable Agents-A1 gate.
+- Counterfactual misrouting evidence remains relevant only to future separately
+  preregistered intervention work. M39 remains executed-route and
+  observation-only.
+- Current early-exit evidence remains unfavorable for prioritizing layer-wise
+  exit on a large post-trained MoE before observation-only monitoring and a
+  model-specific intrinsic-exit feasibility study establish meaningful headroom
+  and final-output parity.
+- No useful new r/LocalLLaMA implementation lead was found in the current scan.
+  Reddit remains lead-only and cannot establish a protocol change without a
+  primary source and reproducible implementation.
+
+No M39 outcome-bearing feature, layer, threshold, stopping rule, route change,
+or production policy is added by this research disposition.
+
 ## Exact-gradient and MoE claim boundary
 
 An exact sparse-MoE VJP means the local autograd derivative through the executed
@@ -182,10 +199,10 @@ expert assignments. Straight-through estimators, finite differences, detached
 dequantize/requantize paths, fake gradients, manually substituted derivatives,
 or route estimators may not be described as exact Jacobians.
 
-Executed router margins, loads, transitions, entropy, confidence, hidden-state
-dynamics, and behavioral self-assessment remain candidate monitoring features
-until independently validated. They do not establish causality, safe stopping,
-repair, or production utility.
+Executed router margins, loads, transitions, entropy, hardware routing
+footprints, confidence, hidden-state dynamics, and behavioral self-assessment
+remain candidate monitoring features until independently validated. They do not
+establish causality, safe stopping, repair, privacy, or production utility.
 
 ## Privacy, production, and completion boundary
 
@@ -204,8 +221,8 @@ substitution, device-placement mismatch, kernel mismatch, OOM, resource breach,
 instability, artifact corruption, cleanup failure, serving-restoration failure,
 privacy failure, or commit-safety failure.
 
-No M38E, Q35Q, M39, Jacobian Lens, router-telemetry, semantic-workspace,
-completed-error-prediction, truncation, early-exit, intervention, or production
-claim is complete until its own preregistered gates pass and the corresponding
-aggregate finalization commit is present. The research program is not complete
-at this steer.
+No M38E, Q35Q, M39, Jacobian Lens, router-telemetry, hardware-telemetry,
+semantic-workspace, completed-error-prediction, truncation, early-exit,
+intervention, privacy, or production claim is complete until its own
+preregistered gates pass and the corresponding aggregate finalization commit is
+present. The research program is not complete at this steer.

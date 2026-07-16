@@ -4,6 +4,51 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T16:37Z — outcome: `m38e_finalization_audits_in_progress`
+
+- **Steer:** blob `0c258735…` unchanged; NEW binding addendum
+  `M38E_ORPHANED_POSTCOMPLETION_COMPUTE` (commit `9050252`) pulled, read,
+  obeyed (supersedes "any GPU activity halts cleanup").
+- **Classification resolved — prior `activity_detected` was a false alarm.**
+  Metadata-only attribution (nothing private committed):
+  - The sustained ~98-100% GPU compute is **NOT M38E**: it is unrelated
+    homelab services (a llama.cpp `llama-server` under llama-swap, plus an
+    MCP process), with process groups unrelated to M38E. Must not be
+    signalled (addendum condition 6).
+  - There is **no live Python M38E driver** — every `m38e_dev_sweep.py`
+    process-name match was a shell wrapper/monitor whose command line merely
+    contains the path string; the persistent phantom was THIS session's own
+    completion Monitor (`while pgrep -f m38e_dev_sweep.py …`), now STOPPED.
+    The M38E driver exited cleanly ~30h ago.
+  - Ledger byte-stable (unchanged >30h, no write fd), 288/288 official, 94
+    pilot, 0 full-band 4096, 382 total, uniform `run_kind=m38e_official_dev`.
+- **Finalization audits run against the frozen ledger — PASS:** exact-set
+  (288 = 12 cells x 24, no extra keys); escalation accounting (every band
+  ran its pilot, ZERO full-band 4096 reruns -> all bands escalation_failed,
+  consistent with the frontier-not-found conclusion); provenance
+  internal-consistency (all 382 rows carry a uniform run_id / source_commit /
+  model revision_pinned / manifest_digest / task_set_digest / override_hash /
+  seed); verifier (all 382 rows have a verdict); zero duplicate keys; frozen
+  verifier/generator suite 52/52; privacy/commit-safety clean; M38E process
+  + GPU-memory cleanup (driver exited holding no GPU; 98% GPU is the
+  unrelated tenant). Launch record present with per-attempt `records` +
+  recorded `untracked_import_audit`.
+- **Remaining gate — serving-restoration BLOCKED (not manufactured):**
+  Agents-A1 is not currently served; the dual-RTX-3090 is held by the
+  unrelated `llama-server` homelab service. Restoring/verifying Agents-A1
+  serving would require freeing that GPU, which is an operator/host decision
+  (the addendum forbids displacing an unrelated workload). Until
+  serving-restoration passes, the terminal `m38e_completed_error_frontier_not_found`
+  is NOT committed and the GPU window is NOT released (addendum steps 8, 10).
+- **active_attempt_blockers:** none (driver exited; no M38E compute).
+  **retry_blockers:** 2 (permanent, fail-closed).
+  **finalization_blockers:** 1 — serving-restoration blocked by an unrelated
+  GPU tenant; needs the dual-3090 freed for Agents-A1 or an operator ruling.
+- **q35q_blockers:** GPU window not released (unrelated tenant + pending
+  serving-restoration); admission `q35q_artifact_admission_blocked` until a
+  real tokenizer record exists.
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T16:07Z — outcome: `m38e_postcompletion_activity_detected`
 
 - **Steer:** blob `0c258735…` unchanged; NEW binding executive addendum

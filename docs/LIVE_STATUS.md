@@ -4,6 +4,47 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T17:35Z — TERMINAL: `inconclusive` (M38E CLOSED)
+
+- **Steer:** blob `52227ac…` (was `fedb4741…`), commit `7092032`
+  "terminalize M38E honestly, preserve the GPU boundary" — read, obeyed;
+  `steer_sha_seen` advanced. The steer's executive decision validated the
+  attribution (M38E driver exited ~30.5h ago holding no GPU; GPU is an
+  unrelated `llama-server`/llama-swap + MCP; no orphaned M38E process) and
+  directs the fail-closed terminal outcome.
+- **M38E TERMINAL OUTCOME COMMITTED: `inconclusive`** — blocker class
+  **`serving_restoration_unavailable_due_unrelated_gpu_tenant`**.
+  - Step-2 reconfirm (metadata only): no live M38E driver, no ledger write
+    fd, no M38E-attributable GPU kernel, ledger byte-stable. Unrelated GPU
+    tenant left **untouched**.
+  - **Every other frozen finalization audit PASSED**: exact-set (288 =
+    12 cells x 24; 94 pilot; 0 full-band 4096; 382 total), escalation
+    accounting (all bands piloted, zero material-reduction -> escalation
+    failed everywhere; two-family completed-error frontier irreversibly
+    unavailable), provenance internal-consistency, verifier coverage
+    (382/382), no-duplicate, frozen tests, privacy, commit-safety, M38E
+    process-cleanup, M38E GPU-memory-cleanup.
+  - `m38e_completed_error_frontier_not_found` was **NOT** committed solely
+    because the serving-restoration gate did not pass (Agents-A1 could not
+    be restored/verified without displacing an unrelated workload, which is
+    forbidden). This is a fail-closed terminal, not a manufactured pass and
+    not a waiver of serving restoration.
+- **M38E is now CLOSED.** No restart, rerun, repair, extend, reinterpret, or
+  replacement of any task/row/family/attempt/cap/seed/threshold/verifier/
+  audit. The frozen validated ledger is the sole admissible execution record.
+- **GPU boundary preserved:** the dual-RTX-3090 window is **NOT** released;
+  Agents-A1 serving is **NOT** claimed restored.
+- **M38E blockers:** active_attempt none (closed); retry 2 (permanent,
+  fail-closed); finalization CLOSED at `inconclusive`
+  (serving_restoration_unavailable_due_unrelated_gpu_tenant).
+- **Next milestone — Q35Q Phase 0 (CPU-only only):** while the unrelated GPU
+  tenant is active, only CPU/storage/repo-side Q35Q work (artifact admission
+  w/ genuine tokenizer roundtrip, manifests, synthetic tests, privacy scan).
+  NO GPU load / backward / VJP smoke / capture until the dual-3090 is
+  legitimately available. `q35q_artifact_admission_blocked` until a real
+  tokenizer record exists.
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T17:05Z — outcome: `m38e_finalization_audits_in_progress`
 
 - **Steer UPDATED:** steer.md blob `fedb4741…` (was `0c258735…`), commit

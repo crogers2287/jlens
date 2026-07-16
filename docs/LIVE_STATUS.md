@@ -4,6 +4,38 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T18:35Z — M38E CLOSED; Q35Q Phase-0 GPTQ admission staging landed
+
+- **Steer:** blob `52227ac…` unchanged (`steer_sha_seen 52227ac…`); binding
+  Q35Q Phase-0 addendum `Q35Q_PHASE0_STAGING_AND_EXACT_JVP_CROSSCHECK`
+  (commit `8e205c0`) obeyed — it authorizes the bounded CPU/storage/network
+  staging sequence executed below. No newer, remote in sync.
+- **M38E: CLOSED — terminal `inconclusive`** (unchanged); ledger byte-stable,
+  no live driver, no M38E GPU kernel. No restart/rerun/repair.
+- **gpu_boundary:** dual-RTX-3090 still owned by the **unrelated**
+  `llama-server`/llama-swap + MCP tenant; window **NOT** released, Agents-A1
+  serving **NOT** claimed restored, tenant untouched.
+- **Q35Q Phase-0 progress (CPU/storage/network only; commit `1123561`):**
+  GPTQ admission staging for `Qwen/Qwen3.5-35B-A3B-GPTQ-Int4` @ immutable
+  revision `3af5ca29…`:
+  - staged 39 small admission files (config/tokenizer/chat-template/
+    generation-config/manifests), manifest sha256 `b06970e9…`; 0 custom-code
+    files (no `trust_remote_code` needed).
+  - text-only architecture-admission (no weights loaded): ALL frozen fields
+    match — hidden 2048, 40 layers, vocab 248320, 256 routed experts, top-8,
+    MoE-intermediate 512; vision modules present-but-omitted (multimodal repo).
+  - **genuine tokenizer roundtrip PASS** — `trust_remote_code=False`,
+    deterministic, encoded-length 44, roundtrip OK; raw fixture text + token
+    IDs private (id-sequence digest only). Aggregate-only record committed.
+  - NO GPU, NO weight load, NO model instantiation, NO capture.
+- **q35q_blockers:** `q35q_artifact_admission_blocked` remains binding — the
+  aggregate admission-amendment (binding the roundtrip + text-only-load into
+  the frozen admission schema) and weight staging (step 7) remain; all GPU
+  execution stays gated until the dual-3090 is legitimately free.
+- **M38E blockers:** active none (closed); retry 2 (fail-closed);
+  finalization none (terminally closed at `inconclusive`).
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+
 ## Heartbeat 2026-07-16T18:05Z — M38E CLOSED (`inconclusive`); Q35Q Phase 0 gated
 
 - **Steer:** blob `52227ac…` unchanged (`steer_sha_seen 52227ac…`); no

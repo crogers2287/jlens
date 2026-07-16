@@ -4,6 +4,31 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T21:05Z — Q35Q second repair: defect-5 tokenizer conjunction closed (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver,
+  no M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU.
+- **Second-repair progress (CPU-only, NEW files):** defect-5 (complete tokenizer
+  admission) now closed at the logic level — a per-field conjunction binds
+  tokenizer class, `trust_remote_code=False`, normalization/cleanup, no-special-
+  token encoding, admitted BOS/EOS/PAD/special-token behavior, deterministic
+  encoded length + private id digest, exact decode/re-encode, chat-template
+  identity + rendering digest, tokenizer-file manifest identity, and exact
+  model/tokenizer repo+revision pairing; each field fails closed (22 new tests).
+  Prior tick closed defects 1/2/3/6 (staging orchestration + 18 integration
+  tests). Honest aggregate outcome remains `q35q_artifact_admission_blocked`.
+- **q35q_blockers (narrow, remaining):** defect-4 pinned-source/load-manifest
+  admission not yet bound; orchestration + tokenizer conjunction not yet wired
+  into the live HfApi/snapshot_download CLI with a fresh end-to-end rerun;
+  weight staging unauthorized before a genuine pass. GPU exact-VJP gate awaits a
+  legitimate dual-3090 transition + a pinned TP-correct runtime.
+- **Tests (fresh):** 396/396 (6 pre-commit + stage + orchestration + tokenizer
+  admission); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T20:35Z — steer advanced; Q35Q Phase-0 SECOND repair executed (CPU)
 
 - **Steer CHANGED:** blob `2553634…` -> `37b082ad…` (rebased onto remote,

@@ -1,0 +1,80 @@
+{
+  "architecture_admission": {
+    "all_required_pass": true,
+    "full_attention_interval": true,
+    "hidden_size": true,
+    "layer_types_hybrid_schedule": true,
+    "moe_intermediate_size": true,
+    "mtp_metadata_present": true,
+    "num_experts": true,
+    "num_experts_per_tok": true,
+    "num_hidden_layers": true,
+    "outer_architectures": true,
+    "outer_model_type": true,
+    "shared_expert_intermediate_size": true,
+    "text_model_type": true,
+    "untied_output_head": true,
+    "vision_present_in_repo": true,
+    "vocab_size": true
+  },
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "both_repos_pinned": {
+    "base": {
+      "immutable_revision": "0f0813072d2358973511097385626f21fcb6d422",
+      "projected_weight_bytes": 71903877960,
+      "repo_id": "Qwen/Qwen3.5-35B-A3B-Base",
+      "small_file_count": 10,
+      "small_manifest_sha256": "f51f02cb730a4c954318e44e62a1a5c867f9dd448e90dec8729bc21f7ffa0623",
+      "weight_file_count": 14
+    },
+    "gptq": {
+      "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b",
+      "projected_weight_bytes": 24419939760,
+      "repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4",
+      "small_file_count": 13,
+      "small_manifest_sha256": "301dd91cff3102e1bc73648b53da9b064c3f1485f0191909bb73a138cdcc92be",
+      "weight_file_count": 14
+    }
+  },
+  "gptq_admission": {
+    "all_required_pass": true,
+    "bits_4": true,
+    "group_size_128": true,
+    "quant_method_gptq": true,
+    "skips_attention": true,
+    "skips_lm_head": true,
+    "skips_mtp": true,
+    "skips_shared_expert": true,
+    "skips_vision": true,
+    "symmetric": true
+  },
+  "gpu_used": false,
+  "model_instantiated": false,
+  "outcome": "q35q_phase0_admission_corrected",
+  "phase0_admission_prerequisites_pass": true,
+  "storage_projection": {
+    "aggregate_ceiling_gib": 46.0,
+    "base_weight_gib": 66.97,
+    "gptq_weight_gib": 22.74,
+    "isolated_cache": true,
+    "per_gpu_load_ceiling_gib": 23.0
+  },
+  "tokenizer_admission": {
+    "bos_token_id": null,
+    "chat_template_render_sha256": "f275735cc3d6ba818293816e82315582b7c8a147d23390f51d7ee619c50e1835",
+    "deterministic_encode": true,
+    "encoded_length": 44,
+    "eos_token_id": 248046,
+    "exact_decode_reencode": true,
+    "id_sequence_sha256": "ce3c6f90ff314577ca74d4431e2be93de2f94b0b7ae12a2969e97eb50956d20b",
+    "no_special_tokens_requested": true,
+    "nonempty": true,
+    "pad_token_id": 248044,
+    "reencoded_id_sequence_sha256": "ce3c6f90ff314577ca74d4431e2be93de2f94b0b7ae12a2969e97eb50956d20b",
+    "reported_vocab_size": 248044,
+    "roundtrip_pass": true,
+    "tokenizer_class": "Qwen2Tokenizer",
+    "trust_remote_code": false
+  },
+  "weights_loaded": false
+}

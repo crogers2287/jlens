@@ -4,6 +4,23 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T09:05Z
+
+- **Steer:** blob `0c258735…` unchanged; no newer, remote in sync.
+- **M38E — SWEEP COMPLETE, finalization pending (unchanged):** **288 / 288**
+  official (12 cells x 24, uniform `run_kind=m38e_official_dev`); pilot
+  **94**; full_band_4096 **0**; total **382**. Ledger unchanged ~23.5h;
+  driver process lingering-idle (not disturbed). Terminal outcome
+  `m38e_completed_error_frontier_not_found` pending frozen finalization
+  gates + driver-exit confirmation; not auto-finalized. Operator notified
+  04:05Z; awaiting decision.
+- **Tests (fresh):** 324/324 pre-commit; status commit-safe clean.
+- **active_attempt_blockers:** none. **retry_blockers:** 2 (fail-closed).
+  **finalization_blockers:** 1 (frozen gates + terminal outcome, gated on
+  operator driver-exit confirmation).
+- **q35q_blockers:** GPU frees on finalization; admission
+  `q35q_artifact_admission_blocked` until a real tokenizer record exists.
+
 ## Heartbeat 2026-07-16T08:35Z
 
 - **Steer:** blob `0c258735…` unchanged; no newer, remote in sync (rebased

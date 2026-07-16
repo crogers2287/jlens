@@ -1,0 +1,35 @@
+{
+  "outcome": "q35q_phase0_metadata_header_gate_reconciled",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Metadata-only Safetensors header admission (authorized by the live-composition/header-gate addendum): shard headers fetched via ranged reads (no tensor payloads, no full shard files) and reconciled against the pinned weight index. Aggregate-only: counts, booleans, and public architecture shapes; no tensor names, URLs, response headers, caches, or local paths.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "prior_commit_reclassified": {
+    "bd86525": "q35q_live_composition_probe_partial",
+    "note": "the earlier reported source-identity and tokenizer 'passes' were self-bound (expected derived from the same observed object/bytes) and are NOT established; only the live architecture-config and GPTQ-config checks are retained"
+  },
+  "header_gate_live_result": {
+    "reconciled": true,
+    "shard_count": 14,
+    "tensor_count": 124611,
+    "each_indexed_tensor_once": true,
+    "no_unindexed_tensor": true,
+    "every_shard_covered": true,
+    "no_extra_shard": true,
+    "header_length_ceiling_bytes": 67108864,
+    "payload_bytes_fetched": 0
+  },
+  "independent_shape_evidence": {
+    "embed_tokens": [248320, 2048],
+    "lm_head": [248320, 2048],
+    "note": "obtained from real shard headers, independent of config and tokenizer; confirms vocab/output width 248320 and hidden 2048 and an untied 248320-wide head at the tensor level"
+  },
+  "header_gate_logic_tests": 18,
+  "remaining_blockers": {
+    "corrected_non_self_bound_composition": "source identity, text-only allow-list, and tokenizer expectations must be derived from INDEPENDENT provenance (pinned package/source, meta-device module enumeration, immutable tokenizer files) and compared to the observed runtime — not self-compared; special_token_behavior must be explicitly tested, not asserted",
+    "staging_orchestration_wiring": "route remote enumeration/download/checksum/free-space/cleanup/resume/cache-isolation/final-reconciliation through the repaired run_staging_orchestration (the live probe used direct hf_hub_download)",
+    "final_overall_conjunction": "one production path emitting a single conjunction with production-path integration tests that fail on self-binding",
+    "weight_staging": "full shard payload staging remains prohibited until every independent prerequisite passes"
+  },
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; no tensor names, URLs, response headers, weights, caches, or local paths"
+}

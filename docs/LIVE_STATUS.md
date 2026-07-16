@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-16T23:35Z — new correction; metadata-only header gate reconciled (CPU)
+
+- **New binding addendum** `..._Q35Q_LIVE_COMPOSITION_SELF_BINDING_AND_HEADER_GATE`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my live probe `q35q_live_composition_probe_partial`:
+  the reported source-identity and tokenizer passes were SELF-BOUND (expected
+  derived from the same observed object/bytes) and are NOT established; only the
+  live architecture-config and GPTQ-config checks are retained. It also authorized
+  a bounded metadata-only Safetensors header gate.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights loaded, no tensor payloads fetched.
+- **Header gate executed (authorized, metadata-only):** built the header-parse +
+  index-reconciliation logic (18 fail-closed tests) and ran it LIVE against the
+  14 pinned shards via ranged reads (0 payload bytes). Result: RECONCILED — 14
+  shards, 124611 tensors, each indexed tensor once, no unindexed tensor, every
+  shard covered. Independently-obtained shapes: embed [248320,2048], lm_head
+  [248320,2048] — confirms vocab/output-width 248320 + hidden 2048 + untied head
+  at the tensor level, without weight staging.
+- **q35q_blockers (remaining):** corrected NON-self-bound composition (source /
+  allow-list / tokenizer expectations from independent provenance); route through
+  the repaired staging orchestration; one final overall conjunction with
+  self-binding-failing integration tests; then weight staging. Overall outcome
+  remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 442/442 (6 pre-commit + stage + orchestration + tokenizer +
+  source + header gate); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T23:05Z — FIRST live Phase-0 composition; 4/5 validators pass on real artifact (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

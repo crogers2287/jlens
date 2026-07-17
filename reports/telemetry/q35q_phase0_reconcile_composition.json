@@ -1,0 +1,37 @@
+{
+  "outcome": "q35q_phase0_source_artifact_module_equality_established",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Committed, reproducible source<->artifact reconciliation composition (order item 2 / defect 6): the module-set equality now runs through a committed CLI + injected-provider composition used identically in tests and live, instead of a pure function only. Aggregate-only.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "composition": {
+    "source_provider": "meta-device construction of the admitted text-only Qwen3_5MoeForCausalLM class -> parameter names (no weights/GPU/memory)",
+    "artifact_provider": "strict weight-index admission (immutable LFS sha256 identity + frozen grammar) -> canonical module set",
+    "map": "frozen prefix (model.language_model.* -> model.*) + vision/MTP omission + packed<->numbered expert collapse; exact equality",
+    "independence": "source from class construction, artifact from index; neither copied into the other"
+  },
+  "live_result": {
+    "source_class": "Qwen3_5MoeForCausalLM",
+    "equal": true,
+    "source_count": 693,
+    "artifact_textonly_count": 693,
+    "missing_count": 0,
+    "extra_count": 0,
+    "vision_omitted": 167,
+    "mtp_omitted": 785,
+    "expert_layers": 40,
+    "index_tensor_count": 124611,
+    "index_shard_count": 14
+  },
+  "tests": {"reconcile_composition": 3},
+  "scope_boundary": "module-SET correspondence only; NOT load-manifest tensor equality (item 3): exact tensors, quantization aux tensors, dtype/shape, multiplicity, ordering, gate/up fusion, packed layout, and the numbered->packed loader transformation with strict loadability remain open",
+  "remaining_order": {
+    "item_3_load_manifest_semantics": "exact tensor/quant-aux/dtype/shape/multiplicity/ordering/fusion + numbered->packed loader transformation, zero ignored/missing/synthesized under strict loading",
+    "item_4_identity_binding": "full config + Transformers package + source file + class + loader + kernel + runtime identity pin and equality-check",
+    "item_5_conjunction": "one adversarial aggregate Phase-0 conjunction",
+    "item_6_weight_staging": "only after the conjunction passes",
+    "item_7_resource_transition": "independently authorized + verified dual-3090 transition (unrelated tenant currently present and active)",
+    "item_8_parity": "exact quantized forward + VJP/JVP parity before fitting"
+  },
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated_on_meta_only": true, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_and_active_preserved"},
+  "privacy": "aggregate-only; counts and booleans, no module names, tensor values, weights, caches, or local paths"
+}

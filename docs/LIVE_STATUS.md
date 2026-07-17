@@ -4,6 +4,32 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T04:05Z — committed source<->artifact reconciliation composition (order item 2)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary — unrelated tenant BACK and ACTIVE:** last tick's free state was
+  transient; the unrelated GPU workload has returned and is actively computing
+  (one card ~100% util, both cards multi-GiB resident). Window remains NOT
+  released; no independently authorized transition; GPU boundary preserved; no
+  GPU work; residual/active tenant not signalled or displaced.
+- **Order item 2 DONE (CPU-only, NEW files):** committed the source<->artifact
+  reconciliation composition (previously only a pure function + tests). A
+  committed CLI + injected-provider `run_reconciliation` compose strict
+  weight-index admission (LFS identity + grammar) with meta-device source module
+  enumeration under the frozen packed<->numbered / prefix / vision-MTP-omission
+  map, used identically in tests and live. Live: source 693 == artifact 693,
+  missing 0 / extra 0, 167 vision + 785 MTP omitted, 40 layers, index 124611
+  tensors / 14 shards; source class Qwen3_5MoeForCausalLM. Not self-bound.
+- **q35q_blockers (remaining, items 3-8):** exact load-manifest tensor equality +
+  numbered->packed loader transformation (quant-aux/shape/dtype/multiplicity/
+  ordering/fusion, strict loadability); full config/package/source/class/loader/
+  kernel/runtime identity binding; one adversarial Phase-0 conjunction; weight
+  staging; independently authorized resource transition; exact quantized forward +
+  VJP/JVP parity. Overall outcome `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 544/544; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T03:35Z — strict index admission wired into CLI (order item 1); GPU boundary HELD despite state change
 
 - **New binding addendum** `..._EXTERNAL_397B_MOE_JLENS_AND_ERROR_MONITOR_CONFOUND_GATES`

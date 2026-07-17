@@ -58,18 +58,25 @@ def extract_mapping(mapping_list) -> list:
     return [extract_converter(c) for c in mapping_list]
 
 
-def verify_dispatch_conversion(extracted) -> dict:
-    """Exact verification of the dispatch-selected qwen3_5_moe_text conversion."""
+def verify_dispatch_conversion(extracted, *, expected_total=3) -> dict:
+    """Exact verification of the dispatch-selected qwen3_5_moe_text conversion.
+    Requires the EXACT total object count and EXACTLY ONE prefix change (defects
+    2/3), so no extra/unrecognized converter capable of touching the expert tensors
+    can coexist with a valid-looking pair."""
     if not extracted:
         raise Q35QStageBlock("empty dispatch conversion mapping")
     prefixes = [e for e in extracted if e.get("kind") == "PrefixChange"]
+    weight_converters = [e for e in extracted if e.get("kind") != "PrefixChange"]
     gate_up = [e for e in extracted if e.get("target") == EXPECTED_GATE_UP["target"]]
     down = [e for e in extracted if e.get("target") == EXPECTED_DOWN["target"]]
     packed_targeting = [e for e in extracted if e.get("target") in _PACKED_TARGETS]
     checks = {
-        "prefix_change_exact": any(
-            p.get("prefix_to_remove") == EXPECTED_PREFIX["prefix_to_remove"]
-            and p.get("model_prefix") == EXPECTED_PREFIX["model_prefix"] for p in prefixes),
+        "exact_total_object_count": len(extracted) == expected_total,
+        "exactly_one_prefix_change": len(prefixes) == 1,
+        "prefix_change_exact": len(prefixes) == 1 and (
+            prefixes[0].get("prefix_to_remove") == EXPECTED_PREFIX["prefix_to_remove"]
+            and prefixes[0].get("model_prefix") == EXPECTED_PREFIX["model_prefix"]),
+        "exactly_two_weight_converters": len(weight_converters) == 2,
         "exactly_one_gate_up_converter": len(gate_up) == 1,
         "exactly_one_down_converter": len(down) == 1,
         "gate_up_source_exact": len(gate_up) == 1 and gate_up[0]["source"] == EXPECTED_GATE_UP["source"],

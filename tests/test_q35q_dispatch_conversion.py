@@ -84,6 +84,20 @@ def test_wrong_prefix_value_fails():
     assert out["prefix_change_exact"] is False and out["dispatch_conversion_pass"] is False
 
 
+def test_extra_prefix_converter_fails():
+    m = good(); m.insert(0, {"kind": "PrefixChange", "prefix_to_remove": "language_model", "model_prefix": "model"})
+    out = verify_dispatch_conversion(m)
+    assert out["exactly_one_prefix_change"] is False and out["exact_total_object_count"] is False
+    assert out["dispatch_conversion_pass"] is False
+
+
+def test_exact_total_count_enforced():
+    m = good(); m.append({"kind": "WeightConverter", "target": ["other.thing"],
+                          "source": ["x"], "ops": [("Transpose", 1)]})
+    out = verify_dispatch_conversion(m)
+    assert out["exact_total_object_count"] is False and out["dispatch_conversion_pass"] is False
+
+
 def test_empty_fails():
     with pytest.raises(Q35QStageBlock, match="empty dispatch"):
         verify_dispatch_conversion([])

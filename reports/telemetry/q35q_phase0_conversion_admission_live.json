@@ -1,0 +1,32 @@
+{
+  "outcome": "q35q_provenance_blocked",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Committed LIVE conversion/source/dispatch admission adapter (runtime-composition-provenance correction): obtains identities from the installed runtime (no caller-supplied observed fields), binds import-origin/distribution-root/source-bytes/class-modules, and verifies the live dispatch object exactly. Blocks honestly on the expected-digest independence gate. Aggregate-only.",
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "installed_runtime_admission_pass": true,
+  "installed_bindings": {
+    "transformers_version_bound": true,
+    "import_origin_contained_under_distribution_root": true,
+    "exact_pinned_file_set": true,
+    "source_bytes_hashed": true,
+    "live_dispatch_conversion_pass": true,
+    "converter_class_modules_bound": true,
+    "pinned_files": ["transformers/conversion_mapping.py (mapping data)", "transformers/core_model_loading.py (converter/operation class definitions)", "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py (model definition)"],
+    "live_finding": "the converter/operation CLASSES (PrefixChange/WeightConverter/MergeModulelist/Concatenate) are defined in transformers.core_model_loading, not conversion_mapping -- surfaced by the live adapter and now pinned + class-module-bound"
+  },
+  "dispatch_verifier_hardening": "exact total object count + exactly-one prefix change enforced (defects 2/3), so no extra/unrecognized converter can coexist with a valid-looking pair",
+  "independence_gate_blocked": {
+    "expected_digests_independent": false,
+    "blocker": "expected source digests not yet derived from the immutable PyPI upstream artifact for transformers 5.13.1; deriving from installed bytes is self-binding",
+    "upstream_resolvable": "transformers 5.13.1 exists on PyPI (normal install, no direct_url) -> independent upstream derivation is feasible as the next step"
+  },
+  "remaining": {
+    "independence": "derive expected digests from the immutable PyPI 5.13.1 sdist/wheel and bind; add the 10 adversarial integration tests (forged bundle, self-bound digests, shadow path, same-version different wheel, shadow class, extra converter, non-live extraction, wrong loader entry)",
+    "gptq_runtime_tuple": "freeze+install exact immutable Optimum/GPTQModel+Defuser/BACKEND.GPTQ_TORCH tuple (moving main not admissible) -- operator decision",
+    "then": "synthetic differentiable fixture; Phase-0 conjunction; weights; authorized GPU transition; exact forward + activation VJP/JVP parity; lens fit"
+  },
+  "repository_visibility": "public (unresolved; aggregate-only boundary maintained)",
+  "tests": {"dispatch_conversion": 12, "runtime_admission": 7},
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_preserved"},
+  "privacy": "aggregate-only; version + booleans + public source-digest prefixes, no host paths/private digests, tensor values, weights, caches"
+}

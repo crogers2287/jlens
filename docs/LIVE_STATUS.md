@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T08:35Z — new correction; LIVE conversion-admission adapter (committed, dispatch-obtained)
+
+- **New binding addendum** `..._Q35Q_RUNTIME_COMPOSITION_PROVENANCE_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my dispatch verifier + unified composition partial:
+  they were injected/synthetic, not a committed LIVE runtime admission, and the
+  independence boolean was not evidence.
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (resident, low util); window NOT
+  released; no authorized transition; boundary preserved; no GPU work.
+- **LIVE adapter built (CPU-only, NEW committed CLI):** scripts/q35q_conversion_admission.py
+  obtains identities FROM the installed runtime (no caller-injected fields):
+  distribution version, import-origin realpath containment under the package root,
+  exact pinned source-file set, source-byte hashing, and the LIVE
+  get_checkpoint_conversion_mapping('qwen3_5_moe_text') object extracted+verified
+  immediately with class-module binding. Installed-runtime admission PASSES.
+  Live finding: the converter/op CLASSES live in transformers.core_model_loading
+  (not conversion_mapping) -- now pinned + class-module-bound. Dispatch verifier
+  hardened: exact total count + exactly-one prefix (defects 2/3).
+- **Outcome `q35q_provenance_blocked` (honest):** the expected-digest INDEPENDENCE
+  gate is not yet met -- expected digests must come from the immutable PyPI
+  upstream for transformers 5.13.1 (which EXISTS on PyPI), not the installed bytes.
+- **q35q_blockers:** independence (PyPI 5.13.1 upstream digest derivation + 10
+  adversarial integration tests); the GPTQ runtime tuple (exact immutable Optimum/
+  GPTQModel+Defuser) for the differentiable fixture -- operator decision. Overall
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** full q35q/m36v/m38e suite green (752); commit-safe clean.
+
 ## Heartbeat 2026-07-17T08:05Z — unified runtime conversion-admission composition (defect 4/8)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

@@ -1,0 +1,28 @@
+{
+  "outcome": "q35q_load_manifest_runtime_path_unresolved",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Runtime source-digest pin (order items 2/4): bind the exact installed Transformers source files the conversion/structural verifiers depend on to immutable public sha256 identities, so a source swap / monkeypatch / version drift is caught and the structural conversion inspection becomes admission-grade rather than a drift hint. Aggregate-only; public library identities only.",
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "pinned_public_source_digests": {
+    "transformers/conversion_mapping.py": {"sha256_prefix": "03562f796f068c1e"},
+    "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py": {"sha256_prefix": "5ff72ce593c1c7bd"},
+    "note": "public reproducible library-file identities (permitted immutable public identity); bound by equality via bind_source_digests; the structural conversion verification (AST) is now anchored to these pinned sources"
+  },
+  "tests": {"runtime_source_pin": 7},
+  "runtime_tuple_status": {
+    "present_and_pinnable": ["transformers 5.13.1 (source-digest pinned)", "torch/cuda (installed)"],
+    "absent_for_differentiable_fixture": ["Optimum", "GPTQModel", "Defuser"],
+    "implication": "the installed runtime can structurally verify the standard numbered->packed conversion, but the GPTQModel+Defuser+TorchLinear differentiable activation-autograd fixture requires installing/pinning the GPTQ loader tuple -- a runtime-tuple decision flagged for the operator, not taken"
+  },
+  "operator_decisions_pending": [
+    "repository visibility (public vs restore-private) -- gate unresolved",
+    "freeze + install the GPTQ loader tuple (Optimum / GPTQModel+Defuser) so the differentiable-runtime admission fixture can proceed"
+  ],
+  "remaining_order": {
+    "items_1_4_identity_binding": "complete the full runtime-tuple freeze once GPTQModel/Optimum are installed (their source digests + dispatch)",
+    "differentiable_fixture": "tiny synthetic Qwen3.5-MoE fixture through the real GPTQModel/Defuser/TorchLinear stack: defusion, per-quant-tensor consumption, forward + activation VJP/JVP parity vs dequantized ref, finite-diff, determinism, adversarial fails",
+    "then": "Phase-0 conjunction; weights; authorized GPU transition; exact forward + VJP/JVP parity; lens fit"
+  },
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_and_active_preserved"},
+  "privacy": "aggregate-only; public library version + reproducible source-digest prefixes, no host/private digests, tensor values, weights, caches, or local paths"
+}

@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T07:05Z — runtime source-digest pin binds the structural conversion verification (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator decision; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (one card actively computing, ~92%
+  util); window NOT released; no authorized transition; boundary preserved; no
+  GPU work; tenant not signalled/displaced.
+- **Runtime source-digest pin (CPU-only, NEW files):** bound the exact installed
+  Transformers source files the conversion/structural verifiers depend on
+  (conversion_mapping.py, modeling_qwen3_5_moe.py) to immutable public sha256
+  identities via bind_source_digests (equality; fail closed on swap/monkeypatch/
+  drift/missing/extra). This anchors the AST structural conversion verification to
+  a pinned immutable source (addendum items 2/4). 7 tests.
+- **CPU-only admission stack now comprehensive:** header gate (provenance-bound),
+  strict index admission, config admission, source<->artifact reconciliation
+  (full 40-layer), load-manifest runtime-path classification, structural (AST)
+  conversion verification, and now runtime source-digest pin. The next substantive
+  steps require the GPTQ loader tuple.
+- **q35q_blockers (operator decisions):** (1) repository visibility public vs
+  private; (2) freeze+install the GPTQ loader tuple (Optimum / GPTQModel+Defuser)
+  so the differentiable activation-autograd fixture (defusion, per-quant-tensor
+  consumption, forward + VJP/JVP parity vs dequantized ref, finite-diff,
+  determinism, adversarial fails) can proceed. Then Phase-0 conjunction, weights,
+  authorized GPU transition, exact parity. Overall outcome
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 583/583; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T06:35Z — new addendum; structural (AST) conversion verify replaces substring hint
 
 - **New binding addendum** `..._Q35Q_DIFFERENTIABLE_GPTQ_TORCH_BACKEND_PRIORITY`

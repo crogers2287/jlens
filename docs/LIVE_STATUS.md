@@ -4,6 +4,32 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T00:05Z — source-derived allow-list established via meta construction (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights loaded (meta-device module enumeration only — no memory).
+- **Corrected-composition item-2 progress (CPU-only, NEW files):** replaced the
+  self-bound admitted==admitted comparison with a genuine SOURCE-derived allow-
+  list from a bounded meta-device construction of the admitted Qwen3_5MoeForCausalLM
+  class (no weights/GPU/memory). Real structure discovered (independent of the
+  weight index): DeltaNet projections under linear_attn.* (not self_attn), full
+  layers add q_norm/k_norm, PACKED source experts (mlp.experts.gate_up_proj/
+  down_proj); source allow-list 693 modules (templates 18 linear / 15 full). This
+  supersedes the earlier synthetic validator's wrong self_attn path + numbered-
+  expert assumption. 7 new tests.
+- **q35q_blockers (remaining):** packed(source)<->numbered(artifact) expert
+  representation map before source<->index module-set equality; non-self-bound
+  tokenizer + source-identity provenance; staging-orchestration wiring; one final
+  conjunction with self-binding-failing integration tests; then weight staging.
+  Overall outcome remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 449/449 (6 pre-commit + stage + orchestration + tokenizer +
+  source + header + source-allowlist); commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-16T23:35Z — new correction; metadata-only header gate reconciled (CPU)
 
 - **New binding addendum** `..._Q35Q_LIVE_COMPOSITION_SELF_BINDING_AND_HEADER_GATE`

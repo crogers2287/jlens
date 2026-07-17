@@ -1,0 +1,33 @@
+{
+  "outcome": "q35q_phase0_source_derived_allowlist_established",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Independent SOURCE-derived text-only module allow-list from a bounded meta-device construction of the admitted Qwen3_5MoeForCausalLM class (no weights, no GPU, no memory: torch.device('meta'); reduced layer/expert counts, expanded over the frozen schedule). This is the source side of corrected-composition item 2, replacing the earlier self-bound admitted==admitted comparison. Aggregate-only: counts, template sizes, and public module-structure facts; no tensor values, no local paths.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "source_derived": {
+    "model_class": "Qwen3_5MoeForCausalLM",
+    "allowlist_size": 693,
+    "top_level_module_count": 3,
+    "linear_attention_layer_template_size": 18,
+    "full_attention_layer_template_size": 15,
+    "num_layers": 40,
+    "full_attention_interval": 4
+  },
+  "real_structure_findings": {
+    "deltanet_projection_path": "model.layers.{i}.linear_attn.{in_proj_qkv,in_proj_z,in_proj_a,in_proj_b,out_proj} (NOT self_attn); linear layers also carry linear_attn.{A_log,conv1d,dt_bias,norm}",
+    "full_attention_layers": "self_attn.{q_proj,k_proj,v_proj,o_proj} plus q_norm/k_norm (QK-norm)",
+    "routed_experts_source_representation": "PACKED per layer: mlp.experts.gate_up_proj + mlp.experts.down_proj (module count independent of num_experts)",
+    "routed_experts_artifact_representation": "the GPTQ weight index enumerates NUMBERED per-expert tensors (~124611 tensors / ~32285 canonical module paths)",
+    "shared_expert": "mlp.shared_expert.{gate_proj,up_proj,down_proj} + mlp.shared_expert_gate; router mlp.gate",
+    "supersedes": "the hardcoded self_attn projection paths + numbered-expert assumption in the earlier synthetic q35q_source_admission validator; the live composition must use this meta-derived allow-list"
+  },
+  "source_allowlist_logic_tests": 7,
+  "remaining_blockers": {
+    "packed_numbered_expert_reconciliation": "the source packed expert modules (mlp.experts.gate_up_proj/down_proj) must be mapped to the artifact's numbered per-expert tensors under a frozen representation map before requiring source<->artifact module-set equality",
+    "corrected_non_self_bound_tokenizer_and_source_identity": "expected tokenizer values + source commit/file identity from independent immutable provenance vs observed runtime",
+    "staging_orchestration_wiring": "route enumeration/download/checksum/free-space/cleanup/resume/cache-isolation/reconciliation through run_staging_orchestration",
+    "final_overall_conjunction": "one production path + integration tests that fail on self-binding",
+    "weight_staging": "full shard payload staging remains prohibited until every independent prerequisite passes"
+  },
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated_on_meta_only": true, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; no tensor values, weights, caches, or local paths"
+}

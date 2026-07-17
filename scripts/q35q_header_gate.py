@@ -22,8 +22,10 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from q35q_header_gate_adapter import run_header_gate  # noqa: E402
+from q35q_index_admission import admit_weight_index  # noqa: E402
 from q35q_range_fetch import RangeProvenanceBlock  # noqa: E402
 from q35q_safetensors_header import HeaderGateBlock  # noqa: E402
+from q35q_stage import Q35QStageBlock  # noqa: E402
 
 REPO = "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4"
 REV = "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"
@@ -52,9 +54,19 @@ def main():
         if s.rfilename.endswith(".safetensors"):
             records.append({"repo_id": REPO, "revision": REV, "path": s.rfilename,
                             "lfs_oid": _lfs_sha256(s), "declared_size": s.size})
+    # strict weight-index admission: freeze the index's immutable LFS sha256 from
+    # metadata, verify the downloaded bytes against it, then parse under the frozen
+    # grammar (no fail-open json.load).
+    index_lfs_sha = None
+    for s in mi.siblings:
+        if s.rfilename == "model.safetensors.index.json":
+            index_lfs_sha = _lfs_sha256(s)
+    if not index_lfs_sha:
+        raise Q35QStageBlock("weight-index immutable LFS identity unavailable")
     idx_path = hf_hub_download(REPO, filename="model.safetensors.index.json",
                                revision=REV, local_dir=staging_root)
-    weight_map = json.load(open(idx_path))["weight_map"]
+    with open(idx_path, "rb") as f:
+        weight_map = admit_weight_index(f.read(), index_lfs_sha)["weight_map"]
 
     session = requests.Session()
 
@@ -75,7 +87,7 @@ def main():
         result["artifact_admission_status"] = "q35q_artifact_admission_blocked"
         result["boundary"] = {"gpu_used": False, "weights_loaded": False,
                               "tensor_payload_fetched": False, "unrelated_gpu_tenant": "preserved"}
-    except (RangeProvenanceBlock, HeaderGateBlock) as e:
+    except (RangeProvenanceBlock, HeaderGateBlock, Q35QStageBlock) as e:
         result = {"outcome": "q35q_artifact_admission_blocked",
                   "blocked": type(e).__name__, "reason": str(e)[:160]}
 

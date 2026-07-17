@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T03:35Z — strict index admission wired into CLI (order item 1); GPU boundary HELD despite state change
+
+- **New binding addendum** `..._EXTERNAL_397B_MOE_JLENS_AND_ERROR_MONITOR_CONFOUND_GATES`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It is program control: notes a public 397B-MoE BF16 Jacobian-lens
+  precedent (metadata/source inspection only; separate amendment required before
+  any download/exec), adds correctness-monitor confound gates for future M39, and
+  EXPLICITLY does NOT release the dual-3090 window, relax any Q35Q prerequisite,
+  or authorize weight staging.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary — STATE CHANGE, boundary HELD:** the previously-blocking
+  unrelated GPU workload is no longer observed on the dual-3090; only a small
+  residual allocation remains (both cards now <0.5 GiB used, ~0% util). Per the
+  steer this does NOT release the window: no independently-authorized+verified
+  resource transition has occurred, Phase-0 admission has NOT passed, and low
+  utilization may not be inferred as a free window. GPU boundary preserved; no
+  GPU work, no signalling/displacing any residual tenant.
+- **Order item 1 DONE (CPU-only):** wired strict immutable weight-index admission
+  into the committed header-gate CLI — freeze the index LFS sha256 from metadata,
+  verify downloaded bytes against it, parse under the frozen grammar (no
+  fail-open json.load). Live CLI passed: 14 shards, 124611 tensors.
+- **q35q_blockers (remaining order items 2-8):** committed source<->artifact
+  reconciliation composition; exact load-manifest semantics + numbered->packed
+  loader transformation (quant-aux/shape/dtype/multiplicity/ordering/fusion);
+  full package/source/class/loader/kernel/runtime identity binding; one
+  adversarial Phase-0 conjunction; then weight staging; independently authorized
+  resource transition; exact quantized forward + VJP/JVP parity. Overall outcome
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 541/541; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T03:05Z — strict weight-index admission (defect 4) done + live-verified (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

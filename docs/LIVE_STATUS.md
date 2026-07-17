@@ -4,6 +4,35 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T04:35Z — new correction; config admission + full-source enumeration (CPU)
+
+- **New binding addendum** `..._Q35Q_REDUCED_META_EXTRAPOLATION_AND_SOURCE_INDEPENDENCE_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified the reconciliation partial: source was built from
+  UNADMITTED artifact config, and it reduced to 4 layers/2 experts and
+  extrapolated (could miss a layer-index-dependent branch outside layers 0-3).
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present and actively computing (one card
+  ~100% util, both multi-GiB resident); window NOT released; no authorized
+  transition; boundary preserved; no GPU work; tenant not signalled/displaced.
+- **Repair executed (CPU-only, NEW files):** (1) config.json admitted via its
+  immutable git-blob identity (== Hub blob_id) + the full text-architecture + GPTQ
+  conjunctions BEFORE source construction; admitted config supplies expert/layer
+  counts; (2) admitted config not mutated; (3) the FULL 40-layer text-only class
+  is constructed directly on the meta device (measured feasible ~0.7s, 693 modules
+  == prior reduced result) and enumerated directly — the reduced+extrapolation
+  path is removed; (4) fail-closed guard on incomplete layer enumeration. Live:
+  config_admitted true, full_source_enumeration true, 693==693, 167 vision + 785
+  MTP omitted, 40 layers x 256 experts, index 124611 tensors / 14 shards.
+- **q35q_blockers (remaining):** item-3 exact load-manifest tensor equality +
+  numbered->packed loader transformation; item-4 equality-bind source/package/
+  class identity against a frozen expected pin (observed identity now recorded);
+  item-5 adversarial Phase-0 conjunction; then weight staging; authorized
+  resource transition; exact quantized forward + VJP/JVP parity. Overall outcome
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 554/554; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T04:05Z — committed source<->artifact reconciliation composition (order item 2)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

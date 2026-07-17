@@ -19,27 +19,44 @@ source set until source/package identity is independently pinned (order item 4).
 """
 from __future__ import annotations
 
+from q35q_config_admission import admit_config
 from q35q_index_admission import admit_weight_index
 from q35q_module_reconcile import reconcile_source_vs_artifact
 from q35q_source_admission import canonical_module_path
-from q35q_source_allowlist import derive_source_allowlist_from_modules
+from q35q_source_allowlist import canonical_source_modules, extract_templates
 from q35q_stage import Q35QStageBlock
 
 
-def run_reconciliation(*, source_param_names, index_bytes, index_expected_sha256,
-                       num_experts, num_layers=40, interval=4) -> dict:
-    """Compose strict index admission + source allow-list derivation + the frozen
-    representation-map equality. `source_param_names` come from the admitted text-only
-    class (meta-device enumeration); `index_bytes` are the downloaded weight index."""
+def run_reconciliation(*, config_bytes, config_expected_git_sha1, source_param_names,
+                       index_bytes, index_expected_sha256) -> dict:
+    """Compose config admission + strict index admission + full-source module set +
+    the frozen representation-map equality. `source_param_names` are the DIRECT full
+    enumeration of the admitted text-only class (no reduced extrapolation); the
+    admitted config supplies the authoritative expert/layer counts."""
+    admitted_cfg = admit_config(config_bytes, config_expected_git_sha1)
+    num_experts = admitted_cfg["num_experts"]
+    num_layers = admitted_cfg["num_hidden_layers"]
+
     admitted = admit_weight_index(index_bytes, index_expected_sha256)
     artifact_modules = {canonical_module_path(name) for name in admitted["weight_map"]}
-    source = derive_source_allowlist_from_modules(
-        source_param_names, num_layers=num_layers, interval=interval)
-    recon = reconcile_source_vs_artifact(source["allowlist"], artifact_modules, num_experts)
+
+    # DIRECT full-source module set (not reduced+extrapolated): every layer present
+    source_modules = canonical_source_modules(source_param_names)
+    templates = extract_templates(source_modules, num_layers)
+    if set(templates["per_layer"]) != set(range(num_layers)):
+        raise Q35QStageBlock(
+            f"source enumeration is not the complete {num_layers}-layer manifest")
+    recon = reconcile_source_vs_artifact(source_modules, artifact_modules, num_experts)
     return {
         "outcome": ("q35q_phase0_source_artifact_module_equality_established"
                     if recon["equal"] else "q35q_artifact_admission_blocked"),
         "artifact_admission_status": "q35q_artifact_admission_blocked",
+        "config_admitted": True,
+        "config_architecture_pass": admitted_cfg["architecture_pass"],
+        "config_gptq_pass": admitted_cfg["gptq_pass"],
+        "admitted_num_layers": num_layers,
+        "admitted_num_experts": num_experts,
+        "full_source_enumeration": True,
         "equal": recon["equal"],
         "source_count": recon["source_count"],
         "artifact_textonly_count": recon["artifact_textonly_count"],

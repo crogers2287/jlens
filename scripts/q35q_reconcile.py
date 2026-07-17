@@ -54,19 +54,19 @@ def main():
         raise Q35QStageBlock("model-info commit != frozen revision")
     index_sha = next((_lfs_sha256(s) for s in mi.siblings
                       if s.rfilename == "model.safetensors.index.json"), None)
+    config_blob = next((getattr(s, "blob_id", None) for s in mi.siblings
+                        if s.rfilename == "config.json"), None)
     if not index_sha:
         raise Q35QStageBlock("weight-index immutable LFS identity unavailable")
+    if not config_blob:
+        raise Q35QStageBlock("config immutable git blob identity unavailable")
 
-    hf_hub_download(REPO, filename="config.json", revision=REV, local_dir=staging_root)
+    cfg_path = hf_hub_download(REPO, filename="config.json", revision=REV, local_dir=staging_root)
+    with open(cfg_path, "rb") as f:
+        config_bytes = f.read()
+    # build the FULL 40-layer text-only class directly on the meta device (no
+    # reduction, no in-place config mutation): meta tensors allocate metadata only.
     cfg = AutoConfig.from_pretrained(staging_root, trust_remote_code=False)
-    txt = getattr(cfg, "text_config", cfg)
-    num_experts = getattr(txt, "num_experts", 256)
-    num_layers = getattr(txt, "num_hidden_layers", 40)
-    interval = getattr(txt, "full_attention_interval", 4)
-    # reduced meta construction (structurally faithful: packed experts are one module)
-    for attr, val in (("num_hidden_layers", 4), ("num_experts", 2)):
-        if hasattr(txt, attr):
-            setattr(txt, attr, val)
     with torch.device("meta"):
         model = AutoModelForCausalLM.from_config(cfg, trust_remote_code=False)
     source_param_names = [n for n, _ in model.named_parameters()]
@@ -78,10 +78,13 @@ def main():
 
     try:
         result = run_reconciliation(
+            config_bytes=config_bytes, config_expected_git_sha1=config_blob,
             source_param_names=source_param_names, index_bytes=index_bytes,
-            index_expected_sha256=index_sha, num_experts=num_experts,
-            num_layers=num_layers, interval=interval)
+            index_expected_sha256=index_sha)
+        # observed source/package identity (item 6 partial: recorded, not yet pinned)
+        import transformers
         result["source_class"] = type(model).__name__
+        result["transformers_version"] = transformers.__version__
     except Q35QStageBlock as e:
         result = {"outcome": "q35q_artifact_admission_blocked",
                   "blocked": type(e).__name__, "reason": str(e)[:160]}

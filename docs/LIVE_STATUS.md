@@ -4,6 +4,31 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T05:05Z — order item 3: q35q_load_manifest_blocked (GPTQ<->runtime expert-repr mismatch)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present and computing (multi-GiB resident);
+  window NOT released; no authorized transition; boundary preserved; no GPU work.
+- **Order item 3 -> HARD BLOCKER (CPU-only source inspection, NEW files):** the
+  load-manifest / loader-transformation gate reaches an evidence-backed block.
+  transformers 5.13.1 Qwen3_5MoeExperts stores routed experts as PACKED 3D
+  nn.Parameter tensors (gate_up_proj[num_experts,2*int,hidden], indexed by expert)
+  -- NOT nn.Linear modules. The GPTQ artifact stores NUMBERED per-expert 2D
+  linears with GPTQ tensors (qweight/qzeros/scales/g_idx). GPTQ cannot quantize a
+  packed 3D parameter, and the source carries NO _checkpoint_conversion_mapping /
+  load-state-dict hook to map numbered->packed. Verdict `q35q_load_manifest_blocked`:
+  module-SET equality (693==693) holds but tensor-level strict loadability does
+  NOT, and per steer a conversion may not be improvised. 8 tests.
+- **q35q_blockers:** the GPTQ(3af5ca29)+transformers-5.13.1 combination is not
+  strictly loadable. Resolution is an OPERATOR/steer decision: pin a runtime whose
+  Qwen3.5-MoE experts are per-expert linears matching the artifact (intersects
+  order item 8), admit a matching quantized checkpoint, take a BF16/FP8 or smaller
+  dense path, or stop the quantized branch. Overall outcome remains
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 562/562; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T04:35Z — new correction; config admission + full-source enumeration (CPU)
 
 - **New binding addendum** `..._Q35Q_REDUCED_META_EXTRAPOLATION_AND_SOURCE_INDEPENDENCE_CORRECTION`

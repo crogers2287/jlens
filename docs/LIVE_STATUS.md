@@ -4,6 +4,31 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T01:05Z — metadata-only header gate PASSED (sub-gate); overall still blocked (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads.
+- **Header-gate provenance closed (CPU/metadata-only, NEW files):** added a
+  provenance-bound ranged fetcher that asserts HTTP 206 + exact Content-Range,
+  rejects unpinned/mutable resolve URLs, and binds each shard's immutable LFS OID
+  before reading header bytes (18 fail-closed tests). Live rerun through it PASSED
+  on all 14 pinned shards: 206/Content-Range verified, all OIDs bound, reconciled,
+  124611 tensors, embed/lm_head [248320,2048], 0 payload bytes.
+- **First Phase-0 SUB-GATE PASS:** `q35q_phase0_metadata_header_gate_passed` —
+  format + range-provenance + immutable-OID + reconciliation + privacy all
+  satisfied with fully independent (non-self-bound) evidence. Overall
+  `q35q_artifact_admission_blocked` UNCHANGED.
+- **q35q_blockers (remaining, overall):** packed<->numbered expert map +
+  source<->index equality; non-self-bound tokenizer/source-identity; staging
+  orchestration wiring; one final conjunction with self-binding/provenance failure
+  tests; then weight staging.
+- **Tests (fresh):** 477/477; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T00:35Z — new correction; Safetensors header parser format-hardened + live-reconciled (CPU)
 
 - **New binding addendum** `..._Q35Q_SAFETENSORS_FORMAT_VALIDATION_CORRECTION`

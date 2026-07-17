@@ -4,6 +4,32 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T03:05Z — strict weight-index admission (defect 4) done + live-verified (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads.
+- **Defect 4 (strict weight-index admission) done + live-verified (CPU-only,
+  NEW files):** verify sha256(local index bytes) == the frozen immutable LFS
+  object sha256; duplicate-key rejection; frozen grammar (top-level subset
+  {metadata,weight_map}; nonempty weight_map; nonempty string tensor names;
+  nonempty .safetensors shard paths, no absolute/traversal; booleans/non-strings
+  rejected). 19 tests. Provenance finding: the index is LFS-backed (~15 MB /
+  124611 tensors), so its identity is the LFS sha256 NOT the git blob sha1 (which
+  hashes the pointer) — the initial git-blob attempt correctly FAILED CLOSED
+  before correction. Live: identity bound, 124611 tensors, 14 shards.
+- **q35q_blockers (remaining):** wire strict index admission into the header-gate
+  CLI (still json.load); defect-6 committed reconciliation CLI; defect-7
+  load-manifest equality (exact tensors/quant-aux/dtype/shape/ordering +
+  numbered->packed loader transformation, strict loadability); defect-9 config
+  schema coverage; defect-10 source/package identity pin. Overall outcome
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 541/541; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T02:35Z — new correction; header URL/redirect + expert-id defects fixed (CPU)
 
 - **New binding addendum** `..._Q35Q_HEADER_REDIRECT_AND_MODULE_RECONCILIATION_CORRECTION`

@@ -1,0 +1,23 @@
+{
+  "outcome": "q35q_artifact_admission_blocked",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Strict weight-index admission (defect 4): immutable-identity verification of the downloaded index bytes + duplicate-key rejection + frozen grammar, built and live-verified. Aggregate-only.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "defect_4_strict_index_admission": {
+    "status": "identity_plus_grammar_done_and_live_verified",
+    "identity": "verify sha256(local index bytes) == the frozen immutable LFS object sha256 the Hub reports; fails closed on mismatch or wrong-shape identity",
+    "grammar": "duplicate JSON keys rejected at every level; top-level keys subset of {metadata, weight_map}; weight_map nonempty; tensor names nonempty strings; shard paths nonempty strings, no absolute/traversal, .safetensors only; booleans and non-strings rejected; metadata (if present) an object",
+    "provenance_finding": "the index is LFS-backed (~15 MB / 124611 tensors); its content identity is the LFS object sha256, NOT the git blob sha1 (which hashes only the small LFS pointer). The initial git-blob identity attempt correctly FAILED CLOSED before this was corrected to the LFS sha256.",
+    "live_result": {"index_identity_bound": true, "tensor_count": 124611, "shard_count": 14}
+  },
+  "tests": {"index_admission": 19},
+  "remaining_blockers": {
+    "defect_4_cli_wiring": "route the header-gate CLI's index load through admit_weight_index (it still uses plain json.load); freeze the index descriptor {repo,rev,path,lfs_sha256,size} alongside the shard descriptors",
+    "defect_6_committed_reconciliation_cli": "single committed source<->artifact reconciliation CLI used identically in tests and live",
+    "defect_7_load_manifest_equality": "exact tensor names/multiplicity, quantization aux tensors (scales/qzeros/g_idx/qweight), dtype/shape, expert-axis ordering, gate/up fusion order, packed layout, and the exact numbered->packed loader conversion with zero ignored/missing/synthesized tensors under strict loading",
+    "defect_9_schema_coverage": "bind exact hidden-layer + attention/DeltaNet/shared-expert/router/embed/head parameter schema to the pinned config",
+    "defect_10_source_package_identity": "pin + equality-check installed Transformers package/source/class/digest/config/loader before admitting the meta-device source set"
+  },
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; counts and booleans, no sha values, tensor names, weights, caches, or local paths"
+}

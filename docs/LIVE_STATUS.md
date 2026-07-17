@@ -4,6 +4,34 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T09:05Z — new correction; INDEPENDENCE gate established (upstream wheel provenance)
+
+- **New binding addendum** `..._Q35Q_LIVE_ADAPTER_DISTRIBUTION_AND_OPERATION_ORIGIN_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified the live adapter partial AND provided the concrete
+  PyPI upstream identities (wheel/sdist sha256 + source commit).
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (resident, low util); window NOT
+  released; no authorized transition; boundary preserved; no GPU work.
+- **Source-digest INDEPENDENCE established (CPU-only, NEW files):** fetched the
+  frozen PyPI transformers-5.13.1 wheel, verified its sha256 == the pinned upstream
+  identity, extracted the admitted source files INDEPENDENTLY from the wheel, and
+  bound them by equality to the installed bytes -> all 3 files match
+  (installed_source_bound_to_upstream=true). This resolves the expected-digest
+  independence gate that blocked the runtime conversion admission (no longer
+  self-bound). Public library wheel fetched for provenance only; NOT committed.
+  10 tests.
+- **q35q_blockers (remaining):** full live-closure hardening (distribution RECORD
+  ownership; live source closure via inspect for the dispatch callable + every
+  converter + nested op + model classes; clean-subprocess monkeypatch detection;
+  loader-entry binding; 10 adversarial tests); the exact immutable GPTQ runtime
+  tuple (Optimum/GPTQModel+Defuser) for the differentiable fixture -- operator
+  decision. Overall `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** full q35q/m36v/m38e suite green (762); commit-safe clean.
+
 ## Heartbeat 2026-07-17T08:35Z — new correction; LIVE conversion-admission adapter (committed, dispatch-obtained)
 
 - **New binding addendum** `..._Q35Q_RUNTIME_COMPOSITION_PROVENANCE_CORRECTION`

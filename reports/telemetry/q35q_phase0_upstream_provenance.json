@@ -1,0 +1,28 @@
+{
+  "outcome": "q35q_source_digest_independence_established",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Independent upstream source provenance: the frozen PyPI transformers 5.13.1 wheel was fetched and its sha256 verified against the pinned upstream identity; the admitted source files were extracted independently from the wheel and bound by equality to the installed bytes. This resolves the expected-digest INDEPENDENCE gate that blocked the runtime conversion admission. Aggregate-only; public library identities only.",
+  "pinned_upstream": {
+    "wheel_name": "transformers-5.13.1-py3-none-any.whl",
+    "wheel_sha256_verified": true,
+    "sdist_name": "transformers-5.13.1.tar.gz",
+    "source_commit": "4626421dc6b741a329300682a6408246ee465490"
+  },
+  "independence_result": {
+    "wheel_sha256_matches_pinned": true,
+    "expected_digests_derived_from_wheel_not_installed_bytes": true,
+    "members_bound": ["transformers/conversion_mapping.py", "transformers/core_model_loading.py", "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py"],
+    "all_present": true, "no_extra": true, "all_match_upstream": true,
+    "installed_source_bound_to_upstream": true,
+    "note": "the installed transformers 5.13.1 conversion/loader/model source files are byte-identical to the immutable PyPI wheel; the source-digest binding is now non-self-bound"
+  },
+  "tests": {"upstream_provenance": 10},
+  "remaining_for_full_runtime_admission": {
+    "full_live_closure_hardening": "bind the installed distribution via importlib.metadata.distribution() RECORD/WHEEL/METADATA ownership; derive the live source closure from the actual imported objects (inspect.getsourcefile) for the dispatch callable + every converter + every nested operation + model classes; clean-subprocess isolation detecting in-memory monkeypatching; bind the loader entry point; 10 adversarial integration tests",
+    "gptq_runtime_tuple": "exact immutable Optimum/GPTQModel+Defuser/BACKEND.GPTQ_TORCH tuple for the differentiable fixture -- operator decision",
+    "then": "synthetic differentiable fixture; Phase-0 conjunction; weights; authorized GPU transition; exact forward + activation VJP/JVP parity; lens fit"
+  },
+  "repository_visibility": "public (unresolved; aggregate-only boundary maintained)",
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "library_wheel_fetched_for_provenance": true, "wheel_not_committed": true, "unrelated_gpu_tenant": "present_preserved"},
+  "privacy": "aggregate-only; public library wheel identity + booleans, no host paths/private digests, tensor values, weights, caches"
+}

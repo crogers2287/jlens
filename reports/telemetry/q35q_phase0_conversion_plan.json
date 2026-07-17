@@ -1,0 +1,27 @@
+{
+  "outcome": "q35q_load_manifest_runtime_path_unresolved",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Order item 2 (partial): aggregate conversion-plan manifest for the numbered->packed expert conversion present in the installed runtime, plus a precise delimitation of what it does NOT cover for the GPTQ artifact. Source inspection + metadata only; no weights.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "conversion_plan_present_in_transformers": {
+    "prefix_change": "language_model -> model",
+    "expert_gate_up_merge": "mlp.experts.*.gate_proj.weight + mlp.experts.*.up_proj.weight -> mlp.experts.gate_up_proj via [MergeModulelist(dim=0), Concatenate(dim=1)]",
+    "expert_down_merge": "mlp.experts.*.down_proj.weight -> mlp.experts.down_proj via [MergeModulelist(dim=0)]",
+    "standard_numbered_to_packed_present": true,
+    "version_drift_guard": "verify_conversion_plan_present confirms these frozen entries exist in the installed conversion_mapping.py"
+  },
+  "gptq_coverage_gap": {
+    "covers_standard_weight_experts": true,
+    "covers_gptq_quant_tensors": false,
+    "reason": "the WeightConverter source_patterns target `.weight`; the GPTQ artifact stores `.qweight/.qzeros/.scales/.g_idx` per numbered expert, which these converters do not match",
+    "implication": "the transformers global conversion handles a STANDARD (bf16/fp16) numbered->packed merge but NOT the quantized tensors; the GPTQ route needs a separate stack: Optimum QuantLinear replacement (cannot apply to packed nn.Parameter experts) OR GPTQModel+Defuser (defuses the model to numbered experts to match the numbered quantized checkpoint)"
+  },
+  "remaining_runtime_audit": {
+    "gptq_stack_required": "freeze + install the GPTQ loader tuple (Optimum and/or GPTQModel+Defuser, pinned) to inspect the exact quantized conversion path and produce the per-quant-tensor conversion-plan manifest; this is a runtime-tuple freeze decision (a package install/pin), not yet taken",
+    "then": "synthetic strict-load fixture through the real pinned loader stack; Phase-0 conjunction; weights; authorized GPU transition; exact forward + VJP/JVP parity"
+  },
+  "tests": {"conversion_plan": 5, "load_manifest": 10},
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_and_active_preserved"},
+  "privacy": "aggregate-only; conversion-op labels + booleans, no tensor names/values, weights, caches, or local paths"
+}

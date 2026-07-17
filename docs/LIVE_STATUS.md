@@ -4,6 +4,34 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T06:05Z — runtime conversion-plan audit (item 2 partial); GPTQ gap delimited
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **repo_visibility:** still PUBLIC (private=false) — visibility gate UNRESOLVED,
+  awaiting operator decision; aggregate-only write boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (multi-GiB resident); window NOT
+  released; no authorized transition; boundary preserved; no GPU work.
+- **Order item 2 (partial, CPU-only source inspection, NEW files):** documented
+  the exact numbered->packed conversion present in the installed runtime as an
+  aggregate conversion-plan manifest + a version-drift verifier. transformers
+  5.13.1 qwen3_5_moe_text = qwen3_5_text (language_model->model PrefixChange) +
+  qwen2_moe expert merge: gate/up via [MergeModulelist(dim=0), Concatenate(dim=1)],
+  down via [MergeModulelist(dim=0)]. Live-verified present. CRITICAL scope fact:
+  these converters' source_patterns target `.weight`, so they do NOT cover the
+  GPTQ artifact's `.qweight/.qzeros/.scales/.g_idx` -> the standard bf16/fp16
+  numbered->packed merge is covered, the QUANTIZED tensors are not. The GPTQ route
+  needs a separate stack (Optimum QuantLinear -- cannot apply to packed
+  nn.Parameter experts; or GPTQModel+Defuser -- defuse to numbered). 5 tests.
+- **q35q_blockers (remaining):** freeze+install the GPTQ loader tuple (Optimum/
+  GPTQModel+Defuser, pinned) to inspect the exact quantized path + per-quant-tensor
+  conversion-plan manifest (a runtime-tuple/package-install decision, not yet
+  taken); then synthetic strict-load fixture through the real stack; Phase-0
+  conjunction; weights; authorized GPU transition; exact forward + VJP/JVP parity.
+  Overall outcome `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 569/569; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T05:35Z — new correction; load-manifest RECLASSIFIED unresolved; repo-visibility PUBLIC flagged
 
 - **New binding addendum** `..._Q35Q_DYNAMIC_GPTQ_LOADER_AND_REPOSITORY_VISIBILITY_CORRECTION`

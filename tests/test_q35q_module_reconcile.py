@@ -110,3 +110,27 @@ def test_fused_experts_collapse():
 def test_empty_source_fails():
     with pytest.raises(Q35QStageBlock, match="empty source"):
         reconcile_source_vs_artifact(set(), artifact_set(), NE)
+
+
+# ---------- defect 8: canonical expert ids + strict num_experts ----------
+
+def test_non_canonical_expert_id_fails():
+    a = artifact_set(add=["model.language_model.layers.0.mlp.experts.00.gate_proj"])
+    with pytest.raises(Q35QStageBlock, match="non-canonical expert id"):
+        rewrite_artifact_to_textonly(a, NE)
+
+
+def test_expert_id_out_of_range_fails():
+    a = artifact_set(add=[f"model.language_model.layers.0.mlp.experts.{NE}.gate_proj"])
+    with pytest.raises(Q35QStageBlock, match=">= num_experts"):
+        rewrite_artifact_to_textonly(a, NE)
+
+
+def test_boolean_num_experts_fails():
+    with pytest.raises(Q35QStageBlock, match="non-boolean integer"):
+        rewrite_artifact_to_textonly(artifact_set(), True)
+
+
+def test_zero_num_experts_fails():
+    with pytest.raises(Q35QStageBlock, match="non-boolean integer"):
+        rewrite_artifact_to_textonly(artifact_set(), 0)

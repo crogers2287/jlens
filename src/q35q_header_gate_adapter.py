@@ -28,12 +28,37 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 from q35q_range_fetch import RangeProvenanceBlock, verify_range_response
 from q35q_safetensors_header import reconcile_index_with_headers
 
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
+# frozen permitted host class for Hub resolve + LFS/CDN redirects
+_PERMITTED_HOSTS = ("huggingface.co", "cdn-lfs.huggingface.co", "cdn-lfs.hf.co",
+                    "cdn-lfs-us-1.hf.co", "cdn-lfs-eu-1.hf.co", "hf.co")
+
+
+def _host_permitted(host: str) -> bool:
+    host = (host or "").lower()
+    return any(host == h or host.endswith("." + h) for h in _PERMITTED_HOSTS)
+
+
+def _require_exact_resolve_url(url: str, repo_id: str, revision: str, path: str):
+    """Parse the request URL and require exact scheme/host-class/repo/revision/path
+    components — not substring containment (defect 2)."""
+    parts = urlsplit(url or "")
+    if parts.scheme != "https":
+        raise RangeProvenanceBlock(f"request URL is not HTTPS: {parts.scheme!r}")
+    if not _host_permitted(parts.hostname or ""):
+        raise RangeProvenanceBlock(f"request host not permitted: {parts.hostname!r}")
+    if parts.username or parts.password or parts.query or parts.fragment:
+        raise RangeProvenanceBlock("request URL carries credentials/query/fragment")
+    # exact path: /<repo_id>/resolve/<revision>/<path>
+    expected = f"/{repo_id}/resolve/{revision}/{path}"
+    if parts.path != expected:
+        raise RangeProvenanceBlock("request URL path is not the exact frozen descriptor")
 
 
 @dataclass(frozen=True)
@@ -85,16 +110,20 @@ class DescriptorBoundFetcher:
         if desc is None:
             raise RangeProvenanceBlock(f"no frozen descriptor for shard: {path}")
         url = self.url_builder(desc.repo_id, desc.path, desc.revision)
-        # exact repo/revision/path binding of the request URL (not a loose substring)
-        if desc.repo_id not in url or f"/resolve/{desc.revision}/" not in url or not url.rstrip("/").endswith(desc.path):
-            raise RangeProvenanceBlock("request URL is not the exact frozen descriptor")
+        _require_exact_resolve_url(url, desc.repo_id, desc.revision, desc.path)
         end = start + length - 1
         result = self.http_get(url, {"Range": f"bytes={start}-{end}"})
-        if not isinstance(result, tuple) or len(result) != 4:
-            raise RangeProvenanceBlock("transport must expose (status, headers, body, final_url)")
-        status, headers, body, final_url = result
-        if not isinstance(final_url, str) or not final_url.startswith("https://"):
-            raise RangeProvenanceBlock(f"final URL is not HTTPS: {final_url!r}")
+        if not isinstance(result, tuple) or len(result) != 5:
+            raise RangeProvenanceBlock(
+                "transport must expose (status, headers, body, final_url, redirect_chain)")
+        status, headers, body, final_url, redirect_chain = result
+        # every hop (including the final URL) must be HTTPS on a permitted host
+        for hop_url in list(redirect_chain or []) + [final_url]:
+            hp = urlsplit(hop_url or "")
+            if hp.scheme != "https":
+                raise RangeProvenanceBlock(f"redirect/final hop not HTTPS: {hop_url!r}")
+            if not _host_permitted(hp.hostname or ""):
+                raise RangeProvenanceBlock(f"redirect/final host not permitted: {hp.hostname!r}")
         cr = (headers or {}).get("Content-Range") or (headers or {}).get("content-range")
         verify_range_response(status, cr, start, length, desc.declared_size)
         if not isinstance(body, (bytes, bytearray)) or len(body) != length:

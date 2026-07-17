@@ -1,0 +1,30 @@
+{
+  "outcome": "q35q_artifact_admission_blocked",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Partial repair of the header-redirect/URL/metadata and expert-id defects flagged in the header-redirect-and-module-reconciliation correction. Bounded defects fixed and live-verified; the larger load-manifest, strict-index, committed-reconciliation-CLI, and source/package-identity items remain. Aggregate-only.",
+  "prior_commits_reclassified": {
+    "feffd91": "q35q_phase0_metadata_header_gate_repair_partial",
+    "e366df7": "q35q_phase0_source_artifact_module_reconciliation_partial"
+  },
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "defects_fixed_this_cycle": {
+    "defect_1_redirect_host_class": "transport contract now returns (status,headers,body,final_url,redirect_chain); every hop incl. final must be HTTPS on a frozen permitted Hugging Face/CDN host set; intermediate downgrade or unpermitted host fails closed",
+    "defect_2_exact_url_identity": "request URL parsed with urllib.parse; exact scheme=https, permitted host, and exact path /{repo_id}/resolve/{revision}/{path}; credentials/query/fragment rejected; substring matching removed",
+    "defect_3_metadata_commit_binding": "the committed CLI requires HfApi.model_info(...).sha == the frozen revision before freezing descriptors",
+    "defect_8_canonical_expert_ids": "expert ids must be canonical decimal (0/00 no longer collapse); num_experts must be a positive non-boolean int; duplicate expert sub-modules and out-of-range ids fail closed"
+  },
+  "live_hardened_header_gate": {
+    "note": "the hardened CLI reran against the real artifact and passed the strict URL + redirect-chain + metadata-commit checks; reconciled 14 shards / 124611 tensors; embed/lm_head [248320,2048]; 0 payload bytes",
+    "still_partial_because": "defect 4 (strict weight-index identity + duplicate-key rejection + frozen grammar + local-bytes-vs-remote-identity verification) is NOT yet implemented; the CLI still parses the index with plain json.load"
+  },
+  "remaining_blockers": {
+    "defect_4_strict_index_admission": "freeze an exact descriptor for model.safetensors.index.json (repo/rev/path/blob-or-lfs-identity/size), verify local bytes vs the independent remote identity, reject duplicate JSON keys, and validate a frozen top-level + weight_map grammar (reject booleans, non-string names/paths, empty, traversal, unknown fields)",
+    "defect_6_committed_reconciliation_cli": "a single committed CLI/adapter must reproduce the source<->artifact construction (source/package/class/config identity, meta-device module manifest, strict index parse, canonical artifact derivation, frozen map, equality) used identically in tests and live",
+    "defect_7_load_manifest_equality": "coarse module-name equality is not load-manifest equality: exact tensor names/multiplicity, quantization aux tensors (scales/qzeros/g_idx/qweight), dtype/shape, expert-axis ordering, gate/up fusion order, packed layout, and the exact numbered->packed loader conversion with zero ignored/missing/synthesized tensors under strict loading",
+    "defect_9_schema_coverage": "bind exact hidden-layer set + attention/DeltaNet/shared-expert/router/embed/head parameter schema to the pinned config",
+    "defect_10_source_package_identity": "pin + equality-check the installed Transformers package, source file, class qualname, source digest/commit, config, and loader/conversion implementation before admitting the meta-device source set"
+  },
+  "tests": {"header_gate_adapter": 26, "module_reconcile": 13, "range_fetch": 22},
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated_on_meta_only": true, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; counts and booleans, no module names, tensor values, URLs, OIDs, weights, caches, or local paths"
+}

@@ -37,12 +37,20 @@ _EXPERT_RE = re.compile(r"^(model\.layers\.\d+\.mlp\.experts)\.(\d+)\.(gate_proj
 _FUSE = {"gate_proj": "gate_up_proj", "up_proj": "gate_up_proj", "down_proj": "down_proj"}
 
 
+def _canonical_expert_id(eid_str: str) -> int:
+    """Require a canonical decimal expert id: digits only, no leading zeros (so
+    `0` and `00` cannot collapse to the same integer via int())."""
+    if not eid_str.isdigit() or (len(eid_str) > 1 and eid_str[0] == "0"):
+        raise Q35QStageBlock(f"non-canonical expert id: {eid_str!r}")
+    return int(eid_str)
+
+
 def rewrite_artifact_to_textonly(artifact_modules, num_experts: int) -> dict:
     """Apply the frozen map to the artifact's canonical module set, returning the
     derived text-only module set plus omission counts. Fails closed on anything
     outside the frozen partition or a malformed expert layout."""
-    if num_experts <= 0:
-        raise Q35QStageBlock("num_experts must be positive")
+    if type(num_experts) is not int or num_experts <= 0:  # bool is an int subclass
+        raise Q35QStageBlock("num_experts must be a positive non-boolean integer")
     textonly, vision, mtp = set(), 0, 0
     experts_seen = {}
     for m in artifact_modules:
@@ -60,8 +68,13 @@ def rewrite_artifact_to_textonly(artifact_modules, num_experts: int) -> dict:
         rest = "model." + m[len(_LM_PREFIX):]
         em = _EXPERT_RE.match(rest)
         if em:
-            base, eid, sub = em.group(1), int(em.group(2)), em.group(3)
-            experts_seen.setdefault(base, {}).setdefault(eid, set()).add(sub)
+            base, eid, sub = em.group(1), _canonical_expert_id(em.group(2)), em.group(3)
+            if eid >= num_experts:
+                raise Q35QStageBlock(f"expert id {eid} >= num_experts {num_experts}")
+            slot = experts_seen.setdefault(base, {}).setdefault(eid, set())
+            if sub in slot:
+                raise Q35QStageBlock(f"duplicate expert sub-module {sub} at {base}.{eid}")
+            slot.add(sub)
             textonly.add(f"{base}.{_FUSE[sub]}")
         else:
             textonly.add(rest)

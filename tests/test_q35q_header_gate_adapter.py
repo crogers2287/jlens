@@ -62,7 +62,8 @@ def setup(*, size_override=None):
         a, b = (int(x) for x in rng.split("-"))
         body = shard_bytes[path][a:b + 1]
         cr = f"bytes {a}-{b}/{real_sizes[path]}"
-        return 206, {"Content-Range": cr}, body, url
+        final = f"https://cdn-lfs.huggingface.co/repos/x/{path}"
+        return 206, {"Content-Range": cr}, body, final, [url]
 
     wmap = {"model.embed_tokens.weight": "shard0.safetensors", "lm_head.weight": "shard1.safetensors"}
     records = [
@@ -137,18 +138,59 @@ def test_non_https_final_url_fails():
     records, wmap, _ = setup()
 
     def http_get(url, headers):
-        path = url.rsplit("/", 1)[-1]
         rng = headers["Range"][len("bytes="):]
         a, b = (int(x) for x in rng.split("-"))
-        return 206, {"Content-Range": f"bytes {a}-{b}/999999"}, b"x" * (b - a + 1), "http://downgrade/x"
+        return 206, {"Content-Range": f"bytes {a}-{b}/999999"}, b"x" * (b - a + 1), "http://downgrade/x", [url]
 
     with pytest.raises(RangeProvenanceBlock, match="not HTTPS"):
         run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=_url, http_get=http_get)
 
 
-def test_three_tuple_transport_rejected():
+def test_intermediate_downgrade_hop_fails():
     records, wmap, _ = setup()
-    with pytest.raises(RangeProvenanceBlock, match="status, headers, body, final_url"):
+
+    def http_get(url, headers):
+        rng = headers["Range"][len("bytes="):]
+        a, b = (int(x) for x in rng.split("-"))
+        # a mid-chain HTTP hop must fail even if the final URL is HTTPS
+        chain = [url, "http://mid-hop.example/x"]
+        return (206, {"Content-Range": f"bytes {a}-{b}/999999"}, b"x" * (b - a + 1),
+                "https://cdn-lfs.huggingface.co/x", chain)
+
+    with pytest.raises(RangeProvenanceBlock, match="not HTTPS"):
+        run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=_url, http_get=http_get)
+
+
+def test_unpermitted_final_host_fails():
+    records, wmap, _ = setup()
+
+    def http_get(url, headers):
+        rng = headers["Range"][len("bytes="):]
+        a, b = (int(x) for x in rng.split("-"))
+        return (206, {"Content-Range": f"bytes {a}-{b}/999999"}, b"x" * (b - a + 1),
+                "https://evil.example.com/x", [url])
+
+    with pytest.raises(RangeProvenanceBlock, match="host not permitted"):
+        run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=_url, http_get=http_get)
+
+
+def test_url_with_query_fails():
+    records, wmap, http_get = setup()
+    builder = lambda repo, path, rev: f"https://huggingface.co/{repo}/resolve/{rev}/{path}?x=1"
+    with pytest.raises(RangeProvenanceBlock, match="credentials/query/fragment"):
+        run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=builder, http_get=http_get)
+
+
+def test_unpermitted_request_host_fails():
+    records, wmap, http_get = setup()
+    builder = lambda repo, path, rev: f"https://evil.example.com/{repo}/resolve/{rev}/{path}"
+    with pytest.raises(RangeProvenanceBlock, match="request host not permitted"):
+        run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=builder, http_get=http_get)
+
+
+def test_five_tuple_required():
+    records, wmap, _ = setup()
+    with pytest.raises(RangeProvenanceBlock, match="final_url, redirect_chain"):
         run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=_url,
                         http_get=lambda u, h: (206, {}, b""))
 
@@ -157,10 +199,9 @@ def test_wildcard_total_fails():
     records, wmap, _ = setup()
 
     def http_get(url, headers):
-        path = url.rsplit("/", 1)[-1]
         rng = headers["Range"][len("bytes="):]
         a, b = (int(x) for x in rng.split("-"))
-        return 206, {"Content-Range": f"bytes {a}-{b}/*"}, b"x" * (b - a + 1), url
+        return 206, {"Content-Range": f"bytes {a}-{b}/*"}, b"x" * (b - a + 1), url, [url]
 
     with pytest.raises(RangeProvenanceBlock, match="wildcard/absent"):
         run_header_gate(descriptor_records=records, weight_map=wmap, url_builder=_url, http_get=http_get)

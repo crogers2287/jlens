@@ -4,6 +4,37 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T02:35Z — new correction; header URL/redirect + expert-id defects fixed (CPU)
+
+- **New binding addendum** `..._Q35Q_HEADER_REDIRECT_AND_MODULE_RECONCILIATION_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified both prior commits partial: the header redirect was
+  scheme-only + URL substring-based + metadata commit unbound; the module equality
+  was coarse (not load-manifest), used non-canonical expert ids, and had no
+  committed live path.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads.
+- **Bounded defects fixed (CPU/metadata-only):** (1) transport now exposes the
+  full redirect chain; every hop incl. final must be HTTPS on a frozen permitted
+  HF/CDN host set (intermediate downgrade/unpermitted host fail); (2) exact URL
+  identity via urllib.parse (scheme/host/exact resolve path; credentials/query/
+  fragment rejected; substring matching removed); (3) CLI binds model-info commit
+  == frozen revision; (8) canonical decimal expert ids (0/00 no longer collapse),
+  num_experts must be a positive non-boolean int. Hardened CLI reran live and
+  passed the URL/redirect/commit checks (14 shards, 124611 tensors, embed/lm_head
+  [248320,2048]).
+- **q35q_blockers (remaining, larger):** defect-4 strict weight-index identity +
+  duplicate-key rejection + grammar + local-vs-remote-bytes verification; defect-6
+  committed source<->artifact reconciliation CLI; defect-7 load-manifest equality
+  (exact tensors/quant-aux/dtype/shape/ordering + numbered->packed loader
+  transformation, strict loadability); defect-9 config schema coverage; defect-10
+  source/package identity pin. Overall outcome `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 522/522; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T02:05Z — source<->artifact module equality established (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

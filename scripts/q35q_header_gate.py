@@ -44,6 +44,9 @@ def main():
 
     api = HfApi()
     mi = api.model_info(REPO, revision=REV, files_metadata=True)
+    # defect 3: bind the metadata response commit to the frozen revision by equality
+    if getattr(mi, "sha", None) != REV:
+        raise RangeProvenanceBlock(f"model-info commit {getattr(mi, 'sha', None)!r} != frozen revision")
     records = []
     for s in mi.siblings:
         if s.rfilename.endswith(".safetensors"):
@@ -57,7 +60,8 @@ def main():
 
     def http_get(url, headers):
         r = session.get(url, headers=headers, allow_redirects=True, timeout=60)
-        return r.status_code, dict(r.headers), r.content, r.url
+        chain = [h.url for h in r.history]  # each redirect hop's URL
+        return r.status_code, dict(r.headers), r.content, r.url, chain
 
     try:
         result = run_header_gate(descriptor_records=records, weight_map=weight_map,

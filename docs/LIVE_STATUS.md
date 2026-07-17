@@ -4,6 +4,35 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T00:35Z — new correction; Safetensors header parser format-hardened + live-reconciled (CPU)
+
+- **New binding addendum** `..._Q35Q_SAFETENSORS_FORMAT_VALIDATION_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my header run
+  `q35q_phase0_metadata_header_reconciliation_partial` — correctly: the parser
+  bound shape/dtype independently of the byte span, allowed holes, accepted
+  duplicate keys, under-validated grammar, and let booleans pass as ints.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads.
+- **Format repair executed (CPU/metadata-only):** all 5 binding parser defects
+  closed — shape/dtype bound to exact byte span under a frozen dtype table;
+  complete hole-free coverage of the data region; duplicate JSON keys rejected;
+  Safetensors header-start/padding/record/metadata grammar enforced; booleans
+  rejected wherever an int is required. 28 tests (wrong-shape/right-span, holes,
+  dup keys, whitespace, bad metadata, boolean dims/offsets). Fresh LIVE rerun
+  against the 14 pinned shards PASSED: reconciled, 124611 tensors, embed/lm_head
+  [248320,2048], 0 payload bytes.
+- **q35q_blockers (remaining):** explicit HTTP 206/Content-Range verification +
+  per-shard immutable OID binding (raw ranged fetcher); packed<->numbered expert
+  map + source<->index equality; non-self-bound tokenizer/source-identity; staging
+  orchestration wiring; final conjunction; then weight staging. Overall outcome
+  remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 459/459; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T00:05Z — source-derived allow-list established via meta construction (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

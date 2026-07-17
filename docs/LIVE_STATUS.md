@@ -4,6 +4,38 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T06:35Z — new addendum; structural (AST) conversion verify replaces substring hint
+
+- **New binding addendum** `..._Q35Q_DIFFERENTIABLE_GPTQ_TORCH_BACKEND_PRIORITY`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It flags (a) my substring conversion check as a drift-hint only
+  (needs structural inspection), and (b) GPTQModel TorchLinear (SUPPORTS_TRAINING,
+  eager dequantize+matmul, BACKEND.GPTQ_TORCH) as the preferred DIFFERENTIABLE
+  activation-autograd path -- Jacobian Lens differentiates through the model with
+  weights as CONSTANTS, so activation derivatives suffice.
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator decision; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (multi-GiB resident; an ollama proc
+  also appeared); window NOT released; no authorized transition; boundary
+  preserved; no GPU work; no tenant signalled/displaced.
+- **Structural conversion verification (CPU-only, NEW files):** replaced the
+  substring drift-hint with AST-based structural verification of the exact
+  qwen3_5_moe_text conversion objects -- qwen3_5_text PrefixChange, qwen2_moe
+  gate/up merge [MergeModulelist, Concatenate] IN ORDER + down merge
+  [MergeModulelist], and the qwen3_5_moe_text composition. Fails on strings in
+  comments/dead code, reordered operations, unrelated model key, and duplicate
+  shadow mapping. 7 tests; live structural_pass=true on transformers 5.13.1.
+- **q35q_blockers (remaining):** freeze immutable runtime-tuple identities +
+  source-digest pin (items 1-3); the GPTQModel+Defuser+TorchLinear differentiable
+  fixture (defusion, per-quant-tensor consumption, forward + activation VJP/JVP
+  parity vs dequantized ref, finite-diff, determinism, adversarial fails) requires
+  installing/pinning the GPTQ loader tuple -- a runtime-tuple decision, flagged not
+  taken. Then Phase-0 conjunction, weights, authorized GPU transition, parity.
+  Overall outcome `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 576/576; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T06:05Z — runtime conversion-plan audit (item 2 partial); GPTQ gap delimited
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

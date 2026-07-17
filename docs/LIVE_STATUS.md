@@ -4,6 +4,32 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T08:05Z — unified runtime conversion-admission composition (defect 4/8)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present (resident, low util); window NOT
+  released; no authorized transition; boundary preserved; no GPU work.
+- **Unified composition built (CPU-only, NEW files):** one committed production
+  path binds package version + module import-origin (canonical-path suffix) +
+  source-digest pin + dispatch-selected conversion verification, with adversarial
+  integration tests (7). Fails closed on wrong version, wrong import origin/shadow
+  module, non-independent (self-bound) expected digests, wrong source digest, and
+  wrong dispatch conversion. It REQUIRES expected_digests_independent=True, so it
+  correctly BLOCKS live until the expected sha256 are derived from an INDEPENDENT
+  upstream artifact (not installed bytes) -- honest fail-closed.
+- **q35q_blockers (remaining):** source-digest independence (upstream-derived
+  expected sha256, not installed bytes); the GPTQ runtime tuple (Optimum/
+  GPTQModel+Defuser) for the differentiable activation-autograd fixture -- operator
+  decision. Then differentiable fixture, Phase-0 conjunction, weights, authorized
+  GPU transition, exact forward + VJP/JVP parity. Overall
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** full q35q/m36v/m38e suite green (750); pre-commit 324/324;
+  commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T07:35Z — new correction; dispatch-bound conversion verification (corrects AST)
 
 - **New binding addendum** `..._Q35Q_AST_DISPATCH_AND_SOURCE_PIN_COMPOSITION_CORRECTION`

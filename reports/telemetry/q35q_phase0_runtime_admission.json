@@ -1,0 +1,19 @@
+{
+  "outcome": "q35q_artifact_admission_blocked",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Unified runtime conversion-admission composition (defect 4/8 of the AST-dispatch/source-pin correction): one committed production path binds package version + module import origin + source-digest pin + dispatch-selected conversion verification, with adversarial integration tests. Fails closed on the source-digest INDEPENDENCE gate, so it blocks live until upstream-independent digests are established. Aggregate-only.",
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "unified_composition": {
+    "binds_in_one_path": ["package version equality", "module import-origin canonical-path suffix", "source-digest equality (bind_source_digests)", "dispatch-selected conversion exact verification (verify_dispatch_conversion on the live get_checkpoint_conversion_mapping object)"],
+    "fail_closed_gates": ["wrong package version", "wrong import origin / shadow module", "non-independent (self-bound) expected digests", "wrong source digest", "wrong dispatch conversion (dims/patterns/counts/multiplicity)"],
+    "tests": 7
+  },
+  "residual_blockers": {
+    "source_digest_independence": "the composition REQUIRES expected_digests_independent=True; live it must remain False until the expected sha256 are derived from an INDEPENDENT upstream artifact (wheel/sdist/commit/blob), not the installed bytes -> the unified composition currently BLOCKS live (fail-closed), which is correct",
+    "gptq_runtime_tuple": "Optimum / GPTQModel+Defuser (BACKEND.GPTQ_TORCH) required for the differentiable activation-autograd fixture -- runtime-tuple/install decision flagged for the operator",
+    "then": "differentiable fixture; Phase-0 conjunction; weights; authorized GPU transition; exact forward + activation VJP/JVP parity; lens fit"
+  },
+  "repository_visibility": "public (unresolved; aggregate-only boundary maintained)",
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_preserved"},
+  "privacy": "aggregate-only; booleans + public library version, no host/private digests, tensor values, weights, caches, or local paths"
+}

@@ -4,6 +4,35 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T01:35Z — new correction; header gate now via COMMITTED reproducible path (CPU)
+
+- **New binding addendum** `..._Q35Q_RANGE_PROVENANCE_AND_REPRODUCIBLE_LIVE_ADAPTER_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my range work
+  `q35q_phase0_metadata_header_gate_repair_partial` — correctly: wildcard totals
+  passed, OID was shape-checked, the URL was a loose substring, redirects were
+  unobservable, and the live adapter was uncommitted/non-reproducible.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads.
+- **Repair executed (CPU/metadata-only, NEW committed path):** a reproducible
+  adapter + live CLI freeze exact per-shard descriptors {repo,rev,path,lfs_oid,
+  size} from immutable metadata BEFORE transport (self-binding impossible), bind
+  each request URL to the exact descriptor, require 206 + exact range + exact
+  positive-integer total==declared size (wildcard rejected), observe the final
+  URL (HTTPS-downgrade rejected), and reconcile the index. Same code in tests +
+  live. Live CLI PASSED: 14 descriptors, reconciled, 124611 tensors, embed/
+  lm_head [248320,2048], 0 payload bytes.
+- **Sub-gate PASS (committed+reproducible):** `q35q_phase0_metadata_header_gate_passed`.
+  Overall `q35q_artifact_admission_blocked` UNCHANGED.
+- **q35q_blockers (remaining, overall):** packed<->numbered expert map +
+  source<->index equality; non-self-bound tokenizer/source-identity; staging
+  orchestration wiring; final conjunction; then weight staging.
+- **Tests (fresh):** 505/505; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T01:05Z — metadata-only header gate PASSED (sub-gate); overall still blocked (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

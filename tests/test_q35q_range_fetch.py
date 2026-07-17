@@ -55,6 +55,17 @@ def test_verify_total_size_mismatch():
         verify_range_response(206, "bytes 0-7/999", 0, 8, 100)
 
 
+def test_verify_wildcard_total_fails():
+    with pytest.raises(RangeProvenanceBlock, match="wildcard/absent"):
+        verify_range_response(206, "bytes 0-7/*", 0, 8, 100)
+
+
+@pytest.mark.parametrize("size", [None, True, 0, -5, 1.5])
+def test_verify_bad_declared_size_fails(size):
+    with pytest.raises(RangeProvenanceBlock, match="positive integer"):
+        verify_range_response(206, "bytes 0-7/100", 0, 8, size)
+
+
 # ---------- fetcher composition ----------
 
 def make_fetcher(*, status=206, content_range="bytes 0-7/100", body=b"01234567",

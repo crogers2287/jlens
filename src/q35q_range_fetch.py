@@ -52,13 +52,19 @@ def parse_content_range(value: str):
 
 
 def verify_range_response(status, content_range, start, length, declared_size) -> bool:
-    """Assert exact 206 Range provenance for one read."""
+    """Assert exact 206 Range provenance for one read. Requires a present positive
+    integer response total equal to an independently declared positive-integer
+    shard size; wildcard `*`, absent totals, and non-integer/boolean sizes fail."""
     if status != 206:
         raise RangeProvenanceBlock(f"expected HTTP 206, got {status}")
+    if type(declared_size) is not int or declared_size <= 0:
+        raise RangeProvenanceBlock(f"declared size must be a positive integer: {declared_size!r}")
     cs, ce, ct = parse_content_range(content_range)
     if cs != start or ce != start + length - 1:
         raise RangeProvenanceBlock(f"Content-Range {cs}-{ce} != requested {start}-{start + length - 1}")
-    if ct is not None and declared_size is not None and ct != declared_size:
+    if ct is None:
+        raise RangeProvenanceBlock("Content-Range total is wildcard/absent; exact total required")
+    if ct != declared_size:
         raise RangeProvenanceBlock(f"Content-Range total {ct} != declared size {declared_size}")
     return True
 

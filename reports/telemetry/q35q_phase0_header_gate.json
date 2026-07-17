@@ -1,25 +1,27 @@
 {
   "outcome": "q35q_phase0_metadata_header_gate_passed",
   "artifact_admission_status": "q35q_artifact_admission_blocked",
-  "description": "Metadata-only Safetensors header gate now PASSES all requirements against the pinned immutable artifact: format-hardened parser + provenance-bound ranged fetcher (HTTP 206 + Content-Range verified, immutable per-shard OID bound, resolve URL pinned to the 40-hex commit) + index<->header reconciliation. This is a Phase-0 SUB-GATE pass only; overall artifact admission remains blocked pending the composition gates. Aggregate-only: counts, booleans, public architecture shapes; no tensor names, URLs, OIDs, response headers, caches, or local paths.",
+  "description": "Metadata-only Safetensors header gate passes through a COMMITTED, reproducible production path (scripts/q35q_header_gate.py + src/q35q_header_gate_adapter.py + tests), repairing the range-provenance/reproducibility defects. Aggregate-only: counts, booleans, public architecture shapes; no tensor names, URLs, OIDs, response headers, caches, or local paths.",
+  "prior_run_reclassified": {"05daef4": "q35q_phase0_metadata_header_gate_repair_partial"},
   "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
-  "header_gate_requirements_satisfied": {
-    "format": "shape/dtype bound to exact byte span (frozen dtype table); complete hole-free coverage; duplicate keys rejected; Safetensors grammar enforced; booleans rejected",
-    "range_provenance": "every ranged read asserted HTTP 206 + exact Content-Range start/end/total; non-206 / wrong Content-Range / unpinned (mutable) resolve URL fail closed",
-    "immutable_identity": "all 14 shards bound to an immutable LFS sha256 OID before header bytes were read",
-    "reconciliation": "each indexed tensor appears once in its declared shard; no unindexed tensor; every shard covered; no extra shard",
-    "no_payload": "only header ranges (bytes 0-7 then 8..7+n) fetched; no tensor payload ranges; no full shard cached",
-    "privacy": "aggregate-only committed"
+  "defects_addressed": {
+    "defect_1_wildcard_or_absent_total": "verify_range_response now requires a present positive-integer total equal to a positive-integer declared size; wildcard '*'/None/boolean/zero/negative sizes fail closed",
+    "defect_2_oid_identity": "each shard's immutable lfs sha256 OID is frozen from public metadata into the descriptor (narrowed claim: descriptor identity, NOT payload cryptographic verification via header bytes)",
+    "defect_3_exact_descriptor": "request URL is bound to the exact {repo_id, revision, path} of the frozen descriptor by equality, not a /resolve/<hex>/ substring; wrong repo / wrong revision / wrong path fail closed",
+    "defect_4_observable_transport": "http_get contract returns (status, headers, body, final_url); the final URL is observed and rejected on HTTPS downgrade; the claim is narrowed to what is actually verified",
+    "defect_5_committed_reproducible_adapter": "run_header_gate composes frozen descriptors -> descriptor-bound fetcher -> format-hardened parser -> index reconciliation; the same code is used in tests and the committed live CLI",
+    "defect_6_adversarial_coverage": "tests fail closed on wildcard total, bad declared sizes, wrong-but-valid-shaped repo/revision/path/OID, non-HTTPS final URL, descriptor<->index set mismatch, three-tuple transport, and a descriptor size disagreeing with the response (self-binding impossible: descriptors frozen before transport)"
   },
-  "live_result": {
-    "reconciled": true, "shard_count": 14, "tensor_count": 124611,
-    "all_shard_oids_bound": true, "payload_bytes_fetched": 0,
+  "live_result_via_committed_cli": {
+    "reconciled": true, "descriptor_count": 14, "shard_count": 14, "tensor_count": 124611,
+    "payload_bytes_fetched": 0,
     "independent_shapes": {"embed_tokens": [248320, 2048], "lm_head": [248320, 2048]}
   },
-  "tests": {"header_gate_format": 28, "range_provenance": 18},
+  "permitted_claim": "immutable Hub metadata + exact descriptor binding + exact ranged-response provenance (206/exact-range/exact-total) + valid Safetensors header format + index/header reconciliation. Ranged header bytes do NOT cryptographically verify shard payloads.",
+  "tests": {"range_fetch": 20, "header_gate_adapter": 20, "header_format": 28},
   "other_open_phase0_gates": [
     "packed(source)<->numbered(artifact) expert representation map + source<->index module-set equality",
-    "non-self-bound tokenizer + source-identity provenance",
+    "non-self-bound tokenizer + source/package identity admission",
     "repaired staging-orchestration composition",
     "one production-path final conjunction with self-binding/provenance failure tests",
     "weight staging (still prohibited before a genuine overall pass)"

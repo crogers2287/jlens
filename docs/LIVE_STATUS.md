@@ -4,6 +4,36 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T07:35Z — new correction; dispatch-bound conversion verification (corrects AST)
+
+- **New binding addendum** `..._Q35Q_AST_DISPATCH_AND_SOURCE_PIN_COMPOSITION_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It reclassified my AST verifier (`q35q_conversion_ast_repair_partial`)
+  and source pin (`q35q_runtime_source_pin_repair_partial`).
+- **repo_visibility:** still PUBLIC (private=false) — gate UNRESOLVED, awaiting
+  operator; aggregate-only boundary continues.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present; window NOT released; no authorized
+  transition; boundary preserved; no GPU work; tenant not signalled/displaced.
+- **Correction executed (CPU-only, NEW files):** replaced arbitrary-dict-literal
+  AST parsing with DISPATCH-BOUND verification -- inspect the LIVE composed
+  mapping the loader actually returns (get_checkpoint_conversion_mapping,
+  overwrite-immune, model_type-bound) with EXACT patterns, EXACT operation dims,
+  EXACT converter counts + multiplicity. Fixes AST defects 1-6 (dispatch binding,
+  same object, constructor dims, exact source-pattern equality, exact multiplicity,
+  overwrite immunity). Live: converter_count 3, all exact checks pass; 10 tests
+  fail on wrong dims/reordering/extra-pattern/duplicate/extra-converter/wrong-prefix.
+- **q35q_blockers (remaining):** source-pin INDEPENDENCE (expected digests from an
+  independent upstream artifact, not installed bytes); ONE unified production
+  composition binding package/module-path/import-origin/loader-entry/dispatch/
+  source-digest/dispatch-conversion with full adversarial suite; freeze+install
+  the GPTQ runtime tuple (Optimum/GPTQModel+Defuser) for the differentiable
+  activation-autograd fixture (operator decision). Then Phase-0 conjunction,
+  weights, authorized GPU transition, exact parity. Overall
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 593/593; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T07:05Z — runtime source-digest pin binds the structural conversion verification (CPU)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

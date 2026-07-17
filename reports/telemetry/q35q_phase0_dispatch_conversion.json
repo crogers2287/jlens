@@ -1,0 +1,29 @@
+{
+  "outcome": "q35q_conversion_dispatch_verified_runtime_path_unresolved",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Dispatch-bound conversion verification (corrects AST verifier defects 1-6): inspect the LIVE composed conversion mapping the loader dispatch actually returns for qwen3_5_moe_text, with exact patterns/dims/counts/multiplicity, instead of parsing arbitrary dict literals. Aggregate-only; source/runtime inspection, no weights.",
+  "supersedes": {"commit_2649e28_ast_verifier": "q35q_conversion_ast_repair_partial (AST kept as component)"},
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "dispatch_bound_verification": {
+    "accessor": "transformers.conversion_mapping.get_checkpoint_conversion_mapping('qwen3_5_moe_text') -> the final composed dispatch object (overwrite-immune, model_type-bound)",
+    "converter_count": 3,
+    "checks_all_pass": true,
+    "verified_exact": [
+      "PrefixChange(prefix_to_remove='language_model', model_prefix='model')",
+      "exactly one gate_up converter: target ['mlp.experts.gate_up_proj'], source exact ['mlp.experts.*.gate_proj.weight','mlp.experts.*.up_proj.weight'], ops exact [MergeModulelist(dim=0), Concatenate(dim=1)]",
+      "exactly one down converter: target ['mlp.experts.down_proj'], source exact ['mlp.experts.*.down_proj.weight'], ops exact [MergeModulelist(dim=0)]",
+      "no extra converter targeting the packed expert tensors (multiplicity == 2)"
+    ],
+    "defects_addressed": "AST defects 1 (dispatch binding), 2 (same object), 3 (constructor dims), 4 (exact source-pattern equality), 5 (exact multiplicity), 6 (overwrite-immune via final object)"
+  },
+  "tests": {"dispatch_conversion": 10},
+  "remaining_blockers": {
+    "source_pin_independence": "expected source digests must be derived from an independent upstream artifact (wheel/sdist/commit/blob), not the installed bytes; the installed transformers build's upstream reference must be resolved before the digest binding is non-self-bound",
+    "unified_production_composition": "compose package-version + module-path + import-origin + loader-entry-point + dispatch + source-digest + dispatch-conversion into ONE committed production path with the full adversarial integration suite (including self-bound-identity and wrong-import-origin fails)",
+    "gptq_runtime_tuple": "freeze + install Optimum / GPTQModel+Defuser (BACKEND.GPTQ_TORCH) for the differentiable activation-autograd fixture -- a runtime-tuple/install decision flagged for the operator",
+    "then": "Phase-0 conjunction; weights; authorized GPU transition; exact forward + activation VJP/JVP parity; lens fit"
+  },
+  "repository_visibility": "public (unresolved; aggregate-only boundary maintained)",
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated": false, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_preserved"},
+  "privacy": "aggregate-only; conversion-op labels + booleans + public library version, no host/private digests, tensor values, weights, caches, or local paths"
+}

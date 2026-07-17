@@ -4,6 +4,31 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T02:05Z — source<->artifact module equality established (CPU)
+
+- **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** dual-3090 still holds the unrelated llama-server/llama-swap
+  + MCP tenant (memory resident, ~0% util, not inferred as free); window NOT
+  released, serving NOT claimed restored; tenant not signalled/displaced. No GPU,
+  no weights, no tensor payloads (meta-device enumeration only).
+- **Remaining-order items 1-2 done (CPU-only, NEW files):** froze the packed
+  (source) <-> numbered (artifact) expert representation map and proved EXACT
+  source<->artifact text-only module-set equality. Frozen map: artifact
+  model.language_model.* -> source model.*; vision (model.visual.*) + MTP (mtp.*)
+  omitted; artifact numbered+split experts mlp.experts.{e}.{gate,up,down}_proj
+  collapse to source fused+packed mlp.experts.{gate_up_proj,down_proj}, exactly
+  num_experts per layer. LIVE: source 693 (meta) == artifact 693 (index), missing
+  0 / extra 0, 167 vision + 785 MTP omitted, 40 expert layers x 256 experts.
+  Independent (source from class construction, artifact from index) -> not
+  self-bound. 9 new tests.
+- **q35q_blockers (remaining, overall):** non-self-bound tokenizer + source/
+  package identity admission; staging-orchestration wiring; one final Phase-0
+  conjunction with adversarial tests; then weight staging; dual-3090 transition;
+  TP/autograd runtime pin. Overall outcome remains `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 514/514; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T01:35Z — new correction; header gate now via COMMITTED reproducible path (CPU)
 
 - **New binding addendum** `..._Q35Q_RANGE_PROVENANCE_AND_REPRODUCIBLE_LIVE_ADAPTER_CORRECTION`

@@ -1,0 +1,33 @@
+{
+  "outcome": "q35q_phase0_source_artifact_module_equality_established",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "description": "Frozen packed(source)<->numbered(artifact) expert representation map + exact source-derived vs artifact-derived text-only module-set equality (remaining Q35Q order items 1-2). Source set from an independent meta-device construction of Qwen3_5MoeForCausalLM; artifact set from the pinned weight index; the two reconcile to EXACT equality under the frozen map. Aggregate-only: counts + booleans, no module names.",
+  "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
+  "frozen_representation_map": {
+    "prefix": "artifact model.language_model.* -> source model.* ; lm_head unchanged",
+    "omission": "artifact model.visual.* (vision) and mtp.* (MTP) omitted from the admitted text-only load manifest",
+    "experts": "artifact NUMBERED+SPLIT mlp.experts.{e}.{gate_proj,up_proj,down_proj} for e in [0,num_experts) collapse to source FUSED+PACKED mlp.experts.{gate_up_proj,down_proj}; every layer must carry exactly num_experts experts each with all three sub-modules"
+  },
+  "live_result": {
+    "num_experts": 256,
+    "equal": true,
+    "source_count": 693,
+    "artifact_textonly_count": 693,
+    "missing_count": 0,
+    "extra_count": 0,
+    "vision_modules_omitted": 167,
+    "mtp_modules_omitted": 785,
+    "expert_layers": 40
+  },
+  "independence": "source from meta-device class construction (no weight index inspected); artifact from the weight index (no class construction); compared by equality -> not self-bound",
+  "tests": {"module_reconcile": 9},
+  "other_open_phase0_gates": [
+    "non-self-bound tokenizer + source/package identity admission (item 3)",
+    "route enumeration/checksum/storage/cleanup/resume/cache-isolation through the repaired staging orchestration (item 4)",
+    "one production-path final conjunction with adversarial self-binding/provenance tests (item 5)",
+    "weight staging only after the genuine aggregate Phase-0 pass (item 6)",
+    "separately authorized dual-3090 transition (item 7); exact TP/autograd runtime pin (item 8)"
+  ],
+  "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated_on_meta_only": true, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "preserved"},
+  "privacy": "aggregate-only; counts and booleans, no module names, tensor values, weights, caches, or local paths"
+}

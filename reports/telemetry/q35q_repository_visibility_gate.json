@@ -1,0 +1,12 @@
+{
+  "outcome": "repository_visibility_public_unresolved",
+  "description": "Repository-privacy gate per the dynamic-GPTQ-loader/repository-visibility addendum. An independent GitHub metadata read reports the repository as public. Flagged for operator resolution; the aggregate-only write boundary continues to be enforced.",
+  "independent_read": {"private": false, "visibility": "public"},
+  "assessment": {
+    "all_committed_records_aggregate_only": true,
+    "commit_safety_enforced": "every commit passes check_commit_safe.py (no private paths / prompt / output / notes text); no task text, prompts, tokens, outputs, hidden states, routes, Jacobians, weights, caches, credentials, or per-task predictions have been committed",
+    "action_taken": "NOT auto-changing repository visibility (outward-facing operator action; the operator uses GitHub as the progress view). Flagged for operator to confirm whether public visibility is intentional or should be restored to private.",
+    "gate": "no later scientific phase may begin while repository visibility and artifact-destination controls disagree; continue aggregate-only until the operator resolves visibility"
+  },
+  "privacy": "aggregate-only; no private artifacts committed"
+}

@@ -4,6 +4,40 @@ Status-only file per the 2026-07-12 steer (`8768df4`). Aggregates only —
 no task text, operands, outputs, token ids, telemetry arrays, paths,
 weights, or per-task predictions. Newest heartbeat at top.
 
+## Heartbeat 2026-07-17T05:35Z — new correction; load-manifest RECLASSIFIED unresolved; repo-visibility PUBLIC flagged
+
+- **New binding addendum** `..._Q35Q_DYNAMIC_GPTQ_LOADER_AND_REPOSITORY_VISIBILITY_CORRECTION`
+  landed (rebased onto remote, never merged; steer.md blob `37b082ad…`
+  unchanged). It (a) reclassified my load-manifest hard-block as PREMATURE and
+  (b) raised a repository-visibility privacy trigger.
+- **M38E:** CLOSED — terminal `inconclusive`; ledger byte-stable, no driver, no
+  M38E GPU kernel. Not reopened.
+- **gpu_boundary:** unrelated tenant present and computing (multi-GiB resident,
+  ~27% util both cards); window NOT released; no authorized transition; boundary
+  preserved; no GPU work.
+- **REPO VISIBILITY (privacy gate, item 1):** independent GitHub read reports the
+  repository PUBLIC (private=false). All committed records are aggregate-only and
+  every commit passes check_commit_safe (no task text/prompts/tokens/outputs/
+  states/routes/weights/paths). NOT auto-changing visibility (outward-facing
+  operator action; GitHub is the operator progress view) — FLAGGED for operator to
+  confirm intentional-public vs restore-private. No later scientific phase may
+  begin while visibility/destination controls disagree; aggregate-only continues.
+- **Load-manifest CORRECTED (item 3):** my prior hard-blocker searched only
+  model-local hooks and was premature. transformers 5.13.1 conversion_mapping.py
+  IS a global loader-level conversion layer: qwen3_5_moe_text = qwen3_5_text
+  (language_model->model PrefixChange) + qwen2_moe (numbered->packed expert merge).
+  So the numbered->packed conversion EXISTS at the loader level. But optimum +
+  gptqmodel are NOT installed, so the GPTQ quantized-loader tuple is incomplete ->
+  outcome reclassified `q35q_load_manifest_runtime_path_unresolved` (not blocked).
+  10 tests.
+- **q35q_blockers (remaining):** freeze the full runtime tuple + inspect the exact
+  GPTQ conversion path; aggregate conversion-plan manifest (per numbered expert +
+  qweight/qzeros/scales/g_idx); synthetic strict-load fixture through the real
+  loader stack; else GPTQModel+Defuser route; then Phase-0 conjunction, weights,
+  authorized GPU transition, exact forward+VJP/JVP parity. Overall outcome
+  `q35q_artifact_admission_blocked`.
+- **Tests (fresh):** 564/564; commit-safe clean; aggregate-only.
+
 ## Heartbeat 2026-07-17T05:05Z — order item 3: q35q_load_manifest_blocked (GPTQ<->runtime expert-repr mismatch)
 
 - **Steer:** blob `37b082ad…` unchanged; remote in sync; no new addendum.

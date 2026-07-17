@@ -1,30 +1,32 @@
 {
-  "outcome": "q35q_load_manifest_blocked",
+  "outcome": "q35q_load_manifest_runtime_path_unresolved",
   "artifact_admission_status": "q35q_artifact_admission_blocked",
-  "description": "Order item 3 (load-manifest / loader transformation) reaches a hard, evidence-backed blocker: the admitted GPTQ artifact's routed-expert representation is incompatible with the installed Transformers 5.13.1 source class, with no deterministic pinned loader transformation. A conversion may NOT be improvised. Aggregate-only; source-inspection + metadata only, no weights.",
+  "description": "Order item 3 (load-manifest / loader transformation): CORRECTED per the dynamic-GPTQ-loader addendum. The prior hard-blocker classification was premature (it searched only model-local hooks). The numbered->packed conversion exists at the loader level; the outcome is runtime-path UNRESOLVED, not terminated. Aggregate-only; source inspection + metadata only, no weights.",
+  "supersedes": {"commit_42a7b243": "reclassified from q35q_load_manifest_blocked to q35q_load_manifest_runtime_path_unresolved"},
   "repo_pinned": {"repo_id": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4", "immutable_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b"},
-  "runtime_observed": {"transformers_version": "5.13.1"},
-  "finding": {
+  "runtime_observed": {"transformers_version": "5.13.1", "optimum_installed": false, "gptqmodel_installed": false},
+  "corrected_finding": {
     "source_expert_representation": "packed",
     "artifact_expert_representation": "numbered",
     "representations_match": false,
-    "pinned_conversion_hook_present": false,
-    "strictly_loadable": false,
+    "model_local_hook_present": false,
+    "loader_level_conversion_present": true,
+    "gptq_loader_stack_present": false,
     "evidence": [
-      "transformers 5.13.1 Qwen3_5MoeExperts stores routed experts as packed 3D nn.Parameter per layer (gate_up_proj[num_experts, 2*intermediate, hidden]; down_proj[num_experts, hidden, intermediate]) indexed by gate_up_proj[expert_idx] -- plain parameters, not nn.Linear modules",
-      "the GPTQ artifact stores 256 numbered per-expert 2D linears mlp.experts.{e}.{gate_proj,up_proj,down_proj} with GPTQ tensors qweight/qzeros/scales/g_idx",
-      "GPTQ quantizes nn.Linear modules and has no mechanism to quantize a packed 3D parameter, so the artifact was quantized against an older per-expert-Linear modeling structure",
-      "the source modeling carries no _checkpoint_conversion_mapping, register_load_state_dict_pre_hook, load_hook, or _load_from_state_dict mapping numbered per-expert GPTQ tensors into the packed parameters"
+      "transformers 5.13.1 conversion_mapping.py IS a global loader-level weight-conversion layer (WeightConverter / MergeModulelist / Concatenate)",
+      "it defines qwen3_5_text with PrefixChange(language_model -> model), and qwen3_5_moe_text = qwen3_5_text + qwen2_moe conversions, i.e. the numbered->packed expert merge + the model.language_model.* prefix rewrite exist at the loader level (my prior model-local-only search missed this)",
+      "the GPTQ quantized loader stack (optimum.gptq.GPTQQuantizer.convert_model / GPTQModel Defuser) is NOT installed in this runtime, so quantized strict loadability cannot be exercised or ruled out here"
     ]
   },
-  "consequence": "the current GPTQ(3af5ca29) + transformers-5.13.1 combination cannot strictly load the admitted text-only class; module-SET equality (693==693) holds but tensor-level strict loadability does NOT. Per steer, a conversion may not be improvised after inspecting weights.",
-  "resolution_options_for_operator": [
-    "pin an immutable Transformers runtime whose Qwen3.5-MoE routed experts use the per-expert-Linear representation matching the GPTQ artifact (intersects order item 8: pin the exact TP/quantization/runtime), then re-run the load-manifest gate",
-    "admit a different quantized checkpoint whose expert representation matches the pinned runtime",
-    "a separately resourced BF16/FP8 path or a smaller admitted dense engineering model",
-    "stop the quantized Jacobian branch"
+  "required_runtime_path_audit_remaining": [
+    "freeze the complete candidate runtime tuple (Transformers build+commit, Optimum, GPTQModel, Defuser, Accelerate, PyTorch, CUDA, kernel backend, dispatch, config classes, loader entry point)",
+    "inspect the exact selected path (global conversion mappings, GPTQ convert_model, GPTQModel dispatch, Defuser, QuantLinear replacement, checkpoint loading)",
+    "produce an aggregate-only conversion-plan manifest: per numbered expert + each qweight/qzeros/scales/g_idx -> exact target module, shape, dtype, ordering, fusion/defusion op, backend owner; zero ambiguous/missing/extra/duplicated/ignored/synthesized",
+    "synthetic production-path fixture on a tiny Qwen3.5-MoE-shaped model through the real pinned loader stack: prove numbered->packed conversion, quant-aux loading, expert ordering, gate/up identity, strict key consumption, deterministic output, and backward behavior",
+    "if Transformers+Optimum fails, evaluate the immutable GPTQModel+Defuser route (documented Qwen3.5-MoE support); if every pinned supported route fails -> q35q_quantized_runtime_unavailable with exact identities",
+    "then a separate exact-forward + VJP/JVP parity gate (inference loading != autograd admission)"
   ],
-  "tests": {"load_manifest": 8},
+  "tests": {"load_manifest": 10},
   "boundary": {"gpu_used": false, "weights_loaded": false, "model_instantiated_on_meta_only": true, "tensor_payload_fetched": false, "unrelated_gpu_tenant": "present_and_active_preserved"},
   "privacy": "aggregate-only; representation labels + booleans, no tensor names/values, weights, caches, or local paths"
 }

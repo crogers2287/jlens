@@ -53,8 +53,9 @@ def classify_expert_representation(names) -> str:
 
 def load_manifest_verdict(*, source_repr: str, artifact_repr: str,
                           conversion_hook_present: bool) -> dict:
-    """Decide strict loadability of the artifact into the source class. Differing
-    representations without a pinned conversion transformation is a hard block."""
+    """Low-level representation check. NOTE: `conversion_hook_present` here means a
+    MODEL-LOCAL hook only; absence does NOT establish absence of a loader-level
+    transformation (see runtime_load_path_verdict). Kept for the narrow check."""
     if source_repr == "unknown" or artifact_repr == "unknown":
         raise Q35QStageBlock("could not classify source or artifact expert representation")
     same = source_repr == artifact_repr
@@ -63,13 +64,47 @@ def load_manifest_verdict(*, source_repr: str, artifact_repr: str,
         "source_expert_representation": source_repr,
         "artifact_expert_representation": artifact_repr,
         "representations_match": same,
-        "pinned_conversion_hook_present": bool(conversion_hook_present),
-        "strictly_loadable": loadable,
-        "outcome": ("q35q_phase0_load_manifest_candidate_ok" if loadable
-                    else "q35q_load_manifest_blocked"),
-        "blocker": None if loadable else (
-            "the GPTQ artifact stores numbered per-expert linears but the source class "
-            "packs routed experts into stacked 3D parameters, and no pinned loader "
-            "transformation (checkpoint conversion mapping / load-state-dict hook) maps "
-            "between them; a conversion may not be improvised"),
+        "model_local_conversion_hook_present": bool(conversion_hook_present),
+    }
+
+
+def runtime_load_path_verdict(*, source_repr: str, artifact_repr: str,
+                              model_local_hook_present: bool,
+                              loader_conversion_present: bool,
+                              gptq_loader_stack_present: bool) -> dict:
+    """Decide the load-manifest runtime path, accounting for the loader-level
+    conversion layer (Transformers global conversion_mapping) and the GPTQ loader
+    stack (Optimum / GPTQModel), not only model-local hooks.
+
+    - representations match, or a conversion path exists AND the GPTQ loader stack is
+      present -> candidate (pending the exact conversion-plan audit);
+    - a conversion path exists but the GPTQ loader stack is absent -> UNRESOLVED
+      (cannot exercise the quantized loader in this runtime);
+    - no conversion path of any kind and representations differ -> blocked.
+    """
+    if source_repr == "unknown" or artifact_repr == "unknown":
+        raise Q35QStageBlock("could not classify source or artifact expert representation")
+    same = source_repr == artifact_repr
+    any_conversion = model_local_hook_present or loader_conversion_present
+    if same or (any_conversion and gptq_loader_stack_present):
+        outcome, note = "q35q_phase0_load_manifest_runtime_candidate", (
+            "a conversion path and (if needed) a GPTQ loader stack are present; the exact "
+            "per-tensor conversion-plan audit + synthetic strict-load fixture remain")
+    elif any_conversion and not gptq_loader_stack_present:
+        outcome, note = "q35q_load_manifest_runtime_path_unresolved", (
+            "a loader-level numbered->packed conversion exists in the runtime, but the GPTQ "
+            "loader stack (Optimum/GPTQModel) is not installed, so quantized strict loadability "
+            "cannot be exercised or ruled out in this runtime tuple")
+    else:
+        outcome, note = "q35q_load_manifest_blocked", (
+            "representations differ and no conversion path (model-local or loader-level) exists")
+    return {
+        "source_expert_representation": source_repr,
+        "artifact_expert_representation": artifact_repr,
+        "representations_match": same,
+        "model_local_hook_present": bool(model_local_hook_present),
+        "loader_level_conversion_present": bool(loader_conversion_present),
+        "gptq_loader_stack_present": bool(gptq_loader_stack_present),
+        "outcome": outcome,
+        "note": note,
     }

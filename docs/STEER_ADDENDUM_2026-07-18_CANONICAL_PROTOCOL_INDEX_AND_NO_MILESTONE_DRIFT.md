@@ -72,6 +72,45 @@ Otherwise record the source as a lead outside sealed evidence and make no commit
 Status-only heartbeats remain prohibited as a substitute for executing the active
 milestone.
 
+## Official Agents-A1 dense-sibling bridge
+
+InternScience released `Agents-A1-4B` on 2026-07-14. The public Hugging Face
+artifact inspected for this correction is revision
+`945c40a4aa6f534d434a353207b8d42ecf7a5293`. Its configuration identifies
+`Qwen3_5ForConditionalGeneration` with model type `qwen3_5`, rather than the
+35B model's MoE architecture. It is therefore an official dense member of the
+same Agents-A1 family and materially changes the minimum future comparator set.
+
+This artifact does not change the active Q35Q milestone and authorizes no weight
+retrieval, model execution, GPU use, hidden-state capture, Jacobian capture,
+scientific evaluation, or production use. Before any use, the dense sibling must
+receive its own immutable artifact, processor, vision path, runtime, forward, and
+derivative admission. No layer, feature, token, Jacobian, calibration, or semantic
+coordinate may be assumed aligned with the 35B MoE.
+
+After Q35Q passes its existing gates and establishes sealed incremental monitor
+value, the first Agents-A1-family scaling bridge must include the admitted 4B
+dense sibling under matched task partitions, harness, tool schemas, prompts,
+decoding, decision boundaries, verifier rules, and outcome taxonomy. Required
+paired comparisons are:
+
+1. external checks, metadata, confidence, hidden-state, and trajectory monitors on
+   the dense sibling and the 35B MoE;
+2. identical full-population and family-disjoint evaluation where both models can
+   execute the task;
+3. equal-cost reporting and separate calibration for each model;
+4. explicit classification of signals shared by both models as general
+   agent-family, task, or representation evidence rather than MoE-specific
+   evidence;
+5. explicit classification of route-only effects as 35B-MoE evidence requiring
+   occupancy, parent-route, semantic, topology, and checkpoint controls;
+6. prospective, preregistered transfer tests rather than fitting an alignment on
+   sealed outcomes.
+
+The dense sibling is a bridge and negative control for MoE-specific claims. It is
+not a substitute for Agents-A1-35B route telemetry, derivative parity, or sealed
+replication.
+
 ## Canonical future comparator order for Agents-A1
 
 After Q35Q runtime admission, strict loading, forward parity, derivative parity,
@@ -87,12 +126,14 @@ instrumentation:
 5. independently certified sequential abort, capability, and resolution heads;
 6. provenance-bound experience-memory comparators under contamination and
    cold-start controls;
-7. minimal executed-route identities, weights, margins, entropy, occupancy, and
-   parent-route innovations at frozen boundaries;
-8. coalition, ancestry, semantic-nuisance, expert-footprint, and serving-topology
+7. matched execution on the separately admitted Agents-A1-4B dense sibling as an
+   official same-family control for every compatible non-routing monitor;
+8. minimal executed-route identities, weights, margins, entropy, occupancy, and
+   parent-route innovations at frozen boundaries on the 35B MoE;
+9. coalition, ancestry, semantic-nuisance, expert-footprint, and serving-topology
    controls when route telemetry is evaluated;
-9. frozen sparse-feature or transcoder comparators when technically available;
-10. Jacobian-Lens features only after exact derivative parity, bounded capture
+10. frozen sparse-feature or transcoder comparators when technically available;
+11. Jacobian-Lens features only after exact derivative parity, bounded capture
     cost, and sealed incremental value over every admitted cheaper baseline.
 
 Detection remains separate from abort, retry, escalation, truncation, tool

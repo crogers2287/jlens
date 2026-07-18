@@ -27,8 +27,13 @@ expert, vision, and MTP components.
 
 A separate open campaign in `solarkyle/jspace` reports that workspace-derived
 signals can improve some family-specific hallucination detectors but do not support
-a universal correctness gate. Its reported negative controls include sign reversal
-or failure on some veracity families, answer-readout confounding, weak signal for
+a universal correctness gate. At immutable public commit
+`50fc677f0a107b5dae84dbac6d30eb4dcee8ff2d`, the campaign corrected its earlier
+operation-level sign-inversion interpretation: its prospective universal-transfer
+gate missed, and several apparent favorable or inverted veracity slices were
+entangled with answer-identity or fixed-truth confounding. The bounded evidence is
+task-conditional reliability and transfer failure, not a clean cross-operation sign
+reversal. The campaign still reports answer-readout confounding, weak signal for
 some tool-call argument errors, and materially different results across model and
 task families.
 

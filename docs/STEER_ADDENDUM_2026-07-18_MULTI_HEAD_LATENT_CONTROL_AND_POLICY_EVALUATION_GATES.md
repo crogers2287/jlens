@@ -227,6 +227,96 @@ Future Resolution Head evaluation must include:
 A changed action or improved class score is not evidence that the final task
 outcome improved. Detection quality and policy utility must both pass.
 
+## Answerability-versus-correctness factorization and dual-risk certification
+
+Wagner, “Two Axes of LLM Abstention: Answer Correctness and Question
+Answerability,” arXiv `2607.08456v1` dated 2026-07-09, evaluates five dense
+instruction-tuned models from 2B to 14B. On the same questions it separates
+correct-and-answerable, wrong-but-answerable, and unanswerable outcomes. The
+reported geometry is crossed rather than a strict double dissociation: ordinary
+answer confidence primarily separates successful from unsuccessful attempts,
+while a prompt-boundary hidden-state readout primarily separates answerable from
+unanswerable questions.
+
+The strongest natural-data evidence is on CREPE false-presupposition questions.
+The paper reports ordinary answer-confidence and trained output readouts near
+chance for answerability, while hidden-state readouts remain moderately above
+chance. It also reports a factorized acceptance policy with separately calibrated
+correctness and answerability thresholds and separately certified wrong-answer
+and unanswerable-answer risk budgets. The paper’s own controls show that
+SelfAware contains substantial surface lexical signal, that natural-data
+separability is materially lower, and that certificate issuance varies across
+random resplits. These are dense-model question-answering results, not an
+Agents-A1 or long-horizon agent result.
+
+Future abstention, escalation, direct-answer, tool-use, or task-acceptance studies
+must therefore treat at least these as separate endpoints:
+
+1. **admissibility or answerability:** whether the task, request, premise, action,
+   or proposed tool operation should be attempted under the available evidence,
+   permissions, tools, environment state, and policy;
+2. **execution correctness:** whether an admissible attempted answer or action is
+   likely to succeed or be correct;
+3. **resolution choice:** which permitted action should be taken when the first
+   two endpoints are uncertain or fail.
+
+A single scalar confidence, capability, workspace, route, or Jacobian score may
+replace this factorization only after a preregistered sealed comparison shows
+that it controls each endpoint’s risk separately without losing required
+coverage. Aggregate abstention accuracy, pooled selective risk, or one combined
+false-abort rate is insufficient.
+
+For each study, freeze the outcome ontology and denominators before labels are
+opened. At minimum distinguish correct-answerable, wrong-answerable,
+unanswerable or inadmissible, malformed, permission-blocked, tool-unavailable,
+insufficient-evidence, false-premise, recoverable, and terminal outcomes where
+applicable. Do not relabel a wrong answer as unanswerable merely because the model
+failed, and do not treat an answerable task as inadmissible merely because the
+available model is weak.
+
+The answerability and correctness heads, layers, token boundaries, features,
+thresholds, calibration rules, and policy conjunction must be selected on
+training and tuning data only. Use disjoint probe-training, threshold-tuning,
+post-selection certification, and sealed-test partitions. A failed certificate
+may not be used to retune on the certification split. Certification must follow
+the existing cluster-aware and sequential-risk rules when tasks, templates,
+episodes, users, or repeated rollouts are dependent.
+
+Report separate risk budgets, confidence levels, empirical test risks, coverage,
+and certificate-issuance rates for:
+
+- answering or acting on inadmissible inputs;
+- wrong execution on admissible inputs;
+- unnecessary abstention, escalation, clarification, or tool use;
+- abandonment of answerable or solvable tasks;
+- right-to-wrong and wrong-to-right changes caused by the policy.
+
+Prompt-only, bag-of-words or equivalent surface, task-family, template, modality,
+tool-availability, permission, and environment-state baselines are mandatory.
+Within-family and family-disjoint tests must determine whether an answerability
+probe is reading semantic admissibility or merely task source, wording, format,
+or benchmark construction. Surface-available signal remains a valid operational
+comparator but cannot be represented as uniquely internal model awareness.
+
+Decision timing remains explicit. A prompt-boundary answerability head may support
+a pre-generation admissibility claim only from information available at that
+boundary. A post-answer correctness score is retrospective. A step-level agent
+head must not use later observations, tool results, verifier outcomes, or future
+trajectory states. The conjunction of scores inherits the latest information
+boundary used by any component and may claim savings only for work occurring
+after that boundary.
+
+For Agents-A1, add a cheap frozen admissibility or answerability head beside the
+confidence and capability baselines before route telemetry or Jacobian-Lens
+features. Evaluate it on both the separately admitted Agents-A1-4B dense sibling
+and Agents-A1-35B MoE under matched tasks and separate calibration. Shared
+answerability effects are general agent-family or task evidence; route-only
+incremental effects remain MoE-specific and must pass the existing occupancy,
+semantic, parent-route, topology, and equal-cost controls. This addition changes
+the minimum future comparator decomposition but does not authorize model
+execution, telemetry capture, abstention, escalation, tool suppression, routing,
+or production control.
+
 ## Long-horizon and AndroidWorld leakage controls
 
 For step-level or long-horizon evaluation:
@@ -284,14 +374,15 @@ The preferred Agents-A1-native sequence remains:
 1. metadata and action-history baselines;
 2. calibrated logits and confidence;
 3. selected decision-boundary hidden-state projections;
-4. a frozen fixed-budget capability head;
-5. compact online route paths, margins, entropy, and cross-layer path summaries;
-6. a frozen multi-action resolution head;
-7. streaming trajectory summaries that require no replay;
-8. Jacobian-lens features only after exact derivative parity and capture-cost
+4. a frozen prompt-boundary admissibility or answerability head;
+5. a frozen fixed-budget capability or correctness head;
+6. compact online route paths, margins, entropy, and cross-layer path summaries;
+7. a frozen multi-action resolution head;
+8. streaming trajectory summaries that require no replay;
+9. Jacobian-lens features only after exact derivative parity and capture-cost
    validation;
-9. policy evaluation only after detection passes;
-10. full attention maps, attribution graphs, steering, or router intervention
+10. policy evaluation only after detection passes;
+11. full attention maps, attribution graphs, steering, or router intervention
     only under separate amendments.
 
 For Agents-A1 or comparable large multimodal MoEs, additionally control model
@@ -316,7 +407,11 @@ Established:
   several benchmarks and an AndroidWorld case study;
 - each released head is coupled to a specific backbone and mode;
 - hidden-state capability and multi-action policy heads are mandatory future
-  comparators when technically compatible.
+  comparators when technically compatible;
+- correctness and answerability are distinct selective-decision endpoints in the
+  reported dense-model question-answering experiments;
+- a separately calibrated two-axis policy is a mandatory future abstention and
+  task-acceptance comparator when technically compatible.
 
 Unproven:
 
@@ -325,8 +420,12 @@ Unproven:
 - leakage-free episode-disjoint AndroidWorld training and evaluation;
 - low-overhead single-pass monitoring in the target serving stack;
 - stable calibration under workload, model, mode, or harness drift;
+- robust answerability separation after surface, family, modality, tool, and
+  environment controls on agent trajectories;
+- dual-risk certificate stability under clustered long-horizon episodes;
 - transfer to Agents-A1 or another large multimodal MoE;
-- incremental Jacobian-lens value over capability and resolution heads;
+- incremental Jacobian-lens value over answerability, capability, correctness,
+  and resolution heads;
 - safe early exit, routing, tool use, clarification, abstention, retry, or
   production deployment.
 

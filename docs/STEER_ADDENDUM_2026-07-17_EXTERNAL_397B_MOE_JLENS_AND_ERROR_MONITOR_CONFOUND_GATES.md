@@ -1,4 +1,4 @@
-# Steer addendum — external 397B MoE Jacobian-lens precedent and correctness-monitor confound gates
+# Steer addendum — external large-MoE Jacobian-lens precedents and correctness-monitor confound gates
 
 Date: 2026-07-17
 
@@ -25,6 +25,31 @@ The base model's official card independently identifies it as a 397B-total,
 17B-active, 60-layer Qwen3.5 MoE with Gated DeltaNet, routed experts, a shared
 expert, vision, and MTP components.
 
+A second public Hugging Face artifact,
+`stanleytheli/qwen3.6-35B-A3B-jlens`, at immutable repository revision
+`7a5dc7a6c770c272226a321409b30d7e6d773bba`, reports a fitted
+Anthropic-format Jacobian lens for `Qwen/Qwen3.6-35B-A3B`. This is a materially
+closer architecture and scale comparator for the Agents-A1-35B path than the
+397B artifact. Its model card reports:
+
+- source layers 0 through 38 with target layer 39 on the 40-layer,
+  `d_model=2048` text decoder;
+- one 1000-prompt WikiText-103 fit and one 100-prompt fit, with the author claiming
+  agreement within noise;
+- two approximately 327 MB FP16 PyTorch-pickle lens files;
+- fitting on 8 H200 GPUs with `dim_batch=16`, approximately 101 GiB peak memory per
+  GPU, and approximately 55 to 80 seconds per prompt;
+- a pure-PyTorch autograd path claimed to propagate through the 256-expert sparse
+  MoE dispatch and hybrid gated-linear-attention blocks; and
+- final-output-token rank comparisons against the classic logit lens plus a small
+  two-hop factual-readout demonstration.
+
+The 35B model card does not freeze the exact base-model revision, Transformers
+revision, Jacobian-lens source revision, dependency lock, corpus example identities,
+per-shard fit receipts, merge receipts, or artifact digests. Its published files are
+pickle-bearing artifacts. These omissions and the unsafe serialization format are
+admission blockers, not clerical details.
+
 A separate open campaign in `solarkyle/jspace` reports that workspace-derived
 signals can improve some family-specific hallucination detectors but do not support
 a universal correctness gate. At immutable public commit
@@ -50,22 +75,37 @@ The public 397B artifact changes one narrow feasibility classification:
 > 0.4T total parameters is no longer purely hypothetical; it has a concrete public
 > implementation and artifact claim.
 
-It does **not** establish:
+The public 35B artifact changes a second, narrower feasibility classification:
+
+> Fitting an Anthropic-format BF16 Jacobian lens through the same broad
+> Qwen3.6-35B-A3B sparse/hybrid backbone used as the nearest public base-family
+> comparator for Agents-A1 is no longer purely hypothetical.
+
+This does **not** establish:
 
 - exact GPTQ, AWQ, NF4, or other quantized autograd;
 - equality between a quantized Jacobian and a BF16 Jacobian;
+- equality between the public Qwen3.6 base-model Jacobian and an Agents-A1
+  checkpoint Jacobian after agentic post-training;
 - feasibility on two 24 GiB GPUs or the present host;
 - correctness prediction, completed-error detection, safe early exit, or repair;
-- transfer from Qwen3.5-397B-A17B to Agents-A1;
+- transfer from either public base model to Agents-A1;
+- multimodal, long-context, tool-trajectory, or production-path validity;
 - privacy or production suitability;
 - causal expert localization; or
-- validity of the reported ignition or steering effects in this program.
+- validity of the reported ignition, latent-hop, or steering effects in this program.
 
-The reported workspace-band statistic is geometry evidence, not a correctness
-monitor. The model card itself reports family confounding and a small fitting
-sample relative to larger published lens collections. No threshold, source layer,
-direction, performance number, or intervention from the public artifact may be
-imported into an Agents-A1 claim.
+The reported workspace-band, final-token-rank, and latent-hop statistics are geometry
+or readout evidence, not correctness monitors. No threshold, source layer, direction,
+performance number, prompt-count claim, or intervention from either public artifact
+may be imported into an Agents-A1 claim.
+
+A lens fitted to the public Qwen3.6 base checkpoint may not be treated as an admitted
+Agents-A1 lens. Post-training can change residual bases, routing, attention dynamics,
+normalization, calibration, and the input-output Jacobian. Any proposed reuse must be
+a prospectively frozen transfer experiment with separate checkpoint admission and
+without sealed-label retuning. A failed transfer requires a checkpoint-specific fit
+or termination of that branch; it may not be repaired after viewing sealed outcomes.
 
 ## Q35Q order remains unchanged
 
@@ -84,7 +124,7 @@ Q35Q remains `q35q_artifact_admission_blocked`. The active order remains:
 8. test exact quantized forward and VJP/JVP parity before fitting any quantized
    Jacobian lens.
 
-The external BF16 precedent may not be used to skip exact quantized parity. It does
+The external BF16 precedents may not be used to skip exact quantized parity. They do
 reduce the value of spending Q35Q effort merely to prove that a large MoE lens can
 exist in BF16. Q35Q's unique purpose is now sharper: determine whether an admitted,
 locally feasible quantized path preserves the derivatives needed for a credible
@@ -92,20 +132,45 @@ Agents-A1 scaling route.
 
 ## External-replication lane
 
-A separate launch amendment is required before downloading or executing the public
-397B lens or base-model tensor payloads. That amendment must freeze:
+A separate launch amendment is required before downloading or executing either
+public lens or either base-model tensor payload. That amendment must freeze:
 
 - the public lens repository revision and every artifact identity;
 - the base-model revision and exact lm-head shard identity;
-- the public GitHub source commit and dependency lock;
+- the public GitHub or Hugging Face source revision and dependency lock;
+- corpus identity, source-position policy, estimator, shard boundaries, merge rule,
+  and expected fit receipts;
 - a CPU-only consumer-check implementation and expected aggregate outputs;
 - storage, network, cleanup, and resource limits;
 - a prohibition on private prompt, output, token, activation, route, or label use;
-- a statement that reproducing a band statistic does not validate behavioral claims;
-- stop conditions and a public-safe aggregate record.
+- a statement that reproducing a rank or band statistic does not validate behavioral
+  or correctness claims;
+- stop conditions and a public-safe aggregate record; and
+- serialization safety.
+
+The two Qwen3.6 lens files are PyTorch pickles. They may not be loaded directly in an
+ordinary research or production process. Before deserialization, the lane must either
+convert them through a separately admitted, network-isolated, credential-free,
+read-only sandbox into a non-executable tensor format with independently verified
+schema and digests, or reject the artifacts. A file being hosted on Hugging Face does
+not satisfy this gate.
 
 Before such a launch, metadata and source inspection only are permitted. No public
 behavioral steering trial is authorized by this addendum.
+
+## Prompt-count convergence gate
+
+The public 35B card's claim that a 100-prompt fit matches a 1000-prompt fit within
+noise is useful only as a lead for a resource-saving pilot. It is not an imported
+sample-size result.
+
+Any checkpoint-specific Agents-A1 lens proposal must first preregister a training-only
+prompt-count convergence study using independently fitted shards at multiple frozen
+corpus sizes. Stability must be evaluated on public or training-only readout metrics,
+artifact-to-artifact distance, and held-out public prompts. Sealed correctness labels,
+private trajectories, verifier outcomes, and production telemetry may not select the
+fit size. The smallest stable fit may advance only if it also passes all derivative,
+provenance, privacy, and artifact-admission gates.
 
 ## M39 and Agents-A1 correctness-monitor gates
 
@@ -148,19 +213,24 @@ The current credible sequence is:
 
 1. finish Q35Q Phase-0 honestly;
 2. establish exact quantized derivative parity on the admitted Qwen3.5 MoE path;
-3. independently audit the public 397B BF16 artifact through a separate bounded
-   amendment, using it only as an external large-MoE comparator;
-4. run an independent forward-only correctness-monitor benchmark with the confound
+3. audit the public Qwen3.6-35B-A3B lens metadata, serialization, source path, and
+   claimed fit receipts through a separate bounded amendment, treating it as the
+   nearest public same-backbone feasibility comparator rather than an Agents-A1 lens;
+4. independently audit the public 397B BF16 artifact through a separate bounded
+   amendment only if its additional scale comparison remains decision-relevant;
+5. run an independent forward-only correctness-monitor benchmark with the confound
    gates above;
-5. require stable incremental prediction beyond nuisance, confidence, hidden-state,
-   and router/path comparators;
-6. only then design an Agents-A1-native derivative or telemetry capture;
-7. keep every intervention and production gate separate.
+6. require stable incremental prediction beyond nuisance, confidence, hidden-state,
+   router/path, external-check, and trajectory comparators;
+7. preregister a public/training-only prompt-count convergence pilot before any
+   checkpoint-specific Agents-A1 lens fit;
+8. only then design an Agents-A1-native derivative or telemetry capture; and
+9. keep every intervention and production gate separate.
 
 If quantized derivative parity fails, the program must report that result and choose
 between a separately resourced BF16/FP8 path, a smaller admitted dense engineering
-model, or stopping the Jacobian branch. It may not substitute the external 397B
-claim for local parity evidence.
+model, or stopping the Jacobian branch. It may not substitute either external claim
+for local parity evidence.
 
 ## Status and claims
 

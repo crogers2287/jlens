@@ -118,6 +118,68 @@ Any later causal claim must separately measure:
 A changed output string, suppression of a literal token, or successful behavior
 flip is not correctness, safety, repair, or production utility.
 
+## 2026-07-22 circuit-object and comparison-granularity correction
+
+The primary source `Circuit Claims Depend on What Is Extracted and How It Is
+Compared` (arXiv:2607.18921v1, submitted 2026-07-21) demonstrates on a synthetic
+Lean tactic-prediction setting that behavior-preserving circuit extraction does
+not identify a unique mechanism. Exact edge overlap can fall to a random
+baseline when the reported circuit object, pruning criterion, or component
+representation changes, while coarser summaries such as selected attention
+heads and relative circuit-size rankings remain more stable.
+
+This evidence changes the claim boundary for future transcoder, attribution,
+router-path, sparse-feature, and Jacobian-derived circuit studies. A reported
+`circuit` is not a sufficiently specified scientific object.
+
+Before validation or sealed evaluation, every circuit study must freeze:
+
+1. the extracted object class, including whether it is a compact
+   behavior-preserving circuit, a broader scaffold retaining read/write/routing
+   structure, a minimum-size thresholded subgraph, or another explicitly
+   defined object;
+2. the ablation, replacement, patching, or pruning semantics used to define
+   sufficiency and necessity;
+3. the behavioral or loss threshold, threshold-search rule, tie handling,
+   traversal order, stopping rule, random seed, and restart policy;
+4. the graph ontology and component granularity, including whether attention
+   query and key components are joint or separate and how experts, routers,
+   residual channels, features, error nodes, and output nodes are represented;
+5. the comparison level and metric, including exact edges, nodes, heads,
+   experts, layers, modules, paths, graph motifs, size rankings, functional
+   outputs, or intervention effects;
+6. normalization, matching, alignment, permutation handling, and uncertainty
+   procedures used for cross-prompt, cross-seed, cross-checkpoint, or
+   cross-model comparisons.
+
+Required reporting must include at least:
+
+- exact edge- and node-level agreement;
+- coarser head, expert, module, layer, or path agreement when applicable;
+- circuit-size and performance-retention curves across prospectively frozen
+  thresholds;
+- matched random-circuit, size-matched, and extraction-method controls;
+- stability across seeds and held-out task families;
+- the number and diversity of alternative circuits meeting the same behavioral
+  criterion when computationally feasible.
+
+Low exact-edge overlap does not by itself prove different mechanisms. High
+behavioral retention does not prove that the selected graph is unique,
+minimal, complete, or the model's mechanism. Stability at one comparison level
+may not be represented as stability at another level.
+
+For Agents-A1, any comparison between dense-sibling hidden-state circuits,
+35B-MoE router/path circuits, sparse-feature graphs, and Jacobian-derived graphs
+must use explicitly matched behavioral targets and separately declared graph
+ontologies. Route identities, expert paths, residual/J-space directions, and
+transcoder features are not interchangeable nodes. Cross-representation
+agreement is an empirical result requiring a frozen alignment procedure, not an
+assumption.
+
+This correction adds no execution authority. It does not change Q35Q admission,
+authorize circuit extraction, model execution, telemetry capture, intervention,
+or production use.
+
 ## Agents-A1 scaling interpretation
 
 Transcoders are a later comparator track, not a bypass around Q35Q admission or

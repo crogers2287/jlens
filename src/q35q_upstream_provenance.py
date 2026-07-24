@@ -12,10 +12,11 @@ not the installed bytes. The addendum fixes the upstream identities:
 
 `verify_wheel_and_extract` verifies the downloaded wheel bytes against the frozen
 wheel sha256, rejects ambiguous archive/request identities, and extracts exactly
-the admitted source closure. `compare_installed_to_upstream` binds installed
-source digests to those independent expected values by equality. Pure over bytes
-so it is unit-testable with a synthetic zip; the live adapter must compose it
-with distribution ownership and live-object source closure in one clean process.
+the admitted Transformers-side source closure. `compare_installed_to_upstream`
+binds installed source digests to those independent expected values by equality.
+Pure over bytes so it is unit-testable with a synthetic zip; the live adapter
+must compose it with distribution ownership, live-object source closure, and the
+eventual frozen GPTQModel/Defuser loader closure in one clean process.
 """
 from __future__ import annotations
 
@@ -36,9 +37,14 @@ PINNED_UPSTREAM = {
     "source_commit": "4626421dc6b741a329300682a6408246ee465490",
 }
 
+# Frozen Transformers-side closure needed before the GPTQModel/Defuser loader
+# tuple is selected. The model module imports the three live configuration
+# classes from the separate configuration module, so that file is part of the
+# executable source closure and may not be omitted.
 ADMITTED_SOURCE_MEMBERS = (
     "transformers/conversion_mapping.py",
     "transformers/core_model_loading.py",
+    "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py",
     "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
 )
 

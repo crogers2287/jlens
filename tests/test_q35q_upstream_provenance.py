@@ -1,4 +1,5 @@
 """Q35Q independent upstream provenance tests (CPU-only, no network)."""
+import importlib.util
 import io
 import sys
 import zipfile
@@ -30,11 +31,26 @@ def make_wheel(members):
 MEMBERS = {
     "transformers/conversion_mapping.py": b"CONV",
     "transformers/core_model_loading.py": b"CORE",
+    "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py": b"CONFIG",
     "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py": b"MODEL",
 }
 WHEEL = make_wheel(MEMBERS)
 WHEEL_SHA = sha256(WHEEL)
 UPSTREAM = {name: sha256(data) for name, data in MEMBERS.items()}
+
+
+def test_configuration_source_is_in_admitted_closure():
+    assert "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py" in ADMITTED_SOURCE_MEMBERS
+    assert len(ADMITTED_SOURCE_MEMBERS) == 4
+
+
+def test_live_adapter_manifest_matches_upstream_closure():
+    script_path = Path(__file__).resolve().parent.parent / "scripts" / "q35q_conversion_admission.py"
+    spec = importlib.util.spec_from_file_location("q35q_conversion_admission_script", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    assert tuple(module.PINNED) == ADMITTED_SOURCE_MEMBERS
 
 
 def test_verify_and_extract_exact_closure():
@@ -62,6 +78,14 @@ def test_missing_member_fails():
     incomplete.pop(ADMITTED_SOURCE_MEMBERS[-1])
     wheel = make_wheel(incomplete)
     with pytest.raises(Q35QStageBlock, match="member missing"):
+        verify_wheel_and_extract(wheel, sha256(wheel))
+
+
+def test_missing_configuration_member_fails():
+    incomplete = dict(MEMBERS)
+    incomplete.pop("transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py")
+    wheel = make_wheel(incomplete)
+    with pytest.raises(Q35QStageBlock, match="configuration_qwen3_5_moe"):
         verify_wheel_and_extract(wheel, sha256(wheel))
 
 
@@ -123,6 +147,7 @@ def test_member_paths_string_is_rejected():
 def test_compare_bound():
     output = compare_installed_to_upstream(UPSTREAM, dict(UPSTREAM))
     assert output["installed_bound_to_upstream"] is True
+    assert output["member_count"] == 4
 
 
 def test_compare_mismatch_reports_fail_closed():

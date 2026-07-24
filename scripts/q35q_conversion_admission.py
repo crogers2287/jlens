@@ -7,19 +7,20 @@ Unlike the pure verifiers, this adapter obtains identities FROM the installed
 runtime (no caller-supplied observed fields):
 
 - resolve the installed Transformers distribution + version via importlib.metadata;
-- resolve conversion_mapping.py + modeling_qwen3_5_moe.py via the import system,
-  canonicalize realpath, and require containment under the distribution package root
-  (rejects shadow / alternate-origin imports);
+- resolve conversion_mapping.py, core_model_loading.py, and the Qwen3.5-MoE
+  configuration/model modules via the import system, canonicalize realpath, and
+  require containment under the distribution package root;
 - hash the actual imported source bytes;
 - obtain get_checkpoint_conversion_mapping("qwen3_5_moe_text") LIVE, extract it
   immediately, bind every converter/operation CLASS module qualname to
-  transformers.conversion_mapping (rejects shadow classes), and verify the exact
+  transformers.core_model_loading (rejects shadow classes), and verify the exact
   conversion (count / prefix multiplicity / patterns / dims).
 
 Expected-digest INDEPENDENCE is not asserted by a boolean here: it requires deriving
 the expected digests from the immutable PyPI upstream artifact for transformers
 5.13.1 (which exists), not the installed bytes. Until that independent derivation is
-committed, this adapter emits `q35q_provenance_blocked` for the independence gate.
+composed with distribution ownership and live-object source inspection, this adapter
+emits `q35q_provenance_blocked`.
 Aggregate-only output: version, booleans, and public source-digest prefixes only.
 
 usage: q35q_conversion_admission.py <out_json>
@@ -36,12 +37,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from q35q_dispatch_conversion import extract_mapping, verify_dispatch_conversion  # noqa: E402
 
 EXPECTED_VERSION = "5.13.1"
-# the converter/operation CLASSES are defined here (the mapping DATA lives in
-# conversion_mapping.py); both are pinned, plus the model definition.
+# The converter/operation classes are defined in core_model_loading.py (the
+# mapping data lives in conversion_mapping.py). The Qwen3.5 model module imports
+# its live config classes from a separate source file, so both model and config
+# modules are part of the minimum Transformers-side executable closure.
 EXPECTED_CONVERSION_MODULE = "transformers.core_model_loading"
-PINNED = ("transformers/conversion_mapping.py",
-          "transformers/core_model_loading.py",
-          "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py")
+PINNED = (
+    "transformers/conversion_mapping.py",
+    "transformers/core_model_loading.py",
+    "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py",
+    "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
+)
 
 
 def _sha(path):
@@ -60,6 +66,8 @@ def main():
     files = {
         "transformers/conversion_mapping.py": os.path.realpath(cm.__file__),
         "transformers/core_model_loading.py": os.path.realpath(os.path.join(pkg_root, "core_model_loading.py")),
+        "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py":
+            os.path.realpath(os.path.join(pkg_root, "models", "qwen3_5_moe", "configuration_qwen3_5_moe.py")),
         "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py":
             os.path.realpath(os.path.join(pkg_root, "models", "qwen3_5_moe", "modeling_qwen3_5_moe.py")),
     }
@@ -93,12 +101,14 @@ def main():
         },
         "independence_gate": {
             "expected_digests_independent": False,
-            "blocker": "expected source digests are not yet derived from the immutable PyPI upstream artifact for transformers 5.13.1; deriving them from the installed bytes would be self-binding",
-            "upstream_resolvable": "transformers 5.13.1 exists on PyPI (normal install, no direct_url) -> an independent upstream derivation is feasible next",
+            "blocker": "upstream verification, installed-distribution ownership, live-object source closure, and installed-byte equality are not yet composed in one clean subprocess",
+            "upstream_resolvable": "transformers 5.13.1 exists on PyPI; frozen wheel identity is recorded",
         },
-        "remaining": ["independent upstream digest derivation (PyPI 5.13.1 sdist/wheel)",
-                      "GPTQ runtime tuple (Optimum/GPTQModel+Defuser) for the differentiable fixture",
-                      "then Phase-0 conjunction, weights, authorized GPU transition, exact parity"],
+        "remaining": [
+            "compose frozen upstream wheel verification with distribution RECORD ownership and live-object source closure",
+            "bind the actual GPTQModel/Defuser loader after freezing the runtime tuple",
+            "then Phase-0 conjunction, weights, authorized GPU transition, exact parity",
+        ],
         "boundary": {"gpu_used": False, "weights_loaded": False, "tensor_payload_fetched": False,
                      "unrelated_gpu_tenant": "present_preserved"},
         "privacy": "aggregate-only; version + booleans + public source-digest prefixes, no host paths",

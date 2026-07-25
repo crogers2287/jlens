@@ -31,7 +31,16 @@ EXPECTED = {
     "full_attention_interval": 4,
     "tie_word_embeddings": False,
 }
-GPTQ_EXPECTED = {"bits": 4, "group_size": 128, "quant_method": "gptq", "sym": True}
+GPTQ_EXPECTED = {
+    "bits": 4,
+    "group_size": 128,
+    "quant_method": "gptq",
+    "sym": True,
+    # The frozen artifact predates GPTQModel's persisted rotation metadata and
+    # has no online-Hadamard requirement. Any non-null rotation changes both
+    # calibration and inference semantics and is outside this admission path.
+    "rotation": None,
+}
 
 # Local paths that must never enter a deterministic public-file manifest.
 _MANIFEST_EXCLUDE = re.compile(
@@ -83,7 +92,7 @@ def validate_text_architecture(config: dict) -> dict:
 
 
 def validate_gptq_quant(qcfg: dict) -> dict:
-    """GPTQ quantization identity checks + skip-rule presence."""
+    """GPTQ quantization identity checks + skip-rule and rotation checks."""
     if not isinstance(qcfg, dict):
         raise Q35QStageBlock("quantization_config missing")
     dyn = qcfg.get("dynamic") or {}
@@ -93,6 +102,7 @@ def validate_gptq_quant(qcfg: dict) -> dict:
         "group_size_128": qcfg.get("group_size") == GPTQ_EXPECTED["group_size"],
         "quant_method_gptq": qcfg.get("quant_method") == GPTQ_EXPECTED["quant_method"],
         "symmetric": qcfg.get("sym") == GPTQ_EXPECTED["sym"],
+        "rotation_disabled": qcfg.get("rotation") is GPTQ_EXPECTED["rotation"],
         "skips_attention": "attn" in dyn_keys,
         "skips_mtp": "mtp" in dyn_keys,
         "skips_shared_expert": "shared_expert" in dyn_keys,

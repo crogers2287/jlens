@@ -4,21 +4,22 @@
 Committed production path per
 ``docs/STEER_ADDENDUM_2026-07-17_Q35Q_RUNTIME_COMPOSITION_PROVENANCE_CORRECTION.md``.
 The adapter obtains identities from the installed runtime rather than accepting
-caller-supplied observations. It now additionally binds the imported Transformers
-package to one installed wheel-style distribution through ``distribution()``, the
-canonical package/dist-info roots, METADATA, WHEEL, RECORD, declared files, and
-RECORD-verified bytes.
+caller-supplied observations. It binds the imported Transformers package to one
+installed wheel-style distribution through ``distribution()``, canonical package
+and dist-info roots, METADATA, WHEEL, RECORD, declared files, RECORD-verified bytes,
+and the source origins of the live dispatch/converter/operation/model/config objects.
 
-This remains a partial admission. Independent upstream-wheel extraction, complete
-live-object source closure, clean-subprocess isolation, and the actual frozen
-GPTQModel/Defuser loader still have to be composed in the same conjunction.
-Aggregate-only output: versions, booleans, counts, and public source-digest prefixes.
+This remains a partial admission. Independent upstream-wheel extraction,
+clean-subprocess isolation, and the actual frozen GPTQModel/Defuser loader still
+have to be composed in the same conjunction. Aggregate-only output: versions,
+booleans, counts, and public source-digest prefixes.
 
 usage: q35q_conversion_admission.py <out_json>
 """
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import os
 from pathlib import PurePosixPath
@@ -28,17 +29,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from q35q_dispatch_conversion import extract_mapping, verify_dispatch_conversion  # noqa: E402
 from q35q_distribution_ownership import verify_distribution_ownership  # noqa: E402
+from q35q_live_object_closure import (  # noqa: E402
+    ADMITTED_MODULE_MEMBERS,
+    EXPECTED_CONFIG_CLASSES,
+    EXPECTED_MODEL_CLASSES,
+    verify_live_object_closure,
+)
 
 EXPECTED_VERSION = "5.13.1"
 EXPECTED_DISTRIBUTION = "transformers"
 EXPECTED_PACKAGE_INIT_MEMBER = "transformers/__init__.py"
 EXPECTED_CONVERSION_MODULE = "transformers.core_model_loading"
-PINNED = (
-    "transformers/conversion_mapping.py",
-    "transformers/core_model_loading.py",
-    "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py",
-    "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py",
-)
+PINNED = tuple(ADMITTED_MODULE_MEMBERS.values())
 
 
 def _read_bytes(path: str) -> bytes:
@@ -115,6 +117,14 @@ def _distribution_ownership(distribution, transformers, source_paths: dict[str, 
     )
 
 
+def _module_path(module) -> str:
+    spec = getattr(module, "__spec__", None)
+    origin = getattr(spec, "origin", None) if spec is not None else None
+    if not isinstance(origin, str) or not origin:
+        raise RuntimeError(f"module {module.__name__} has no import-spec origin")
+    return os.path.realpath(origin)
+
+
 def main():
     if len(sys.argv) != 2:
         raise SystemExit("usage: q35q_conversion_admission.py <out_json>")
@@ -123,31 +133,31 @@ def main():
     import transformers
     import transformers.conversion_mapping as cm
 
-    distribution = md.distribution(EXPECTED_DISTRIBUTION)
-    version = distribution.version
-    pkg_root = os.path.realpath(os.path.dirname(transformers.__file__))
-    source_paths = {
-        "transformers/conversion_mapping.py": os.path.realpath(cm.__file__),
-        "transformers/core_model_loading.py": os.path.realpath(
-            os.path.join(pkg_root, "core_model_loading.py")
+    module_objects = {
+        "transformers.conversion_mapping": cm,
+        "transformers.core_model_loading": importlib.import_module(
+            "transformers.core_model_loading"
         ),
-        "transformers/models/qwen3_5_moe/configuration_qwen3_5_moe.py": os.path.realpath(
-            os.path.join(
-                pkg_root,
-                "models",
-                "qwen3_5_moe",
-                "configuration_qwen3_5_moe.py",
+        "transformers.models.qwen3_5_moe.configuration_qwen3_5_moe": (
+            importlib.import_module(
+                "transformers.models.qwen3_5_moe.configuration_qwen3_5_moe"
             )
         ),
-        "transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py": os.path.realpath(
-            os.path.join(
-                pkg_root,
-                "models",
-                "qwen3_5_moe",
-                "modeling_qwen3_5_moe.py",
+        "transformers.models.qwen3_5_moe.modeling_qwen3_5_moe": (
+            importlib.import_module(
+                "transformers.models.qwen3_5_moe.modeling_qwen3_5_moe"
             )
         ),
     }
+    module_paths = {name: _module_path(module) for name, module in module_objects.items()}
+    source_paths = {
+        member: module_paths[module_name]
+        for module_name, member in ADMITTED_MODULE_MEMBERS.items()
+    }
+
+    distribution = md.distribution(EXPECTED_DISTRIBUTION)
+    version = distribution.version
+    pkg_root = os.path.realpath(os.path.dirname(transformers.__file__))
     contained = all(
         path.startswith(pkg_root + os.sep) for path in source_paths.values()
     )
@@ -167,6 +177,20 @@ def main():
         type(obj).__module__ == EXPECTED_CONVERSION_MODULE for obj in live
     )
 
+    modeling = module_objects[
+        "transformers.models.qwen3_5_moe.modeling_qwen3_5_moe"
+    ]
+    configuration = module_objects[
+        "transformers.models.qwen3_5_moe.configuration_qwen3_5_moe"
+    ]
+    live_closure = verify_live_object_closure(
+        dispatch_callable=cm.get_checkpoint_conversion_mapping,
+        converters=live,
+        model_classes={name: getattr(modeling, name) for name in EXPECTED_MODEL_CLASSES},
+        config_classes={name: getattr(configuration, name) for name in EXPECTED_CONFIG_CLASSES},
+        expected_module_paths=module_paths,
+    )
+
     installed_admission = (
         version == EXPECTED_VERSION
         and contained
@@ -175,6 +199,7 @@ def main():
         and top_level_class_modules_bound
         and len(digests) == len(PINNED)
         and ownership["distribution_ownership_pass"]
+        and live_closure["live_object_closure_pass"]
     )
 
     record = {
@@ -191,6 +216,7 @@ def main():
             "top_level_converter_class_modules_bound": (
                 top_level_class_modules_bound
             ),
+            "live_object_source_closure": live_closure,
             "distribution_ownership": ownership,
             "installed_admission_pass": installed_admission,
             "conversion_source_sha256_prefixes": {
@@ -200,9 +226,9 @@ def main():
         "independence_gate": {
             "expected_digests_independent": False,
             "blocker": (
-                "independent upstream-wheel extraction, complete live-object "
-                "source closure, clean-subprocess isolation, and loader binding "
-                "are not yet composed in one process"
+                "independent upstream-wheel extraction, clean-subprocess isolation, "
+                "and the GPTQModel/Defuser loader closure are not yet composed in "
+                "one process"
             ),
             "upstream_resolvable": (
                 "transformers 5.13.1 frozen PyPI wheel identity is recorded"
@@ -210,9 +236,9 @@ def main():
         },
         "remaining": [
             "compose frozen upstream wheel verification and installed-byte equality in this clean-process adapter",
-            "derive source closure from the live dispatch, converter, nested-operation, model, and config objects",
+            "enforce clean-subprocess sys.path, user-site, pre-import, shadow-package, and monkeypatch rejection",
             "bind the actual GPTQModel/Defuser loader after freezing the runtime tuple",
-            "then Phase-0 conjunction, weights, authorized GPU transition, exact parity",
+            "then strict differentiable fixture, Phase-0 conjunction, weights, authorized GPU transition, exact parity",
         ],
         "boundary": {
             "gpu_used": False,
@@ -237,6 +263,9 @@ def main():
                 ],
                 "live_dispatch_conversion_pass": dispatch[
                     "dispatch_conversion_pass"
+                ],
+                "live_object_closure_pass": live_closure[
+                    "live_object_closure_pass"
                 ],
             },
             indent=2,

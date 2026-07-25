@@ -1,0 +1,53 @@
+{
+  "outcome": "q35q_rotation_config_admission_hardened",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "repository_visibility": "public",
+  "evidence": {
+    "upstream_repository": "ModelCloud/GPTQModel",
+    "upstream_commit": "185a2a46ddbd63bbac99d224fb6cd7c5eacfeaa8",
+    "change_class": "persisted rotation metadata and online Hadamard execution",
+    "frozen_q35q_repository": "Qwen/Qwen3.5-35B-A3B-GPTQ-Int4",
+    "frozen_q35q_revision": "3af5ca2972faf6de1fd6f4efc4d8d319ca751e8b",
+    "frozen_artifact_rotation": null
+  },
+  "engineering": {
+    "rotation_field_frozen": true,
+    "required_rotation_value": null,
+    "non_null_rotation_fails_closed": true,
+    "runtime_pin_advanced": false,
+    "gpu_boundary_changed": false,
+    "aggregate_only": true
+  },
+  "tests": {
+    "targeted_q35q_stage_tests": 37,
+    "targeted_result": "pass",
+    "full_repository_suite": "not_run",
+    "integrated_target_runtime_execution": "not_run"
+  },
+  "established": [
+    "the frozen Q35Q artifact configuration has no rotation mode",
+    "GPTQModel rotation metadata now changes calibration and inference semantics through online Hadamard transforms",
+    "Q35Q configuration admission now rejects hadamard, random, false, zero, and other non-null rotation values",
+    "missing or explicit null rotation remains admissible under the frozen artifact contract"
+  ],
+  "not_established": [
+    "successful integrated adapter execution in the target runtime",
+    "immutable complete GPTQ runtime tuple",
+    "actual GPTQModel/Defuser loader-entry source closure",
+    "strict synthetic Q35Q loading, packed-tensor consumption, expert ordering, forward parity, VJP parity, JVP parity, or finite-difference parity"
+  ],
+  "remaining": [
+    "compose same-clean-subprocess frozen-wheel and installed-byte equality",
+    "enforce clean-subprocess isolation and adversarial tamper rejection",
+    "freeze and bind the complete GPTQModel/Defuser runtime tuple",
+    "bind the actual loader entry and complete source closure",
+    "run the strict differentiable fixture before weight staging or GPU authorization"
+  ],
+  "boundary": {
+    "gpu_used": false,
+    "weights_loaded": false,
+    "tensor_payload_fetched": false,
+    "private_or_sealed_data_committed": false
+  },
+  "privacy": "aggregate-only; no host paths, credentials, weights, tensor data, task text, outputs, hidden states, routes, Jacobians, caches, or per-task predictions"
+}

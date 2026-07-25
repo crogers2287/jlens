@@ -1,0 +1,58 @@
+{
+  "outcome": "q35q_distribution_ownership_repair_partial",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "repository_visibility": "public",
+  "engineering": {
+    "distribution_ownership_verifier_added": true,
+    "live_adapter_integration_added": true,
+    "installed_distribution_api": "importlib.metadata.distribution",
+    "identities_checked": [
+      "normalized distribution name and exact version",
+      "canonical purelib root and exact dist-info identity",
+      "METADATA identity",
+      "WHEEL identity and py3-none-any tag",
+      "declared-file membership",
+      "RECORD membership, sha256, size, and empty self-hash",
+      "imported transformers package root ownership",
+      "parsed METADATA/WHEEL equality to RECORD-verified bytes",
+      "optional independent upstream source-digest equality",
+      "absence of an unadmitted direct_url installation identity"
+    ],
+    "aggregate_only": true
+  },
+  "tests": {
+    "targeted_distribution_ownership": 19,
+    "targeted_result": "pass",
+    "adapter_python_compile": "pass",
+    "full_repository_suite": "not_run",
+    "github_status_contexts": 0
+  },
+  "not_established": [
+    "successful execution of the integrated live adapter in the target runtime",
+    "same-clean-subprocess frozen upstream-wheel extraction and installed-byte equality",
+    "complete live-object source closure for dispatch, converter, nested operation, model, and configuration objects",
+    "clean-subprocess shadow-package, editable-install, and monkeypatch rejection",
+    "actual GPTQModel/Defuser loader-entry binding",
+    "immutable complete GPTQ runtime tuple",
+    "strict synthetic Q35Q loading, packed-tensor consumption, expert ordering, forward parity, VJP parity, JVP parity, or finite-difference parity"
+  ],
+  "remaining": [
+    "compose the frozen Transformers wheel verifier with installed ownership and upstream equality in one controlled subprocess",
+    "derive source identity from actual live objects with import specifications and inspect",
+    "add the required adversarial integration conjunction",
+    "freeze and bind the exact GPTQModel, Defuser, Optimum, Accelerate, PyTorch, and GPTQ_TORCH runtime tuple",
+    "run the strict differentiable fixture before any weight staging or GPU transition"
+  ],
+  "upstream_observation": {
+    "gptqmodel_head": "f6f1ab12fe8115f84c52253871ca039ac6c425ee",
+    "gptqmodel_version": "7.3.2",
+    "runtime_pin_advanced": false
+  },
+  "boundary": {
+    "gpu_used": false,
+    "weights_loaded": false,
+    "tensor_payload_fetched": false,
+    "private_or_sealed_data_committed": false
+  },
+  "privacy": "aggregate-only; no host paths, credentials, weights, tensor data, task text, outputs, hidden states, routes, Jacobians, caches, or per-task predictions"
+}

@@ -1,8 +1,9 @@
 """Q35Q Phase-0 admission-logic tests (CPU-only, no network/model).
 
 Proves the corrected admission fails closed on incomplete architecture, cache/
-metadata contamination, extra/missing files, path escape, hash mismatch, and
-substring-only or nondeterministic tokenizer behavior.
+metadata contamination, extra/missing files, path escape, hash mismatch,
+substring-only or nondeterministic tokenizer behavior, and runtime-affecting
+rotation metadata outside the frozen artifact contract.
 """
 import sys
 from pathlib import Path
@@ -106,13 +107,28 @@ def good_qcfg(**over):
 
 
 def test_gptq_full_pass():
-    assert validate_gptq_quant(good_qcfg())["all_required_pass"] is True
+    out = validate_gptq_quant(good_qcfg())
+    assert out["rotation_disabled"] is True
+    assert out["all_required_pass"] is True
 
 
 @pytest.mark.parametrize("over", [{"bits": 8}, {"group_size": 64},
                                    {"quant_method": "awq"}, {"sym": False}])
 def test_gptq_field_fails(over):
     assert validate_gptq_quant(good_qcfg(**over))["all_required_pass"] is False
+
+
+@pytest.mark.parametrize("rotation", ["hadamard", "random", False, 0])
+def test_gptq_rotation_metadata_fails_closed(rotation):
+    out = validate_gptq_quant(good_qcfg(rotation=rotation))
+    assert out["rotation_disabled"] is False
+    assert out["all_required_pass"] is False
+
+
+def test_gptq_explicit_null_rotation_passes():
+    out = validate_gptq_quant(good_qcfg(rotation=None))
+    assert out["rotation_disabled"] is True
+    assert out["all_required_pass"] is True
 
 
 def test_gptq_missing_skip_rules_fails():

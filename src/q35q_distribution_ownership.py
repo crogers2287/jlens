@@ -303,6 +303,12 @@ def verify_distribution_ownership(
     required_declared = expected_member_set | {record_member}
     declared_members_present = required_declared.issubset(set(declared))
     record_members_present = required_declared.issubset(set(record))
+    metadata_text_matches_member_bytes = (
+        metadata_text.encode("utf-8") == bytes(member_bytes[metadata_member])
+    )
+    wheel_text_matches_member_bytes = (
+        wheel_text.encode("utf-8") == bytes(member_bytes[wheel_member])
+    )
 
     import hashlib
 
@@ -361,6 +367,8 @@ def verify_distribution_ownership(
         "wheel_identity_bound": wheel_identity_bound,
         "declared_members_present": declared_members_present,
         "record_members_present": record_members_present,
+        "metadata_text_matches_member_bytes": metadata_text_matches_member_bytes,
+        "wheel_text_matches_member_bytes": wheel_text_matches_member_bytes,
         "record_hashes_match": record_hashes_match,
         "record_sizes_match": record_sizes_match,
         "record_self_entry_valid": record_self_entry_valid,

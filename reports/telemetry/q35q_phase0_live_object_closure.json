@@ -1,0 +1,61 @@
+{
+  "outcome": "q35q_live_object_source_closure_repair_partial",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "repository_visibility": "public",
+  "engineering": {
+    "transformers_live_object_closure_verifier_added": true,
+    "live_adapter_integration_added": true,
+    "objects_bound": [
+      "dispatch callable",
+      "returned converter classes",
+      "nested operation classes",
+      "Qwen3.5-MoE model classes",
+      "Qwen3.5-MoE configuration classes"
+    ],
+    "origins_checked": [
+      "declaring-module export identity",
+      "module __file__",
+      "module __spec__.origin",
+      "inspect-derived source file",
+      "exact admitted module-to-source-member mapping"
+    ],
+    "aggregate_only": true
+  },
+  "tests": {
+    "targeted_live_object_closure": 11,
+    "targeted_result": "pass",
+    "helper_python_compile": "pass",
+    "adapter_python_compile": "pass",
+    "full_repository_suite": "not_run",
+    "integrated_target_runtime_execution": "not_run"
+  },
+  "established": [
+    "the committed adapter no longer constructs the four Transformers source paths from the package root",
+    "the committed adapter derives those source paths from imported module specifications",
+    "live dispatch, converter, nested-operation, model, and configuration objects must resolve to exact module exports",
+    "module file, module spec origin, inspect source file, and admitted source path must agree",
+    "the exact four-file Transformers-side closure is required"
+  ],
+  "not_established": [
+    "same-clean-subprocess frozen upstream-wheel extraction and installed-byte equality",
+    "clean-subprocess sys.path, user-site, pre-import, shadow-package, editable-install, and monkeypatch rejection",
+    "actual GPTQModel/Defuser loader-entry source closure",
+    "immutable complete GPTQ runtime tuple",
+    "successful integrated adapter execution in the target runtime",
+    "strict synthetic Q35Q loading, packed-tensor consumption, expert ordering, forward parity, VJP parity, JVP parity, or finite-difference parity"
+  ],
+  "remaining": [
+    "compose frozen upstream-wheel verification and installed-byte equality in the same controlled subprocess",
+    "enforce clean-subprocess isolation and adversarial tamper rejection",
+    "freeze and bind the GPTQModel, Defuser, Optimum, Accelerate, PyTorch, and GPTQ_TORCH tuple",
+    "bind the actual loader entry and its complete source closure",
+    "run the strict differentiable fixture before weights or GPU authorization"
+  ],
+  "boundary": {
+    "gpu_used": false,
+    "weights_loaded": false,
+    "tensor_payload_fetched": false,
+    "private_or_sealed_data_committed": false
+  },
+  "privacy": "aggregate-only; no host paths, credentials, weights, tensor data, task text, outputs, hidden states, routes, Jacobians, caches, or per-task predictions"
+}

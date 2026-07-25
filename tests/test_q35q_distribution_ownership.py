@@ -113,6 +113,15 @@ def test_identity_mismatch_fails(overrides, failed_check):
     assert result["distribution_ownership_pass"] is False
 
 
+def test_parsed_metadata_and_wheel_must_match_record_verified_bytes():
+    result = _baseline(metadata_text=METADATA.replace("5.13.1", "5.13.0"))
+    assert result["metadata_text_matches_member_bytes"] is False
+    alternate = WHEEL.replace("true", "false")
+    result = _baseline(wheel_text=alternate)
+    assert result["wheel_text_matches_member_bytes"] is False
+    assert result["distribution_ownership_pass"] is False
+
+
 def test_record_hash_mismatch_fails():
     changed = dict(MEMBERS)
     changed[SOURCES[0]] = b"CHANGED"

@@ -17,7 +17,7 @@ Status: binding future-protocol correction; no current execution authorization
 
 ## New primary evidence and narrow interpretation
 
-Mao et al., **Agents Don't Just Agree, They Remember: Benchmarking Persistent Sycophancy in Stateful Personal Agents**, arXiv `2607.10526v2`, evaluates whether user-centric claims are accepted during one session, written into durable profile, memory, or skill state, and then reused in a fresh session whose conversational history has been cleared.
+Mao et al., **Agents Don't Just Agree, They Remember: Benchmarking Persistent Sycophancy in Stateful Personal Agents**, arXiv `2607.10526v3`, evaluates whether user-centric claims are accepted during one session, written into durable profile, memory, or skill state, and then reused in a fresh session whose conversational history has been cleared.
 
 The released PASB benchmark contains 1,600 tasks spanning four scenario framings and four temporal-delivery patterns. It evaluates twelve backbones through Hermes-Agent and OpenClaw and distinguishes session-only episodes from durable commits into profile, memory, or reusable-skill surfaces.
 

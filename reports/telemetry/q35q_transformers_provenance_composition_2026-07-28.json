@@ -1,0 +1,36 @@
+{
+  "outcome": "q35q_transformers_provenance_composition_implementation_committed",
+  "artifact_admission_status": "q35q_artifact_admission_blocked",
+  "date": "2026-07-28",
+  "implemented": {
+    "isolated_child_execution": "python -I -s -E with a reduced environment",
+    "preimport_and_user_site_rejection": true,
+    "pypi_release_metadata_resolution": "exact transformers 5.13.1 wheel filename, version, type, hash, HTTPS origin, and single-candidate identity",
+    "bounded_public_wheel_fetch": true,
+    "independent_upstream_digest_extraction": true,
+    "installed_byte_equality_composed": true,
+    "distribution_record_ownership_composed": true,
+    "live_transformers_object_closure_composed": true,
+    "aggregate_only_output": true
+  },
+  "targeted_validation": {
+    "new_no_network_tests": 10,
+    "result": "passed in a dependency-isolated harness against the committed adapter logic",
+    "adapter_syntax_compilation": "passed",
+    "full_repository_suite": "not_run",
+    "target_runtime_execution": "not_run"
+  },
+  "claim_boundary": {
+    "established": "The committed production adapter now contains one clean-process Transformers-side provenance composition path rather than caller-injected expected digests.",
+    "not_established": "No live target-runtime pass is claimed. The GPTQModel/Defuser loader, immutable runtime tuple, strict tensor consumption, expert ordering, forward parity, VJP, JVP, finite-difference parity, weights, GPU transition, Agents-A1 transfer, or production use remain unadmitted."
+  },
+  "remaining": [
+    "execute the integrated adapter in the exact target runtime and retain only aggregate evidence",
+    "freeze GPTQModel, Defuser, Optimum, Accelerate, PyTorch, CUDA, and GPTQ_TORCH as one immutable tuple",
+    "bind the actual GPTQModel/Defuser loader entry and complete executable source closure",
+    "run strict synthetic Qwen3.5-MoE loading with one-time packed-tensor consumption and expert/fusion ordering proofs",
+    "prove deterministic forward, activation-VJP, activation-JVP, and finite-difference parity",
+    "complete Phase-0 before weight staging or a separately authorized GPU transition"
+  ],
+  "privacy": "aggregate-only; no host paths, credentials, caches, model data, weights, prompts, outputs, hidden states, routes, Jacobians, sealed labels, or per-example predictions"
+}
